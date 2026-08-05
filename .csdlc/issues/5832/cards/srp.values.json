@@ -7,19 +7,21 @@
     "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation",
     "slug": "v0-92-wp-14-acip-and-a2a-contract-reconciliation",
     "version": "v0.92",
-    "generation": 0
+    "generation": 19
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "WP-14 issue 5832, its declared implementation paths, and retained proof",
+      "review_scope": "Review issue 5832 exact-head semantic envelope, protobuf schema, public catalog, deterministic JSON, compatibility negotiation, Runtime auth and signed-control boundaries, bounded full-duplex WSS, denial/replay/malformed cases, platform evidence, and strict distributed/consumer/Shepherd/cloud non-ownership.",
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-14 scope?"
+        "Do protobuf and deterministic JSON preserve exactly one ACIP/A2A semantic identity?",
+        "Can catalog or version negotiation drift from the canonical schema or accept incompatible input?",
+        "Are auth, signed command, capability, origin, replay, wrong-runtime, limits, and dispatch boundaries enforced before operation execution?",
+        "Does real Rustls WSS proof cover bidirectional correlation, backpressure, reconnect, and typed errors on declared platforms?",
+        "Did the issue avoid distributed authority, consumer UI, Shepherd behavior, cloud bridge, and custom transport scope?"
       ],
       "findings": [],
       "residual_risk": [],

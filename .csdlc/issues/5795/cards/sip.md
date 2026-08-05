@@ -12,27 +12,27 @@ Status: ready
 
 ## Goal
 
-Provide a governed Runtime v3 and Observatory path for real local model-backed Shepherd dialogue.
+Deliver one optional local-only Shepherd message path from the separate Observatory through signed Runtime v3 governed ingress to an explicitly configured MLX/Gemma adapter and back with truthful execution classification.
 
 ## Required Outcome
 
-A bounded operator message travels through authenticated Runtime v3 control to a configured local MLX/Gemma provider and returns truthful response evidence, with unavailable and unauthorized cases distinguished.
+A bounded authorized operator message produces a real local model response when the configured Apple Metal/MLX model is available, while Runtime and Observatory distinguish real, deterministic-test, and unavailable outcomes and remain usable after failures.
 
 ## Scope
 
-- adl-runtime/src/runtime_api.rs
-- adl-runtime-kernel Shepherd adapter/control paths
-- local MLX/Gemma provider binding
-- demos/html-observatory Shepherd controls and status
-- .csdlc/issues/5795
-- .csdlc/evidence/5795
+- adl-runtime-kernel governed ingress, control, operations, and protocol-adapter surfaces
+- adl-runtime Runtime API, auth, and WSS projection surfaces
+- A narrow explicitly configured local MLX/Gemma adapter and deterministic tests
+- demos/html-observatory operator channel and status projection
+- .csdlc/evidence/5795 real local-model and negative proof
 
 ## Authority
 
-- Issue 5795 owns the local-only Shepherd MVP
-- WP-03 owns Runtime launch stability and WP-18A owns final consumer integration
-- The v0.95 full Shepherd, training, and evaluator program remains separate
-- No cloud or global default model change is authorized
+- Issue 5795 owns the local Shepherd adapter and its Runtime/Observatory integration only
+- Issue 5820 owns launch/readiness and issue 5800 owns browser trust
+- Issue 5832 owns ACIP/A2A and WSS contract stability
+- Observatory renders commands/results but never owns signing keys, provider launch, or filesystem/model authority
+- No cloud fallback, global default switch, or v0.95 training/evaluator authority
 
 ## Assumptions
 

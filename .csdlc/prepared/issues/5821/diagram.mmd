@@ -1,2 +1,15 @@
-flowchart LR
-  I["Issue 5821"] --> D["Design required"]
+flowchart TD
+  W["WP-03 stable single-node Runtime"] --> A["Architecture and threat-model gate"]
+  A --> C["16 bounded child contracts"]
+  C --> N1["Guardian node A"]
+  C --> N2["Guardian node B"]
+  N1 <-->|"mTLS QUIC membership"| N2
+  N1 --> E["Epoch, lease, and fencing authority"]
+  N2 --> E
+  E --> M["Prepare and quiesce"]
+  M --> S["Checkpoint and transfer"]
+  S --> V["Validate target and fence source"]
+  V --> K["Activate and commit one owner"]
+  V -->|"failure"| R["Rollback to validated source"]
+  K --> P["Integrated multi-node proof"]
+  R --> P

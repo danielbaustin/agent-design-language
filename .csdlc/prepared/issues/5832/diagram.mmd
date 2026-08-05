@@ -1,2 +1,11 @@
 flowchart LR
-  I["Issue 5832"] --> D["Design required"]
+  S["Versioned semantic ACIP/A2A envelope"] --> P["Protobuf wire schema"]
+  S --> J["Deterministic JSON projection"]
+  P --> C["Schema-derived public catalog"]
+  J --> R["Semantic round-trip fixtures"]
+  P --> R
+  C --> N["Version negotiation"]
+  N --> W["Authenticated Rustls WSS carrier"]
+  W --> G["Governed Runtime ingress"]
+  W -->|"bad auth, replay, malformed, oversized"| X["Deny before dispatch"]
+  G --> E["Correlated response and trace"]

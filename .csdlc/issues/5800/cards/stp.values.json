@@ -7,44 +7,50 @@
     "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
     "slug": "v0-92-observatory-browser-trusted-https",
     "version": "v0.92",
-    "generation": 0
+    "generation": 34
   },
   "status": "ready",
   "content": {
     "card_kind": "stp",
     "values": {
-      "task_boundary": "Deliver a browser-trusted local Observatory HTTPS flow with reproducible browser and health proof.",
+      "task_boundary": "Deliver one supported browser-trusted localhost HTTPS flow for the separate Observatory and Runtime API, including atomic certificate handling, explicit operator trust, consistent configuration, and reproducible positive, negative, and platform proof.",
       "deliverables": [
-        "Supported certificate issuance, trust, renewal or reissue, and startup flow",
-        "Chrome, curl, HTML, Runtime-feed, configuration, and documentation evidence"
+        "Supported localhost certificate generation, validation, trust installation, and reissue flow",
+        "Consistent Runtime API and separate Observatory HTTPS configuration and startup guidance",
+        "Chrome, curl, HTML, health/readiness, Runtime-feed, and negative certificate evidence",
+        "Platform disposition for macOS, Linux, and native Windows without inferred portability"
       ],
       "acceptance_criteria": [
         "Chrome loads the supported Observatory URL without certificate warnings or bypasses",
-        "The chosen certificate has correct localhost names and valid trust/expiry behavior",
-        "Startup, configuration, docs, URLs, and health checks consistently use HTTPS",
-        "Observatory HTML and Runtime feed succeed through verified TLS",
-        "Expired, mismatched, missing, or untrusted certificates fail truthfully without deleting the last valid pair",
-        "Certificate private material is not committed or logged",
-        "macOS local proof is retained and Windows/Linux setup is implemented or explicitly bounded by supported portable behavior",
-        "One exact-revision review has no unresolved actionable findings"
+        "The committed certificate pair has correct localhost SANs, validity, Rustls compatibility, and private-key permissions",
+        "Runtime API, separate Observatory server, configured origins, docs, URLs, and probes consistently use HTTPS",
+        "Verified curl and browser paths reach Observatory HTML plus Runtime health, readiness, and feed",
+        "Missing, malformed, expired, mismatched, untrusted, or partial certificate states fail truthfully and preserve the last valid pair",
+        "No private key, token, trust-store export, or secret is committed or logged",
+        "macOS proof is retained and Linux/native Windows behavior is implemented or explicitly blocked with evidence",
+        "One exact-head review has no unresolved actionable findings"
       ],
       "dependencies": [
-        "WP-01",
-        "WP-02A",
-        "Runtime/Observatory sprint coordination before WP-03"
+        "WP-01 issue 5817 merged and ancestral",
+        "WP-02A proving substrate terminal before implementation",
+        "Sprint 5855 coordination",
+        "Serialization with issue 5820 for shared Runtime init or TLS paths"
       ],
       "repo_inputs": [
         "adl-runtime/src/local_tls.rs",
+        "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
         "adl-runtime/tests/local_tls.rs",
-        "demos/html-observatory",
-        "infra/runtime-v3/runtime-init.toml"
+        "infra/runtime-v3/runtime-init.toml",
+        "demos/html-observatory/runtime-v3.config.json",
+        "demos/html-observatory/README.md",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
       ],
       "non_goals": [
-        "AWS work",
-        "Let's Encrypt issuance for localhost",
-        "Disabling TLS verification",
-        "Production public-domain certificate automation",
-        "Unrelated Observatory redesign"
+        "AWS, ACM, Route53, or Let's Encrypt issuance for localhost",
+        "Public production-domain certificate automation",
+        "Disabling TLS verification, browser warnings, or CORS policy",
+        "Serving Observatory HTML from Runtime or redesigning the Observatory",
+        "Claiming WP-03, WP-14, or WP-18A completion"
       ]
     }
   }

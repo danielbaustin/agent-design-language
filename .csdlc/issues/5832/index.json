@@ -3,9 +3,9 @@
   "issue": 5832,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8d41f336d8a8940f446bc1a8cc646c2998249b1f4bddb564ab78aa91dfb005b4",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "c9cadef33949d8ba848a975079ac417d010f93e78a86b73bc021aa2014346052",
+  "phase": "bound",
+  "generation": 19,
+  "digest": "ebd5bece1edd6aadb075c6acf8a4ffa1d19da558884b884d1fb61b67c8662b26",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5832/design.md",
   "diagram_path": ".csdlc/prepared/issues/5832/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-runtime-readiness-design-review",
+      "revision": "585ae0a7f6fa2a3f682bab346edf66b27aeb3528cf5b869d91bdc4ca1a7491e1"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "f0f62aa8346872bd63afaab3fee2b911bbdcdf19d2084f132e27d00871fb12f0",
-      "rendered_digest": "658834669a85554c6a7d82cca1b6d2d762576df006895c3d87bdb4ee54cb3719",
-      "ast_digest": "42b4e9904f7fc3ff06a8b989e45bf37c2a1ae5e587401076e41428b11d03e54b"
+      "values_digest": "4d2506126c5f8905d141d8ebc99eff75a1d2c319fff140e11795c08f3f7b33ca",
+      "rendered_digest": "8e7dba4c262f9605227bfc992ab93b900a1b9a8f0ee2329e5f9f309775cc4cf5",
+      "ast_digest": "d339e3e09349659711ef814f9b7f0c4e56a54e5eadc9747efffe7031c82b64c5"
     },
     "stp": {
-      "values_digest": "04a965c4e5f3f3fc4bca6b5f87e24064bbc4de22f4489dc3098c7af9a0d97e73",
-      "rendered_digest": "937e0d0e1858232e360e34ecc3ca419d4413fd465f30595f749d40f7a0a400bf",
-      "ast_digest": "49a8caa44f2af0e0f746832c38373b0fb03e2e395f4e987a827b006ce53e30d9"
+      "values_digest": "acd00301ebae43929e4fb9f39e24eeece93ed731ec80ed4ef1bad3a7ef003f75",
+      "rendered_digest": "f9900295b0c76b52a1a4b1f3beb7b5310793b37fc2179409c8279fb3e59f813d",
+      "ast_digest": "8ca9bcaeecbf0c37caf57c1e0c1c32f3f2857fa6ddb3daed7916a36d63153d58"
     },
     "spp": {
-      "values_digest": "4f12ea056e875d3d898ef08714a08ae3efd2e309dfcd9562b31bace1f5282629",
-      "rendered_digest": "5179bfe1ecfa933bf17f74011302c8a9d3a52f2af12192b7378eec5f7aff034b",
-      "ast_digest": "3281ad617f3a0dab87e9501a81f6934345d75c3a7314cc8162ffd2e22df54ce1"
+      "values_digest": "73d18d2b622efed681622cfd7dd7d6e29ae8f8ff068b01c3d15bfb6cde373ff3",
+      "rendered_digest": "a0c23e30077ca7773a0ba713b0c470fc07491dcc0fabf41163ea939b39aaf69d",
+      "ast_digest": "c8b31a7ff121c8ddc10820f6eae8cd3b1c9960836439c956ecacc52be1e497ef"
     },
     "vpp": {
-      "values_digest": "3bdcb3d4a33039be857d9120142ce66f4e2e4d49d2ccb242762cb727aefac085",
-      "rendered_digest": "ea3d4f740ca0b471860bbbc09ca42ba6a66cde1ebf7e067892013222715d1773",
-      "ast_digest": "8a6cadb216b51a939c6411a787aa0e728f9dde972c450eb4833285c35786c61b"
+      "values_digest": "2e7de77c76e5a82be1e06e9edd986eb2ae3cfbcfb992bc7c8838aa86e893b80f",
+      "rendered_digest": "7d05fd90ebcd5e1cb0a7495a1b8d04d3a67ea9a1ffbe278c2ef487bfe755ee8c",
+      "ast_digest": "9f71d90b940f87c87cb595736efb063a25782821c7860e08a2307284132936bb"
     },
     "srp": {
-      "values_digest": "b1681f01ad11f68ef56a54671fa3f16233668f015ec42a3ac16e13113a8dfa47",
-      "rendered_digest": "3094853268c7fc07f8157e4829428a2266971675c1e9310175929e4df1a83947",
-      "ast_digest": "09e26ad749c560966653f6b618d25dac41ae3d607fadd78b9188eb0b33263232"
+      "values_digest": "a31a21c1aaf8354835c39c1f3b6a1b1584885c8653682816787c4d30fc5621b6",
+      "rendered_digest": "392116f8b2844eb2b47b558a12a08332f1744646fdb5b0f4bc7c416cac8c3a6f",
+      "ast_digest": "a48218debfd779486aad8db28be59e8799ba3c84d1f15ddd8d17c336df8a86a7"
     },
     "sor": {
-      "values_digest": "5ddf6ccf1af2e0d458835ccd9d45999114c720b7a958bf8f83ec74b182b3a9db",
+      "values_digest": "726fed6bea5f157945625561cd2ffc3fb6745e0fb268bca03e348466bcc781ea",
       "rendered_digest": "ca00a3cb3f454ba45ff64b773e445a3beb4be7e3336cfbe573de8d542dc1488c",
       "ast_digest": "805bf932776db506a84bc733ada010a45567e55b0d7223d73fd194d885406962"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,160 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5832-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5832 only.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5832-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5832\",\".csdlc/prepared/issues/5832\",\".csdlc/evidence/5832\"],\"purpose\":\"Prepare issue 5832 design, diagram, cards, and validation plan without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-runtime-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the reconciled protocol goal.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Define one versioned ACIP/A2A semantic family with canonical protobuf, deterministic JSON, a schema-derived public catalog, and authenticated bounded full-duplex Runtime v3 WSS transport.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-14: ACIP and A2A contract reconciliation.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the concrete WP-14 outcome.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"Runtime v3 admits, transports, projects, traces, replays, and rejects the same ACIP/A2A message semantics consistently across protobuf and JSON, with explicit version negotiation, auth, limits, round trips, denied access, and real WSS exchange.\",\"operation\":\"replan\",\"previous_value\":\"reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace generic WP-14 scope.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime and adl-runtime-kernel ACIP semantic envelopes and governed protocol adapters\",\"Runtime API/auth full-duplex Rustls WSS carrier and focused tests\",\"Versioned protobuf schema, deterministic JSON projection, public catalog, and compatibility fixtures\",\"Trace/replay identity, frame limits, negotiation, errors, reconnect, and backpressure contracts\",\".csdlc/evidence/5832\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Clarify WP-14 authority.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5832 owns ACIP/A2A semantic, schema, projection, catalog, negotiation, and carrier contracts\",\"Issue 5821 owns distributed Guardian/polis authority and must land first\",\"Issue 5795 consumes stable command semantics and issue 5837 consumes stable client contracts\",\"Runtime retains authentication, signed command, capability, and dispatch authority\",\"No UI, Shepherd behavior, cloud bridge, custom crypto, or custom transport runtime authority\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the executable protocol boundary.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Reconcile existing ACIP/A2A semantics into one versioned envelope, protobuf schema, deterministic JSON projection, public catalog, compatibility policy, and authenticated bounded full-duplex WSS implementation with round-trip, denial, replay, malformed, and real-carrier proof.\",\"operation\":\"replan\",\"previous_value\":\"Deliver reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace protocol deliverables.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Frozen versioned semantic envelope and compatibility/negotiation policy\",\"Canonical protobuf files plus schema-derived public message catalog\",\"Deterministic JSON projection and protobuf/JSON semantic round-trip fixtures\",\"Authenticated Rustls WSS bidirectional carrier with limits, backpressure, reconnect, error, replay, and denied-access proof\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Pin WP-14 dependencies.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-04 issue 5821 integrated distributed substrate terminal\",\"Current ACIP stream substrate requalified on Runtime v3\",\"Current trace/replay identity baseline requalified\",\"Stable Runtime API/auth ownership before issues 5795 and 5837 integrate\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Use current protocol inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md\",\"docs/adr/0017-secure-local-agent-comms-and-a2a-boundary.md\",\"adl-runtime/src/acip.rs\",\"adl-runtime/src/runtime_api.rs\",\"adl-runtime/src/runtime_api_auth.rs\",\"adl-runtime/tests/runtime_api_wss.rs\",\"adl-runtime-kernel/src/acip.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime-kernel/src/ingress.rs\",\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/src/operations.rs\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set protocol non-goals.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Distributed Guardian membership, placement, migration, or fencing\",\"Observatory/Unity UI implementation\",\"Shepherd local-model behavior\",\"SNS/SQS or other cloud bridge completion\",\"Custom cryptography, TLS, WebSocket, or protobuf runtime\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the WP-14 execution plan.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"After WP-04 lands, inventory existing ACIP/A2A/WSS/trace contracts, freeze one semantic envelope and compatibility policy, implement protobuf/catalog/deterministic JSON parity, harden authenticated bounded WSS admission and reconnect behavior, then run round-trip, denial, replay, malformed, real-carrier, platform, and exact-head proof.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Name protocol affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"ACIP/A2A semantic envelopes and adapters\",\"Protobuf schema and public catalog\",\"Deterministic JSON projection and compatibility fixtures\",\"Runtime API/auth WSS carrier\",\"Trace/replay, limits, negotiation, backpressure, reconnect, and error handling\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Record protocol invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"One semantic message has equivalent protobuf and deterministic JSON meaning\",\"Unsupported versions and unknown required fields fail without guessing\",\"Malformed, oversized, replayed, wrong-runtime, or denied frames fail before dispatch\",\"Authentication and signed command policy remain Runtime-owned\",\"Queues and binary payloads remain bounded\",\"Public catalog cannot silently diverge from the wire schema\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Record protocol risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Existing ACIP/A2A envelopes may encode conflicting semantics\",\"JSON number/byte/omission rules could drift from protobuf\",\"Catalog generation could become stale\",\"Version negotiation could accidentally accept incompatible majors\",\"WSS auth, reconnect, or backpressure could widen authority or duplicate dispatch\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set protocol stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-04 issue 5821 is not terminal\",\"The ACIP substrate or trace/replay baseline cannot be requalified\",\"A proposed encoding cannot preserve one semantic identity across protobuf and JSON\",\"The design requires custom crypto/transport or weakens Runtime authentication\",\"Issue 5795 or 5837 owns an overlapping live file without serialization\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set protocol replan triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"WP-04 changes distributed identity or transport assumptions\",\"Runtime API/auth ownership changes\",\"Compatibility fixtures expose semantic loss between protobuf and JSON\",\"Consumer integration requires a previously undeclared versioning rule\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace protocol acceptance, steps, and validation DAG.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"One versioned ACIP/A2A semantic envelope defines identity, addressing, correlation/causation, trace/replay, capability/authority, payload, ordering, acknowledgement, error, and size rules\",\"Canonical protobuf schemas and a schema-derived public catalog agree on messages, directions, payloads, versions, and auth requirements\",\"Deterministic JSON projection round-trips with protobuf without semantic loss under explicit bytes, integer, omission, ordering, and unknown-field rules\",\"Version negotiation accepts only declared compatible versions and rejects unsupported majors or required fields\",\"Authenticated Rustls WSS performs real bounded full-duplex exchange with correlation, backpressure, reconnect, and typed errors\",\"Missing/invalid auth, unsigned control, denied capability, malformed/oversized frame, replay, wrong runtime, and origin refusal fail before dispatch\",\"Protocol and real-carrier proof runs on macOS, Linux, and native Windows or retains an explicit blocker\",\"One exact-head review has no unresolved actionable findings\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify WP-04 and trace/stream baselines, inventory semantic drift, and freeze envelope, version, compatibility, schema, catalog, JSON, and carrier contracts.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement protobuf/catalog/JSON parity plus authenticated bounded WSS negotiation, admission, dispatch, errors, reconnect, and backpressure.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run golden round trips, compatibility and denial negatives, real bidirectional WSS exchange, and native-platform proof.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve exact-head review and publish stable consumer handoff with closing linkage.\",\"acceptance_ids\":[\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"schema-catalog-json-parity\",\"proof_role\":\"Validate protobuf schemas, catalog derivation, deterministic JSON rules, golden semantic round trips, and compatibility negotiation.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"contracts\",\"--test\",\"protocol_adapters\"],\"parallel_group\":\"protocol-contract\",\"defer_reason\":null},{\"lane\":\"wss-auth-negative\",\"proof_role\":\"Prove auth, signed-control, capability, origin, malformed/oversized, replay, wrong-runtime, backpressure, reconnect, and typed-error behavior.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"runtime_api_wss\"],\"parallel_group\":\"protocol-contract\",\"defer_reason\":null},{\"lane\":\"real-full-duplex-wss\",\"proof_role\":\"Exchange authenticated protobuf and JSON ACIP/A2A messages bidirectionally over the production Rustls WSS endpoint and retain correlated trace evidence.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-5\",\"AC-6\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"runtime_api_wss\",\"--\",\"--ignored\",\"--exact\",\"real_acip_a2a_full_duplex\"],\"parallel_group\":\"protocol-live\",\"defer_reason\":\"Requires completed schema/carrier implementation and a running production Runtime endpoint.\"},{\"lane\":\"native-protocol-platforms\",\"proof_role\":\"Repeat schema, negotiation, auth, denial, and real-carrier checks on macOS, Linux, and native Windows.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"runtime\"],\"parallel_group\":\"platform\",\"defer_reason\":\"Requires native platform runners after implementation; absent evidence remains blocked.\"},{\"lane\":\"exact-head-hygiene\",\"proof_role\":\"Reject unrelated changes and support exact-head review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set protocol review scope.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review issue 5832 exact-head semantic envelope, protobuf schema, public catalog, deterministic JSON, compatibility negotiation, Runtime auth and signed-control boundaries, bounded full-duplex WSS, denial/replay/malformed cases, platform evidence, and strict distributed/consumer/Shepherd/cloud non-ownership.\",\"operation\":\"replan\",\"previous_value\":\"WP-14 issue 5832, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set protocol review prompts.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Do protobuf and deterministic JSON preserve exactly one ACIP/A2A semantic identity?\",\"Can catalog or version negotiation drift from the canonical schema or accept incompatible input?\",\"Are auth, signed command, capability, origin, replay, wrong-runtime, limits, and dispatch boundaries enforced before operation execution?\",\"Does real Rustls WSS proof cover bidirectional correlation, backpressure, reconnect, and typed errors on declared platforms?\",\"Did the issue avoid distributed authority, consumer UI, Shepherd behavior, cloud bridge, and custom transport scope?\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5832-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
     }
   ]
 }

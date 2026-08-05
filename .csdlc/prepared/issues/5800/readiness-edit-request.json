@@ -1,0 +1,20 @@
+{
+  "issue": 5800,
+  "card": "srp",
+  "expected_generation": 33,
+  "expected_digest": "85c80d6a0e7e437808171395590c809bd49e10d0dc0f5e223ea9e5e7925f0682",
+  "claim_id": "claim-5800-v092-preparation",
+  "actor": "codex:5860-runtime-readiness",
+  "reason": "Set issue-specific review prompts.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Does Chrome trust both real localhost listeners without warning or bypass?",
+      "Can malformed, expired, mismatched, or partial replacement destroy the last valid pair?",
+      "Do Runtime init, CORS origins, Observatory config, docs, and probes name the same HTTPS contract?",
+      "Are private material and macOS/Linux/Windows claims bounded by retained evidence?",
+      "Did the change avoid WP-03 launch resilience and Observatory redesign scope?"
+    ]
+  }
+}

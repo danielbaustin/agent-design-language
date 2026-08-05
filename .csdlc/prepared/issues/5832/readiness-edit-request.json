@@ -1,0 +1,20 @@
+{
+  "issue": 5832,
+  "card": "srp",
+  "expected_generation": 18,
+  "expected_digest": "ece64348162b426574263488547d31f675010e8acbd448d5c6f7d601d159dea4",
+  "claim_id": "claim-5832-v092-preparation",
+  "actor": "codex:5860-runtime-readiness",
+  "reason": "Set protocol review prompts.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Do protobuf and deterministic JSON preserve exactly one ACIP/A2A semantic identity?",
+      "Can catalog or version negotiation drift from the canonical schema or accept incompatible input?",
+      "Are auth, signed command, capability, origin, replay, wrong-runtime, limits, and dispatch boundaries enforced before operation execution?",
+      "Does real Rustls WSS proof cover bidirectional correlation, backpressure, reconnect, and typed errors on declared platforms?",
+      "Did the issue avoid distributed authority, consumer UI, Shepherd behavior, cloud bridge, and custom transport scope?"
+    ]
+  }
+}

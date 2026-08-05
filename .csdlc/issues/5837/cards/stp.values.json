@@ -7,38 +7,54 @@
     "title": "[v0.92][WP-18A] Observatory/Unity consumer integration",
     "slug": "v0-92-wp-18a-observatory-unity-consumer-integration",
     "version": "v0.92",
-    "generation": 0
+    "generation": 19
   },
   "status": "ready",
   "content": {
     "card_kind": "stp",
     "values": {
-      "task_boundary": "Deliver separate consumers integrated with the versioned Runtime API and WSS.",
+      "task_boundary": "Bind the existing HTML and Unity Observatory clients to one stable Runtime v3 API/WSS compatibility contract, implement real read/write/reconnect behavior and explicit failure states, and prove redaction, refusal, restart recovery, and platform-visible interaction without moving UI into Runtime.",
       "deliverables": [
-        "separate consumers integrated with the versioned Runtime API and WSS",
-        "real Observatory and Unity interactions, compatibility matrix, and consumer failure cases"
+        "One shared compatibility matrix for API/schema version, endpoints, audience, IDs, ordering/correlation, reconnect cursor, auth, and backpressure",
+        "Real HTML Observatory Runtime HTTPS/WSS reads, authenticated controls, failures, and browser evidence",
+        "Real Unity native Runtime reads, authenticated controls, reconnect behavior, contract validation, and Editor/player evidence",
+        "Redaction/refusal/stale/offline/TLS/version/restart evidence proving no fixture substitution or authority widening"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "HTML and Unity use one compatibility matrix for API/schema version, endpoints, audiences, IDs, ordering/correlation, reconnect cursor, auth, and backpressure",
+        "The real HTML client reads Runtime snapshots/events and performs only authorized controls over trusted HTTPS/WSS",
+        "The real Unity client reads the same Runtime state and performs only authorized controls without a schema fork",
+        "Public/operator/reviewer redaction and denied write cases prevent private-state or authority exposure in both clients",
+        "TLS/origin failure, version mismatch, stale/offline data, unavailable Runtime, auth refusal, backpressure, and malformed events are explicit client states",
+        "After Guardian-owned Runtime restart both clients reconnect with bounded replay, no duplicate application, and no authority escalation",
+        "Browser plus native Unity evidence uses live Runtime paths; fixture/static rendering proof is classified separately and platform limits are explicit",
+        "One exact-head review has no unresolved actionable findings"
       ],
       "dependencies": [
-        "WP-03",
-        "WP-14",
-        "WP-18"
+        "WP-03 issue 5820 stable Runtime launch/API/readiness",
+        "WP-14 issue 5832 stable versioned HTTP/WSS schema and auth contract",
+        "WP-18 first-birthday interaction surface terminal",
+        "Issue 5800 trusted browser HTTPS for HTML live proof",
+        "Approved existing HTML and Unity designs remain unchanged unless separately authorized"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md",
-        ".adl/docs/TBD/OBSERVATORY_UNITY_DESIGN.md"
+        "docs/milestones/v0.92/features/OBSERVATORY_UNITY_CONSUMER_INTEGRATION_v0.92.md",
+        "demos/html-observatory/app.js",
+        "demos/html-observatory/runtime-v3.config.json",
+        "demos/html-observatory/README.md",
+        "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs",
+        "demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json",
+        "demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryCompatibilityVerifier.cs",
+        "adl-runtime/src/runtime_api.rs",
+        "adl-runtime/src/runtime_api_auth.rs",
+        "docs/api/runtime-v3/v1/observatory.openapi.json"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Observatory redesign or unapproved Unity visual changes",
+        "Serving HTML/assets from Runtime or moving UI code into Runtime",
+        "Runtime launch, protocol, TLS trust, or birthday implementation owned upstream",
+        "Client-side private-state, signing-key, certificate-key, or authorization authority",
+        "Unity-only Runtime schema, provider integration, or AWS work"
       ]
     }
   }

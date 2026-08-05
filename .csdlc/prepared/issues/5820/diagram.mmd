@@ -1,2 +1,13 @@
-flowchart LR
-  I["Issue 5820"] --> D["Design required"]
+flowchart TD
+  I["Versioned runtime-init.toml"] --> V["Guardian validates complete config"]
+  V --> G["Guardian process 0"]
+  G --> K["One Runtime v3 kernel"]
+  K --> A["Axum and Rustls API"]
+  K --> D["Transactional durable state"]
+  K --> T["Bounded Tokio services"]
+  K --> L["Tracing and Vector route"]
+  A --> R["Liveness and truthful readiness"]
+  G -->|"recoverable exit"| B["Bounded backoff and restart"]
+  B --> K
+  G -->|"configuration exit"| F["Fail before readiness"]
+  K -->|"shutdown"| Q["Drain, checkpoint, cancel, reap"]

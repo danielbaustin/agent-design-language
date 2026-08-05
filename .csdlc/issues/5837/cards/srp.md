@@ -12,13 +12,15 @@ Status: pre_phase
 
 ## Scope
 
-WP-18A issue 5837, its declared implementation paths, and retained proof
+Review issue 5837 exact-head shared compatibility matrix, HTML and Unity real Runtime integrations, audience redaction, authenticated controls, denial/failure/backpressure states, Guardian restart/reconnect behavior, browser/native evidence, approved design preservation, and strict Runtime/protocol/TLS/birthday non-ownership.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-18A scope?
+- Do HTML and Unity consume exactly one versioned schema, ordering, correlation, reconnect, auth, and backpressure contract?
+- Can either client expose private state, keys, raw tokens, or gain write authority through reads, reconnect, or presentation mode?
+- Are live, stale, offline, denied, TLS, origin, version, malformed, and fixture states visibly and semantically distinct?
+- After Guardian restart, do both clients reconnect without duplicates or authority escalation using real Runtime paths?
+- Did the change preserve approved designs and keep UI, Runtime, WP-14, TLS trust, birthday, provider, and AWS ownership boundaries?
 
 ## Findings
 

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-18A] Observatory/Unity consumer integration",
     "slug": "v0-92-wp-18a-observatory-unity-consumer-integration",
     "version": "v0.92",
-    "generation": 0
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -16,19 +16,95 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-18a",
-          "proof_role": "real Observatory and Unity interactions, compatibility matrix, and consumer failure cases",
+          "lane": "shared-consumer-contract",
+          "proof_role": "Validate one schema/version/audience/order/reconnect/auth/backpressure matrix plus redaction and denied actions for both clients.",
           "acceptance_ids": [
             "AC-1",
-            "AC-2",
-            "AC-3",
             "AC-4",
             "AC-5"
           ],
           "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v0916_unity_observatory_contract.sh"
+          ],
+          "parallel_group": "consumer-contract",
+          "defer_reason": null
+        },
+        {
+          "lane": "html-live-runtime",
+          "proof_role": "Run the separate HTML Observatory against the real trusted Runtime HTTP/WSS paths and retain read, authorized control, denial, stale, offline, and visible browser evidence.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-4",
+            "AC-5",
+            "AC-7"
+          ],
+          "deterministic": false,
           "resource_profile": "medium",
-          "budget_seconds": 3600,
-          "budget_tokens": 25000,
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+          ],
+          "parallel_group": "consumer-live",
+          "defer_reason": "Requires issue 5800 trust plus the running exact Runtime candidate."
+        },
+        {
+          "lane": "unity-live-runtime",
+          "proof_role": "Run native Unity Editor/player integration against the same Runtime revision and retain reads, controls, denial, failure, and visual interaction evidence.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-7"
+          ],
+          "deterministic": false,
+          "resource_profile": "large",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v0917_unity_observatory_integrated_proof.sh"
+          ],
+          "parallel_group": "consumer-live",
+          "defer_reason": "Requires the approved Unity version, live Runtime endpoint, and native Editor/player environment."
+        },
+        {
+          "lane": "guardian-restart-reconnect",
+          "proof_role": "Restart the Guardian-owned Runtime and prove both clients reconnect with bounded replay, no duplicate application, and no authority escalation.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": false,
+          "resource_profile": "large",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            "adl/tools/run_runtime_v3_guardian_soak.sh"
+          ],
+          "parallel_group": "consumer-live",
+          "defer_reason": "Requires both completed consumers and the exact Runtime candidate."
+        },
+        {
+          "lane": "exact-head-hygiene",
+          "proof_role": "Reject unrelated changes and support exact-head review.",
+          "acceptance_ids": [
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
           "argv": [
             "git",
             "diff",
@@ -42,9 +118,9 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5837/design.md",
-      "design_digest": "bab20e749946ab47caaff4f71a51475c223a68a42e68464b4b1153baa9d43137",
+      "design_digest": "b0515176721b655162f3e919c5864345b65613ea64876e0c6a3c52b038becda3",
       "diagram_ref": ".csdlc/prepared/issues/5837/diagram.mmd",
-      "diagram_digest": "6e998bbfc4e909d907a0aedb02e0083df704316714c6bf03c5a82c5f8dcf9363"
+      "diagram_digest": "2735fcc45f0da9aacd9372d8bc46663117662848e7775310da12795fa0824105"
     }
   }
 }

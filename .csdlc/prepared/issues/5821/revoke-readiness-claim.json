@@ -1,0 +1,11 @@
+{
+  "issue": 5821,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5821-v092-preparation",
+  "expected_generation": 19,
+  "expected_digest": "e8238eeeea119e6e21121d7b4ec94d539e4a3845cead3ae73cf7036334f83ea9",
+  "now_unix_seconds": 1785949549,
+  "actor": "codex:5860-runtime-readiness",
+  "operator_authority": "operator:daniel-issue-5860-preparation-only",
+  "reason": "Release completed preparation claim so implementation can reacquire authority just in time."
+}

@@ -12,38 +12,57 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+After WP-04 lands, inventory existing ACIP/A2A/WSS/trace contracts, freeze one semantic envelope and compatibility policy, implement protobuf/catalog/deterministic JSON parity, harden authenticated bounded WSS admission and reconnect behavior, then run round-trip, denial, replay, malformed, real-carrier, platform, and exact-head proof.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
-    "acceptance_ids": [
-      "AC-2"
-    ],
-    "status": "pending"
-  },
-  {
-    "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Verify WP-04 and trace/stream baselines, inventory semantic drift, and freeze envelope, version, compatibility, schema, catalog, JSON, and carrier contracts.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
       "AC-3",
       "AC-4"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S2",
+    "action": "Implement protobuf/catalog/JSON parity plus authenticated bounded WSS negotiation, admission, dispatch, errors, reconnect, and backpressure.",
     "acceptance_ids": [
-      "AC-5"
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Run golden round trips, compatibility and denial negatives, real bidirectional WSS exchange, and native-platform proof.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Resolve exact-head review and publish stable consumer handoff with closing linkage.",
+    "acceptance_ids": [
+      "AC-8"
     ],
     "status": "pending"
   }
@@ -51,15 +70,20 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- One semantic message has equivalent protobuf and deterministic JSON meaning
+- Unsupported versions and unknown required fields fail without guessing
+- Malformed, oversized, replayed, wrong-runtime, or denied frames fail before dispatch
+- Authentication and signed command policy remain Runtime-owned
+- Queues and binary payloads remain bounded
+- Public catalog cannot silently diverge from the wire schema
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Existing ACIP/A2A envelopes may encode conflicting semantics
+- JSON number/byte/omission rules could drift from protobuf
+- Catalog generation could become stale
+- Version negotiation could accidentally accept incompatible majors
+- WSS auth, reconnect, or backpressure could widen authority or duplicate dispatch
 
 ## Estimates
 
@@ -73,19 +97,21 @@ Revision 1
 
 .csdlc/prepared/issues/5832/design.md
 
-Digest: 940d19cba56b39716e3412682e9206974184eebdca216e38077aa604a18b87f3
+Digest: 585ae0a7f6fa2a3f682bab346edf66b27aeb3528cf5b869d91bdc4ca1a7491e1
 
 ## Diagram
 
 .csdlc/prepared/issues/5832/diagram.mmd
 
-Digest: 769cc348bc5c2ada9fc9aec69d67684f26ef58521be0dff370289a54d2d1791e
+Digest: 0ddb64863e3e34f2587da73ca88c9ce88eb77000c199807e0c69639234b28b7f
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- WP-04 issue 5821 is not terminal
+- The ACIP substrate or trace/replay baseline cannot be requalified
+- A proposed encoding cannot preserve one semantic identity across protobuf and JSON
+- The design requires custom crypto/transport or weakens Runtime authentication
+- Issue 5795 or 5837 owns an overlapping live file without serialization
 
 ## Handoff
 

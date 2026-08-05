@@ -12,26 +12,26 @@ Status: ready
 
 ## Goal
 
-Make the supported local Observatory load over browser-trusted HTTPS without warning bypasses.
+Make the separate local Observatory and Runtime v3 API load through one browser-trusted localhost HTTPS identity without warning or verification bypasses.
 
 ## Required Outcome
 
-One documented and reproducible local trust flow makes Chrome, Observatory startup, configured URLs, health checks, and Runtime feed access agree on trusted HTTPS.
+A documented, reproducible local certificate generation, trust installation, reissue, configuration, startup, and recovery flow makes Chrome, curl, Observatory HTML, Runtime health/readiness, and the Runtime feed agree on verified HTTPS.
 
 ## Scope
 
-- demos/html-observatory
-- adl-runtime/src/local_tls.rs
+- adl-runtime/src/local_tls.rs and its local TLS bootstrap binary
 - adl-runtime/tests/local_tls.rs
-- Runtime and Observatory HTTPS configuration and docs
-- .csdlc/issues/5800
-- .csdlc/evidence/5800
+- infra/runtime-v3/runtime-init.toml TLS and allowed-origin configuration
+- demos/html-observatory HTTPS configuration, startup guidance, and focused validation
+- .csdlc/evidence/5800 trusted-browser and verified-health proof
 
 ## Authority
 
-- Issue 5800 owns local Observatory certificate trust and HTTPS consistency
-- WP-03 owns broader Runtime launch and resilience
-- No AWS certificate or hosted production TLS work is authorized
+- Issue 5800 owns local localhost certificate trust, issuance or reissue, and HTTPS consistency only
+- Issue 5820 owns broader Guardian and Runtime launch resilience; overlapping init or TLS files serialize
+- Issue 5795 and issue 5837 consume this trusted path and cannot redefine it
+- No AWS, ACM, Route53, public-domain, or verification-bypass authority
 
 ## Assumptions
 

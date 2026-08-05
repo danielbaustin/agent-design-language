@@ -25,17 +25,16 @@ Diagram: .csdlc/prepared/issues/5800/diagram.mmd
 [
   {
     "lane": "local-tls-contract",
-    "proof_role": "Run focused Rust tests for certificate generation, reuse, replacement, trust inputs, and negative cases.",
+    "proof_role": "Prove generation, SAN, expiry, Rustls pair, permissions, atomic replacement, and last-valid-pair negatives.",
     "acceptance_ids": [
       "AC-2",
       "AC-5",
-      "AC-6",
-      "AC-7"
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "medium",
     "budget_seconds": 600,
-    "budget_tokens": 3000,
+    "budget_tokens": 4000,
     "argv": [
       "cargo",
       "test",
@@ -45,39 +44,80 @@ Diagram: .csdlc/prepared/issues/5800/diagram.mmd
       "--test",
       "local_tls"
     ],
-    "parallel_group": "tls",
+    "parallel_group": "tls-contract",
     "defer_reason": null
   },
   {
-    "lane": "observatory-https-health",
-    "proof_role": "Prove verified Observatory HTML access at the configured HTTPS endpoint; browser trust evidence is retained alongside this lane.",
+    "lane": "observatory-https-integration",
+    "proof_role": "Prove the configured separate Observatory and Runtime endpoints through verified curl, HTML, health, readiness, and feed access.",
     "acceptance_ids": [
-      "AC-1",
       "AC-3",
-      "AC-4"
+      "AC-4",
+      "AC-5"
     ],
     "deterministic": false,
     "resource_profile": "medium",
     "budget_seconds": 600,
-    "budget_tokens": 3000,
+    "budget_tokens": 4000,
+    "argv": [
+      "bash",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+    ],
+    "parallel_group": "local-live",
+    "defer_reason": "Run after the implementation session starts the real HTTPS listeners with the supported certificate identity."
+  },
+  {
+    "lane": "trusted-browser-macos",
+    "proof_role": "Retain Chrome trust and no-warning evidence for the actual localhost Observatory and Runtime feed.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4",
+      "AC-7"
+    ],
+    "deterministic": false,
+    "resource_profile": "medium",
+    "budget_seconds": 600,
+    "budget_tokens": 4000,
     "argv": [
       "curl",
       "--config",
       ".csdlc/prepared/issues/5800/curl-observatory-https.conf"
     ],
-    "parallel_group": "browser",
-    "defer_reason": "Requires the configured local runtime and trusted Observatory server to be running."
+    "parallel_group": "local-live",
+    "defer_reason": "Requires explicit operator trust installation and browser-visible live endpoints on macOS."
   },
   {
-    "lane": "exact-head-diff-hygiene",
+    "lane": "platform-trust",
+    "proof_role": "Run or disposition the same trust, probe, and negative contract on Linux and native Windows.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-5",
+      "AC-7"
+    ],
+    "deterministic": false,
+    "resource_profile": "large",
+    "budget_seconds": 600,
+    "budget_tokens": 4000,
+    "argv": [
+      "bash",
+      "adl/tools/run_owner_validation_lane.sh",
+      "runtime"
+    ],
+    "parallel_group": "platform",
+    "defer_reason": "Requires native Linux and Windows runners after implementation; absent runner evidence remains blocked, not passed."
+  },
+  {
+    "lane": "exact-head-hygiene",
     "proof_role": "Reject unrelated changes and support exact-head review.",
     "acceptance_ids": [
+      "AC-6",
       "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 30,
-    "budget_tokens": 500,
+    "budget_seconds": 600,
+    "budget_tokens": 4000,
     "argv": [
       "git",
       "diff",
@@ -101,7 +141,9 @@ Tokens: 25000
 ## Commands
 
 - `cargo test --locked --manifest-path adl-runtime/Cargo.toml --test local_tls`
+- `bash adl/tools/test_v0917_html_observatory_integrated_proof.sh`
 - `curl --config .csdlc/prepared/issues/5800/curl-observatory-https.conf`
+- `bash adl/tools/run_owner_validation_lane.sh runtime`
 - `git diff --check`
 
 ## Failure Semantics

@@ -3,9 +3,9 @@
   "issue": 5821,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9376933aa08bd1c1708eacda6c1cb876ff925d7a61596daf9f30c8c4e86f245e",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "f40dbd5fbe9b40c2ec785a03a1a908645b2e626d6811d36518e52c31162121c6",
+  "phase": "bound",
+  "generation": 19,
+  "digest": "6ec5776a5003641d4f33c99bb2789db4472ecf6e9bb9675d3f5944a4d5797313",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5821/design.md",
   "diagram_path": ".csdlc/prepared/issues/5821/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-runtime-readiness-design-review",
+      "revision": "46e68b5092a52a379d8e352fec1c388008d7d265cbaf245fc2a38d05b3669db1"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "95569d90b4904dd9cb2afbad186431076b848a577c688c0c0627b711be411880",
-      "rendered_digest": "a77d8b7ab149390373f7bbff65844c5bd4a8707b25191ba2583e1e4abdae6986",
-      "ast_digest": "8952b541ea070892ac4144b543489d47bbec8d71837245e8e6290bf6165a93ae"
+      "values_digest": "adefe46710abbaf8f19b0e12c2229897c1c1b72cbee8ec07c04e30ca5cf1fbcf",
+      "rendered_digest": "fd8725bbe5024f9ee69db3b95a42ab6a522d6c3154d73eff104f8592862b50aa",
+      "ast_digest": "b2b4c1840ccfa82f416250b4f87211b0e9a519f583286f013c7a084db9a6ec28"
     },
     "stp": {
-      "values_digest": "ef35ec0af83c45d124c78acd4a9cbd924c77b40564cca7852ae480158545db7a",
-      "rendered_digest": "d3b07c74dd27feab8fb94f839e4fd046a062acde33277268f06ee80a2e1b554f",
-      "ast_digest": "5560db22cd53a6dffe0fa577321d67533f9680c86744d9819bec015859c13e41"
+      "values_digest": "7224edcbe7ac2a7a6a43cfbd926f73033ef0eaa3ac8b72d2c43aa2ba5ea21467",
+      "rendered_digest": "204c65fc2019d42e89ab91144c4578f641102546fd0d6366b0b31eea21575b2b",
+      "ast_digest": "cbaadc27e7ee10ac046e5131eba0395b680de3b2772831d322262c60d71e726a"
     },
     "spp": {
-      "values_digest": "51e3824010b454e10824636f5dcbd8eefcce10ffe010ab7cfdc5731d5431796b",
-      "rendered_digest": "b45123514c1325cdd75b754046898311a7c8184318bd4f031848bedbcb5ea89e",
-      "ast_digest": "f5211ffc63ff0ed10e363612db9c39c6daf0482251fd22212dcd7f51ea89813d"
+      "values_digest": "d525d314da4ad22bb2e6cb455e6142c9e8b5d88464594dbc7880a1a618dabb7d",
+      "rendered_digest": "746f5a70f07dee6cd539799b1e90286bf93738a1aac178921c0ae4832234c202",
+      "ast_digest": "d7799f1eea3531de260a9d2a9f4f421f5eb860763e69fc22742531680c04fb8b"
     },
     "vpp": {
-      "values_digest": "3e9e543ea2761920046db2d833d27313d38e01fd67d3bda55ac508298f9da723",
-      "rendered_digest": "54e04173878e5e1b10bccffcd7798928dd306c9a57bec8b8c41314da7140455e",
-      "ast_digest": "01caa24a9aecdf674ca7cfb6eca51961cc873e8d5302cc6d09609de0ef51a41b"
+      "values_digest": "fd70b557e4b7789ad9631cb55a4b087def72537bbabc317c49128ef0d4ad530c",
+      "rendered_digest": "35058599a2d3775dac4dd90a23e4e3290c9b3201034d6488ddbaca1ad4292a35",
+      "ast_digest": "86c101d6d87145ae8c634d170cf2a8c3d8dabf1a46695bfd8b241f948b9650d8"
     },
     "srp": {
-      "values_digest": "aa4d9a1c29560748ea6b5e2577e5ec5c82861ac7e83879a66c029f2462838a00",
-      "rendered_digest": "a0807245f8c2680aac5c1288c065733847cecaafd63200e61c8261979aa5a493",
-      "ast_digest": "4a3a37d3c1288bae1714af3101994a5d27a79479db2d2d04ac63c0c9acb577fa"
+      "values_digest": "e69cb64c237cc85992fd1086444c3bfb178b3e66f435299c76b69ac766b28cc4",
+      "rendered_digest": "75c3f53abe2bded4afac17822a9a69df635c44145be99d682ccd31107717cb92",
+      "ast_digest": "75281ebd3097df3bd457d4b948943a65bcca6c2606a1213159c851a215da2f59"
     },
     "sor": {
-      "values_digest": "7119002ababf61034db7f0f19d7ee42c391fdea67465bae94e94487bd8d8bbfb",
+      "values_digest": "9098e405d569a6ea1509492d0275bd895c5f056748992e992cc19b069ed56a89",
       "rendered_digest": "e10d878924281817411c3f3ea1f856c4f04bc1a7c1419a67f67224f0db96dd33",
       "ast_digest": "e9f243f2dcd8c5194d9cc00e3bcc0b6d2994a1076c33b349f81126488ff15055"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,160 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5821 only.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\"],\"purpose\":\"Prepare issue 5821 design, diagram, cards, and validation plan without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-runtime-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the distributed program goal.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Pass a reviewed distributed Guardian/polis architecture and threat-model gate, execute the exact 16-child program with disjoint ownership, and integrate real multi-node membership, fencing, migration, rollback, certificate, and recovery behavior.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-04: Distributed Guardian/polis runtime.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the WP-04 required outcome.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"One reviewed distributed-runtime contract and threat model governs 16 concrete terminal child issues whose production paths converge at one exact revision with single-authority, mTLS membership, partition, fencing, relocation, rollback, rotation, and recovery proof.\",\"operation\":\"replan\",\"previous_value\":\"architecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace generic distributed scope.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Distributed architecture, threat model, schemas, COTS decisions, and 16-child ownership ledger\",\"Narrow child-owned surfaces under adl-runtime and adl-runtime-kernel for Guardian identity, networking, topology, state, control, observability, and resource context\",\"Integrated multi-node, partition, fencing, migration, rollback, certificate, and recovery proof\",\".csdlc/evidence/5821 program and integration evidence\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Clarify WP-04 authority.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5821 owns the architecture/security gate, exact 16-child denominator, integration, and final reconciliation\",\"Each child retains its own implementation, proof, review, PR, and closeout authority\",\"Guardian remains process 0; network transport never becomes polis, cognition, governance, or identity authority\",\"Issue 5832 waits for the integrated substrate and owns protocol reconciliation\",\"No Runtime v2 or v0.93 governance authority\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the distributed task boundary.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Freeze the distributed Guardian trust, membership, lease/epoch, fencing, placement, migration, rollback, observability, and threat contracts; route exactly 16 nonduplicative children; then prove and reconcile one real integrated multi-node program.\",\"operation\":\"replan\",\"previous_value\":\"Deliver architecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace distributed deliverables.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Reviewed architecture decision packet and threat model before implementation credit\",\"Exact 16-row child ledger mapping requirement, dependency, owner, paths, proof, review, PR, and terminal receipt\",\"Maintained QUIC/TLS membership plus epoch/lease/fencing and migration state-machine implementation across child issues\",\"Real integrated partition, fencing, migration, rollback, certificate rotation/revocation, recovery, and relocation evidence\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Pin WP-04 dependencies.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-03 issue 5820 terminal with stable ingress, lifecycle, state, and readiness contracts\",\"Exactly 16 concrete distributed-runtime child issues with no duplicate ownership\",\"Reviewed COTS transport and cryptographic boundary\",\"Sprint 5855 serial gate before WP-14 issue 5832\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Use current distributed inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/adr/0054-runtime-v3-guardian-owned-kernel-and-api-boundary.md\",\"adl-runtime/src/guardian.rs\",\"adl-runtime/src/networking.rs\",\"adl-runtime/src/topology.rs\",\"adl-runtime/src/acip.rs\",\"adl-runtime-kernel/src/topology.rs\",\"adl-runtime-kernel/src/continuity.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/src/observability.rs\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set distributed non-goals.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"v0.93 constitutional governance or polis policy redesign\",\"Custom cryptography, custom framing, or cognition-owned placement\",\"Runtime v2 modification or fallback\",\"Treating architecture prose, fixtures, receipts, demo mode, or opened children as completion\",\"Absorbing WP-14 protocol reconciliation or WP-17 identity migration policy\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the distributed execution plan.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"After WP-03 stabilizes, freeze the architecture/threat/COTS/schema contract and exact 16-child denominator, execute children in dependency order with disjoint claims, integrate production transport and single-authority migration behavior, run adversarial multi-node/platform proof, then reconcile all terminal receipts at one reviewed revision.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Name distributed affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"Guardian identity and mTLS membership\",\"Discovery, epochs, leases, fencing, and failure detection\",\"Capability/resource-weather placement inputs\",\"Snapshot catalog and migration/rollback state machine\",\"Topology, certificate, migration, and failure observability\",\"16-child lifecycle and integration evidence\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Record distributed invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Exactly one authoritative owner exists for a Runtime lineage at any epoch\",\"All node/control traffic is mutually authenticated with separate certificate purposes\",\"Replay, stale epoch, cloned state, wrong node, and wrong trust domain fail closed\",\"Failed migration never activates two targets or discards the recoverable source checkpoint\",\"Partitions degrade placement/relocation but never grant authority\",\"Every one of the 16 children has one nonduplicative owner and terminal receipt\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Record distributed risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"The 16-child denominator could contain gaps or duplicate ownership\",\"Partition or stale lease could create split brain\",\"Migration ordering could fence the source before target validation\",\"Certificate rotation/expiry could strand membership\",\"Synthetic fixtures could be mistaken for real multi-node proof\",\"Program integration could hide a red or nonterminal child\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set distributed stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-03 contracts are not terminal and stable\",\"Architecture or threat review has unresolved actionable findings\",\"The exact 16-child ledger is missing, duplicate, or path-colliding\",\"Any design permits plaintext, verification disablement, custom crypto, Runtime v2, or dual authority\",\"A child lacks real production-path proof or truthful terminal state\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set distributed replan triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"WP-03 changes ingress/state/lifecycle contracts\",\"Threat review changes trust boundaries or COTS transport\",\"A child discovers overlapping ownership or an uncovered requirement\",\"Integrated partition/migration proof violates single-authority invariants\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace distributed acceptance, steps, and validation DAG.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"A reviewed architecture and threat model freeze identity, trust, COTS transport, schemas, membership, epochs/leases, fencing, placement, migration, rollback, and observability before implementation credit\",\"Exactly 16 concrete nonduplicative child issues map every required behavior and threat to owner, paths, dependencies, proof, review, PR, and terminal receipt\",\"All 16 children are implemented, reviewed, merged, terminal, and integrated without hidden red or deferred work\",\"Real production transport proves multi-node membership, partition, failure detection, epochs/leases, and fencing with one authoritative owner\",\"Real migration proves prepare, quiesce, checkpoint, transfer, validate, fence, activate, commit, and safe rollback including relocation failures\",\"mTLS enrollment, purpose separation, rotation, revocation, expiry, wrong-node, wrong-domain, replay, and stale-message cases fail safely\",\"Topology, certificate health, migration, fencing, and failure causes are visible through versioned API and tracing/Vector without private-state exposure\",\"One exact-revision review has no unresolved actionable findings and reconciles the entire child program\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify WP-03, freeze architecture/threat/COTS/schema contracts, and publish the exact 16-child ownership and dependency ledger.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Route and complete all 16 children under disjoint claims with production proof and truthful terminal receipts.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Integrate the real multi-node substrate and run partition, fencing, migration, rollback, certificate, recovery, relocation, and observability proof.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Reconcile all child receipts and integrated evidence at one exact revision, resolve review, and publish with closing linkage.\",\"acceptance_ids\":[\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"architecture-threat-gate\",\"proof_role\":\"Validate the frozen architecture, threat model, COTS choices, schemas, trust boundaries, and exact 16-child coverage/ownership ledger.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-distributed-program.rb\"],\"parallel_group\":\"program-gate\",\"defer_reason\":\"Validator is an implementation deliverable and runs before any child receives implementation credit.\"},{\"lane\":\"distributed-state-machines\",\"proof_role\":\"Prove epochs, leases, fencing, membership, topology, snapshot, migration, rollback, replay, and stale-message semantics deterministically.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"continuity\",\"--test\",\"durable_state\",\"--test\",\"control\"],\"parallel_group\":\"distributed-contract\",\"defer_reason\":null},{\"lane\":\"real-multinode-adversarial\",\"proof_role\":\"Exercise production mTLS/QUIC membership, partition, fencing, migration, rollback, rotation/revocation, recovery, and relocation failures across real nodes.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"distributed_guardian\",\"--\",\"--ignored\",\"--exact\",\"real_multinode_program\"],\"parallel_group\":\"multinode-live\",\"defer_reason\":\"Requires completed child implementations, real node identities, and issue-local certificate/state roots.\"},{\"lane\":\"child-terminal-reconciliation\",\"proof_role\":\"Require all 16 child issues, PRs, exact reviews, validation, merged revisions, receipts, and released claims to agree.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-distributed-children.rb\"],\"parallel_group\":\"program-closeout\",\"defer_reason\":\"Runs after all child closeout receipts exist.\"},{\"lane\":\"platform-and-exact-head\",\"proof_role\":\"Run declared native platform proof, diff hygiene, and exact integrated review.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"runtime\"],\"parallel_group\":\"platform\",\"defer_reason\":\"Requires native platform runners and the exact integrated candidate.\"}]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the distributed review scope.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review issue 5821 architecture/threat gate, exact 16-child ledger and terminal truth, production mTLS membership, epochs/leases/fencing, placement authority, migration/rollback, certificate/replay/partition failures, API/observability projection, and strict Runtime v2/v0.93/WP-14 non-ownership.\",\"operation\":\"replan\",\"previous_value\":\"WP-04 issue 5821, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set distributed review prompts.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does the architecture and threat model close every trust, identity, certificate, partition, replay, and migration boundary before implementation credit?\",\"Are exactly 16 children concrete, nonduplicative, disjoint, terminal, and fully represented in integration evidence?\",\"Can any partition, stale lease, cloned checkpoint, or failed migration create two authoritative owners?\",\"Do real transport, certificate, relocation, recovery, and observability proofs use production paths rather than fixtures or receipts?\",\"Did the program avoid Runtime v2, v0.93 governance, custom crypto, and WP-14 scope?\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
     }
   ]
 }

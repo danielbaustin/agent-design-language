@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
     "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
     "version": "v0.92",
-    "generation": 0
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -16,35 +16,130 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-04",
-          "proof_role": "reviewed architecture, threat model, child issue wave, integrated distributed proof, and relocation failure cases",
+          "lane": "architecture-threat-gate",
+          "proof_role": "Validate the frozen architecture, threat model, COTS choices, schemas, trust boundaries, and exact 16-child coverage/ownership ledger.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-6"
           ],
           "deterministic": true,
           "resource_profile": "large",
-          "budget_seconds": 3600,
-          "budget_tokens": 25000,
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
           "argv": [
-            "git",
-            "diff",
-            "--check"
+            "ruby",
+            ".csdlc/prepared/issues/5821/validate-distributed-program.rb"
           ],
-          "parallel_group": "issue-local",
+          "parallel_group": "program-gate",
+          "defer_reason": "Validator is an implementation deliverable and runs before any child receives implementation credit."
+        },
+        {
+          "lane": "distributed-state-machines",
+          "proof_role": "Prove epochs, leases, fencing, membership, topology, snapshot, migration, rollback, replay, and stale-message semantics deterministically.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
+            "continuity",
+            "--test",
+            "durable_state",
+            "--test",
+            "control"
+          ],
+          "parallel_group": "distributed-contract",
           "defer_reason": null
+        },
+        {
+          "lane": "real-multinode-adversarial",
+          "proof_role": "Exercise production mTLS/QUIC membership, partition, fencing, migration, rollback, rotation/revocation, recovery, and relocation failures across real nodes.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": false,
+          "resource_profile": "large",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "--test",
+            "distributed_guardian",
+            "--",
+            "--ignored",
+            "--exact",
+            "real_multinode_program"
+          ],
+          "parallel_group": "multinode-live",
+          "defer_reason": "Requires completed child implementations, real node identities, and issue-local certificate/state roots."
+        },
+        {
+          "lane": "child-terminal-reconciliation",
+          "proof_role": "Require all 16 child issues, PRs, exact reviews, validation, merged revisions, receipts, and released claims to agree.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5821/validate-distributed-children.rb"
+          ],
+          "parallel_group": "program-closeout",
+          "defer_reason": "Runs after all child closeout receipts exist."
+        },
+        {
+          "lane": "platform-and-exact-head",
+          "proof_role": "Run declared native platform proof, diff hygiene, and exact integrated review.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-8"
+          ],
+          "deterministic": false,
+          "resource_profile": "large",
+          "budget_seconds": 600,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            "adl/tools/run_owner_validation_lane.sh",
+            "runtime"
+          ],
+          "parallel_group": "platform",
+          "defer_reason": "Requires native platform runners and the exact integrated candidate."
         }
       ],
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5821/design.md",
-      "design_digest": "b07405493b60b4da27f287713299c91753da920cd54419f61cf944ed64775ec8",
+      "design_digest": "46e68b5092a52a379d8e352fec1c388008d7d265cbaf245fc2a38d05b3669db1",
       "diagram_ref": ".csdlc/prepared/issues/5821/diagram.mmd",
-      "diagram_digest": "8875b91f9d11d43128d8151b5de9115accf9843420f7e84ef3d424fa4ee504ea"
+      "diagram_digest": "839945549709f057ef410e2b793c0a4beac3077114e3c5e24e0ef2a786407954"
     }
   }
 }

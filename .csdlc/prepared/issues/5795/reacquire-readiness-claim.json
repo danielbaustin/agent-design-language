@@ -1,0 +1,24 @@
+{
+  "issue": 5795,
+  "expected_generation": 0,
+  "expected_digest": "a057ed7416850cee79ecbb309501d7d65a8ea5e35b0b1dce90a378ceaa4c1409",
+  "now_unix_seconds": 1785948690,
+  "actor": "codex:5860-runtime-readiness",
+  "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5795 only.",
+  "replacement": {
+    "id": "claim-5795-v092-preparation",
+    "owner": "codex:5860-runtime-readiness",
+    "generation": 0,
+    "acquired_unix_seconds": 1785948690,
+    "expires_unix_seconds": 1786035090,
+    "heartbeat_unix_seconds": 1785948690,
+    "branch": "codex/5860-v092-execution-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5795",
+      ".csdlc/prepared/issues/5795",
+      ".csdlc/evidence/5795"
+    ],
+    "purpose": "Prepare issue 5795 design, diagram, cards, and validation plan without product implementation."
+  }
+}

@@ -12,24 +12,26 @@ Status: ready
 
 ## Goal
 
-Complete WP-04: Distributed Guardian/polis runtime.
+Pass a reviewed distributed Guardian/polis architecture and threat-model gate, execute the exact 16-child program with disjoint ownership, and integrate real multi-node membership, fencing, migration, rollback, certificate, and recovery behavior.
 
 ## Required Outcome
 
-architecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92
+One reviewed distributed-runtime contract and threat model governs 16 concrete terminal child issues whose production paths converge at one exact revision with single-authority, mTLS membership, partition, fencing, relocation, rollback, rotation, and recovery proof.
 
 ## Scope
 
-- Issue 5821 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/CSM_RUNTIME_DISTRIBUTED_DESIGN.md
-- .adl/docs/TBD/CSM_RUNTIME_DISTRIBUTED_EXECUTION_PLAN.md
+- Distributed architecture, threat model, schemas, COTS decisions, and 16-child ownership ledger
+- Narrow child-owned surfaces under adl-runtime and adl-runtime-kernel for Guardian identity, networking, topology, state, control, observability, and resource context
+- Integrated multi-node, partition, fencing, migration, rollback, certificate, and recovery proof
+- .csdlc/evidence/5821 program and integration evidence
 
 ## Authority
 
-- Issue 5821 owns only WP-04: Distributed Guardian/polis runtime
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Issue 5821 owns the architecture/security gate, exact 16-child denominator, integration, and final reconciliation
+- Each child retains its own implementation, proof, review, PR, and closeout authority
+- Guardian remains process 0; network transport never becomes polis, cognition, governance, or identity authority
+- Issue 5832 waits for the integrated substrate and owns protocol reconciliation
+- No Runtime v2 or v0.93 governance authority
 
 ## Assumptions
 

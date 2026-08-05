@@ -1,0 +1,20 @@
+{
+  "issue": 5821,
+  "card": "srp",
+  "expected_generation": 18,
+  "expected_digest": "291c5e4b6991b0927a676658a520050eaa92e6eb67518143c7aea13208c1abe8",
+  "claim_id": "claim-5821-v092-preparation",
+  "actor": "codex:5860-runtime-readiness",
+  "reason": "Set distributed review prompts.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Does the architecture and threat model close every trust, identity, certificate, partition, replay, and migration boundary before implementation credit?",
+      "Are exactly 16 children concrete, nonduplicative, disjoint, terminal, and fully represented in integration evidence?",
+      "Can any partition, stale lease, cloned checkpoint, or failed migration create two authoritative owners?",
+      "Do real transport, certificate, relocation, recovery, and observability proofs use production paths rather than fixtures or receipts?",
+      "Did the program avoid Runtime v2, v0.93 governance, custom crypto, and WP-14 scope?"
+    ]
+  }
+}

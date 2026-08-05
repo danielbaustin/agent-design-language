@@ -1,0 +1,24 @@
+{
+  "issue": 5800,
+  "expected_generation": 0,
+  "expected_digest": "5af499b0573a1afde2d66adc9290cd2a0e6f567c29309fe31461b6ea72ffe5bb",
+  "now_unix_seconds": 1785948690,
+  "actor": "codex:5860-runtime-readiness",
+  "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5800 only.",
+  "replacement": {
+    "id": "claim-5800-v092-preparation",
+    "owner": "codex:5860-runtime-readiness",
+    "generation": 0,
+    "acquired_unix_seconds": 1785948690,
+    "expires_unix_seconds": 1786035090,
+    "heartbeat_unix_seconds": 1785948690,
+    "branch": "codex/5860-v092-execution-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5800",
+      ".csdlc/prepared/issues/5800",
+      ".csdlc/evidence/5800"
+    ],
+    "purpose": "Prepare issue 5800 design, diagram, cards, and validation plan without product implementation."
+  }
+}

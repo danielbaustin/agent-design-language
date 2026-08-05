@@ -12,24 +12,27 @@ Status: ready
 
 ## Goal
 
-Complete WP-14: ACIP and A2A contract reconciliation.
+Define one versioned ACIP/A2A semantic family with canonical protobuf, deterministic JSON, a schema-derived public catalog, and authenticated bounded full-duplex Runtime v3 WSS transport.
 
 ## Required Outcome
 
-reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier
+Runtime v3 admits, transports, projects, traces, replays, and rejects the same ACIP/A2A message semantics consistently across protobuf and JSON, with explicit version negotiation, auth, limits, round trips, denied access, and real WSS exchange.
 
 ## Scope
 
-- Issue 5832 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/acip/AGENT_COMMUNICATION_AND_INVOCATION_PROTOCOL.md
-- .adl/docs/TBD/a2a/ADL_A2A_ADAPTER.md
+- adl-runtime and adl-runtime-kernel ACIP semantic envelopes and governed protocol adapters
+- Runtime API/auth full-duplex Rustls WSS carrier and focused tests
+- Versioned protobuf schema, deterministic JSON projection, public catalog, and compatibility fixtures
+- Trace/replay identity, frame limits, negotiation, errors, reconnect, and backpressure contracts
+- .csdlc/evidence/5832
 
 ## Authority
 
-- Issue 5832 owns only WP-14: ACIP and A2A contract reconciliation
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Issue 5832 owns ACIP/A2A semantic, schema, projection, catalog, negotiation, and carrier contracts
+- Issue 5821 owns distributed Guardian/polis authority and must land first
+- Issue 5795 consumes stable command semantics and issue 5837 consumes stable client contracts
+- Runtime retains authentication, signed command, capability, and dispatch authority
+- No UI, Shepherd behavior, cloud bridge, custom crypto, or custom transport runtime authority
 
 ## Assumptions
 

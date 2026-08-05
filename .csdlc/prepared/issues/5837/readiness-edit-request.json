@@ -1,0 +1,20 @@
+{
+  "issue": 5837,
+  "card": "srp",
+  "expected_generation": 18,
+  "expected_digest": "9539328fa46513968bbfc408d21a7364f3a9decda8bc1b807fa880e3d6cba4ad",
+  "claim_id": "claim-5837-v092-preparation",
+  "actor": "codex:5860-runtime-readiness",
+  "reason": "Set consumer review prompts.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Do HTML and Unity consume exactly one versioned schema, ordering, correlation, reconnect, auth, and backpressure contract?",
+      "Can either client expose private state, keys, raw tokens, or gain write authority through reads, reconnect, or presentation mode?",
+      "Are live, stale, offline, denied, TLS, origin, version, malformed, and fixture states visibly and semantically distinct?",
+      "After Guardian restart, do both clients reconnect without duplicates or authority escalation using real Runtime paths?",
+      "Did the change preserve approved designs and keep UI, Runtime, WP-14, TLS trust, birthday, provider, and AWS ownership boundaries?"
+    ]
+  }
+}

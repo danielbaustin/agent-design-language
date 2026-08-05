@@ -7,19 +7,21 @@
     "title": "[v0.92][WP-18A] Observatory/Unity consumer integration",
     "slug": "v0-92-wp-18a-observatory-unity-consumer-integration",
     "version": "v0.92",
-    "generation": 0
+    "generation": 19
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "WP-18A issue 5837, its declared implementation paths, and retained proof",
+      "review_scope": "Review issue 5837 exact-head shared compatibility matrix, HTML and Unity real Runtime integrations, audience redaction, authenticated controls, denial/failure/backpressure states, Guardian restart/reconnect behavior, browser/native evidence, approved design preservation, and strict Runtime/protocol/TLS/birthday non-ownership.",
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-18A scope?"
+        "Do HTML and Unity consume exactly one versioned schema, ordering, correlation, reconnect, auth, and backpressure contract?",
+        "Can either client expose private state, keys, raw tokens, or gain write authority through reads, reconnect, or presentation mode?",
+        "Are live, stale, offline, denied, TLS, origin, version, malformed, and fixture states visibly and semantically distinct?",
+        "After Guardian restart, do both clients reconnect without duplicates or authority escalation using real Runtime paths?",
+        "Did the change preserve approved designs and keep UI, Runtime, WP-14, TLS trust, birthday, provider, and AWS ownership boundaries?"
       ],
       "findings": [],
       "residual_risk": [],

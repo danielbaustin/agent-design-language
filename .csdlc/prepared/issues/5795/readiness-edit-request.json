@@ -1,0 +1,20 @@
+{
+  "issue": 5795,
+  "card": "srp",
+  "expected_generation": 18,
+  "expected_digest": "1a7ae11730f2e495a0a15ed8ff3ee6b0033bfd18980cccfdf68aa29151c314cf",
+  "claim_id": "claim-5795-v092-preparation",
+  "actor": "codex:5860-runtime-readiness",
+  "reason": "Set Shepherd review prompts.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Does a real local model response traverse signed governed Runtime ingress end to end?",
+      "Can fake, cached, retained, or unavailable evidence be mistaken for real execution?",
+      "Do missing model, timeout, cancellation, malformed input, and unauthorized mutation preserve Runtime usability?",
+      "Are prompts, responses, model identity, tokens, paths, and logs bounded by the redaction policy?",
+      "Did the issue avoid cloud fallback, global default changes, protocol redesign, and v0.95 claims?"
+    ]
+  }
+}

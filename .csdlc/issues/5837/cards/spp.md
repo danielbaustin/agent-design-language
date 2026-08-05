@@ -12,38 +12,56 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+After 5800/5820/5832/WP-18 gates, freeze one compatibility matrix, bind both existing clients to the same redacted HTTP/WSS contract, implement authenticated control and bounded reconnect/failure behavior without UI redesign, then prove real browser and Unity interactions, restart recovery, redaction/refusal, platform limits, and exact-head review.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify all upstream gates, freeze the shared compatibility/redaction/reconnect matrix, and narrow disjoint HTML, Unity, and any necessary Runtime compatibility files.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1",
+      "AC-4",
+      "AC-7"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Implement real HTML and Unity read/write transport bindings, explicit failure states, redaction/refusal handling, and bounded reconnect without design or authority drift.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
       "AC-3",
-      "AC-4"
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Run live browser and Unity interactions against one Runtime revision, exercise denial/failure/backpressure, restart Guardian, and verify bounded replay and unchanged authority.",
     "acceptance_ids": [
-      "AC-5"
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Resolve exact-head review and publish compatibility evidence with closing linkage and explicit platform limits.",
+    "acceptance_ids": [
+      "AC-8"
     ],
     "status": "pending"
   }
@@ -51,15 +69,21 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- One versioned schema and ordering/correlation contract serves both clients
+- Runtime exposes no private state, signing key, certificate key, or raw token
+- Reads never imply write authority and reconnect never widens permissions
+- Retained/static packets are visibly historical and never count as live proof
+- UI remains outside Runtime and Unity has no schema fork
+- TLS, origin, version, stale, denied, unavailable, restart, and backpressure states are explicit
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- HTML and Unity could drift onto different schema versions
+- Reconnect could duplicate events or restore stale write authority
+- Fallback packets could mask live Runtime failure
+- Redaction differences could expose private fields in one client
+- Unity platform/network behavior could diverge from browser proof
+- Shared Runtime changes could collide with upstream owners
 
 ## Estimates
 
@@ -73,19 +97,21 @@ Revision 1
 
 .csdlc/prepared/issues/5837/design.md
 
-Digest: bab20e749946ab47caaff4f71a51475c223a68a42e68464b4b1153baa9d43137
+Digest: b0515176721b655162f3e919c5864345b65613ea64876e0c6a3c52b038becda3
 
 ## Diagram
 
 .csdlc/prepared/issues/5837/diagram.mmd
 
-Digest: 6e998bbfc4e909d907a0aedb02e0083df704316714c6bf03c5a82c5f8dcf9363
+Digest: 2735fcc45f0da9aacd9372d8bc46663117662848e7775310da12795fa0824105
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- Issues 5820 or 5832 or WP-18 are not stable
+- Issue 5800 browser trust is unavailable for HTML proof
+- Integration requires UI code in Runtime, client-side private state, or signing keys
+- The clients require incompatible schemas or ordering rules
+- A live failure can be hidden by fixture or retained fallback
 
 ## Handoff
 

@@ -7,7 +7,7 @@
     "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
     "slug": "v0-92-observatory-browser-trusted-https",
     "version": "v0.92",
-    "generation": 0
+    "generation": 34
   },
   "status": "pre_phase",
   "content": {

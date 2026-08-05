@@ -12,44 +12,52 @@ Status: ready
 
 ## Summary
 
-Stabilize the Runtime/Observatory boundary, implement the local provider path and truthful statuses, prove real and negative behavior, then resolve exact-head review.
+After 5800/5820 and stable 5832 contracts, narrow the governed operation and consumer files, add an explicit bounded local MLX adapter and truthful execution classification, preserve Runtime usability on all failures, then prove deterministic negatives, one real model round trip, browser correlation, and exact-head review.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Freeze the governed message, provider, status, and evidence contracts after WP-03 and TLS stabilization",
+    "action": "Verify 5800/5820 and stable 5832 gates, inventory governed ingress/provider ownership, and narrow disjoint Runtime and Observatory files.",
     "acceptance_ids": [
       "AC-2",
-      "AC-3",
-      "AC-6",
       "AC-7"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the local provider path, Observatory control, and deterministic and negative tests",
+    "action": "Implement the explicit bounded local adapter, governed admission, truthful execution classification, and correlated response projection.",
     "acceptance_ids": [
+      "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
-      "AC-6",
       "AC-7"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Run the real local model smoke, resolve exact-head review, and publish",
+    "action": "Run deterministic admission/adapter negatives, real MLX/Gemma smoke, and live browser-to-Runtime round trip while verifying post-failure usability.",
     "acceptance_ids": [
       "AC-1",
+      "AC-3",
+      "AC-4",
       "AC-5",
+      "AC-6"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Resolve exact-head review and publish with truthful local-only claims and closing linkage.",
+    "acceptance_ids": [
       "AC-8"
     ],
     "status": "pending"
@@ -58,17 +66,19 @@ Revision 1
 
 ## Invariants
 
-- Shepherd cannot bypass governed Runtime policy
-- Real-model and test-double status are never conflated
-- No network/cloud dependency is introduced
-- No tracked work on main
+- Unsigned, unauthorized, malformed, oversized, or wrong-runtime messages fail before model invocation
+- No cloud fallback or silent model substitution
+- Real, deterministic-test, retained, and unavailable outcomes remain distinguishable
+- Timeout/cancellation releases bounded permits and preserves Runtime usability
+- Prompts, tokens, model paths, and private response content obey redaction policy
 
 ## Risks
 
-- Local model availability is mistaken for implementation success
-- Runtime and Observatory contracts drift concurrently
-- A fake response receives production credit
-- Timeout or cancellation leaves stale work
+- A fake or cached response could be misreported as real
+- Local process invocation could escape timeout or cancellation
+- Model absence could make startup incorrectly fail
+- Browser transport could bypass signed governed ingress
+- Sensitive prompt/response or model path data could enter logs
 
 ## Estimates
 
@@ -82,20 +92,21 @@ Revision 1
 
 .csdlc/prepared/issues/5795/design.md
 
-Digest: f553a522074f53957494c36a8c33d10d3c7850b609287b2f83dd3d2b62874ec2
+Digest: baaacc72e7a7f8ca9e4009905db58250c4e4afe050031d572230db863e0d27e2
 
 ## Diagram
 
 .csdlc/prepared/issues/5795/diagram.mmd
 
-Digest: 1198da4b3642ca2b934f89155fa4ae5f5137664cab166949f925b41a84c676cc
+Digest: 7db206956bb1d4ac5d32aae7445ca356c16a90e7d8cc28bb40054e448880a2dd
 
 ## Stop Conditions
 
-- WP-03 or issue 5800 control surfaces are unstable
-- The local provider cannot be invoked without bypassing policy
-- Real execution evidence cannot be distinguished from a test double
-- Protected-path collision
+- Issues 5800 or 5820 are not stable for integration
+- Issue 5832 contract changes would make the adapter route speculative
+- The implementation requires cloud fallback or global default mutation
+- Real and fake execution cannot be distinguished in retained evidence
+- A model timeout or crash can take down Runtime
 
 ## Handoff
 

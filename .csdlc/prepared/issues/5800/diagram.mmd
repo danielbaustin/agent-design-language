@@ -1,7 +1,12 @@
 flowchart LR
-  C["Trusted certificate source"] --> I["Operator trust/install flow"]
-  I --> O["HTTPS Observatory on configured URL"]
-  O --> B["Chrome trusted load"]
-  O --> H["HTML and Runtime feed health"]
-  B --> P["Retained proof"]
+  S["Runtime local TLS bootstrap"] --> V["Validate SAN, expiry, pair, permissions"]
+  V --> C["Atomically commit localhost generation"]
+  C --> T["Explicit operator trust installation"]
+  C --> R["Runtime API HTTPS :20997"]
+  C --> O["Separate Observatory HTTPS :8765"]
+  T --> B["Chrome trusted load"]
+  R --> H["Health, readiness, and feed"]
+  O --> B
+  B --> P["Retained browser proof"]
   H --> P
+  V -->|"invalid or partial"| F["Keep last valid pair; fail closed"]

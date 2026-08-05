@@ -3,9 +3,9 @@
   "issue": 5820,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "50b75585680c7acb7b8f8912ae3704962d8da142da1ef08a64e78dd0fb1f0129",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "0a4a514bed7647c2bbfe72e01b23eadbde18694ccc8b68f14d0db9dc3a7938a2",
+  "phase": "bound",
+  "generation": 19,
+  "digest": "d275a0264bdc7c78c04365646ee9343d99edbc4a0cf4c7659418b7743ceeede1",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5820/design.md",
   "diagram_path": ".csdlc/prepared/issues/5820/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-runtime-readiness-design-review",
+      "revision": "ed297788195f619435a0a993c692f5c14d111802c3893a59f84df2225404c80f"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "adc95022d06c16906391e8d9f167110257e3011ef22eb8a092f849d436e6c92f",
-      "rendered_digest": "51f8027a60d41de611191d2843dbf8e0748e081f8ec05c745cfc549765ff67d6",
-      "ast_digest": "5c05266e9b0219d84b6f516458ecf5ff07ff076649e520809f6457ab70fe9cc9"
+      "values_digest": "56c2eb9510d153498b75bf32e80e0a544a4b72a81b642995acfde9f75724d745",
+      "rendered_digest": "c8c66fea84069ebe1ed7d42ef63d5a9206fcb15341ee89778dca1f105b01559c",
+      "ast_digest": "80fa6a822906c04a46b14b9fe53d896f645ae6bdf709b8dbe916eab882beac7c"
     },
     "stp": {
-      "values_digest": "9f1f73392b2202c648b9654e1b8243db80eb1d2337c7c8d017aeb94c6a429c84",
-      "rendered_digest": "d49e9ef1b045e0dd9df34c788723cd6e66fc5902dbed56bd2ee615053758b621",
-      "ast_digest": "31a2731ca04b2a05407b252a3670a55899be68c51cc6cd9fe6b3ee97da8b4c6d"
+      "values_digest": "5a4babc2a613e58ea8e76881bad90e16e8c4edf9de13f8228311b6e0a3d6719f",
+      "rendered_digest": "42851e4b8c0b2f55ea1c753bba432a5fd8a015ea097b764dd0a8b2bc15eb5b19",
+      "ast_digest": "3520e78cac053e9737dcb5cc31ac6407f4e4bc2b0f319992508b9acc0c9903ea"
     },
     "spp": {
-      "values_digest": "9016522e7364f9d69a852ab8396c16477bd269197ffb54049ba54ee3aa37b79f",
-      "rendered_digest": "ff7e5be57c37a7573f27b7d4fa3a7609b8bf77c4348349244a934548bb3d8017",
-      "ast_digest": "a466bec0fa363c5ef07eb9480aa09a2186aab50a725c44e272e36ffe7587e05f"
+      "values_digest": "2c99763ddd2597d223d5e61a8de425d6c99b9fef9b6b633c8546488cfcebd4b6",
+      "rendered_digest": "44390f016761b3d801c575ea6a11695b71d44d8696cca1aafb102a72c4704a40",
+      "ast_digest": "533a407dff956d9e0018f5478273d00577a89bb283d9f60749cfed0d6bd7dff9"
     },
     "vpp": {
-      "values_digest": "9eab99ef54454c8ba30efac302ca359b6aa7dae353e9371107461a5173da2743",
-      "rendered_digest": "032ddae49ea2cf89f31a744af354f12c681770b28d3e2686073f3e308943dda7",
-      "ast_digest": "ef13f454b6b9620c392b092c2e5c6d323765942fd98a735e0d859a354c522372"
+      "values_digest": "77b4585799f960a0bbf60dba63112ed3a5461238a59f0f249632318f5ccb1859",
+      "rendered_digest": "3daa57665ab5c0b6ee62bbca81bdb23eb02ba6a0f191be3c722053a4d60af5c0",
+      "ast_digest": "866efe43caa51189e0a6d5754f4e6e1dd5924be5b9165266ee4f0dd0a2504c68"
     },
     "srp": {
-      "values_digest": "15869a95c28f4bc24964a4d13051f0901b89d67e1e7239fa3fad1aa774a5a2cf",
-      "rendered_digest": "3261ce17d590017c1f6671ad51149ac5db37f91113f123257c9e1e22007d21ed",
-      "ast_digest": "49db16d27d6dc96218c4df6e84c4dde91ebafa886038283072e0eee14a233ad2"
+      "values_digest": "c8d52c5b51823340b27db8715435157433ff57674d5d55901f38bfa2f16eb82a",
+      "rendered_digest": "9c7c37c04789b4430bf9e043b973021fe19d34e483fd88ed7c27b623ce4b1386",
+      "ast_digest": "baacb4d0f1a6b174755fca142e86fb09268a52e9de59d07f4590ac5503b8646e"
     },
     "sor": {
-      "values_digest": "e900252eb87661de5a90c005011f11e45a19a94135eb15c0ae3850879df39b92",
+      "values_digest": "817680247bf396a4f0fe03701b1c81e93c707d51ac51d04b5f2fb12edbbdfd55",
       "rendered_digest": "6366dce0988089114b667d0e041ec857a2ae01ffdd5d685b0fe12e96ebc3cfdd",
       "ast_digest": "ac7fef06771ff91e952fce5af2722151f0fe7a59be4ba8c517a2f57ab786cd25"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,160 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5820-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Reacquire the released issue-local preparation claim to repair and approve design-time readiness for issue 5820 only.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5820-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5820\",\".csdlc/prepared/issues/5820\",\".csdlc/evidence/5820\"],\"purpose\":\"Prepare issue 5820 design, diagram, cards, and validation plan without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-runtime-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the Guardian-owned resilience goal.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Consolidate Runtime v3 onto one Guardian-owned, init-file-driven launch path that starts, reports readiness, recovers bounded failures, preserves durable state, and shuts down cleanly across supported platforms.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-03: Runtime launch and resilience consolidation.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the concrete WP-03 outcome.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"One production Guardian process owns one Tokio/Axum/Rustls Runtime v3 kernel whose configuration, startup, readiness, bounded supervision, recovery, durable restart, observability, and shutdown behavior are reproducible and fail truthfully.\",\"operation\":\"replan\",\"previous_value\":\"one Guardian-owned launch path with resilient startup, configuration, recovery, and lifecycle behavior\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace generic scope with current Runtime owners.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime Guardian, supervision, shutdown, resident-agent, API, auth, TLS, and observability modules\",\"adl-runtime-kernel assembly, config, durable-state, supervisor, time, observability, and kernel entrypoint modules\",\"infra/runtime-v3/runtime-init.toml\",\"Focused Runtime launch, recovery, state, API, logging, and platform tests and tools\",\".csdlc/evidence/5820\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Clarify WP-03 authority boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5820 owns single-node Guardian launch and Runtime resilience only\",\"Issue 5800 owns browser trust and serializes shared TLS/init edits\",\"Issue 5821 owns distributed membership, placement, migration, and fencing\",\"Issue 5832 owns ACIP/A2A schema reconciliation and issue 5837 owns consumers\",\"Optional network, provider, time, logging, certificate, or Observatory failures may degrade readiness but cannot gain process authority\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the executable WP-03 boundary.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Deliver one Guardian process-0 launch path and one authoritative init contract for Runtime v3, with bounded supervision, truthful liveness/readiness, durable restart, clean shutdown, failure recovery, and macOS/Linux/native Windows proof.\",\"operation\":\"replan\",\"previous_value\":\"Deliver one Guardian-owned launch path with resilient startup, configuration, recovery, and lifecycle behavior.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace generic deliverables.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"One absolute-init Guardian entrypoint with complete validation and typed terminal states\",\"One kernel assembly path with bounded tasks, Axum/Rustls API, transactional state, and explicit blocking boundaries\",\"Truthful readiness and tracing for startup, dependency degradation, recovery, and shutdown\",\"Real start-stop, child-failure restart, durable-state recovery, authenticated API/WSS, clean-log, and platform evidence\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Pin exact WP-03 dependencies.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-02A issue and proving substrate terminal before execution\",\"Issue 5800 trusted local TLS contract for browser-facing proof\",\"Sprint 5855 ownership coordination\",\"No overlapping active Runtime worktree on claimed implementation paths\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Use live canonical inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/RUNTIME_LAUNCH_AND_RESILIENCE_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"adl-runtime/src/bin/adl-runtime-guardian.rs\",\"adl-runtime/src/guardian.rs\",\"adl-runtime/src/shutdown.rs\",\"adl-runtime/src/runtime_api.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/config.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"infra/runtime-v3/runtime-init.toml\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set bounded WP-03 non-goals.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Distributed Guardian mesh, placement, migration, or fencing\",\"Observatory HTML serving, UI redesign, or Unity integration\",\"ACIP/A2A schema redesign\",\"Runtime v2 fallback, Python server, shell supervisor, or plaintext API\",\"Release-scale soak, allocator, lock-free, Wasm, or unrelated optimization work\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Replace generic WP-03 plan summary.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Audit the current Guardian/kernel/init split and active Runtime collisions, freeze one authoritative init schema, consolidate process ownership and bounded lifecycle behavior, prove dependency degradation cannot kill the kernel, then run real restart/state/API/log/platform proof before exact-head review.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Name WP-03 affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"Guardian process ownership and CLI\",\"Runtime kernel assembly and configuration\",\"Bounded supervision, shutdown, and durable state\",\"Axum/Rustls API, auth, readiness, and WSS\",\"Tracing/Vector logging and platform launch proof\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Record Runtime resilience invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Guardian is process 0 and reaps every child\",\"One init file is authoritative and unsafe configuration fails before spawn\",\"Queues, permits, retries, capture, and shutdown waits remain bounded\",\"Durable state is transactional and survives restart\",\"Optional network, SNTP, provider, log sink, certificate, or Observatory failure cannot crash or deadlock the kernel\",\"No TLS/auth downgrade and stdout/stderr observability separation remains intact\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Record WP-03 risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Multiple launch paths could retain conflicting defaults\",\"Restart loops could treat configuration errors as recoverable\",\"Shutdown budgets could race API drain or checkpoint completion\",\"Optional dependency failure could incorrectly become process-fatal\",\"State format or recovery ordering could corrupt restart truth\",\"Platform signal/process semantics could diverge\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set WP-03 stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-02A is not terminal or proving infrastructure is unstable\",\"Issue 5800 or another Runtime owner holds overlapping live paths\",\"The design requires Runtime v2, a shell/Python supervisor, plaintext, or unbounded queues\",\"Durable-state compatibility cannot be preserved or migrated truthfully\",\"Native platform behavior cannot be tested or explicitly blocked\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set WP-03 replan triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"Guardian or kernel ownership changes on main\",\"Issue 5800 changes the shared TLS/init contract\",\"A supported platform requires a different signal or process-control adapter\",\"Focused proof reveals more than one production launch path remains\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Atomically replace WP-03 acceptance, steps, and validation DAG.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Guardian is the sole production process owner and launches exactly one Runtime v3 kernel from one validated absolute init file\",\"The init contract controls binaries, bind/TLS, state, services, limits, restart, capture, shutdown, and observability without hidden source overrides\",\"Bounded supervision, backoff, cancellation, API drain, checkpoint, child reaping, and typed terminal states behave deterministically\",\"Runtime durable state survives real Guardian-owned restart without receipt or temporary-directory authority\",\"Network/SNTP/provider/log sink/certificate/Observatory failures preserve process liveness and report truthful degraded readiness or startup failure\",\"Authenticated HTTPS/WSS, health/readiness, startup, recovery, shutdown, and clean-log evidence use production paths\",\"Start-stop-recovery behavior is proven on macOS, Linux, and native Windows or a named platform remains blocked with evidence\",\"One exact-head pre-PR review has no unresolved actionable findings and the PR closes issue 5820\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Audit all current Runtime v3 launch/configuration paths, verify WP-02A and issue 5800 gates, and narrow disjoint Guardian/kernel/init ownership.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Consolidate Guardian process ownership, complete init validation, bounded supervision/backoff/capture, and typed lifecycle terminal behavior.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Complete kernel readiness, durable restart, dependency degradation, API drain, checkpoint, logging, and authenticated API/WSS behavior.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run real lifecycle and native-platform proof, resolve exact-head review, and publish with closing linkage.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"guardian-contract\",\"proof_role\":\"Prove init parsing, process ownership, restart/backoff, signal forwarding, bounded capture, and terminal states.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"guardian_cli\"],\"parallel_group\":\"runtime-unit\",\"defer_reason\":null},{\"lane\":\"kernel-configuration-and-state\",\"proof_role\":\"Prove authoritative configuration, bounded assembly, durable checkpoint/restart, readiness, and dependency degradation.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"configuration\",\"--test\",\"durable_state\",\"--test\",\"kernel\"],\"parallel_group\":\"runtime-unit\",\"defer_reason\":null},{\"lane\":\"guardian-live-lifecycle\",\"proof_role\":\"Launch the production Guardian/kernel, exercise health/readiness, authenticated HTTPS/WSS, child failure, restart, shutdown, state recovery, and clean logs.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/run_runtime_v3_guardian_soak.sh\"],\"parallel_group\":\"runtime-live\",\"defer_reason\":\"Run after implementation with installed owner binaries and issue-local state/log roots.\"},{\"lane\":\"native-platform-lifecycle\",\"proof_role\":\"Repeat start-stop, configuration failure, recovery, signal, shutdown, state, and log checks on macOS, Linux, and native Windows.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"runtime\"],\"parallel_group\":\"platform\",\"defer_reason\":\"Requires native CI runners after implementation; missing platform evidence remains blocked.\"},{\"lane\":\"exact-head-hygiene\",\"proof_role\":\"Reject unrelated changes and support exact-head review and closing linkage.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set the exact WP-03 review scope.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review issue 5820 exact-head Guardian/kernel/init changes and retained proof for sole process ownership, bounded lifecycle behavior, durable restart, truthful degradation/readiness, authenticated API/WSS, observability channel policy, native platforms, and strict exclusion of distributed/protocol/consumer scope.\",\"operation\":\"replan\",\"previous_value\":\"WP-03 issue 5820, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Set WP-03 review prompts.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Is Guardian the only production process owner and is one init file truly authoritative?\",\"Can configuration, provider, network time, certificate, Vector, or Observatory failure kill or deadlock the kernel?\",\"Are restart, backoff, cancellation, drain, checkpoint, state recovery, and terminal states bounded and truthful?\",\"Do authenticated API/WSS and stdout/stderr logging proofs use production paths?\",\"Are macOS, Linux, and native Windows claims exact and is WP-04/WP-14/WP-18A scope excluded?\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex:5860-runtime-readiness",
+      "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5820-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
     }
   ]
 }

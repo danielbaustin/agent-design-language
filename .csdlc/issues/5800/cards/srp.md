@@ -12,13 +12,15 @@ Status: pre_phase
 
 ## Scope
 
-Issue 5800 local Observatory browser-trusted HTTPS implementation and retained proof
+Review issue 5800 exact-head changes and evidence for local TLS generation/trust/reissue, Runtime and separate Observatory HTTPS consistency, failure preservation, secret hygiene, platform dispositions, and strict non-ownership of WP-03 or consumer integration.
 
 ## Prompts
 
-- Does Chrome trust the real supported endpoint without bypasses?
-- Are issuance, trust, reissue, configuration, and failure behavior coherent?
-- Are private material and platform claims bounded correctly?
+- Does Chrome trust both real localhost listeners without warning or bypass?
+- Can malformed, expired, mismatched, or partial replacement destroy the last valid pair?
+- Do Runtime init, CORS origins, Observatory config, docs, and probes name the same HTTPS contract?
+- Are private material and macOS/Linux/Windows claims bounded by retained evidence?
+- Did the change avoid WP-03 launch resilience and Observatory redesign scope?
 
 ## Findings
 

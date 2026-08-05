@@ -12,24 +12,27 @@ Status: ready
 
 ## Goal
 
-Complete WP-03: Runtime launch and resilience consolidation.
+Consolidate Runtime v3 onto one Guardian-owned, init-file-driven launch path that starts, reports readiness, recovers bounded failures, preserves durable state, and shuts down cleanly across supported platforms.
 
 ## Required Outcome
 
-one Guardian-owned launch path with resilient startup, configuration, recovery, and lifecycle behavior
+One production Guardian process owns one Tokio/Axum/Rustls Runtime v3 kernel whose configuration, startup, readiness, bounded supervision, recovery, durable restart, observability, and shutdown behavior are reproducible and fail truthfully.
 
 ## Scope
 
-- Issue 5820 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/RUNTIME_V3_LAUNCH_AND_OBSERVATORY_RECOVERY_PLAN.md
-- .adl/docs/TBD/resilience/RUNTIME_V3_LONG_LIVED_AGENT_OS_PLAN.md
+- adl-runtime Guardian, supervision, shutdown, resident-agent, API, auth, TLS, and observability modules
+- adl-runtime-kernel assembly, config, durable-state, supervisor, time, observability, and kernel entrypoint modules
+- infra/runtime-v3/runtime-init.toml
+- Focused Runtime launch, recovery, state, API, logging, and platform tests and tools
+- .csdlc/evidence/5820
 
 ## Authority
 
-- Issue 5820 owns only WP-03: Runtime launch and resilience consolidation
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Issue 5820 owns single-node Guardian launch and Runtime resilience only
+- Issue 5800 owns browser trust and serializes shared TLS/init edits
+- Issue 5821 owns distributed membership, placement, migration, and fencing
+- Issue 5832 owns ACIP/A2A schema reconciliation and issue 5837 owns consumers
+- Optional network, provider, time, logging, certificate, or Observatory failures may degrade readiness but cannot gain process authority
 
 ## Assumptions
 

@@ -12,18 +12,18 @@ Status: ready
 
 ## Summary
 
-Select the supported local trust model, align issuance/config/startup/docs, prove browser and Runtime-feed trust, and retain negative certificate cases.
+Reconcile the existing local TLS generator with one explicit browser trust mechanism, serialize shared init work with issue 5820, align both HTTPS listeners and documentation, prove failure preserves the last valid pair, then retain verified browser, health, feed, and platform evidence before exact-head review.
 
 ## Plan
 
-Revision 1
+Revision 14
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Inventory current certificate, URL, startup, and trust behavior and select one supported model",
+    "action": "Inventory current TLS generation, listener configuration, static serving, trust prerequisites, and collision state with issue 5820; select one explicit supported localhost trust model.",
     "acceptance_ids": [
       "AC-2",
       "AC-3",
@@ -34,21 +34,30 @@ Revision 1
   },
   {
     "id": "S2",
-    "action": "Implement the trusted HTTPS flow and focused positive and negative proof",
+    "action": "Implement atomic certificate validation/reissue and align Runtime API, Observatory server, origins, URLs, probes, and operator trust guidance.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
-      "AC-4",
       "AC-5",
-      "AC-6",
-      "AC-7"
+      "AC-6"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve exact-head review and publish",
+    "action": "Run deterministic TLS negatives and live Chrome, curl, HTML, health, readiness, and Runtime-feed proof on the supported local path.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4",
+      "AC-5",
+      "AC-7"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Complete exact-head review, fix findings, publish with closing linkage, and retain truthful platform limits.",
     "acceptance_ids": [
       "AC-8"
     ],
@@ -59,16 +68,18 @@ Revision 1
 ## Invariants
 
 - TLS verification remains enabled
-- No private key enters Git
-- Runtime and Observatory use one configured URL contract
-- No tracked work on main
+- SANs match configured localhost DNS and IP identities
+- Private keys, trust exports, tokens, and secrets never enter Git or logs
+- Failed replacement preserves the last valid committed pair
+- Runtime and Observatory remain separate listeners with one identity contract
 
 ## Risks
 
-- Trust-store mutation is not reproducible
-- Certificate SANs do not match localhost
-- Replacement exposes a partial cert/key pair
-- Platform setup diverges
+- Trust-store mutation could be implicit or non-reproducible
+- SAN or expiry drift could make browser and curl behavior disagree
+- Partial replacement could separate certificate and key generations
+- Runtime init overlap with issue 5820 could create conflicting ownership
+- macOS-only proof could be overstated as portable
 
 ## Estimates
 
@@ -82,20 +93,21 @@ Revision 1
 
 .csdlc/prepared/issues/5800/design.md
 
-Digest: 0eaa5f688d2b49d829df2c8a32be6c85bed2a3ca334f1d7295e17bb05b766749
+Digest: a8b0df8a0932388521fce40c96c551f235873d09a2b165b75d84d635c055b738
 
 ## Diagram
 
 .csdlc/prepared/issues/5800/diagram.mmd
 
-Digest: b0378c26dd8253f7181eafbede1025fdf4f2b203010d36106952e33506a1bc65
+Digest: 7dd8d22e5d50ec170456f9d5e5402880e82cbd01f58e52055996d331a046a55f
 
 ## Stop Conditions
 
-- The selected trust model requires warning bypasses
-- Private material would be committed or exposed
-- WP-03 changes the same TLS contract concurrently
-- Protected-path collision
+- The selected flow requires a browser warning or TLS verification bypass
+- Private key or host trust material would be committed or logged
+- Issue 5820 owns an overlapping live edit without serialization
+- A failed replacement can remove the last valid pair
+- Required platform behavior has no truthful disposition
 
 ## Handoff
 

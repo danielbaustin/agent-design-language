@@ -1,2 +1,15 @@
 flowchart LR
-  I["Issue 5837"] --> D["Design required"]
+  R["Versioned Runtime HTTP and WSS"] --> P["Audience-redacted projections"]
+  R --> A["Authenticated writes and signed control"]
+  P --> H["HTML Observatory"]
+  P --> U["Unity Observatory"]
+  A --> H
+  A --> U
+  H --> C["Shared compatibility matrix"]
+  U --> C
+  R -->|"restart"| X["Reconnect cursor and bounded replay"]
+  X --> H
+  X --> U
+  R -->|"TLS, version, stale, denied"| F["Explicit client failure state"]
+  F --> H
+  F --> U

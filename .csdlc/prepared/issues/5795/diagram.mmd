@@ -1,6 +1,12 @@
 flowchart LR
-  O["Observatory operator message"] --> G["Governed Runtime v3 command"]
-  G --> P["Configured local MLX/Gemma provider"]
-  P --> E["Response and execution evidence"]
-  E --> O
-  G --> N["Negative and authorization checks"]
+  O["Observatory operator message"] --> W["Authenticated Runtime WSS"]
+  W --> G["Signed governed ingress"]
+  G --> P["Policy and capability admission"]
+  P --> A["Configured local MLX/Gemma adapter"]
+  A --> M["Real local model"]
+  M --> E["Correlated response evidence"]
+  E --> W
+  W --> O
+  P -->|"malformed or unauthorized"| X["Reject before invocation"]
+  A -->|"missing, timeout, or cancelled"| U["Truthful unavailable result"]
+  U --> W

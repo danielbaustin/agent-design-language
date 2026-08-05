@@ -7,39 +7,54 @@
     "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation",
     "slug": "v0-92-wp-14-acip-and-a2a-contract-reconciliation",
     "version": "v0.92",
-    "generation": 0
+    "generation": 19
   },
   "status": "ready",
   "content": {
     "card_kind": "stp",
     "values": {
-      "task_boundary": "Deliver reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier.",
+      "task_boundary": "Reconcile existing ACIP/A2A semantics into one versioned envelope, protobuf schema, deterministic JSON projection, public catalog, compatibility policy, and authenticated bounded full-duplex WSS implementation with round-trip, denial, replay, malformed, and real-carrier proof.",
       "deliverables": [
-        "reconciled versioned protocol family, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS carrier",
-        "contracts, schema catalog, round-trip fixtures, denied-access case, and real WSS exchange"
+        "Frozen versioned semantic envelope and compatibility/negotiation policy",
+        "Canonical protobuf files plus schema-derived public message catalog",
+        "Deterministic JSON projection and protobuf/JSON semantic round-trip fixtures",
+        "Authenticated Rustls WSS bidirectional carrier with limits, backpressure, reconnect, error, replay, and denied-access proof"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "One versioned ACIP/A2A semantic envelope defines identity, addressing, correlation/causation, trace/replay, capability/authority, payload, ordering, acknowledgement, error, and size rules",
+        "Canonical protobuf schemas and a schema-derived public catalog agree on messages, directions, payloads, versions, and auth requirements",
+        "Deterministic JSON projection round-trips with protobuf without semantic loss under explicit bytes, integer, omission, ordering, and unknown-field rules",
+        "Version negotiation accepts only declared compatible versions and rejects unsupported majors or required fields",
+        "Authenticated Rustls WSS performs real bounded full-duplex exchange with correlation, backpressure, reconnect, and typed errors",
+        "Missing/invalid auth, unsigned control, denied capability, malformed/oversized frame, replay, wrong runtime, and origin refusal fail before dispatch",
+        "Protocol and real-carrier proof runs on macOS, Linux, and native Windows or retains an explicit blocker",
+        "One exact-head review has no unresolved actionable findings"
       ],
       "dependencies": [
-        "WP-04",
-        "ACIP substrate",
-        "trace and replay baseline"
+        "WP-04 issue 5821 integrated distributed substrate terminal",
+        "Current ACIP stream substrate requalified on Runtime v3",
+        "Current trace/replay identity baseline requalified",
+        "Stable Runtime API/auth ownership before issues 5795 and 5837 integrate"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md",
-        ".adl/docs/TBD/acip/AGENT_COMMUNICATION_AND_INVOCATION_PROTOCOL.md",
-        ".adl/docs/TBD/a2a/ADL_A2A_ADAPTER.md"
+        "docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md",
+        "docs/adr/0017-secure-local-agent-comms-and-a2a-boundary.md",
+        "adl-runtime/src/acip.rs",
+        "adl-runtime/src/runtime_api.rs",
+        "adl-runtime/src/runtime_api_auth.rs",
+        "adl-runtime/tests/runtime_api_wss.rs",
+        "adl-runtime-kernel/src/acip.rs",
+        "adl-runtime-kernel/src/protocol_adapters.rs",
+        "adl-runtime-kernel/src/ingress.rs",
+        "adl-runtime-kernel/src/control.rs",
+        "adl-runtime-kernel/src/operations.rs"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Distributed Guardian membership, placement, migration, or fencing",
+        "Observatory/Unity UI implementation",
+        "Shepherd local-model behavior",
+        "SNS/SQS or other cloud bridge completion",
+        "Custom cryptography, TLS, WebSocket, or protobuf runtime"
       ]
     }
   }

@@ -1,0 +1,20 @@
+{
+  "issue": 5820,
+  "card": "srp",
+  "expected_generation": 18,
+  "expected_digest": "ce8e16558a87d4685ee5e2c71ee121d7fba8b96af07db1e72c4a02ab62242804",
+  "claim_id": "claim-5820-v092-preparation",
+  "actor": "codex:5860-runtime-readiness",
+  "reason": "Set WP-03 review prompts.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Is Guardian the only production process owner and is one init file truly authoritative?",
+      "Can configuration, provider, network time, certificate, Vector, or Observatory failure kill or deadlock the kernel?",
+      "Are restart, backoff, cancellation, drain, checkpoint, state recovery, and terminal states bounded and truthful?",
+      "Do authenticated API/WSS and stdout/stderr logging proofs use production paths?",
+      "Are macOS, Linux, and native Windows claims exact and is WP-04/WP-14/WP-18A scope excluded?"
+    ]
+  }
+}
