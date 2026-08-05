@@ -37,6 +37,13 @@ def present?(value)
   value.is_a?(String) && !value.strip.empty?
 end
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 def git(*argv)
   out, err, status = Open3.capture3("git", *argv)
   abort "git #{argv.join(' ')} failed: #{err}" unless status.success?
@@ -56,7 +63,7 @@ def verify_evidence_ref(ref, row, field, gate_sha)
   abort "evidence path missing" unless present?(path) && File.file?(path)
   abort "evidence digest malformed" unless digest.to_s.match?(/\A[0-9a-f]{64}\z/)
   abort "evidence digest mismatch for #{path}" unless Digest::SHA256.file(path).hexdigest == digest
-  evidence = JSON.parse(File.read(path))
+  evidence = read_json!(path, "#{field} evidence")
   abort "#{field} schema mismatch" unless evidence["schema"] == EVIDENCE_KIND.fetch(field)
   abort "#{field} issue identity mismatch" unless evidence["issue"] == Integer(row["owner_issue"])
   abort "#{field} PR identity mismatch" unless evidence["pr"] == Integer(row["pr"])
@@ -84,7 +91,7 @@ end
 mode = ARGV.fetch(0)
 case mode
 when "matrix"
-  packet = JSON.parse(File.read(ARGV.fetch(1, ".csdlc/evidence/5842/feature-completion-matrix.json")))
+  packet = read_json!(ARGV.fetch(1, ".csdlc/evidence/5842/feature-completion-matrix.json"), "feature completion matrix")
   abort "gate SHA is not HEAD" unless packet["gate_sha"] == git("rev-parse", "HEAD")
   rows = packet["rows"]
   abort "rows missing" unless rows.is_a?(Array)
@@ -111,7 +118,7 @@ when "matrix"
     abort "#{row['id']} merge not ancestral" unless system("git", "merge-base", "--is-ancestor", row["merge_sha"], packet["gate_sha"])
   end
 when "negative"
-  packet = JSON.parse(File.read(ARGV.fetch(1, ".csdlc/evidence/5842/negative-cases.json")))
+  packet = read_json!(ARGV.fetch(1, ".csdlc/evidence/5842/negative-cases.json"), "quality-gate negative cases")
   required = %w[fixture receipt_only demo_mode synthetic provider_substitution stale_review missing_ancestry unsupported_platform].sort
   cases = packet["cases"]
   abort "negative class universe mismatch" unless cases.is_a?(Array) && cases.map { |row| row["class"] }.sort == required

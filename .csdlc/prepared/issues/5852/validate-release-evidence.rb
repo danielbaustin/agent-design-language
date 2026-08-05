@@ -9,6 +9,13 @@ require "yaml"
 DEFAULT_MANIFEST = ".csdlc/evidence/5852/release-evidence-manifest.json"
 WAVE = "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 def git(*argv)
   out, err, status = Open3.capture3("git", *argv)
   abort "git #{argv.join(' ')} failed: #{err}" unless status.success?
@@ -36,7 +43,7 @@ def milestone_issues
 end
 
 mode = ARGV.fetch(0, "manifest")
-manifest = JSON.parse(File.read(ARGV.fetch(1, DEFAULT_MANIFEST)))
+manifest = read_json!(ARGV.fetch(1, DEFAULT_MANIFEST), "release evidence manifest")
 target = manifest["target_sha"]
 abort "release target SHA missing" unless target.to_s.match?(/\A[0-9a-f]{40}\z/)
 
@@ -53,9 +60,9 @@ when "manifest"
     %w[implementation validation review terminal residual_risk non_claim artifact].each do |kind|
       verify_ref!(row.fetch("#{kind}_ref"), "#{row['claim']} #{kind}")
     end
-    review = JSON.parse(File.read(row.dig("review_ref", "path")))
+    review = read_json!(row.dig("review_ref", "path"), "#{row['claim']} review evidence")
     abort "review identity mismatch" unless review["reviewed_sha"] == row["reviewed_head"] && review["result"] == "passed"
-    terminal = JSON.parse(File.read(row.dig("terminal_ref", "path")))
+    terminal = read_json!(row.dig("terminal_ref", "path"), "#{row['claim']} terminal evidence")
     abort "terminal identity mismatch" unless terminal["issue"] == Integer(row["issue"]) && terminal["phase"] == "closed_out" && terminal["claim_released"] == true
   end
   %w[release_notes checklist handoff residual_risk_summary non_claim_summary].each do |field|
@@ -64,7 +71,7 @@ when "manifest"
 when "ceremony"
   abort "ceremony target is not HEAD" unless target == git("rev-parse", "HEAD")
   milestone_issues.each do |issue|
-    index = JSON.parse(File.read(".csdlc/issues/#{issue}/index.json"))
+    index = read_json!(".csdlc/issues/#{issue}/index.json", "##{issue} typed index")
     abort "##{issue} is not terminal" unless index["phase"] == "closed_out" && index["terminal"].is_a?(Hash)
     abort "##{issue} has an active claim" unless index["claim"].nil?
   end
@@ -99,7 +106,7 @@ when "post-publication"
     verify_ref!(asset.fetch("artifact_ref"), "asset #{asset['name']}")
   end
   milestone_issues.each do |issue|
-    index = JSON.parse(File.read(".csdlc/issues/#{issue}/index.json"))
+    index = read_json!(".csdlc/issues/#{issue}/index.json", "##{issue} typed index")
     abort "##{issue} terminal/claim truth regressed" unless index["phase"] == "closed_out" && index["terminal"].is_a?(Hash) && index["claim"].nil?
   end
 else

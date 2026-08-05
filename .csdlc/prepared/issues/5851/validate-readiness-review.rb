@@ -12,6 +12,13 @@ COMPARISON = ".csdlc/evidence/5851/universe-comparison.json"
 HANDOFF = ".csdlc/evidence/5851/handoff-review.json"
 NEGATIVE = ".csdlc/evidence/5851/negative-cases.json"
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 def expected_issues
   wave = YAML.load_file(WAVE)
   ids = wave.fetch("work_packages").map { |row| row.fetch("issue") }
@@ -31,7 +38,7 @@ def rebuild_row(issue)
   live_issue = gh("issue", issue, "number,state,url")
   index_path = ".csdlc/issues/#{issue}/index.json"
   abort "typed index missing for ##{issue}" unless File.file?(index_path)
-  index = JSON.parse(File.read(index_path))
+  index = read_json!(index_path, "##{issue} typed index")
   publication = index["publication"]
   abort "publication missing for ##{issue}" unless publication.is_a?(Hash) && publication["pull_request"].is_a?(Integer)
   pr = gh("pr", publication["pull_request"], "number,state,baseRefName,headRefOid,mergeCommit,reviewDecision,statusCheckRollup")
@@ -56,7 +63,7 @@ end
 mode = ARGV.fetch(0, "comparison")
 case mode
 when "comparison"
-  comparison = JSON.parse(File.read(ARGV.fetch(1, COMPARISON)))
+  comparison = read_json!(ARGV.fetch(1, COMPARISON), "readiness universe comparison")
   abort "review target is not HEAD" unless comparison["target_sha"] == `git rev-parse HEAD`.strip
   expected = expected_issues
   abort "comparison issue denominator mismatch" unless comparison.fetch("rebuilt_rows").map { |row| row["issue"] }.sort == expected
@@ -64,7 +71,7 @@ when "comparison"
   abort "independently rebuilt live universe mismatch" unless comparison["rebuilt_rows"] == rebuilt
   abort "upstream row slice is forbidden" if comparison.key?("source_sha256") || comparison.key?("source_rows")
 when "handoff"
-  packet = JSON.parse(File.read(ARGV.fetch(1, HANDOFF)))
+  packet = read_json!(ARGV.fetch(1, HANDOFF), "readiness handoff review")
   abort "handoff review is not exact HEAD" unless packet["reviewed_head"] == `git rev-parse HEAD`.strip
   abort "reviewer identity missing" if packet["reviewer"].to_s.strip.empty?
   findings = packet["findings"]
@@ -79,7 +86,7 @@ when "handoff"
   corpus = `git grep -n -E 'status: (active|implementation|released)|issue creation authorized|legal personhood|certified production' -- docs/milestones/v0.93`
   abort "v0.93 activation/claim boundary violated: #{corpus}" unless corpus.strip.empty?
 when "negative"
-  packet = JSON.parse(File.read(ARGV.fetch(1, NEGATIVE)))
+  packet = read_json!(ARGV.fetch(1, NEGATIVE), "readiness negative cases")
   classes = %w[missing_row stale_sha red_checks active_claim absent_receipt dirty_cleanup partial_release duplicate_retry premature_closeout v093_activation].sort
   cases = packet.fetch("cases")
   abort "negative class mismatch" unless cases.map { |row| row["class"] }.sort == classes

@@ -26,12 +26,19 @@ def github_pr(number)
   JSON.parse(out)
 end
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 def source_findings(path)
-  json = JSON.parse(File.read(path))
+  json = read_json!(path, "finding source")
   json.fetch("findings")
 end
 
-manifest = JSON.parse(File.read(ARGV.fetch(0, File.join(ROOT, "disposition-register.json"))))
+manifest = read_json!(ARGV.fetch(0, File.join(ROOT, "disposition-register.json")), "remediation disposition register")
 head = `git rev-parse HEAD`.strip
 abort "target SHA is not HEAD" unless manifest["target_sha"] == head
 SOURCES.each { |path| abort "canonical finding source missing: #{path}" unless File.file?(path) }
@@ -58,7 +65,7 @@ rows.each do |row|
     abort "#{row['id']} remediation checks not green" unless checks.all? { |check| %w[SUCCESS SKIPPED NEUTRAL].include?(check["conclusion"]) }
     abort "#{row['id']} remediation review not approved" unless pr["reviewDecision"] == "APPROVED"
     abort "#{row['id']} merge not ancestral" unless system("git", "merge-base", "--is-ancestor", row["merge_sha"], head)
-    index = JSON.parse(File.read(".csdlc/issues/#{Integer(row['remediation_issue'])}/index.json"))
+    index = read_json!(".csdlc/issues/#{Integer(row['remediation_issue'])}/index.json", "remediation issue index")
     abort "#{row['id']} remediation issue not terminal" unless index["phase"] == "closed_out" && index["claim"].nil? && index["terminal"].is_a?(Hash)
     abort "#{row['id']} validation evidence missing" unless File.file?(row["validation_ref"])
     abort "#{row['id']} validation digest mismatch" unless Digest::SHA256.file(row["validation_ref"]).hexdigest == row["validation_sha256"]

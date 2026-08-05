@@ -12,6 +12,13 @@ UNIVERSE = ".csdlc/evidence/5850/issue-universe.json"
 DAG = ".csdlc/evidence/5850/closeout-dag.json"
 NEGATIVE = ".csdlc/evidence/5850/negative-cases.json"
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 def expected_issues
   wave = YAML.load_file(WAVE)
   ids = wave.fetch("work_packages").map { |row| row.fetch("issue") }
@@ -54,7 +61,7 @@ end
 mode = ARGV.fetch(0, "universe")
 case mode
 when "universe"
-  packet = JSON.parse(File.read(ARGV.fetch(1, UNIVERSE)))
+  packet = read_json!(ARGV.fetch(1, UNIVERSE), "closeout issue universe")
   head = `git rev-parse HEAD`.strip
   abort "target is not HEAD" unless packet["target_sha"] == head
   rows = packet["rows"]
@@ -66,9 +73,9 @@ when "universe"
     abort "##{issue} GitHub state mismatch" unless row["github_state"] == live["state"]
     index_path = ".csdlc/issues/#{issue}/index.json"
     abort "##{issue} typed index missing" unless File.file?(index_path)
-    index = JSON.parse(File.read(index_path))
+    index = read_json!(index_path, "##{issue} typed index")
     abort "##{issue} typed phase mismatch" unless row["typed_phase"] == index["phase"]
-    sor = JSON.parse(File.read(".csdlc/issues/#{issue}/cards/sor.values.json"))
+    sor = read_json!(".csdlc/issues/#{issue}/cards/sor.values.json", "##{issue} SOR values")
     abort "##{issue} SOR state mismatch" unless row["sor_state"] == sor["status"]
     expected_claim = index["claim"].nil? ? "released" : "active"
     abort "##{issue} claim mismatch" unless row["claim_state"] == expected_claim
@@ -102,7 +109,7 @@ when "universe"
     end
   end
 when "dag"
-  dag = JSON.parse(File.read(ARGV.fetch(1, DAG)))
+  dag = read_json!(ARGV.fetch(1, DAG), "closeout DAG")
   nodes = dag.fetch("nodes")
   edges = dag.fetch("edges")
   expected_nodes = (expected_issues.map(&:to_s) + %w[WP-29 WP-30 umbrella-closeout v0.93-acceptance]).sort
@@ -118,7 +125,7 @@ when "dag"
   end
   abort "closeout DAG contains a cycle" unless visited.length == nodes.length
 when "negative"
-  packet = JSON.parse(File.read(ARGV.fetch(1, NEGATIVE)))
+  packet = read_json!(ARGV.fetch(1, NEGATIVE), "closeout negative cases")
   classes = %w[stale_head red_checks missing_review missing_receipt active_claim dirty_worktree partial_release duplicate_retry unknown_issue unowned_action].sort
   abort "negative class mismatch" unless packet.fetch("cases").map { |row| row["class"] }.sort == classes
   packet.fetch("cases").each do |row|

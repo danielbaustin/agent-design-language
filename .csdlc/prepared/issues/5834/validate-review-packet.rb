@@ -32,8 +32,14 @@ rescue JSON::ParserError => error
   fail!("invalid #{label}: #{error.message}")
 end
 
+def load_text!(path, label)
+  path.read
+rescue Errno::ENOENT
+  fail!("missing #{label}: #{path.relative_path_from(ROOT)}")
+end
+
 def validate_packet!(packet_path, manifest_path, schema_path)
-  packet = packet_path.read
+  packet = load_text!(packet_path, "review packet")
   manifest = load_json!(manifest_path, "evidence manifest")
   schema = load_json!(schema_path, "packet schema")
 

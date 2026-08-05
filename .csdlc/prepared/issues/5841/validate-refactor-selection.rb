@@ -17,7 +17,14 @@ def run!(*argv)
   abort "#{argv.join(' ')} failed: #{out}\n#{err}" unless status.success?
 end
 
-manifest = JSON.parse(File.read(ARGV.fetch(0, ".csdlc/evidence/5841/refactor-selection.json")))
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
+manifest = read_json!(ARGV.fetch(0, ".csdlc/evidence/5841/refactor-selection.json"), "refactor selection")
 head = `git rev-parse HEAD`.strip
 abort "target SHA is not HEAD" unless manifest["target_sha"] == head
 selections = manifest["selections"]
@@ -38,7 +45,7 @@ run!("cargo", "clippy", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo
 run!("cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--test", "control")
 run!("cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--test", "observability")
 
-metrics = JSON.parse(File.read(manifest.fetch("metrics_path")))
+metrics = read_json!(manifest.fetch("metrics_path"), "refactor metrics")
 required = %w[before_loc after_loc before_duplication after_duplication ownership_before ownership_after]
 abort "metrics incomplete" unless required.all? { |key| !metrics[key].nil? && metrics[key] != "" }
 abort "refactor increased LoC without disposition" if metrics["after_loc"] > metrics["before_loc"] && metrics["loc_increase_justification"].to_s.empty?

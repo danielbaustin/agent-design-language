@@ -15,9 +15,16 @@ def git(*argv)
   out
 end
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 expected = (EXACT_ROOT_FILES + OWNED_TREES.flat_map { |root| git("ls-files", "--", root).lines.map(&:strip) }).uniq.sort
 abort "canonical docs denominator is empty" if expected.empty?
-manifest = JSON.parse(File.read(ARGV.fetch(0, ".csdlc/evidence/5843/canonical-doc-inventory.json")))
+manifest = read_json!(ARGV.fetch(0, ".csdlc/evidence/5843/canonical-doc-inventory.json"), "canonical documentation inventory")
 rows = manifest["rows"]
 abort "canonical inventory missing" unless rows.is_a?(Array) && !rows.empty?
 abort "canonical document universe mismatch" unless rows.map { |row| row["path"] }.sort == expected

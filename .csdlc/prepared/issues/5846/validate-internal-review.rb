@@ -4,9 +4,16 @@
 require "digest"
 require "json"
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 root = ARGV.fetch(0, "docs/reviews/v0.92/internal-review-5846")
-manifest = JSON.parse(File.read(File.join(root, "packet-manifest.json")))
-findings = JSON.parse(File.read(File.join(root, "findings.json")))
+manifest = read_json!(File.join(root, "packet-manifest.json"), "internal review packet manifest")
+findings = read_json!(File.join(root, "findings.json"), "internal review findings")
 required_roster = %w[
   architecture code dependencies docs security tests lifecycle demos release_publication
 ].sort

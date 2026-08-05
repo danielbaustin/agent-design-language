@@ -4,9 +4,16 @@
 require "digest"
 require "json"
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 mode = ARGV.fetch(0)
 root = ARGV.fetch(1, "docs/reviews/v0.92/external-review-5847")
-manifest = JSON.parse(File.read(File.join(root, "packet-manifest.json")))
+manifest = read_json!(File.join(root, "packet-manifest.json"), "external review packet manifest")
 paths = manifest["paths"]
 abort "packet paths missing" unless paths.is_a?(Array) && !paths.empty? && paths.all? { |path| File.file?(path) }
 normalized = paths.sort.map { |path| "#{path}\0#{Digest::SHA256.file(path).hexdigest}" }.join("\n")
@@ -15,7 +22,7 @@ abort "packet digest mismatch" unless packet_digest == manifest["packet_sha256"]
 abort "packet target missing" unless manifest["target_sha"].is_a?(String) && manifest["target_sha"].match?(/\A[0-9a-f]{40}\z/)
 
 if mode == "report"
-  index = JSON.parse(File.read(File.join(root, "findings-index.json")))
+  index = read_json!(File.join(root, "findings-index.json"), "external review findings index")
   %w[reviewer_identity report_path report_sha256 packet_sha256 target_sha].each do |field|
     abort "#{field} missing" unless index[field].is_a?(String) && !index[field].strip.empty?
   end

@@ -15,6 +15,13 @@ def git(*argv)
   out
 end
 
+def read_json!(path, label)
+  abort "missing #{label}: #{path}" unless File.file?(path)
+  JSON.parse(File.read(path))
+rescue JSON::ParserError => error
+  abort "invalid #{label}: #{error.message}"
+end
+
 def baseline_files(sha)
   git("ls-tree", "-r", "--name-only", sha, "--", "adl/src").lines.map(&:strip).reject(&:empty?).sort
 end
@@ -40,9 +47,9 @@ def current_references
   end
 end
 
-manifest = JSON.parse(File.read(ARGV.fetch(0, ".csdlc/evidence/5786/deletion-manifest.json")))
-baseline = JSON.parse(File.read(ARGV.fetch(1, ".csdlc/evidence/5786/pre-change-denominator.json")))
-platform = JSON.parse(File.read(ARGV.fetch(2, ".csdlc/evidence/5786/platform-proof.json")))
+manifest = read_json!(ARGV.fetch(0, ".csdlc/evidence/5786/deletion-manifest.json"), "deletion manifest")
+baseline = read_json!(ARGV.fetch(1, ".csdlc/evidence/5786/pre-change-denominator.json"), "pre-change denominator")
+platform = read_json!(ARGV.fetch(2, ".csdlc/evidence/5786/platform-proof.json"), "platform proof")
 
 baseline_sha = baseline["baseline_head_sha"]
 abort "baseline SHA missing" unless baseline_sha.to_s.match?(/\A[0-9a-f]{40}\z/)
