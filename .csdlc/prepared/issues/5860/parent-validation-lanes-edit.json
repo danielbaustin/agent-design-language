@@ -1,0 +1,62 @@
+{
+  "issue": 5860,
+  "card": "vpp",
+  "expected_generation": 9,
+  "expected_digest": "89dd078084979bbbe9001cb7086c3f69cbf695f28c2c5145024e6ba5d79fc2df",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "actor": "codex:5860-readiness-integration",
+  "reason": "Make each aggregate preparation control explicit after exact-head review found false-green readiness.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "v092-readiness-matrix",
+        "proof_role": "Prove the exact 58-issue documentation-only denominator, rollback, card, dependency, ownership, live-contract, artifact-digest, doctor, and preparation-control contract while excluding #5861",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1800,
+        "budget_tokens": 18000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5860/validate-v092-readiness.rb", "--verify-live"],
+        "parallel_group": "readiness-integration",
+        "defer_reason": null
+      },
+      {
+        "lane": "v092-typed-doctor-parity",
+        "proof_role": "Recompute all 58 typed doctor reports and reject pinned handoff evidence drift",
+        "acceptance_ids": ["AC-3", "AC-4", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5860/validate-v092-doctors.rb"],
+        "parallel_group": "readiness-controls",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp04-child-wave-preparation",
+        "proof_role": "Prove the live WP-04 child mapping, approvals, null claims, ownership, rollback, and operator-visible umbrella contract",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5821/validate-child-wave.rb"],
+        "parallel_group": "readiness-controls",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp04-implementation-wave-preparation",
+        "proof_role": "Prove the sixteen-child WP-04 preparation contract and terminal integration gate required before WP-14 handoff",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 900,
+        "budget_tokens": 4000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5862/validate-implementation-wave.rb"],
+        "parallel_group": "readiness-controls",
+        "defer_reason": null
+      }
+    ]
+  }
+}

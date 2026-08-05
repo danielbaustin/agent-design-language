@@ -14,8 +14,10 @@ through #5858, including the reviewed WP-04 implementation umbrella #5862
 and its exact sixteen-child wave #5863 through #5878. It may update only each
 issue's C-SDLC design, diagram, cards,
 issue-local readiness evidence, and lock/claim projections required by typed
-lifecycle tooling. It also owns the #5860 lifecycle record and one aggregate
-readiness matrix.
+lifecycle tooling. It also owns the #5860 lifecycle record, one aggregate
+readiness matrix, the canonical wave membership needed to prove the exact
+denominator, and the Runtime sprint prompt that exposes that membership to an
+operator session.
 
 No product source, milestone feature claim, implementation proof, or child PR
 belongs to this issue. Sidecar issue #5861 is owned by another session and is
@@ -49,13 +51,13 @@ one integration review.
 - `.csdlc/prepared/issues/5860/`
 - `.csdlc/evidence/5860/`
 - `docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml`
+- `.adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md`
 
 ## Read-Only Inputs
 
 - `.csdlc/issues/<v0.92-execution-issue>/`
 - `.csdlc/prepared/issues/<v0.92-execution-issue>/`
 - `.adl/docs/TBD/V092_SPRINT_5854_DEMO_PUBLICATION_SESSION_PROMPT.md`
-- `.adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md`
 - `.adl/docs/TBD/V092_SPRINT_5856_QUALITY_RELEASE_SESSION_PROMPT.md`
 - `.adl/docs/TBD/V092_SPRINT_5857_BIRTHDAY_CORE_SESSION_PROMPT.md`
 - `.adl/docs/TBD/V092_SPRINT_5858_FOUNDATION_SESSION_PROMPT.md`
@@ -65,10 +67,23 @@ one integration review.
 - reject placeholder design markers and generic plan scaffolds;
 - parse every values JSON and rendered card;
 - verify each design and diagram digest against the canonical record;
-- verify exact dependency and sprint membership against the v0.92 wave;
-- run typed validation for every child;
-- prove no product path changed;
+- require explicit rollback in every issue design;
+- verify exact dependency and explicit sprint membership against the v0.92
+  wave without inferred or hard-coded membership;
+- run typed doctor comparison for every child and fail on evidence drift;
+- run preparation-time control validators for the WP-04 issue wave while
+  keeping execution-time product proof deferred to each child VPP;
+- prove no product or externally owned #5861 path changed;
 - independently review all 58 readiness dispositions before publication.
+
+## Aggregate Failure Semantics
+
+The parent validator fails closed when any preparation-time control validator
+fails, a canonical issue is absent from explicit sprint membership, doctor or
+artifact evidence is stale, a live issue body drifts, rollback is absent, or a
+changed path crosses the documentation-only boundary. It must never infer
+missing sprint membership or treat the presence of an issue-local validator as
+proof that the validator passes.
 
 ## Stop Conditions
 

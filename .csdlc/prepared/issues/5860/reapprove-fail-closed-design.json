@@ -1,0 +1,7 @@
+{
+  "issue": 5860,
+  "expected_generation": 8,
+  "expected_digest": "f3a7f6b7382347bb0be5dc8de6be31b5b31d33d872fe6f8c05f2b6c79ac92b03",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "reviewer": "codex:5860-readiness-integration"
+}
