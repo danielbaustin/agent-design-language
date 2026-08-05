@@ -113,6 +113,18 @@ sprints.each do |sprint|
   raise "sprint lacks parallel-lane declaration" unless sprint.fetch("parallel_lanes").is_a?(Array)
   raise "sprint lacks write-surface boundary" if sprint.fetch("write_surface").strip.empty?
 
+  prompt_path = File.join(ROOT, sprint.fetch("session_prompt_path"))
+  raise "sprint #{sprint.fetch("sprint")} session prompt missing" unless File.file?(prompt_path) && !File.zero?(prompt_path)
+  prompt = File.read(prompt_path)
+  raise "sprint #{sprint.fetch("sprint")} prompt omits AGENTS.md" unless prompt.include?("AGENTS.md")
+  unless prompt.match?(/issue-bound goal|own goal|child issue goal|session goal/)
+    raise "sprint #{sprint.fetch("sprint")} prompt omits child-goal rule"
+  end
+  raise "sprint #{sprint.fetch("sprint")} prompt omits main protection" unless prompt.include?("main")
+  unless prompt.include?("/private/tmp")
+    raise "sprint #{sprint.fetch("sprint")} prompt omits /private/tmp prohibition"
+  end
+
   issue = Integer(sprint.fetch("issue"))
   issue_root = File.join(ROOT, ".csdlc/issues", issue.to_s)
   record = JSON.parse(File.read(File.join(issue_root, "index.json")))

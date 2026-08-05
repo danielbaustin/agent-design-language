@@ -163,6 +163,7 @@ supporting_issues:
 execution_sprints:
   - sprint: foundation_and_throughput
     issue: 5858
+    session_prompt_path: .adl/docs/TBD/V092_SPRINT_5858_FOUNDATION_SESSION_PROMPT.md
     execution_mode: hybrid
     goal: Establish current documentation, repository ownership, reliable proof infrastructure, and fast operator workflows.
     members: [WP-01B, WP-02, issue-5812, WP-02A, WP-02B, WP-05, WP-06, WP-07]
@@ -178,6 +179,7 @@ execution_sprints:
     write_surface: canonical docs, repository operations, CI, validation tooling, and bounded Freedom Gate cleanup
   - sprint: runtime_observatory_polis_protocol
     issue: 5855
+    session_prompt_path: .adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md
     execution_mode: hybrid
     goal: Deliver one resilient Runtime and Observatory path, then distributed, protocol, provider, and consumer integration.
     members: [issue-5800, WP-03, issue-5795, WP-04, WP-14, WP-18A]
@@ -192,6 +194,7 @@ execution_sprints:
     write_surface: Runtime launch, Observatory HTTPS/WSS, local provider, distributed polis, ACIP/A2A, and consumer integration
   - sprint: birthday_core
     issue: 5857
+    session_prompt_path: .adl/docs/TBD/V092_SPRINT_5857_BIRTHDAY_CORE_SESSION_PROMPT.md
     execution_mode: hybrid
     goal: Build the first-birthday identity, continuity, memory, capability, learning, witness, and review contracts.
     members: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-13A, WP-15, WP-16]
@@ -205,6 +208,7 @@ execution_sprints:
     write_surface: birthday contract, identity, continuity, memory, capability, cognitive profile, adaptive learning, witnesses, and review packet
   - sprint: demonstration_handoff_publication
     issue: 5854
+    session_prompt_path: .adl/docs/TBD/V092_SPRINT_5854_DEMO_PUBLICATION_SESSION_PROMPT.md
     execution_mode: hybrid
     goal: Produce real demonstrations, consumer proofs, governance handoff, and complete launch media.
     members: [WP-17, WP-18, WP-18B, WP-19, WP-20, WP-24, WP-24A]
@@ -219,6 +223,7 @@ execution_sprints:
     write_surface: migration semantics, birthday demo, provider-neutral proof, governance handoff, proof matrix, articles, and podcasts
   - sprint: release_tail
     issue: 5856
+    session_prompt_path: .adl/docs/TBD/V092_SPRINT_5856_QUALITY_RELEASE_SESSION_PROMPT.md
     execution_mode: sequential
     goal: Reduce and refactor safely, enforce the quality gate, complete reviews, remediate findings, and close the milestone.
     members: [WP-21, WP-21A, WP-22, WP-23, WP-25, WP-26, WP-27, WP-28, WP-28A, WP-29, WP-30]

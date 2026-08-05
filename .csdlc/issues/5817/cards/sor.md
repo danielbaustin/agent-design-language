@@ -27,6 +27,11 @@ Activated the canonical v0.92 milestone package, requalified prerequisites, open
 - .csdlc/prepared/issues/5800
 - .csdlc/prepared/issues/5812
 - .csdlc/prepared/issues/5854 through .csdlc/prepared/issues/5858
+- .adl/docs/TBD/V092_SPRINT_5854_DEMO_PUBLICATION_SESSION_PROMPT.md
+- .adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md
+- .adl/docs/TBD/V092_SPRINT_5856_QUALITY_RELEASE_SESSION_PROMPT.md
+- .adl/docs/TBD/V092_SPRINT_5857_BIRTHDAY_CORE_SESSION_PROMPT.md
+- .adl/docs/TBD/V092_SPRINT_5858_FOUNDATION_SESSION_PROMPT.md
 - .csdlc/evidence/5817/feature-and-issue-coverage-audit.md
 - .csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md
 
@@ -37,6 +42,7 @@ Activated the canonical v0.92 milestone package, requalified prerequisites, open
 - Created live sprint umbrella issues 5854 through 5858 and initialized each with six typed cards
 - Generated 552 typed card artifacts with exact wave and sprint alignment
 - Added one Sprint Execution Packet per umbrella with exact membership, safe lanes, serial gates, review path, activity log, child-goal rule, and closeout rule
+- Added five copy-ready individual-session prompts under .adl/docs/TBD and pinned each prompt to its live sprint umbrella
 - Kept every umbrella coordination-only so child issues retain implementation, proof, review, publication, and closeout authority
 - Added complete feature ownership and hard WP-22 completion gates, including WP-24 and WP-24A
 - Requalified #5104 loop semantics against current Runtime v3 source and focused tests

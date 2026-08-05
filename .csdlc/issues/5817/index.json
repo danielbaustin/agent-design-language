@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d53be3af2faf3e66031a9d44cf075b231b9bb435cb118d4f77841ff2b8f74db9",
   "phase": "implemented",
-  "generation": 18,
-  "digest": "24d3857e3d3a51f4ccfbf46124c1a4efdced1ffbad7bf9336dd256082ecb20d0",
+  "generation": 19,
+  "digest": "b2f86c5c790a3990c58f3402bbd35c32f6f9d6f3cc0f75df8cefa5fe0e482801",
   "claim": {
     "id": "claim-5817-v092-wp01",
     "owner": "codex:5817",
-    "generation": 18,
+    "generation": 19,
     "acquired_unix_seconds": 1785910303,
     "expires_unix_seconds": 1786515103,
     "heartbeat_unix_seconds": 1785910303,
@@ -43,34 +43,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "fdeaf4409f217a5a94e587abed906668abfbb7cfa973707dd0426aa78e1f9493",
+      "values_digest": "6d600013642d94d0dbf4f7a994ea99d2a38b2661c12f9993930890f0531b2121",
       "rendered_digest": "4451da75fc9cb7d4886b7877ab335834a02ceb41919e4bb6b6bdea011277826f",
       "ast_digest": "02838e8a1abbb2d0df6a250cf97f2b8ac4cef2309d3afaa866777d382c2cc66a"
     },
     "stp": {
-      "values_digest": "b88b81041a2039811bbb15527c3cdd30c241134ac65c832527c25ecbca5a3324",
+      "values_digest": "0c73bd9d438dc673192f8f674d89425fbda062b01d97ec9c0ff7a16b0dd4afca",
       "rendered_digest": "1d34155c8cb1a8b4cc3a16462f3e1e76a5a9d7fb5dcad1dc0801011ccb404a78",
       "ast_digest": "8cd8c20ceed3eeefa51c5392c7b84f4078db985f356ca1b5abab232dcc3cff65"
     },
     "spp": {
-      "values_digest": "41ff5bc63d4d5c58d859fd32d75bb455fd75fbef8e7a8f315d27d7047d5ab57f",
+      "values_digest": "eabe695f0788bd52da017788dd5e36e7a5cc170a3647b54a213d0dc36d5aae49",
       "rendered_digest": "bf1ba4c2268a9dba7a05452b7849fb8c8404da598b6b4b815a4e6a69350f136e",
       "ast_digest": "ce85c03a9a720cc590ebf965f1ca3824e060ec9ac59512e8c38ca273c7499d18"
     },
     "vpp": {
-      "values_digest": "1a51a04b8570f40d91aca5d6f2ecd2df0c01dc0ba0cace979a93c26f66664f4e",
+      "values_digest": "126388f12509eb76cf134f1acda4d858025af98e25be66612e6fa213bcb8195a",
       "rendered_digest": "7b0c81a22e40545403b7ade24b61d2c2f01062ce3dd238d882cefc3fbf0174b6",
       "ast_digest": "d671ad2461b7c0a1175fe2f5009d663ae1fd6b7a2e7bf28c663ec4525958c9d6"
     },
     "srp": {
-      "values_digest": "f1b872294bf35b53de120ae91c872c5f7efc488bb88a98d8f08530e8addd5ad0",
+      "values_digest": "aa195493af48374878494069b35897cdbc0564580cc9849c3f35b8c083cb68ab",
       "rendered_digest": "50a0eee91011ef437f888408cdd7a8d9530e70c4abc699f18df04addc03d1096",
       "ast_digest": "bff73e23b7f6e7e8261838ca5a193ce76861cc1cfeed3b1efb255122433abf7e"
     },
     "sor": {
-      "values_digest": "a37cb16c83c628a05fe833e2b24094d20f6cd7abe70162466601e03a4e0b0e80",
-      "rendered_digest": "f42bddec316e612201d8613b2a186e2e0921319c1d390ca9282194ae01781bc6",
-      "ast_digest": "68f08aee5b3bec1267bea9437eb43e9ca7d12b8949ed60aac735346997fb4962"
+      "values_digest": "88deee0e37d6074fd6575f7598550074f78d6853ef10b19af2a172447a57599c",
+      "rendered_digest": "5a3b2983f708d79b3859777b439a17889cf2eab6e7d9b0b8b08ca2070e1b9622",
+      "ast_digest": "f75c23a344caa175d92c2e68b81f270ce246c23887a74048461f23dd91e75f15"
     }
   },
   "transitions": [
@@ -257,6 +257,13 @@
       "actor": "codex:5817",
       "reason": "Record the five live sprint umbrella issues, complete typed preparation, and independent-session execution packets.",
       "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Activated the canonical v0.92 milestone package, requalified prerequisites, opened the complete issue wave, initialized every child, supporting issue, and sprint umbrella, and prepared five independent sprint sessions.\",\"changes\":[\"Reconciled active milestone, sprint, WBS, ADR, demo, feature, quality, handoff, and execution-readiness surfaces\",\"Opened and verified 41 child and supporting issues across 39 unique work packages and three explicit supporting issues\",\"Created live sprint umbrella issues 5854 through 5858 and initialized each with six typed cards\",\"Generated 552 typed card artifacts with exact wave and sprint alignment\",\"Added one Sprint Execution Packet per umbrella with exact membership, safe lanes, serial gates, review path, activity log, child-goal rule, and closeout rule\",\"Kept every umbrella coordination-only so child issues retain implementation, proof, review, publication, and closeout authority\",\"Added complete feature ownership and hard WP-22 completion gates, including WP-24 and WP-24A\",\"Requalified #5104 loop semantics against current Runtime v3 source and focused tests\"],\"artifacts\":[\"docs/milestones/v0.92\",\".csdlc/issues/5786\",\".csdlc/issues/5795\",\".csdlc/issues/5800\",\".csdlc/issues/5801\",\".csdlc/issues/5812\",\".csdlc/issues/5818 through .csdlc/issues/5858\",\".csdlc/prepared/issues/5795\",\".csdlc/prepared/issues/5800\",\".csdlc/prepared/issues/5812\",\".csdlc/prepared/issues/5854 through .csdlc/prepared/issues/5858\",\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\",\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"],\"validation\":[{\"command\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"purpose\":\"Prove 39 WPs, 41 initialized child and supporting issues, five initialized sprint umbrellas, 552 typed card artifacts, exact execution packets, source dispositions, feature coverage, links, and delivery gates.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\"},{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5817/target\",\"--test\",\"reasoning\"],\"purpose\":\"Requalify current Runtime v3 bounded reasoning, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"},{\"command\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5817\"],\"purpose\":\"Confirm the WP-01 typed lifecycle record remains healthy after sprint organization.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5817/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Reject whitespace errors in the complete candidate.\",\"outcome\":\"passed\",\"evidence_ref\":\"working tree\"},{\"command\":[\"git\",\"-C\",\"/Users/daniel/git/agent-design-language\",\"status\",\"--short\",\"--branch\"],\"purpose\":\"Confirm the primary checkout remains clean on main.\",\"outcome\":\"passed\",\"evidence_ref\":\"/Users/daniel/git/agent-design-language\"}]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 19,
+      "actor": "codex:5817",
+      "reason": "Record the five live sprint umbrella issues, complete typed preparation, and independent-session execution packets.",
+      "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Activated the canonical v0.92 milestone package, requalified prerequisites, opened the complete issue wave, initialized every child, supporting issue, and sprint umbrella, and prepared five independent sprint sessions.\",\"changes\":[\"Reconciled active milestone, sprint, WBS, ADR, demo, feature, quality, handoff, and execution-readiness surfaces\",\"Opened and verified 41 child and supporting issues across 39 unique work packages and three explicit supporting issues\",\"Created live sprint umbrella issues 5854 through 5858 and initialized each with six typed cards\",\"Generated 552 typed card artifacts with exact wave and sprint alignment\",\"Added one Sprint Execution Packet per umbrella with exact membership, safe lanes, serial gates, review path, activity log, child-goal rule, and closeout rule\",\"Added five copy-ready individual-session prompts under .adl/docs/TBD and pinned each prompt to its live sprint umbrella\",\"Kept every umbrella coordination-only so child issues retain implementation, proof, review, publication, and closeout authority\",\"Added complete feature ownership and hard WP-22 completion gates, including WP-24 and WP-24A\",\"Requalified #5104 loop semantics against current Runtime v3 source and focused tests\"],\"artifacts\":[\"docs/milestones/v0.92\",\".csdlc/issues/5786\",\".csdlc/issues/5795\",\".csdlc/issues/5800\",\".csdlc/issues/5801\",\".csdlc/issues/5812\",\".csdlc/issues/5818 through .csdlc/issues/5858\",\".csdlc/prepared/issues/5795\",\".csdlc/prepared/issues/5800\",\".csdlc/prepared/issues/5812\",\".csdlc/prepared/issues/5854 through .csdlc/prepared/issues/5858\",\".adl/docs/TBD/V092_SPRINT_5854_DEMO_PUBLICATION_SESSION_PROMPT.md\",\".adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md\",\".adl/docs/TBD/V092_SPRINT_5856_QUALITY_RELEASE_SESSION_PROMPT.md\",\".adl/docs/TBD/V092_SPRINT_5857_BIRTHDAY_CORE_SESSION_PROMPT.md\",\".adl/docs/TBD/V092_SPRINT_5858_FOUNDATION_SESSION_PROMPT.md\",\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\",\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"],\"validation\":[{\"command\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"purpose\":\"Prove 39 WPs, 41 initialized child and supporting issues, five initialized sprint umbrellas, 552 typed card artifacts, exact execution packets, source dispositions, feature coverage, links, and delivery gates.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\"},{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5817/target\",\"--test\",\"reasoning\"],\"purpose\":\"Requalify current Runtime v3 bounded reasoning, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"},{\"command\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5817\"],\"purpose\":\"Confirm the WP-01 typed lifecycle record remains healthy after sprint organization.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5817/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Reject whitespace errors in the complete candidate.\",\"outcome\":\"passed\",\"evidence_ref\":\"working tree\"},{\"command\":[\"git\",\"-C\",\"/Users/daniel/git/agent-design-language\",\"status\",\"--short\",\"--branch\"],\"purpose\":\"Confirm the primary checkout remains clean on main.\",\"outcome\":\"passed\",\"evidence_ref\":\"/Users/daniel/git/agent-design-language\"}]}"
     }
   ]
 }
