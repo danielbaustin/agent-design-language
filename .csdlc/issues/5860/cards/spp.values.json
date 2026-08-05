@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 18
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -23,7 +23,7 @@
             "AC-1",
             "AC-5"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S2",
@@ -36,7 +36,7 @@
             "AC-5",
             "AC-6"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S3",
@@ -49,7 +49,7 @@
             "AC-6",
             "AC-7"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S4",
@@ -63,7 +63,7 @@
             "AC-6",
             "AC-7"
           ],
-          "status": "pending"
+          "status": "completed"
         }
       ],
       "affected_areas": [],
