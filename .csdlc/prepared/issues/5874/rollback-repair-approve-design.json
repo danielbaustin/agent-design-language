@@ -1,0 +1,7 @@
+{
+  "issue": 5874,
+  "expected_generation": 2,
+  "expected_digest": "4e9fa3ff491b1ef0509e30034276e0e6533847357ba6952c4fec140ac68e572e",
+  "claim_id": "claim-5874-v092-rollback-repair",
+  "reviewer": "codex:5860-runtime-wp04-rollback-design-review"
+}

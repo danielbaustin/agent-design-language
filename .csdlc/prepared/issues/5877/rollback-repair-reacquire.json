@@ -1,0 +1,24 @@
+{
+  "issue": 5877,
+  "expected_generation": 2,
+  "expected_digest": "55cf38a42dc513840bc06d024f907cb72243082d462573860751a22f8f3606cf",
+  "now_unix_seconds": 1785957259,
+  "actor": "codex:5860-runtime-wp04-rollback-repair",
+  "reason": "Acquire issue-local preparation authority to add the required exact Rollback section for issue 5877.",
+  "replacement": {
+    "id": "claim-5877-v092-rollback-repair",
+    "owner": "codex:5860-runtime-wp04-rollback-repair",
+    "generation": 2,
+    "acquired_unix_seconds": 1785957259,
+    "expires_unix_seconds": 1786043659,
+    "heartbeat_unix_seconds": 1785957259,
+    "branch": "codex/5860-runtime-wp04-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5877",
+      ".csdlc/prepared/issues/5877",
+      ".csdlc/evidence/5877"
+    ],
+    "purpose": "Add and reapprove the bounded issue-specific Rollback section for issue 5877; no product implementation."
+  }
+}

@@ -49,7 +49,7 @@ identity, negative cases, and native platform identity where claimed.
 Hand-authored status booleans, retained fixtures, and prose do not prove
 working behavior.
 
-## Rollback Responsibility
+## Rollback
 
 Disable enrollment and remove only issue-created node records; preserve the WP-03 single-node Guardian and all preexisting identity state.
 

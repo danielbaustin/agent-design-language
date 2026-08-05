@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.08] Fencing and single-owner enforcement",
     "slug": "v0-92-wp-04-08-fencing-single-owner",
     "version": "v0.92",
-    "generation": 2
+    "generation": 3
   },
   "status": "ready",
   "content": {
@@ -84,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5870/design.md",
-      "design_digest": "7fd6aed91354dcc1f993845cfe1f0f33d1e9571f52df7735eb41d2caa9d21ea3",
+      "design_digest": "04d8f677b9dc9389b83ac79b3dac4ed85dcef3be38cb3fe535e80510ad1f65cd",
       "diagram_ref": ".csdlc/prepared/issues/5870/diagram.mmd",
       "diagram_digest": "113850977a9b27ab371914763d9bcac7fc2757008adcd1fe7dea0da48ef809b9"
     }

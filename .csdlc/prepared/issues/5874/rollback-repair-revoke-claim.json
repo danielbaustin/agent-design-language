@@ -1,0 +1,11 @@
+{
+  "issue": 5874,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5874-v092-rollback-repair",
+  "expected_generation": 3,
+  "expected_digest": "a6e4d0a6aaaa58f68743912442b5ccb72a4637077c5a31a49a7e3c79d2eafbe9",
+  "now_unix_seconds": 1785957432,
+  "actor": "codex:5860-runtime-wp04-rollback-repair",
+  "operator_authority": "operator:daniel-issue-5860-preparation-only",
+  "reason": "Release the rollback-section repair claim after typed design reapproval and card regeneration."
+}

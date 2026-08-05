@@ -65,7 +65,7 @@ identity, negative cases, and native platform identity where claimed.
 Hand-authored status booleans, retained fixtures, and prose do not prove
 working behavior.
 
-## Rollback Responsibility
+## Rollback
 
 Remove module registration and distributed launch configuration, fence remote ownership, and prove the WP-03 single-node Guardian remains healthy from unchanged durable state.
 

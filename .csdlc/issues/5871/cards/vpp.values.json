@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.09] Signed capability advertisements",
     "slug": "v0-92-wp-04-09-capability-advertisements",
     "version": "v0.92",
-    "generation": 2
+    "generation": 3
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5871/design.md",
-      "design_digest": "da2d23bdbc96f5edd5beaffdc15ec0cd51d28e924f971f122a69c26f6622f082",
+      "design_digest": "950fa4cb39cabb088976ec6cf1b70537fe5382a7a93d59dc148e331b176ecb04",
       "diagram_ref": ".csdlc/prepared/issues/5871/diagram.mmd",
       "diagram_digest": "b9b2515a3b2332631342a1999611a7f3862a5fb37d669217c9674542ecaa5b9c"
     }

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
     "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
     "version": "v0.92",
-    "generation": 52
+    "generation": 53
   },
   "status": "ready",
   "content": {
@@ -97,7 +97,7 @@
         "WP-04-IMP or any prepared child differs from the approved sixteen-row ledger"
       ],
       "design_ref": ".csdlc/prepared/issues/5821/design.md",
-      "design_digest": "9bbf1f0268fdbd6023c1789ae934feec6020b5705658368ee4547cc8c46d55cd",
+      "design_digest": "9fe5fa921d68ac98add7b33e9dd6caec12e051bab1a8a7c5ad4e156fa447a3a6",
       "diagram_ref": ".csdlc/prepared/issues/5821/diagram.mmd",
       "diagram_digest": "2a57bd6f3950517bf9f5b6a5b2401c178e2b7bf15b382a271dafab50d000a77a"
     }

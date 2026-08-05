@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.01] Node identity and authenticated enrollment",
     "slug": "v0-92-wp-04-01-node-identity-enrollment",
     "version": "v0.92",
-    "generation": 2
+    "generation": 3
   },
   "status": "ready",
   "content": {
@@ -84,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5863/design.md",
-      "design_digest": "d297c56e4e2ee938bf539f50756eb13de9f1607f175ead272426fb6559a016e3",
+      "design_digest": "ff292f50a5fc8c6698deb03c252e944cfba28cc7fa10df59d7e95e282d419871",
       "diagram_ref": ".csdlc/prepared/issues/5863/diagram.mmd",
       "diagram_digest": "076369d31c36cbebb1b4cbe85060e4fe374166ac504a40cb37adfd56c0624ec8"
     }

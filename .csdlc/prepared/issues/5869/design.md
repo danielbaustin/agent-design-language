@@ -48,7 +48,7 @@ identity, negative cases, and native platform identity where claimed.
 Hand-authored status booleans, retained fixtures, and prose do not prove
 working behavior.
 
-## Rollback Responsibility
+## Rollback
 
 Expire issue-created leases, restore the last durable epoch, and leave no ambiguous owner.
 

@@ -52,7 +52,7 @@ identity, negative cases, and native platform identity where claimed.
 Hand-authored status booleans, retained fixtures, and prose do not prove
 working behavior.
 
-## Rollback Responsibility
+## Rollback
 
 Disable the new projection version and restore the prior API catalog without weakening authentication or exposing private state.
 

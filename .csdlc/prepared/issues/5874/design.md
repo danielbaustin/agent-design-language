@@ -49,7 +49,7 @@ identity, negative cases, and native platform identity where claimed.
 Hand-authored status booleans, retained fixtures, and prose do not prove
 working behavior.
 
-## Rollback Responsibility
+## Rollback
 
 Delete only incomplete issue-created transfers and retain the last valid local snapshot catalog.
 

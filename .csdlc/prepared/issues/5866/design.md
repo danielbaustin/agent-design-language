@@ -48,7 +48,7 @@ identity, negative cases, and native platform identity where claimed.
 Hand-authored status booleans, retained fixtures, and prose do not prove
 working behavior.
 
-## Rollback Responsibility
+## Rollback
 
 Disable distributed discovery and return to explicit single-node startup without persisting partial membership.
 

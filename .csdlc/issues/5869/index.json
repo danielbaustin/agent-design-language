@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "7267ce23765f7123ab0ffbb966ebbd8848190136f77b904b3649ddf6830c9e75",
   "phase": "bound",
-  "generation": 2,
-  "digest": "e6864bf131adf52819c39388e40c369813f9bc9901df2b3a66bdf22a699bf06a",
+  "generation": 3,
+  "digest": "ad1bdc42424c190facb0d0434b87b8a5d2b47a075fa6cba2f72f5314049cfb7d",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5869/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "f84809bfb6407cd79add641e46ea02e4111b37e74a421324fd767402ab26766e"
+      "reviewer": "codex:5860-runtime-wp04-rollback-design-review",
+      "revision": "803f74d8d042a7db205a2307b056d40ea029c720f8e087015e37d3422f233cbc"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "65d85954a4fe5b7c0212b90e6bcfd953debb3119a569a1db9a5b307e73ae666d",
+      "values_digest": "60371844bfe7dda008e09ffde386df4d41e20e82b25a8b34da65179e9cbd8e1a",
       "rendered_digest": "7bc55771a70d24063ab2f3ea23db10f976e334a93a5a293a3d2624a25bde66d6",
       "ast_digest": "43527c1e9ea076e5280f39c569152b1a537e2cdf8ddf1975d8b8741d027dc485"
     },
     "stp": {
-      "values_digest": "3f6c17ef407756829d4a16be2601d2cdaedb11997d1231ce7c19c995f0839311",
+      "values_digest": "f39b8509ef0efeb8284aa9735e06a6a92e7083b9194fb4018fd34b81812c7dd2",
       "rendered_digest": "1418fa59cf162e96eba521f2e064c1cf5e0a4bafb1e87242e75181f022914e8b",
       "ast_digest": "cdbdfb601738ffe36d8575ba36f0c5e661c06391d95400df45215b3e3af7e60f"
     },
     "spp": {
-      "values_digest": "40fb4e46d871f7fb90782f46536a5edff0d38585ac434f08fd88fac9f9d8d35f",
-      "rendered_digest": "32676f3b5f97297e88cb909ae55db6c8bd828a14f4e006d121216e5355568f7d",
-      "ast_digest": "a3522a0708a92cd96d082c51327927190c95506c72f0f9bde0b99d0c9ade8685"
+      "values_digest": "cb3b3c7559badfcc3657e39882f3fd02e2663a5a7ef8d3b5f427e7a378f34cb9",
+      "rendered_digest": "e189e5d89a162a9fa9b6bda582776b8468a881a02b27e8a36e2e5fcc60a44c21",
+      "ast_digest": "0b76b3d4eee1faf544b63983d083e0931a7b5fad10237a2189083c76b2402532"
     },
     "vpp": {
-      "values_digest": "9eeed2169f25fe4d93346fd44647f81de88b1840a911cc559e092fd0e5b15753",
+      "values_digest": "a8d0511f56ad0f7d41ff462aebb5d6c160f8f37c7ff5400ca032d131ff7d31a8",
       "rendered_digest": "e48615b3902c35a3abc27a7665886211b5d43d68b02471723d4d120f756abb0b",
       "ast_digest": "d2a789eee03154fac9d07122772925e8560c79577220b9f31cdb6541950ac321"
     },
     "srp": {
-      "values_digest": "cc73b173390f7d8e93fc0d644e60d8a4b95af75cb80ce0920c57f3f28c8f8714",
+      "values_digest": "0613ca652d39c3894d186b43bd8396562ba733b46c4e6550de0cd2b9f874d346",
       "rendered_digest": "027da3cdb5f1b780031f84fd41dc54354275b0483923ff4175506e92b231ee17",
       "ast_digest": "4b054b5ead22ac0d9e91daeee381de242d3184a73d613e692d5e65d2da0879a6"
     },
     "sor": {
-      "values_digest": "12dd85ff8df4efbd9a603d9a7cc2a209cacad1552b6d0e3e87e59a0e2df1652f",
+      "values_digest": "ad122df567dc0798df95d918c187a6563c2a03d4c2b8d92916f13ad556a4c4a2",
       "rendered_digest": "bb45e6e1db31068c0354adcbb0695a85fdbf9cf4038b21605b23353ce83702fa",
       "ast_digest": "0f8fb984437a074332d2881b9d9334d865d1f7c4409a29be9b99a4174e353f05"
     }
@@ -118,6 +118,27 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5869-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 2,
+      "actor": "codex:5860-runtime-wp04-rollback-repair",
+      "reason": "Acquire issue-local preparation authority to add the required exact Rollback section for issue 5869.",
+      "operation": "{\"branch\":\"codex/5860-runtime-wp04-repair\",\"claim_id\":\"claim-5869-v092-rollback-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-rollback-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5869\",\".csdlc/prepared/issues/5869\",\".csdlc/evidence/5869\"],\"purpose\":\"Add and reapprove the bounded issue-specific Rollback section for issue 5869; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 3,
+      "actor": "codex:5860-runtime-wp04-rollback-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 10,
+      "generation": 3,
+      "actor": "codex:5860-runtime-wp04-rollback-repair",
+      "reason": "Release the rollback-section repair claim after typed design reapproval and card regeneration.",
+      "operation": "{\"claim_id\":\"claim-5869-v092-rollback-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-rollback-repair\"}"
     }
   ]
 }

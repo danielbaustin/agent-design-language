@@ -49,7 +49,7 @@ identity, negative cases, and native platform identity where claimed.
 Hand-authored status booleans, retained fixtures, and prose do not prove
 working behavior.
 
-## Rollback Responsibility
+## Rollback
 
 Fence all uncertain distributed owners and return authority to the last durable single-node owner.
 

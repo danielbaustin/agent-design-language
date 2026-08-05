@@ -89,13 +89,19 @@ packet validator checks required sections, threat classes, COTS boundary,
 reviewer-authored report identity and exact packet digests. Product tests and
 multi-node proof remain child and #5862 obligations, not gate completion.
 
-## Estimate And Rollback
+## Estimate
 
 Budget this planning gate at 12 elapsed hours, 140,000 reasoning tokens, and 2
 hours of document/schema/ledger validation and review. The later implementation
 umbrella must estimate each child independently and may not inherit this gate
-budget. Rollback withdraws the unapproved child wave and umbrella, retains the
-review packet, and leaves the WP-03 single-node Runtime unchanged.
+budget.
+
+## Rollback
+
+Withdraw only the unapproved distributed child wave and WP-04-IMP umbrella,
+retain the architecture, threat-model, and review evidence for correction, and
+leave the terminal WP-03 single-node Runtime unchanged. Do not modify product
+paths, weaken authentication, or activate distributed ownership during rollback.
 
 ## Non-Goals
 

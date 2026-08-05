@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04.15] Versioned distributed topology and migration projection",
     "slug": "v0-92-wp-04-15-distributed-projection",
     "version": "v0.92",
-    "generation": 2
+    "generation": 3
   },
   "status": "ready",
   "content": {
@@ -66,7 +66,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
       "design_ref": ".csdlc/prepared/issues/5877/design.md",
-      "design_digest": "3de8c51576f3045cd2bef74b3eaeecdc30cf9c8daa605c2a803b5de6821bd6c7",
+      "design_digest": "2a48aaa85d1fbefd677ebaee69d99b415f99a6d79b37e6cf6462ff8f1e3235f7",
       "diagram_ref": ".csdlc/prepared/issues/5877/diagram.mmd",
       "diagram_digest": "205e7e83ffbf8812f537bacc9065673460c7a36bdcb9ca33e80fc0cabd99e5b4"
     }
