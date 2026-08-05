@@ -53,6 +53,23 @@ date, or authorize WP-25 internal review while any required row is unaccepted.
 - Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
 - Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-quality-gate-to-doc-truth-v1",
+    "paths": [
+      "docs/milestones/v0.92/QUALITY_GATE_v0.92.md",
+      "docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md"
+    ],
+    "issues": [5842, 5843],
+    "order": [5842, 5843]
+  }
+]
+```
+
 ## Validation And Failure Policy
 
 Required lanes are exact 13-feature index completeness/schema checks, issue/PR/head/

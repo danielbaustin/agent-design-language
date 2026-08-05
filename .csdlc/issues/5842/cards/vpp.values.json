@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-22] Quality gate",
     "slug": "v0-92-wp-22-quality-gate",
     "version": "v0.92",
-    "generation": 13
+    "generation": 16
   },
   "status": "ready",
   "content": {
@@ -16,18 +16,20 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "complete-feature-matrix",
-          "proof_role": "Require exactly the 13 indexed v0.92 feature documents and nonempty exact implementation, review, merge, positive, negative, integration, platform, and terminal evidence for every accepted row.",
+          "lane": "semantic-quality-matrix",
+          "proof_role": "Require the exact feature and critical-path denominator; validate issue/PR/review/merge ancestry plus semantic validation, negative, integration, platform, and typed-terminal evidence at the reviewed SHA.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
+            "AC-3",
             "AC-4",
-            "AC-5"
+            "AC-5",
+            "AC-6"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 600,
-          "budget_tokens": 5000,
+          "budget_seconds": 900,
+          "budget_tokens": 6000,
           "argv": [
             "ruby",
             ".csdlc/prepared/issues/5842/validate-quality-gate.rb",
@@ -37,16 +39,20 @@
           "defer_reason": null
         },
         {
-          "lane": "exercised-prohibited-evidence",
-          "proof_role": "Execute the quality gate against all eight prohibited evidence classes and require each forged case to fail with digest-bound observed output.",
+          "lane": "reconstructed-quality-negatives",
+          "proof_role": "Execute forged evidence classes through the real matrix validator and require digest-bound rejection.",
           "acceptance_ids": [
+            "AC-1",
+            "AC-2",
             "AC-3",
-            "AC-5"
+            "AC-4",
+            "AC-5",
+            "AC-6"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 600,
-          "budget_tokens": 5000,
+          "budget_seconds": 900,
+          "budget_tokens": 6000,
           "argv": [
             "ruby",
             ".csdlc/prepared/issues/5842/validate-quality-gate.rb",
@@ -56,34 +62,19 @@
           "defer_reason": null
         },
         {
-          "lane": "gate-packet-hygiene",
-          "proof_role": "Validate tracked gate packet whitespace after the proving matrix and negative validators run.",
-          "acceptance_ids": [
-            "AC-4",
-            "AC-5"
-          ],
-          "deterministic": true,
-          "resource_profile": "small",
-          "budget_seconds": 120,
-          "budget_tokens": 500,
-          "argv": [
-            "git",
-            "diff",
-            "--check"
-          ],
-          "parallel_group": "hygiene",
-          "defer_reason": null
-        },
-        {
           "lane": "typed-card-doctor",
-          "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+          "proof_role": "Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.",
           "acceptance_ids": [
             "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 60,
+          "budget_seconds": 120,
           "budget_tokens": 1000,
           "argv": [
             "csdlc-doctor",
@@ -100,7 +91,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5842/design.md",
-      "design_digest": "2a2f34956c88c9f8f4024f563b8612acac8ab046042d063cd75206202a3e362e",
+      "design_digest": "adfabb93a2d3513c3325bb83a9e9cec2e5a2eafa4f3824e75938812e4e325740",
       "diagram_ref": ".csdlc/prepared/issues/5842/diagram.mmd",
       "diagram_digest": "b1829fae5cf441c5f53f7e5d0184bdbcd7bf61e53855dca5d99241bf03b6c794"
     }

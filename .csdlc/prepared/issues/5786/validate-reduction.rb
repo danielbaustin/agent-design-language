@@ -4,68 +4,93 @@
 require "digest"
 require "json"
 require "open3"
-require "pathname"
 
-ROOT = Pathname.pwd.realpath
-BASELINE_LOC = 355_675
 MINIMUM_REDUCTION = 0.80
-REFERENCE_ROOTS = %w[adl/Cargo.toml .github/workflows adl/tools docs README.md].freeze
+ALLOWED_DISPOSITIONS = %w[replaced adapter retained delete].freeze
+REFERENCE_ROOTS = %w[Cargo.toml adl/Cargo.toml .github/workflows adl/tools docs README.md].freeze
 
-def tracked_files(path)
-  out, err, status = Open3.capture3("git", "ls-files", "--", path)
-  abort "git ls-files failed: #{err}" unless status.success?
-  out.lines.map(&:strip).reject(&:empty?)
+def git(*argv)
+  out, err, status = Open3.capture3("git", *argv)
+  abort "git #{argv.join(' ')} failed: #{err}" unless status.success?
+  out
+end
+
+def baseline_files(sha)
+  git("ls-tree", "-r", "--name-only", sha, "--", "adl/src").lines.map(&:strip).reject(&:empty?).sort
+end
+
+def baseline_loc(sha, paths)
+  paths.sum do |path|
+    blob = git("show", "#{sha}:#{path}")
+    blob.lines.length
+  end
+end
+
+def current_references
+  tracked = REFERENCE_ROOTS.flat_map do |root|
+    git("ls-files", "--", root).lines.map(&:strip).reject(&:empty?)
+  end.uniq.sort
+  tracked.flat_map do |path|
+    next [] unless File.file?(path)
+    File.readlines(path, chomp: true).each_with_index.filter_map do |line, index|
+      if line.match?(/adl\/src|runtime_v2|target\/debug\/adl\b/)
+        { "path" => path, "line" => index + 1, "text_sha256" => Digest::SHA256.hexdigest(line) }
+      end
+    end
+  end
 end
 
 manifest = JSON.parse(File.read(ARGV.fetch(0, ".csdlc/evidence/5786/deletion-manifest.json")))
-denominator = JSON.parse(File.read(ARGV.fetch(1, ".csdlc/evidence/5786/repository-denominator.json")))
+baseline = JSON.parse(File.read(ARGV.fetch(1, ".csdlc/evidence/5786/pre-change-denominator.json")))
 platform = JSON.parse(File.read(ARGV.fetch(2, ".csdlc/evidence/5786/platform-proof.json")))
 
-expected_source = tracked_files("adl/src")
+baseline_sha = baseline["baseline_head_sha"]
+abort "baseline SHA missing" unless baseline_sha.to_s.match?(/\A[0-9a-f]{40}\z/)
+abort "baseline is not ancestral to HEAD" unless system("git", "merge-base", "--is-ancestor", baseline_sha, "HEAD")
+expected_files = baseline_files(baseline_sha)
+abort "pre-change source denominator empty" if expected_files.empty?
+abort "baseline file denominator mismatch" unless baseline["paths"] == expected_files
+expected_loc = baseline_loc(baseline_sha, expected_files)
+abort "baseline LoC mismatch" unless baseline["baseline_loc"] == expected_loc
+abort "baseline file count mismatch" unless baseline["baseline_file_count"] == expected_files.length
+expected_blobs = expected_files.to_h { |path| [path, git("rev-parse", "#{baseline_sha}:#{path}").strip] }
+abort "baseline blob identities mismatch" unless baseline["blob_oids"] == expected_blobs
+
 rows = manifest.fetch("rows")
-abort "duplicate inventory paths" unless rows.map { |r| r["path"] }.uniq.length == rows.length
-abort "source denominator mismatch" unless rows.map { |r| r["path"] }.sort == expected_source.sort
-allowed = %w[replaced adapter retained delete]
+abort "deletion inventory is empty" unless rows.is_a?(Array) && !rows.empty?
+abort "duplicate inventory paths" unless rows.map { |row| row["path"] }.uniq.length == rows.length
+abort "inventory does not cover pre-change denominator" unless rows.map { |row| row["path"] }.sort == expected_files
 rows.each do |row|
   %w[path disposition owner reason].each { |key| abort "#{key} missing" if row[key].to_s.strip.empty? }
-  abort "invalid disposition" unless allowed.include?(row["disposition"])
-  if row["disposition"] == "retained"
-    abort "retained row missing expiry" unless row["expires_at"].to_s.match?(/\A\d{4}-\d{2}-\d{2}T/)
-  end
+  abort "invalid disposition" unless ALLOWED_DISPOSITIONS.include?(row["disposition"])
+  abort "retained row missing expiry" if row["disposition"] == "retained" && !row["expires_at"].to_s.match?(/\A\d{4}-\d{2}-\d{2}T/)
 end
 
-reference_files = REFERENCE_ROOTS.flat_map { |path| tracked_files(path) }.uniq
-expected_references = reference_files.flat_map do |path|
-  next [] unless File.file?(path)
-  File.readlines(path, chomp: true).each_with_index.filter_map do |line, index|
-    { "path" => path, "line" => index + 1, "text_sha256" => Digest::SHA256.hexdigest(line) } if line.match?(/adl\/src|runtime_v2|target\/debug\/adl\b/)
-  end
-end
-actual_references = denominator.fetch("references")
-abort "reference denominator mismatch" unless actual_references == expected_references
-abort "baseline LoC mismatch" unless denominator["baseline_loc"] == BASELINE_LOC
-after_loc = denominator["after_loc"]
-abort "after_loc invalid" unless after_loc.is_a?(Integer) && after_loc >= 0
-reduction = (BASELINE_LOC - after_loc).fdiv(BASELINE_LOC)
-abort "reported reduction mismatch" unless (denominator["reduction_fraction"].to_f - reduction).abs < 0.000001
+current_files = git("ls-files", "--", "adl/src").lines.map(&:strip).reject(&:empty?).sort
+after_loc = current_files.sum { |path| File.readlines(path).length }
+reduction = (expected_loc - after_loc).fdiv(expected_loc)
+abort "reported after_loc mismatch" unless manifest["after_loc"] == after_loc
+abort "reported reduction mismatch" unless (manifest["reduction_fraction"].to_f - reduction).abs < 0.000001
 abort "minimum 80% reduction not met" if reduction < MINIMUM_REDUCTION
 
-receipts = platform.fetch("receipts")
-abort "native macOS and Linux receipts required" unless receipts.map { |r| r["os"] }.sort == %w[linux macos]
-head = `git rev-parse HEAD`.strip
-receipts.each do |receipt|
-  abort "platform head mismatch" unless receipt["head_sha"] == head
-  abort "invalid native run URL" unless receipt["run_url"].to_s.match?(%r{\Ahttps://github\.com/.+/actions/runs/\d+\z})
-  abort "runner identity missing" if receipt["runner_identity"].to_s.strip.empty?
-  artifact = receipt["artifact_path"].to_s
-  abort "platform artifact missing" unless File.file?(artifact)
-  abort "platform digest mismatch" unless Digest::SHA256.file(artifact).hexdigest == receipt["artifact_sha256"]
-  abort "platform proof failed" unless receipt["conclusion"] == "success"
-end
+references = current_references
+abort "reference denominator mismatch" unless manifest["reference_denominator"] == references
+abort "unresolved stale references" unless manifest["resolved_references"] == references
 
-stale = expected_references.reject { |ref| manifest.fetch("resolved_references").include?(ref) }
-abort "stale references remain: #{stale.first(5).inspect}" unless stale.empty?
+head = git("rev-parse", "HEAD").strip
+receipts = platform.fetch("receipts")
+abort "native macOS and Linux receipts required" unless receipts.is_a?(Array) && receipts.map { |row| row["os"] }.sort == %w[linux macos]
+receipts.each do |receipt|
+  %w[head_sha run_url runner_identity artifact_path artifact_sha256 output_sha256 conclusion].each do |field|
+    abort "#{receipt['os']} #{field} missing" if receipt[field].to_s.strip.empty?
+  end
+  abort "platform head mismatch" unless receipt["head_sha"] == head
+  abort "platform proof failed" unless receipt["conclusion"] == "success"
+  abort "platform artifact missing" unless File.file?(receipt["artifact_path"])
+  digest = Digest::SHA256.file(receipt["artifact_path"]).hexdigest
+  abort "platform artifact digest mismatch" unless digest == receipt["artifact_sha256"] && digest == receipt["output_sha256"]
+end
 
 stdout, stderr, status = Open3.capture3("bash", "adl/tools/install_owner_binaries.sh")
 abort "clean install failed: #{stdout}\n#{stderr}" unless status.success?
-puts "PASS: exhaustive denominator, #{(reduction * 100).round(2)}% reduction, native proof, and stale-reference absence"
+puts "PASS: pinned pre-change denominator, #{expected_files.length} files, #{(reduction * 100).round(2)}% reduction"

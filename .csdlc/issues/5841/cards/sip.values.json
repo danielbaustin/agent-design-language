@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 14
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -16,9 +16,12 @@
       "goal": "Complete WP-21A: Rust refactoring and maintainability pass.",
       "required_outcome": "behavior-preserving simplification of active Rust ownership boundaries, duplication, and maintainability hotspots before review",
       "declared_scope": [
-        "Profile the exact post-WP-21 active Rust products and rank ownership, duplication, dependency-direction, size, and test hotspots",
-        "Refactor a small exact-file set under one declared owner without changing supported behavior or public contracts",
-        "Retain characterization, negative, before/after LoC, dependency, lint, test, platform, and review proof"
+        "adl-runtime-kernel/src/control.rs",
+        "adl-runtime-kernel/tests/control.rs",
+        "adl-runtime-kernel/src/observability.rs",
+        "adl-runtime-kernel/tests/observability.rs",
+        ".csdlc/evidence/5841",
+        ".csdlc/prepared/issues/5841/validate-refactor-selection.rb"
       ],
       "authority_boundary": [
         "Issue 5841 owns only WP-21A: Rust refactoring and maintainability pass",

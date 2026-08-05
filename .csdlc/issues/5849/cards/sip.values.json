@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-28] Next milestone planning",
     "slug": "v0-92-wp-28-next-milestone-planning",
     "version": "v0.92",
-    "generation": 12
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -16,9 +16,36 @@
       "goal": "Complete WP-28: Next milestone planning.",
       "required_outcome": "v0.93 handoff and downstream planning update",
       "declared_scope": [
-        "Map v0.93 prerequisites to exact landed v0.92 evidence, blockers, owned follow-ons, or non-claims after WP-27",
-        "Reconcile the candidate v0.93 README, WBS, features, wave YAML, checklist, demo, release, security, and governance boundaries",
-        "Publish a decision-ready handoff without issue creation or milestone activation"
+        ".csdlc/evidence/5849",
+        ".csdlc/prepared/issues/5849/validate-handoff.rb",
+        "docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md",
+        "docs/milestones/v0.93/CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md",
+        "docs/milestones/v0.93/DECISIONS_v0.93.md",
+        "docs/milestones/v0.93/DEMO_MATRIX_v0.93.md",
+        "docs/milestones/v0.93/DESIGN_v0.93.md",
+        "docs/milestones/v0.93/MILESTONE_CHECKLIST_v0.93.md",
+        "docs/milestones/v0.93/README.md",
+        "docs/milestones/v0.93/RED_BLUE_ADVERSARIAL_SECURITY_ISSUE_WAVE_v0.93.md",
+        "docs/milestones/v0.93/RELEASE_NOTES_v0.93.md",
+        "docs/milestones/v0.93/RELEASE_PLAN_v0.93.md",
+        "docs/milestones/v0.93/SPRINT_v0.93.md",
+        "docs/milestones/v0.93/VISION_v0.93.md",
+        "docs/milestones/v0.93/WBS_v0.93.md",
+        "docs/milestones/v0.93/WP_ISSUE_WAVE_v0.93.yaml",
+        "docs/milestones/v0.93/features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md",
+        "docs/milestones/v0.93/features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md",
+        "docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md",
+        "docs/milestones/v0.93/features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md",
+        "docs/milestones/v0.93/features/README.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S1_ZERO_TRUST_ARCHITECTURE_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S2_POLICY_ENFORCEMENT_AUTHORIZATION_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S3_SECRETS_KEYS_CRYPTOGRAPHIC_TRUST_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S4_AUDIT_COMPLIANCE_INCIDENT_EVIDENCE_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S5_ISOLATION_DATA_GOVERNANCE_PRIVACY_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S6_SECURITY_OPERATIONS_ADVERSARIAL_PROVENANCE_v0.93.md",
+        "docs/milestones/v0.93/features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md",
+        "docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md",
+        "docs/reviews/v0.92/next-milestone-planning-5849"
       ],
       "authority_boundary": [
         "Issue 5849 owns only WP-28: Next milestone planning",

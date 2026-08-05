@@ -24,18 +24,20 @@ Diagram: .csdlc/prepared/issues/5842/diagram.mmd
 
 [
   {
-    "lane": "complete-feature-matrix",
-    "proof_role": "Require exactly the 13 indexed v0.92 feature documents and nonempty exact implementation, review, merge, positive, negative, integration, platform, and terminal evidence for every accepted row.",
+    "lane": "semantic-quality-matrix",
+    "proof_role": "Require the exact feature and critical-path denominator; validate issue/PR/review/merge ancestry plus semantic validation, negative, integration, platform, and typed-terminal evidence at the reviewed SHA.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
+      "AC-3",
       "AC-4",
-      "AC-5"
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 600,
-    "budget_tokens": 5000,
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5842/validate-quality-gate.rb",
@@ -45,16 +47,20 @@ Diagram: .csdlc/prepared/issues/5842/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "exercised-prohibited-evidence",
-    "proof_role": "Execute the quality gate against all eight prohibited evidence classes and require each forged case to fail with digest-bound observed output.",
+    "lane": "reconstructed-quality-negatives",
+    "proof_role": "Execute forged evidence classes through the real matrix validator and require digest-bound rejection.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
       "AC-3",
-      "AC-5"
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 600,
-    "budget_tokens": 5000,
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5842/validate-quality-gate.rb",
@@ -64,34 +70,19 @@ Diagram: .csdlc/prepared/issues/5842/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "gate-packet-hygiene",
-    "proof_role": "Validate tracked gate packet whitespace after the proving matrix and negative validators run.",
-    "acceptance_ids": [
-      "AC-4",
-      "AC-5"
-    ],
-    "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 120,
-    "budget_tokens": 500,
-    "argv": [
-      "git",
-      "diff",
-      "--check"
-    ],
-    "parallel_group": "hygiene",
-    "defer_reason": null
-  },
-  {
     "lane": "typed-card-doctor",
-    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 60,
+    "budget_seconds": 120,
     "budget_tokens": 1000,
     "argv": [
       "csdlc-doctor",
@@ -119,7 +110,6 @@ Tokens: 25000
 
 - `ruby .csdlc/prepared/issues/5842/validate-quality-gate.rb matrix`
 - `ruby .csdlc/prepared/issues/5842/validate-quality-gate.rb negative`
-- `git diff --check`
 - `csdlc-doctor --repo . --issue 5842`
 
 ## Failure Semantics

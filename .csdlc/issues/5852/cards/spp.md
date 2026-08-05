@@ -16,7 +16,7 @@ Verify WP-29 and all terminal gates, assemble evidence-linked final release arti
 
 ## Plan
 
-Revision 5
+Revision 6
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 5
 
 .csdlc/prepared/issues/5852/design.md
 
-Digest: 1b7d9aad8a3a3bd3156964f210ae13c9d80fe55d63d0c33541471cf41d93d2cb
+Digest: 7d7fd77cd7abd13264c637b3af8ce76a6f4eeb23a64b2323d14e2efd444aa755
 
 ## Diagram
 

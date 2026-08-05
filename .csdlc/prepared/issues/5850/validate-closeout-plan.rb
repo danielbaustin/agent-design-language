@@ -34,11 +34,21 @@ def github_pr(number)
   JSON.parse(out)
 end
 
-def blocked?(row)
-  row["github_state"] != "CLOSED" || row["checks_state"] != "success" ||
-    row["review_state"] != "approved" || row["typed_phase"] != "closed_out" ||
-    row["receipt_state"] != "present" || row["claim_state"] != "released" ||
-    row["worktree_state"] == "dirty" || row["owner"].to_s.empty?
+def blocked_reasons(row, expected)
+  reasons = []
+  reasons << "unknown_issue" unless expected.include?(row["issue"])
+  reasons << "github_open" unless row["github_state"] == "CLOSED"
+  reasons << "stale_head" unless row["pr_head"] == row["target_sha"]
+  reasons << "red_checks" unless row["checks_state"] == "success"
+  reasons << "missing_review" unless row["review_state"] == "approved"
+  reasons << "typed_nonterminal" unless row["typed_phase"] == "closed_out"
+  reasons << "missing_receipt" unless row["receipt_state"] == "present"
+  reasons << "active_claim" unless row["claim_state"] == "released"
+  reasons << "dirty_worktree" if row["worktree_state"] == "dirty"
+  reasons << "partial_release" if row.key?("release_state") && row["release_state"] != "complete"
+  reasons << "duplicate_retry" if row["retry_state"] == "duplicate_mutation"
+  reasons << "unowned_action" if row["owner"].to_s.empty?
+  reasons
 end
 
 mode = ARGV.fetch(0, "universe")
@@ -72,7 +82,9 @@ when "universe"
     abort "##{issue} PR base mismatch" unless row["pr_base"] == pr["baseRefName"]
     abort "##{issue} PR head mismatch" unless row["pr_head"] == pr["headRefOid"]
     abort "##{issue} PR merge mismatch" unless row["pr_merge"] == pr.dig("mergeCommit", "oid")
-    live_checks = pr.fetch("statusCheckRollup").all? { |check| %w[SUCCESS SKIPPED NEUTRAL].include?(check["conclusion"]) } ? "success" : "not_green"
+    checks = pr.fetch("statusCheckRollup")
+    abort "##{issue} required check set is empty" unless checks.is_a?(Array) && !checks.empty?
+    live_checks = checks.all? { |check| %w[SUCCESS SKIPPED NEUTRAL].include?(check["conclusion"]) } ? "success" : "not_green"
     abort "##{issue} checks mismatch" unless row["checks_state"] == live_checks
     abort "##{issue} review mismatch" unless row["review_state"] == pr["reviewDecision"].to_s.downcase
     if row["worktree_path"]
@@ -82,7 +94,9 @@ when "universe"
       dirty = !status_out.strip.empty?
       abort "##{issue} worktree state mismatch" unless row["worktree_state"] == (dirty ? "dirty" : "clean")
     end
-    row.fetch("evidence").each do |ref|
+    evidence = row.fetch("evidence")
+    abort "##{issue} evidence set is empty" unless evidence.is_a?(Array) && !evidence.empty?
+    evidence.each do |ref|
       abort "##{issue} evidence missing" unless File.file?(ref["path"])
       abort "##{issue} evidence digest mismatch" unless Digest::SHA256.file(ref["path"]).hexdigest == ref["sha256"]
     end
@@ -108,23 +122,15 @@ when "negative"
   classes = %w[stale_head red_checks missing_review missing_receipt active_claim dirty_worktree partial_release duplicate_retry unknown_issue unowned_action].sort
   abort "negative class mismatch" unless packet.fetch("cases").map { |row| row["class"] }.sort == classes
   packet.fetch("cases").each do |row|
+    baseline = row.fetch("baseline_row")
     mutated = row.fetch("mutated_row")
     klass = row["class"]
-    explicit_failure = case klass
-                       when "stale_head" then mutated["pr_head"] != mutated["target_sha"]
-                       when "red_checks" then mutated["checks_state"] != "success"
-                       when "missing_review" then mutated["review_state"] != "approved"
-                       when "missing_receipt" then mutated["receipt_state"] != "present"
-                       when "active_claim" then mutated["claim_state"] == "active"
-                       when "dirty_worktree" then mutated["worktree_state"] == "dirty"
-                       when "partial_release" then mutated["release_state"] != "complete"
-                       when "duplicate_retry" then mutated["retry_state"] == "duplicate_mutation"
-                       when "unknown_issue" then !expected_issues.include?(mutated["issue"])
-                       when "unowned_action" then mutated["owner"].to_s.empty?
-                       else false
-                       end
-    abort "negative fixture does not exercise #{klass}" unless explicit_failure
-    abort "negative fixture must be blocked" unless blocked?(mutated) || explicit_failure
+    abort "negative baseline is not accepted" unless blocked_reasons(baseline, expected_issues).empty?
+    changed = (baseline.keys | mutated.keys).select { |key| baseline[key] != mutated[key] }
+    abort "negative fixture must mutate exactly one declared field" unless changed == [row.fetch("mutated_field")]
+    reasons = blocked_reasons(mutated, expected_issues)
+    abort "negative fixture did not reconstruct #{klass}: #{reasons.inspect}" unless reasons.include?(klass)
+    abort "negative fixture produced undeclared blockers: #{reasons.inspect}" unless reasons == [klass]
   end
 else
   abort "usage: #{$PROGRAM_NAME} universe|dag|negative"

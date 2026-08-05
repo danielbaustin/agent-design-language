@@ -24,17 +24,20 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
 
 [
   {
-    "lane": "derived-terminal-universe",
-    "proof_role": "Derive the expected v0.92 issue universe from canonical wave authority and compare every row with live GitHub, typed phase, receipt, claim, and registered-worktree truth.",
+    "lane": "live-closeout-universe",
+    "proof_role": "Rebuild the full issue denominator and reconcile nonempty live GitHub checks/reviews/PR identity with typed phase, SOR, receipt, claim, worktree, and evidence truth.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-3"
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "budget_seconds": 360,
+    "budget_tokens": 3500,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
@@ -44,15 +47,20 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "derived-closeout-dag",
-    "proof_role": "Reconstruct and topologically validate the exact finish, claim release, cleanup, WP-29, WP-30, umbrella-closeout, and v0.93-acceptance sequence.",
+    "lane": "closeout-dag",
+    "proof_role": "Require the complete issue and ceremony node universe and prove the closeout DAG is acyclic.",
     "acceptance_ids": [
-      "AC-4"
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 240,
-    "budget_tokens": 1800,
+    "budget_seconds": 180,
+    "budget_tokens": 1200,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
@@ -62,15 +70,20 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "exercised-terminal-negatives",
-    "proof_role": "Mutate the derived row contract for every stale, red, missing-review/receipt, active-claim, dirty, partial, duplicate, unknown, and unowned case and require the gate to block.",
+    "lane": "reconstructed-closeout-negatives",
+    "proof_role": "Start from accepted rows, mutate exactly one declared field, and require the real classifier to produce exactly the expected blocker.",
     "acceptance_ids": [
-      "AC-5"
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 240,
-    "budget_tokens": 1800,
+    "resource_profile": "medium",
+    "budget_seconds": 360,
+    "budget_tokens": 3500,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5850/validate-closeout-plan.rb",
@@ -81,14 +94,18 @@ Diagram: .csdlc/prepared/issues/5850/diagram.mmd
   },
   {
     "lane": "typed-card-doctor",
-    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+    "proof_role": "Validate the exact six-card bundle and design approval.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 60,
+    "budget_seconds": 120,
     "budget_tokens": 1000,
     "argv": [
       "csdlc-doctor",

@@ -25,6 +25,13 @@ EXPECTED_FEATURES = %w[
 ].sort.freeze
 EXPECTED_CRITICAL = %w[WP-04 WP-05 WP-06 WP-07 WP-13A WP-20 WP-21 WP-21A].sort.freeze
 EVIDENCE_FIELDS = %w[validation negative integration platform terminal].freeze
+EVIDENCE_KIND = {
+  "validation" => "validation_result",
+  "negative" => "negative_result",
+  "integration" => "integration_result",
+  "platform" => "platform_result",
+  "terminal" => "terminal_result"
+}.freeze
 
 def present?(value)
   value.is_a?(String) && !value.strip.empty?
@@ -42,13 +49,36 @@ def github_pr(number)
   JSON.parse(out)
 end
 
-def verify_evidence_ref(ref)
+def verify_evidence_ref(ref, row, field, gate_sha)
   abort "evidence ref must contain path and sha256" unless ref.is_a?(Hash)
   path = ref["path"]
   digest = ref["sha256"]
   abort "evidence path missing" unless present?(path) && File.file?(path)
   abort "evidence digest malformed" unless digest.to_s.match?(/\A[0-9a-f]{64}\z/)
   abort "evidence digest mismatch for #{path}" unless Digest::SHA256.file(path).hexdigest == digest
+  evidence = JSON.parse(File.read(path))
+  abort "#{field} schema mismatch" unless evidence["schema"] == EVIDENCE_KIND.fetch(field)
+  abort "#{field} issue identity mismatch" unless evidence["issue"] == Integer(row["owner_issue"])
+  abort "#{field} PR identity mismatch" unless evidence["pr"] == Integer(row["pr"])
+  abort "#{field} reviewed SHA mismatch" unless evidence["reviewed_sha"] == row["reviewed_head"]
+  abort "#{field} result did not pass" unless evidence["result"] == "passed"
+  abort "#{field} produced after gate SHA" unless system("git", "merge-base", "--is-ancestor", evidence["reviewed_sha"], gate_sha)
+  case field
+  when "validation", "negative"
+    abort "#{field} commands empty" unless evidence["commands"].is_a?(Array) && !evidence["commands"].empty?
+    abort "#{field} contains nonzero exit" unless evidence["commands"].all? { |command| command["exit_code"] == 0 && present?(command["output_sha256"]) }
+  when "integration"
+    abort "integration merge mismatch" unless evidence["merge_sha"] == row["merge_sha"]
+    abort "integration ancestry not proved" unless evidence["ancestral_to_gate"] == true
+  when "platform"
+    platforms = evidence["platforms"]
+    abort "platform universe must be native macOS and Linux" unless platforms.is_a?(Array) && platforms.map { |item| item["os"] }.sort == %w[linux macos]
+    abort "platform run failed or unbound" unless platforms.all? { |item| item["conclusion"] == "success" && item["head_sha"] == row["reviewed_head"] && present?(item["run_url"]) }
+  when "terminal"
+    abort "terminal phase not closed_out" unless evidence["phase"] == "closed_out"
+    abort "terminal claim remains active" unless evidence["claim_released"] == true
+    abort "terminal receipt missing" unless present?(evidence["receipt_sha256"])
+  end
 end
 
 mode = ARGV.fetch(0)
@@ -71,7 +101,7 @@ when "matrix"
     paths = row["implementation_paths"]
     abort "#{row['id']} implementation paths missing" unless paths.is_a?(Array) && !paths.empty?
     paths.each { |path| abort "#{row['id']} missing implementation path #{path}" unless File.exist?(path) }
-    EVIDENCE_FIELDS.each { |field| verify_evidence_ref(row.fetch("#{field}_evidence")) }
+    EVIDENCE_FIELDS.each { |field| verify_evidence_ref(row.fetch("#{field}_evidence"), row, field, packet["gate_sha"]) }
     abort "#{row['id']} not accepted" unless row["disposition"] == "accepted"
 
     pr = github_pr(Integer(row["pr"].to_s, 10))

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "da578c6c105b85e210fbcf4ebd934b66822520f26992d895eabfe5df54c3bfdf",
   "phase": "bound",
-  "generation": 12,
-  "digest": "9399efdb4c63188d4dc4f6a5130dc2d3d2629a088ad2d2c510c36f89c1c48341",
+  "generation": 19,
+  "digest": "1c00b81c8ab29ecfcdcefd5bc71c97ebad5e23dea557a0d60d4865b7bb7a0363",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5843/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "df65cd33fb590ad53114ea67e65143866b543df1051bdc091438abad53636205"
+      "reviewer": "codex:5860-quality-release-exact-repair-final-design-review",
+      "revision": "7621cd6d9d3ca92ac64b188126a1d8bedefd3a5fa20982471377c27d34904a7b"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "591c049d3326e903b2020712e582ce6d0b35cfaeda40e63a4b4f43e18ce50ebe",
-      "rendered_digest": "03024c54f266c2b458d4f1a8e3bbacfafefaa5647acd0d3448ea9cb09d5a7323",
-      "ast_digest": "0752397bde852ed11ec71927429e053ac275ac5414fde4a4e39b80d7a3e79557"
+      "values_digest": "cf212d56ff02177f0e484c6553e344efcb4ee8892f9119c47c704900cc3123d4",
+      "rendered_digest": "0d38f53c88fd73889ccd81e5ae648210dc56745c38698ce1dac04da95eff590e",
+      "ast_digest": "270c69998937df9a754962b6fc95d7bf5b103abe3f72c8918d0d11454b3e01ff"
     },
     "stp": {
-      "values_digest": "56413161d286826865ff8007bd19ed78cbd4090f0aba78c82d039ffc1130d156",
+      "values_digest": "496c8e026da2a7c76bcd33f5c569248d3785e9ff2e7fd9009c4cb7b4ac04f080",
       "rendered_digest": "7c35f2fd05f7c25e1c723c89baedd954134138134fb23003aba39b806a1eff37",
       "ast_digest": "8767e9d021cfd67b581b13f29e8d9ffbfc3edb69169a3a35aad9591d3ed6b9d5"
     },
     "spp": {
-      "values_digest": "7a3fb7b050ab582e62f22fb400cbdd83f8ac4d0db4643041f91705ee27a9f461",
-      "rendered_digest": "7349b012c6133924492cef9ab67c1de46f8051656c3ccc646562796d24b824e1",
-      "ast_digest": "4b6471e00b863c5c9762bd655d54253a60ce3d3b15541532c2602e1128d56a54"
+      "values_digest": "d22de30a46d6a3c20fc1175d251a65015d07033279751f58f6eb05f2505aeeaf",
+      "rendered_digest": "b5ff0b32c63abb38446f6169b36c7718e627ac2065fd38dfb876893eda826c98",
+      "ast_digest": "4255631cd1d99f9b03e13b1316df367bfb6448d83abf855a5e3a3f9b2d2565da"
     },
     "vpp": {
-      "values_digest": "31325d667e9b2b8c2d45631b956aa05c81882c6dc2752afdf5cab0f373cc7c74",
-      "rendered_digest": "de0b37fa8bfa32ad69510534ce2a29488895f5dd3681a70dd7e0409a0da49fbe",
-      "ast_digest": "d36a14864b100ffd2d23f33f52ef6840eb87627604be60af79485c711d1e4e8c"
+      "values_digest": "937e6e2d791a97b72ac20262718b5cf97ba2ff8d44d7e260e74a8684d24b4af4",
+      "rendered_digest": "43722b0aa247484db694781228e7adcdfc688c038b8e2351d9b50e1e4c5399ff",
+      "ast_digest": "828280b3e05200a295c573e82ed62406cf8e18fcd1a4b7c6c9c37827b7dcb076"
     },
     "srp": {
-      "values_digest": "6e3aeb0c73f877808421c44f24c208be4e6feab117351bf5397fda56df1634bc",
+      "values_digest": "13a5335473a0cb5c8eac00ceb426a2a758f80a99e8f2547fa633f6a0c39ab9d6",
       "rendered_digest": "9ae9ec9e6e64bf8f4cd69d23bd02e821b0bdd3bffbb8926012f18a4787323ef0",
       "ast_digest": "e6c7d85619558101f14105dac96b0ddcf353619e85c4b0e9827ff2b9d5ebd112"
     },
     "sor": {
-      "values_digest": "a82111301afa536979228f4bb5f4172587c4834fe1f0278d35bd686870574da9",
+      "values_digest": "f7de1a5e881d6a1f37844c1a2972da0482f340290418991d7e5873ab5da8d033",
       "rendered_digest": "60299cdb28e592b506644371df86ad1010373fb106ea516fd1e5fa51e5b17946",
       "ast_digest": "c95fded9e9da5c512edbb9c2b414cf8971943b21e00392e269c15241a1e272a5"
     }
@@ -216,6 +216,69 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5843-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 12,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Acquire bounded preparation claim for exact-head quality/release readiness repair of issue 5843; no product implementation or aggregate mutation.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-exact-repair\",\"claim_id\":\"claim-5843-v092-quality-release-exact-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-exact-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5843\",\".csdlc/issues/5843\",\".csdlc/locks/5843.lock\",\".csdlc/prepared/issues/5843\"],\"purpose\":\"Repair issue 5843 design, exact ownership, and issue-local proving validator only; no product implementation, #5860 aggregate surfaces, #5861, GitHub bodies, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 13,
+      "actor": "codex:5860-quality-release-exact-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 24,
+      "generation": 14,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Project the complete exact writable universe for issue 5843 into SIP.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\".csdlc/evidence/5843/\",\".csdlc/prepared/issues/5843/validate-doc-release-truth.rb\",\"AGENTS.md\",\"CHANGELOG.md\",\"README.md\",\"REVIEW.md\",\"csdlc-v2/AGENTS.md\",\"csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md\",\"docs/README.md\",\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\",\"docs/milestones/v0.92/DECISIONS_v0.92.md\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/DESIGN_v0.92.md\",\"docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md\",\"docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\",\"docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md\",\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\",\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/QUALITY_GATE_v0.92.md\",\"docs/milestones/v0.92/README.md\",\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\",\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.92/V092_DOCS_PREP_DOGFOOD_NOTES.md\",\"docs/milestones/v0.92/VISION_v0.92.md\",\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md\",\"docs/milestones/v0.92/external_launch/README.md\",\"docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md\",\"docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md\",\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\"docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md\",\"docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md\",\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md\",\"docs/milestones/v0.92/features/OBSERVATORY_UNITY_CONSUMER_INTEGRATION_v0.92.md\",\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\",\"docs/milestones/v0.92/features/README.md\",\"docs/milestones/v0.92/features/RUNTIME_LAUNCH_AND_RESILIENCE_v0.92.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"docs/reviews/v0.92/docs-release-truth-5843/\"]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 15,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Project the complete exact writable universe for issue 5843 into SPP.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\".csdlc/evidence/5843/\",\".csdlc/prepared/issues/5843/validate-doc-release-truth.rb\",\"AGENTS.md\",\"CHANGELOG.md\",\"README.md\",\"REVIEW.md\",\"csdlc-v2/AGENTS.md\",\"csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md\",\"docs/README.md\",\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\",\"docs/milestones/v0.92/DECISIONS_v0.92.md\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/DESIGN_v0.92.md\",\"docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md\",\"docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\",\"docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md\",\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\",\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/QUALITY_GATE_v0.92.md\",\"docs/milestones/v0.92/README.md\",\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\",\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.92/V092_DOCS_PREP_DOGFOOD_NOTES.md\",\"docs/milestones/v0.92/VISION_v0.92.md\",\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md\",\"docs/milestones/v0.92/external_launch/README.md\",\"docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md\",\"docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md\",\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\"docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md\",\"docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md\",\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md\",\"docs/milestones/v0.92/features/OBSERVATORY_UNITY_CONSUMER_INTEGRATION_v0.92.md\",\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\",\"docs/milestones/v0.92/features/README.md\",\"docs/milestones/v0.92/features/RUNTIME_LAUNCH_AND_RESILIENCE_v0.92.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"docs/reviews/v0.92/docs-release-truth-5843/\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 16,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Replace incomplete or self-attested readiness proof with issue-local reconstructed and exact-head validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"complete-doc-release-universe\",\"proof_role\":\"Reconstruct every tracked changelog, feature, ADR, release, skill, guidance, external-launch, and v0.92 milestone surface; require evidence-bound rows, parsing, links, command output, version ownership, and redaction.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5843/validate-doc-release-truth.rb\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5843\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 27,
+      "generation": 17,
+      "actor": "codex:5860-quality-release-exact-repair-final-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 28,
+      "generation": 18,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Mirror the final exact Owned Paths into SIP after design approval.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\".csdlc/evidence/5843\",\".csdlc/prepared/issues/5843/validate-doc-release-truth.rb\",\"AGENTS.md\",\"CHANGELOG.md\",\"README.md\",\"REVIEW.md\",\"csdlc-v2/AGENTS.md\",\"csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md\",\"docs/README.md\",\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\",\"docs/milestones/v0.92/DECISIONS_v0.92.md\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/DESIGN_v0.92.md\",\"docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md\",\"docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\",\"docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md\",\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\",\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/QUALITY_GATE_v0.92.md\",\"docs/milestones/v0.92/README.md\",\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\",\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.92/V092_DOCS_PREP_DOGFOOD_NOTES.md\",\"docs/milestones/v0.92/VISION_v0.92.md\",\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md\",\"docs/milestones/v0.92/external_launch/README.md\",\"docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md\",\"docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md\",\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\"docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md\",\"docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md\",\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md\",\"docs/milestones/v0.92/features/OBSERVATORY_UNITY_CONSUMER_INTEGRATION_v0.92.md\",\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\",\"docs/milestones/v0.92/features/README.md\",\"docs/milestones/v0.92/features/RUNTIME_LAUNCH_AND_RESILIENCE_v0.92.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"docs/reviews/v0.92/docs-release-truth-5843\"]}"
+    },
+    {
+      "sequence": 29,
+      "generation": 19,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Mirror the final exact Owned Paths and serialization gates into SPP after design approval.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\".csdlc/evidence/5843\",\".csdlc/prepared/issues/5843/validate-doc-release-truth.rb\",\"AGENTS.md\",\"CHANGELOG.md\",\"README.md\",\"REVIEW.md\",\"csdlc-v2/AGENTS.md\",\"csdlc-v2/operator/skills/csdlc-v2-bind/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-card-editor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-clean/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-doctor/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-finish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-init/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-publish/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-review/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-shepherd/SKILL.md\",\"csdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md\",\"docs/README.md\",\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\",\"docs/milestones/v0.92/DECISIONS_v0.92.md\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/DESIGN_v0.92.md\",\"docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md\",\"docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\",\"docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md\",\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\",\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/QUALITY_GATE_v0.92.md\",\"docs/milestones/v0.92/README.md\",\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\",\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.92/V092_DOCS_PREP_DOGFOOD_NOTES.md\",\"docs/milestones/v0.92/VISION_v0.92.md\",\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md\",\"docs/milestones/v0.92/external_launch/README.md\",\"docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md\",\"docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md\",\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\"docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md\",\"docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md\",\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md\",\"docs/milestones/v0.92/features/OBSERVATORY_UNITY_CONSUMER_INTEGRATION_v0.92.md\",\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\",\"docs/milestones/v0.92/features/README.md\",\"docs/milestones/v0.92/features/RUNTIME_LAUNCH_AND_RESILIENCE_v0.92.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"docs/reviews/v0.92/docs-release-truth-5843\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-docs-activation-final-truth-v1\\\",\\\"paths\\\":[\\\"README.md\\\",\\\"docs/README.md\\\",\\\"docs/planning/ADL_FEATURE_LIST.md\\\",\\\"AGENTS.md\\\",\\\"REVIEW.md\\\"],\\\"issues\\\":[5818,5843],\\\"order\\\":[5818,5843]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-quality-gate-to-doc-truth-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/QUALITY_GATE_v0.92.md\\\",\\\"docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md\\\"],\\\"issues\\\":[5842,5843],\\\"order\\\":[5842,5843]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-doc-truth-to-handoff-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\\\"],\\\"issues\\\":[5843,5849],\\\"order\\\":[5843,5849]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-doc-truth-to-release-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\\\",\\\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\\\",\\\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\\\"],\\\"issues\\\":[5843,5852],\\\"order\\\":[5843,5852]}\"]}"
+    },
+    {
+      "sequence": 30,
+      "generation": 19,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Release bounded readiness-repair preparation claim after typed rendering, design approval, and focused validation.",
+      "operation": "{\"claim_id\":\"claim-5843-v092-quality-release-exact-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-exact-repair-completion\",\"previous_owner\":\"codex:5860-quality-release-exact-repair\"}"
     }
   ]
 }

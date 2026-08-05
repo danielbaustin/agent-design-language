@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 14
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -16,53 +16,41 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "selected-owner-proof",
-          "proof_role": "Read the exact post-WP-21 selection, execute tests, strict Clippy, and formatting checks for every selected active owner, verify before/after metrics, and require digest-bound native macOS and Linux evidence at the same target SHA.",
+          "lane": "exact-source-refactor-proof",
+          "proof_role": "Restrict edits to the declared control and observability source/tests, require behavior invariants and rollback, run focused tests plus strict fmt/clippy, reject LoC/duplication regression, and bind native macOS/Linux proof to HEAD.",
           "acceptance_ids": [
+            "AC-1",
             "AC-2",
             "AC-3",
             "AC-4",
-            "AC-5"
+            "AC-5",
+            "AC-6"
           ],
           "deterministic": true,
           "resource_profile": "medium",
           "budget_seconds": 1800,
-          "budget_tokens": 10000,
+          "budget_tokens": 9000,
           "argv": [
             "ruby",
             ".csdlc/prepared/issues/5841/validate-refactor-selection.rb"
           ],
-          "parallel_group": "parity",
-          "defer_reason": null
-        },
-        {
-          "lane": "format-and-diff",
-          "proof_role": "Reject patch whitespace defects after the selected-owner validator proves formatting for every touched workspace.",
-          "acceptance_ids": [
-            "AC-5"
-          ],
-          "deterministic": true,
-          "resource_profile": "small",
-          "budget_seconds": 120,
-          "budget_tokens": 500,
-          "argv": [
-            "git",
-            "diff",
-            "--check"
-          ],
-          "parallel_group": "hygiene",
+          "parallel_group": "refactor",
           "defer_reason": null
         },
         {
           "lane": "typed-card-doctor",
-          "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+          "proof_role": "Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.",
           "acceptance_ids": [
             "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 60,
+          "budget_seconds": 120,
           "budget_tokens": 1000,
           "argv": [
             "csdlc-doctor",
@@ -79,7 +67,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5841/design.md",
-      "design_digest": "08937231b83df57d1d77e4dc0adea8f244698e8b2a089ac5b83a084545c02bf6",
+      "design_digest": "7fc254a91189e99e04efde4f73dfc4e889d91110899e2bf5703fde2d7042e1ba",
       "diagram_ref": ".csdlc/prepared/issues/5841/diagram.mmd",
       "diagram_digest": "b4df00a4d3d743cffd8848bba7bb5c20d5b4d4641915587f6a72b37044e3c611"
     }

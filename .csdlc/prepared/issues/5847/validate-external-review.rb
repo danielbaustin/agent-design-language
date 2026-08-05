@@ -26,6 +26,25 @@ if mode == "report"
   abort "reviewer report digest mismatch" unless Digest::SHA256.file(index["report_path"]).hexdigest == index["report_sha256"]
   abort "findings array missing" unless index["findings"].is_a?(Array)
   abort "unindexed finding" unless index["source_count"].is_a?(Integer) && index["source_count"] == index["findings"].length
+  abort "external reviewer authority missing" unless index["reviewer_authority"].is_a?(String) && !index["reviewer_authority"].strip.empty?
+  required = %w[id severity evidence invariant reproduction_or_proof_gap recommendation owner disposition]
+  allowed_severity = %w[P0 P1 P2 P3]
+  allowed_disposition = %w[open disputed accepted_risk duplicate resolved]
+  ids = index["findings"].map { |finding| finding["id"] }
+  abort "duplicate finding IDs" unless ids.uniq.length == ids.length
+  index["findings"].each do |finding|
+    abort "finding schema incomplete" unless required.all? { |field| finding[field].is_a?(String) && !finding[field].strip.empty? }
+    abort "invalid severity" unless allowed_severity.include?(finding["severity"])
+    abort "invalid disposition" unless allowed_disposition.include?(finding["disposition"])
+    evidence_path = finding["evidence"].split(":", 2).first
+    abort "finding evidence path missing" unless File.exist?(evidence_path)
+    if finding["disposition"] == "accepted_risk"
+      abort "accepted risk lacks operator authority" unless finding["authority"].to_s.start_with?("operator:")
+    end
+    if finding["disposition"] == "duplicate"
+      abort "duplicate target missing" unless ids.include?(finding["duplicate_of"])
+    end
+  end
 elsif mode != "packet"
   abort "usage: #{$PROGRAM_NAME} packet|report [review-root]"
 end

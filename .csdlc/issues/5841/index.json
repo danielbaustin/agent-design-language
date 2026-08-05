@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1c9f6bcd6c882965b4f63206e47bd8f0328eda71e430debcb67eb87b11bcf889",
   "phase": "bound",
-  "generation": 14,
-  "digest": "342395a4bfc11c939218b6fe8a8e3c37a77f11a9c3c8d44969a45b00f7813e84",
+  "generation": 21,
+  "digest": "22714741bb3a0dc57a1e8d9d06d771cf8becd0cc8999044c4990107d66312850",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5841/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "08937231b83df57d1d77e4dc0adea8f244698e8b2a089ac5b83a084545c02bf6"
+      "reviewer": "codex:5860-quality-release-exact-repair-final-design-review",
+      "revision": "7fc254a91189e99e04efde4f73dfc4e889d91110899e2bf5703fde2d7042e1ba"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "87c10859772be8f85ebbc4dd8cf54936b8cdeb7d07a34964e58eb8e46caf6ccf",
-      "rendered_digest": "a4b5991aeb32bf769372931275cac014d70bef5823c2870dbc253c34a04cc7e9",
-      "ast_digest": "bef612f877177d3ba8340e98db65414bd62eccd3e3721341b88573402c322268"
+      "values_digest": "fdb2d5e354070c0d9691a65b9b8c487a15da12fea92be5eb3510331bea090bab",
+      "rendered_digest": "dc39caaac28c73e7438845dc206bcfdeb32e57941b3ffbcefca4c98312944ad1",
+      "ast_digest": "6112cba591864eabbc4e23ce52900dc01b601461d62897c1560e77dce39fdd40"
     },
     "stp": {
-      "values_digest": "6eae660e77e346e305640df42f0ddfc2d2af0d913451b65b42da8e953c425a7c",
+      "values_digest": "6cb2b8ca666d17b6c7f44eecf3ca1753e12f9d4cac74d58de39a6201a24aaabe",
       "rendered_digest": "791664dcb33d545ae82bc73b01ad27cea9bb8014e9fd00b2faa45487136ae351",
       "ast_digest": "ec7ab9c83dd7f77f754fc85a743ddb862a766bba90d90ff62785c4d524b7532d"
     },
     "spp": {
-      "values_digest": "0d9aa0b38646fecaf9bd1c363964c9cd5048ab6d7a97317226fc0fd6749eec52",
-      "rendered_digest": "f1c51bbcb771c1b8425aadb5c0742673048d309c34a266f49a0dffed53d447aa",
-      "ast_digest": "9f26a980933f025f0fcff300d397bead679afaabb4110f47ee3b54081594acec"
+      "values_digest": "d3ddf3199daff17153cf943f3e2d0f9463036555f97c5ef70a832443e35b3c96",
+      "rendered_digest": "980982e3ecefb4ff90e44d5a11d4d75190dacb3c782c7f1aa27d821435d901d4",
+      "ast_digest": "fbd3cc74bbce2f7d49f12b18f73d570f0ef551b97c9eeb324051cb78d619b790"
     },
     "vpp": {
-      "values_digest": "e816899eb87e370c1ff8687f9b607b503a29b3ee58bb303b2fff503d5f3a6313",
-      "rendered_digest": "0af8b21657de00776ebd07dfa27b1514d65e084e4c0b75840769502223f75319",
-      "ast_digest": "b2d3a60e3a6435e138edc4bbf40d9ed9a1c78edc2621e052e91eb2d32e8ccecd"
+      "values_digest": "af82fe29a6ea98b68bdb6dd3bcb21f7af5885e9f0e553c52207023ab905b54ee",
+      "rendered_digest": "70dd7077785bd5cf75ad532d3fc7a9f66f6b0c36a938160dbfd591511cdc4250",
+      "ast_digest": "0418bce264eae706fc18e0879a1fa46b25a452a09feb60367008c2cb57227857"
     },
     "srp": {
-      "values_digest": "79df11d988ab32ca629f294359c4e3d7e563fe2ea783070fbc1c6daf5be5ae79",
+      "values_digest": "1f6849c80f4e4970a5b0cf8f983cf16b7c8df20e8ddf66cd09870e79a6bc4a80",
       "rendered_digest": "168063f7084fabb4b85232a6984b65c5c9c6847542f523e4332c1e923ba9b929",
       "ast_digest": "3df962446f93ea2eb17b19a4103e5d1740e19bbc21b597477a9cd3b0e98f1e7a"
     },
     "sor": {
-      "values_digest": "523c15d9ef60f79fe2f5da1620547d7f91afc61bb4591c16b66c58d1f65c518a",
+      "values_digest": "65dfb675114d3a48e3555ae8ce373bd5bfbdcc27852e0a9157085417ba584df8",
       "rendered_digest": "b149f4e119ec86b9a5b8d437406e06aaf915a40c49f81056d89cc297486e836c",
       "ast_digest": "3d8ab8e31f9073b645cc9bc1c2899591663bd3f328b2565bac43aec80b91e8ec"
     }
@@ -244,6 +244,69 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5841-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 14,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Acquire bounded preparation claim for exact-head quality/release readiness repair of issue 5841; no product implementation or aggregate mutation.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-exact-repair\",\"claim_id\":\"claim-5841-v092-quality-release-exact-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-exact-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5841\",\".csdlc/issues/5841\",\".csdlc/locks/5841.lock\",\".csdlc/prepared/issues/5841\"],\"purpose\":\"Repair issue 5841 design, exact ownership, and issue-local proving validator only; no product implementation, #5860 aggregate surfaces, #5861, GitHub bodies, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 15,
+      "actor": "codex:5860-quality-release-exact-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 28,
+      "generation": 16,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Project the complete exact writable universe for issue 5841 into SIP.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/src/observability.rs\",\"adl-runtime-kernel/tests/observability.rs\",\".csdlc/evidence/5841/\",\".csdlc/prepared/issues/5841/validate-refactor-selection.rb\"]}"
+    },
+    {
+      "sequence": 29,
+      "generation": 17,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Project the complete exact writable universe for issue 5841 into SPP.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/src/observability.rs\",\"adl-runtime-kernel/tests/observability.rs\",\".csdlc/evidence/5841/\",\".csdlc/prepared/issues/5841/validate-refactor-selection.rb\"]}"
+    },
+    {
+      "sequence": 30,
+      "generation": 18,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Replace incomplete or self-attested readiness proof with issue-local reconstructed and exact-head validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"exact-source-refactor-proof\",\"proof_role\":\"Restrict edits to the declared control and observability source/tests, require behavior invariants and rollback, run focused tests plus strict fmt/clippy, reject LoC/duplication regression, and bind native macOS/Linux proof to HEAD.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":9000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5841/validate-refactor-selection.rb\"],\"parallel_group\":\"refactor\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5841\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 19,
+      "actor": "codex:5860-quality-release-exact-repair-final-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 32,
+      "generation": 20,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Mirror the final exact Owned Paths into SIP after design approval.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/src/observability.rs\",\"adl-runtime-kernel/tests/observability.rs\",\".csdlc/evidence/5841\",\".csdlc/prepared/issues/5841/validate-refactor-selection.rb\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 21,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Mirror the final exact Owned Paths and serialization gates into SPP after design approval.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/src/observability.rs\",\"adl-runtime-kernel/tests/observability.rs\",\".csdlc/evidence/5841\",\".csdlc/prepared/issues/5841/validate-refactor-selection.rb\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 21,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Release bounded readiness-repair preparation claim after typed rendering, design approval, and focused validation.",
+      "operation": "{\"claim_id\":\"claim-5841-v092-quality-release-exact-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-exact-repair-completion\",\"previous_owner\":\"codex:5860-quality-release-exact-repair\"}"
     }
   ]
 }

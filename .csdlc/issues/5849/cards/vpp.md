@@ -24,19 +24,20 @@ Diagram: .csdlc/prepared/issues/5849/diagram.mmd
 
 [
   {
-    "lane": "derived-handoff-proof",
-    "proof_role": "Read live WP-27 and typed terminal truth, derive the complete tracked v0.93 candidate corpus, verify every evidence digest and owner/acceptance hook, and reject activation, implementation, legal, production-authority, or certification overclaims.",
+    "lane": "complete-v093-handoff",
+    "proof_role": "Read live WP-27 terminal truth, reconstruct every tracked v0.93 candidate document, require evidence, owner, acceptance, and disposition for every row, and reject activation/legal/certification overclaims.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
-      "AC-5"
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "budget_seconds": 900,
+    "budget_tokens": 8000,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5849/validate-handoff.rb"
@@ -46,14 +47,18 @@ Diagram: .csdlc/prepared/issues/5849/diagram.mmd
   },
   {
     "lane": "typed-card-doctor",
-    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+    "proof_role": "Validate the exact six-card bundle and design approval.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 60,
+    "budget_seconds": 120,
     "budget_tokens": 1000,
     "argv": [
       "csdlc-doctor",

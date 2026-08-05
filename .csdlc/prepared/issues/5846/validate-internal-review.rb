@@ -7,7 +7,9 @@ require "json"
 root = ARGV.fetch(0, "docs/reviews/v0.92/internal-review-5846")
 manifest = JSON.parse(File.read(File.join(root, "packet-manifest.json")))
 findings = JSON.parse(File.read(File.join(root, "findings.json")))
-required_roster = %w[architecture code dependencies docs security tests].sort
+required_roster = %w[
+  architecture code dependencies docs security tests lifecycle demos release_publication
+].sort
 
 abort "target SHA missing" unless manifest["target_sha"].is_a?(String) && manifest["target_sha"].match?(/\A[0-9a-f]{40}\z/)
 paths = manifest["paths"]
@@ -33,7 +35,27 @@ end
 all_findings = findings["findings"]
 abort "findings array missing" unless all_findings.is_a?(Array)
 abort "specialist counts do not reconcile" unless reports.sum { |row| row["finding_count"] } == all_findings.length
-required = %w[id severity evidence invariant owner disposition source_lane]
-abort "bad finding" unless all_findings.all? { |row| required.all? { |key| row[key].is_a?(String) && !row[key].strip.empty? } }
+required = %w[id severity evidence invariant reproduction_or_proof_gap recommendation owner disposition source_lane]
+allowed_severity = %w[P0 P1 P2 P3].freeze
+allowed_disposition = %w[open disputed accepted_risk duplicate resolved].freeze
+ids = all_findings.map { |row| row["id"] }
+abort "duplicate finding IDs" unless ids.uniq.length == ids.length
+all_findings.each do |row|
+  abort "bad finding" unless required.all? { |key| row[key].is_a?(String) && !row[key].strip.empty? }
+  abort "invalid severity" unless allowed_severity.include?(row["severity"])
+  abort "invalid disposition" unless allowed_disposition.include?(row["disposition"])
+  evidence_path = row["evidence"].split(":", 2).first
+  abort "finding evidence path missing" unless File.exist?(evidence_path)
+  abort "accepted risk lacks authority" if row["disposition"] == "accepted_risk" && row["authority"].to_s.strip.empty?
+end
+
+duplicates = findings.fetch("duplicates", [])
+duplicates.each do |row|
+  abort "duplicate references unknown finding" unless ids.include?(row["canonical_id"]) && row.fetch("duplicate_ids").all? { |id| ids.include?(id) }
+end
+findings.fetch("disagreements", []).each do |row|
+  abort "disagreement finding missing" unless row.fetch("finding_ids").all? { |id| ids.include?(id) }
+  abort "disagreement rationale missing" if row["rationale"].to_s.strip.empty?
+end
 
 puts "PASS: explicit specialist roster, report identities, and defensible zero-findings"

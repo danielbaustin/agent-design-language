@@ -16,7 +16,7 @@ Consume terminal remediation, inventory the v0.93 candidate corpus, map every pr
 
 ## Plan
 
-Revision 5
+Revision 7
 
 ## Steps
 
@@ -91,7 +91,7 @@ Revision 5
 
 .csdlc/prepared/issues/5849/design.md
 
-Digest: ab486207a4471bec9cfc204ef26e452dc3a6c41605880f01db8bf84a0913fa68
+Digest: 44ca2597cf6decfd7b236d472854472dca421273ca4b0e5e7ed68704ad370c6d
 
 ## Diagram
 

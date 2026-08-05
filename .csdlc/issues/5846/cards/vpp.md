@@ -24,18 +24,19 @@ Diagram: .csdlc/prepared/issues/5846/diagram.mmd
 
 [
   {
-    "lane": "packet-and-specialist-roster",
-    "proof_role": "Require the exact six-lane specialist roster, reviewer-authored digest-bound reports at the packet target SHA, complete finding reconciliation, and coverage-backed rationale for every zero-finding lane.",
+    "lane": "complete-internal-review",
+    "proof_role": "Validate the exact packet and all nine declared specialist lanes, reviewer-authored digests, defensible zero findings, full finding schema/evidence, deduplication, disagreements, authority, and dispositions.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
-      "AC-5"
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 720,
+    "budget_seconds": 900,
     "budget_tokens": 6000,
     "argv": [
       "ruby",
@@ -45,34 +46,19 @@ Diagram: .csdlc/prepared/issues/5846/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "review-redaction-negative",
-    "proof_role": "Reject secrets, private paths, hidden local state, unsupported severities, stale packet identity, and incomplete reviewer lanes from retained validation evidence.",
-    "acceptance_ids": [
-      "AC-4",
-      "AC-5"
-    ],
-    "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 300,
-    "budget_tokens": 2000,
-    "argv": [
-      "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/validation.json')); abort 'review validation blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?; abort 'negative checks absent' unless r['negative_checks'].is_a?(Array) && !r['negative_checks'].empty?"
-    ],
-    "parallel_group": "negative",
-    "defer_reason": null
-  },
-  {
     "lane": "typed-card-doctor",
-    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 60,
+    "budget_seconds": 120,
     "budget_tokens": 1000,
     "argv": [
       "csdlc-doctor",
@@ -99,7 +85,6 @@ Tokens: 10000
 ## Commands
 
 - `ruby .csdlc/prepared/issues/5846/validate-internal-review.rb`
-- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/validation.json')); abort 'review validation blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?; abort 'negative checks absent' unless r['negative_checks'].is_a?(Array) && !r['negative_checks'].empty?`
 - `csdlc-doctor --repo . --issue 5846`
 
 ## Failure Semantics

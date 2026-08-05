@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-22] Quality gate",
     "slug": "v0-92-wp-22-quality-gate",
     "version": "v0.92",
-    "generation": 13
+    "generation": 16
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 5,
+      "plan_revision": 6,
       "summary": "Pin the gate SHA, enumerate every feature and supporting critical path, bind each row to exact accepted evidence, run prohibited-evidence and platform negative audits, emit blockers, and allow downstream review only after an exact-head pass.",
       "steps": [
         {
@@ -65,7 +65,8 @@
         "docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md",
         "docs/reviews/v0.92/quality-gate-5842",
         ".csdlc/evidence/5842",
-        ".csdlc/prepared/issues/5842/validate-quality-gate.rb"
+        ".csdlc/prepared/issues/5842/validate-quality-gate.rb",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-quality-gate-to-doc-truth-v1\",\"paths\":[\"docs/milestones/v0.92/QUALITY_GATE_v0.92.md\",\"docs/milestones/v0.92/WP_EXECUTION_READINESS_v0.92.md\"],\"issues\":[5842,5843],\"order\":[5842,5843]}"
       ],
       "invariants": [
         "No tracked work on main",
@@ -89,7 +90,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5842/design.md",
-      "design_digest": "2a2f34956c88c9f8f4024f563b8612acac8ab046042d063cd75206202a3e362e",
+      "design_digest": "adfabb93a2d3513c3325bb83a9e9cec2e5a2eafa4f3824e75938812e4e325740",
       "diagram_ref": ".csdlc/prepared/issues/5842/diagram.mmd",
       "diagram_digest": "b1829fae5cf441c5f53f7e5d0184bdbcd7bf61e53855dca5d99241bf03b6c794"
     }

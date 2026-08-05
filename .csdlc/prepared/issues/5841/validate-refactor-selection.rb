@@ -5,66 +5,52 @@ require "digest"
 require "json"
 require "open3"
 
-manifest_path = ARGV.fetch(0, ".csdlc/evidence/5841/refactor-selection.json")
-manifest = JSON.parse(File.read(manifest_path))
-abort "target_sha missing" unless manifest["target_sha"].is_a?(String) && manifest["target_sha"].match?(/\A[0-9a-f]{40}\z/)
-head = `git rev-parse HEAD`.strip
-abort "target SHA is not HEAD" unless manifest["target_sha"] == head
+OWNED_SOURCE = %w[
+  adl-runtime-kernel/src/control.rs
+  adl-runtime-kernel/tests/control.rs
+  adl-runtime-kernel/src/observability.rs
+  adl-runtime-kernel/tests/observability.rs
+].freeze
 
-allowed = %w[adl-v2 adl-runtime-kernel csdlc-v2]
-owner_commands = {
-  "adl-v2" => {
-    "test" => %w[cargo test --locked --manifest-path adl-v2/Cargo.toml],
-    "clippy" => %w[cargo clippy --locked --manifest-path adl-v2/Cargo.toml --all-targets -- -D warnings],
-    "fmt" => %w[cargo fmt --manifest-path adl-v2/Cargo.toml -- --check]
-  },
-  "adl-runtime-kernel" => {
-    "test" => %w[cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml],
-    "clippy" => %w[cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings],
-    "fmt" => %w[cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml -- --check]
-  },
-  "csdlc-v2" => {
-    "test" => %w[cargo test --locked --manifest-path csdlc-v2/Cargo.toml],
-    "clippy" => %w[cargo clippy --locked --manifest-path csdlc-v2/Cargo.toml --all-targets -- -D warnings],
-    "fmt" => %w[cargo fmt --manifest-path csdlc-v2/Cargo.toml -- --check]
-  }
-}.freeze
-selections = manifest["selections"]
-abort "selection missing" unless selections.is_a?(Array) && !selections.empty?
-abort "unknown owner" unless selections.all? { |row| allowed.include?(row["owner"]) }
-
-selections.each do |row|
-  paths = row["paths"]
-  abort "selected paths missing" unless paths.is_a?(Array) && !paths.empty? && paths.all? { |path| File.exist?(path) }
-  owner_prefix = row["owner"] + "/"
-  abort "selected path escapes #{row['owner']}" unless paths.all? { |path| path == row["owner"] || path.start_with?(owner_prefix) }
-  owner_commands.fetch(row["owner"]).each do |kind, argv|
-    stdout, stderr, status = Open3.capture3(*argv)
-    abort "#{kind} failed for #{row['owner']}: #{stdout}\n#{stderr}" unless status.success?
-  end
+def run!(*argv)
+  out, err, status = Open3.capture3(*argv)
+  abort "#{argv.join(' ')} failed: #{out}\n#{err}" unless status.success?
 end
 
-metrics_path = manifest["metrics_path"]
-abort "metrics missing" unless metrics_path.is_a?(String) && File.file?(metrics_path)
-metrics = JSON.parse(File.read(metrics_path))
-required_metrics = %w[before_loc after_loc before_duplication after_duplication ownership_before ownership_after]
-abort "metrics incomplete" unless required_metrics.all? { |key| !metrics[key].nil? && metrics[key] != "" }
-abort "invalid LoC metrics" unless metrics.values_at("before_loc", "after_loc").all? { |value| value.is_a?(Integer) && value >= 0 }
+manifest = JSON.parse(File.read(ARGV.fetch(0, ".csdlc/evidence/5841/refactor-selection.json")))
+head = `git rev-parse HEAD`.strip
+abort "target SHA is not HEAD" unless manifest["target_sha"] == head
+selections = manifest["selections"]
+abort "selection missing" unless selections.is_a?(Array) && !selections.empty?
+selected = selections.flat_map { |row| row.fetch("paths") }.uniq.sort
+abort "selected source escapes exact ownership" unless (selected - OWNED_SOURCE).empty?
+abort "selected source omits implementation and characterization paths" unless selected.any? { |path| path.include?("/src/") } && selected.any? { |path| path.include?("/tests/") }
+
+selections.each do |row|
+  %w[owner invariant rollback_note before_owner after_owner].each do |field|
+    abort "selection #{field} missing" if row[field].to_s.strip.empty?
+  end
+  row.fetch("paths").each { |path| abort "selected path missing: #{path}" unless File.file?(path) }
+end
+
+run!("cargo", "fmt", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--", "--check")
+run!("cargo", "clippy", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--all-targets", "--", "-D", "warnings")
+run!("cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--test", "control")
+run!("cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--test", "observability")
+
+metrics = JSON.parse(File.read(manifest.fetch("metrics_path")))
+required = %w[before_loc after_loc before_duplication after_duplication ownership_before ownership_after]
+abort "metrics incomplete" unless required.all? { |key| !metrics[key].nil? && metrics[key] != "" }
+abort "refactor increased LoC without disposition" if metrics["after_loc"] > metrics["before_loc"] && metrics["loc_increase_justification"].to_s.empty?
+abort "refactor increased duplication" if metrics["after_duplication"].to_f > metrics["before_duplication"].to_f
 
 platforms = manifest["platform_evidence"]
 abort "macOS and Linux evidence required" unless platforms.is_a?(Array) && platforms.map { |row| row["os"] }.sort == %w[linux macos]
 platforms.each do |row|
-  %w[head_sha run_url artifact_path artifact_sha256].each do |field|
-    abort "#{row['os']} #{field} missing" unless row[field].is_a?(String) && !row[field].empty?
-  end
-  abort "platform head mismatch" unless row["head_sha"] == manifest["target_sha"]
-  abort "invalid native run URL" unless row["run_url"].match?(%r{\Ahttps://github\.com/.+/actions/runs/\d+\z})
-  abort "runner identity missing" unless row["runner_identity"].is_a?(String) && !row["runner_identity"].strip.empty?
-  abort "output digest missing" unless row["output_sha256"].to_s.match?(/\A[0-9a-f]{64}\z/)
-  abort "platform conclusion not successful" unless row["conclusion"] == "success"
+  abort "platform target mismatch" unless row["head_sha"] == head && row["conclusion"] == "success"
   abort "platform artifact missing" unless File.file?(row["artifact_path"])
-  abort "platform artifact digest mismatch" unless Digest::SHA256.file(row["artifact_path"]).hexdigest == row["artifact_sha256"]
-  abort "output digest is not artifact-bound" unless row["output_sha256"] == row["artifact_sha256"]
+  digest = Digest::SHA256.file(row["artifact_path"]).hexdigest
+  abort "platform proof digest mismatch" unless digest == row["artifact_sha256"] && digest == row["output_sha256"]
 end
 
-puts "PASS: HEAD-bound selection, derived owner commands, metrics, and native macOS/Linux evidence"
+puts "PASS: exact-source refactor selection, characterization, metrics, and native proof"

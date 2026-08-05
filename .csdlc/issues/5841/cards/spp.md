@@ -16,7 +16,7 @@ After WP-21 lands, rebuild the active Rust hotspot inventory, select exact files
 
 ## Plan
 
-Revision 5
+Revision 7
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 5
 
 .csdlc/prepared/issues/5841/design.md
 
-Digest: 08937231b83df57d1d77e4dc0adea8f244698e8b2a089ac5b83a084545c02bf6
+Digest: 7fc254a91189e99e04efde4f73dfc4e889d91110899e2bf5703fde2d7042e1ba
 
 ## Diagram
 

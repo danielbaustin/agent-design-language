@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "af917826983f54ef33a15a08cacf4239502b6469ee09079b0a28f195e9741431",
   "phase": "bound",
-  "generation": 12,
-  "digest": "969beaf0abae5478a9c4fa177166d1854728ad1d85673e8716bfea320bd5f937",
+  "generation": 15,
+  "digest": "5e9927d1c51ff4f23750a0c6ead359c58dac0ebc23c27b14d7c569902f568471",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5852/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "1b7d9aad8a3a3bd3156964f210ae13c9d80fe55d63d0c33541471cf41d93d2cb"
+      "reviewer": "codex:5860-quality-release-exact-repair-design-review",
+      "revision": "7d7fd77cd7abd13264c637b3af8ce76a6f4eeb23a64b2323d14e2efd444aa755"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "29b6c17697c21afdb9ff3d73cb89f8a50aa598d70d565f5178ef40b84f4b836c",
+      "values_digest": "4c8877a0de88381b2118c400d89b4c44de1a36c14ea9383a4c90a29e9d09a9cc",
       "rendered_digest": "be5003b662067d5bab91d7c4553fcdd70728fbe6e5de6ee928563a945d5e58e1",
       "ast_digest": "26f535c6f0bcb09c4857e1b891a69f874f1cf58a6976c6dfe6872ced7d7b0c7b"
     },
     "stp": {
-      "values_digest": "68f84e40d824bee1d54c7931d75aa3e0deb348f381ac9dcf29224d8fbae4b796",
+      "values_digest": "0bbea737a5939a6e56917409810568eaf805ac164b9358aad1aafe15ad2d0b0c",
       "rendered_digest": "3d396b6e5e1491362ba0f40f6d1f74ccb8d988730770630570ceb3fe9da149d6",
       "ast_digest": "bea85d5035a0b377f19f1a0f64bf0ef94d0de6185cd8be44a92da1485798ad9a"
     },
     "spp": {
-      "values_digest": "e32859d81c41d961fee11ea33e7b8d6a07767522834e736ab4e8e9e7aa32ac32",
-      "rendered_digest": "7b1a33fc0e730a4d41b74596d5aacedf5c05cfebbf44cb1606478ff188b93091",
-      "ast_digest": "c31cfaf063b981dbf07ccd4938c5115a540bb4e0debf88fcc14a84e9662d1cda"
+      "values_digest": "816d67bae472011e8cb4d94a9e530b089bdb70e60cb5e0d4026d22efce17e0b3",
+      "rendered_digest": "255aee5f9457022e134759d09483f210390282ab778eb020635db75691b15787",
+      "ast_digest": "f167ebfa3f404e44ead5fd5209e7e6cd982655a88cbe64fa7574d6acf5e897c8"
     },
     "vpp": {
-      "values_digest": "81d3f3c516488a83402b7e6054cc5d3676492fbc308c5331fe8a8a678fab10d4",
-      "rendered_digest": "02a92e8e7f0a467f5850347dee0fde6e911833b568a8ad07cb00f5cb7089afd5",
-      "ast_digest": "9f07bfb81cee0bf985e7cf126f22f6ec533f738a05051f0c991729ec4415aa69"
+      "values_digest": "19a2cf12e196d67ac1032b6b4e2cbf7b60a5471f39a865a6db793a6a2d2a7851",
+      "rendered_digest": "39ac72f2dba480ea9bb2ac415058e2b9f005523f66dffa94499676ab08d41ca9",
+      "ast_digest": "015f54052a0c374bbd5cbba6ce2806c257823163f8e4daa3a953a482c46c8e19"
     },
     "srp": {
-      "values_digest": "7426356f0202a36e25cd91dc4001b051fb3cbe42f9cb3deaccdb33b0450d09f9",
+      "values_digest": "451c670e119e152e8d9e196d1218940ebeb67fe8f0c26e2d16a82d47498febf7",
       "rendered_digest": "392c586ae21a77ce6717f21c780b03649921cab7ce1faf6b4ec5ee16247652cb",
       "ast_digest": "75d679dec3b72e6f8b9c263e17f296e2b8bcc2049033e2f66a5a9c30187fc175"
     },
     "sor": {
-      "values_digest": "e92f436b3974d598e771c97a778802a72f9e0fefc984d1c38ec0212a3249e6d0",
+      "values_digest": "b1c265ecca373be012adc989c0a10495797e1d280762a5a5c104dd3ee86c4767",
       "rendered_digest": "2cf64595a2dc6c3b25eefd8028717e80ac4fa419fb182cab5d1bf273c16b484f",
       "ast_digest": "e5296f9f599959eaaa052d0feaecd7cfa28ec61756815c3d98807aacebfde812"
     }
@@ -216,6 +216,41 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5852-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 12,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Acquire bounded preparation claim for exact-head quality/release readiness repair of issue 5852; no product implementation or aggregate mutation.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-exact-repair\",\"claim_id\":\"claim-5852-v092-quality-release-exact-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-exact-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5852\",\".csdlc/issues/5852\",\".csdlc/locks/5852.lock\",\".csdlc/prepared/issues/5852\"],\"purpose\":\"Repair issue 5852 design, exact ownership, and issue-local proving validator only; no product implementation, #5860 aggregate surfaces, #5861, GitHub bodies, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 13,
+      "actor": "codex:5860-quality-release-exact-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 24,
+      "generation": 14,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Replace incomplete or self-attested readiness proof with issue-local reconstructed and exact-head validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"exact-release-manifest\",\"proof_role\":\"Bind every release claim to exact reviewed head, ancestral merge, semantic review and terminal evidence, recomputed hashes, notes, checklist, handoff, risks, and non-claims.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5852/validate-release-evidence.rb\",\"manifest\"],\"parallel_group\":\"manifest\",\"defer_reason\":null},{\"lane\":\"ceremony-preflight\",\"proof_role\":\"Require every milestone issue terminal and claim-free, rerun the ceremony tests, and run exact-head v0.92 preflight.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":360,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5852/validate-release-evidence.rb\",\"ceremony\"],\"parallel_group\":\"ceremony\",\"defer_reason\":null},{\"lane\":\"ceremony-negative-rerun\",\"proof_role\":\"Rerun the real ceremony test suite and require observed dirty, branch, tag, duplicate, and partial-state rejection with fresh output digest.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5852/validate-release-evidence.rb\",\"negative\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"live-release-readback\",\"proof_role\":\"Prove annotated tag target, GitHub release publication, exact notes, complete assets, ancestry, and terminal claim-free milestone truth.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5852/validate-release-evidence.rb\",\"post-publication\"],\"parallel_group\":\"post-release\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact six-card bundle and design approval.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5852\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 15,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Mirror the final exact Owned Paths and serialization gates into SPP after design approval.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\",\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\",\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\",\"docs/milestones/v0.92/V092_RELEASE_CEREMONY_5852.md\",\".csdlc/evidence/5852\",\".csdlc/prepared/issues/5852/validate-release-evidence.rb\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-doc-truth-to-release-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md\\\",\\\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md\\\",\\\"docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md\\\"],\\\"issues\\\":[5843,5852],\\\"order\\\":[5843,5852]}\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 15,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Release bounded readiness-repair preparation claim after typed rendering, design approval, and focused validation.",
+      "operation": "{\"claim_id\":\"claim-5852-v092-quality-release-exact-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-exact-repair-completion\",\"previous_owner\":\"codex:5860-quality-release-exact-repair\"}"
     }
   ]
 }

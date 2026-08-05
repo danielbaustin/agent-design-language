@@ -24,17 +24,20 @@ Diagram: .csdlc/prepared/issues/5847/diagram.mmd
 
 [
   {
-    "lane": "external-packet-digest",
-    "proof_role": "Recompute SHA-256 over every sorted packet path and reject missing objects, stale packet identity, or target drift.",
+    "lane": "external-packet-identity",
+    "proof_role": "Validate the immutable external packet corpus, digest, target SHA, redaction boundary, and reviewer authority before transfer.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-4"
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "resource_profile": "small",
+    "budget_seconds": 420,
+    "budget_tokens": 3500,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5847/validate-external-review.rb",
@@ -44,54 +47,42 @@ Diagram: .csdlc/prepared/issues/5847/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "handoff-redaction-authority-negative",
-    "proof_role": "Reject secrets/private state, invalid reviewer authority, unsafe links or commands, mutable packet identity, and unsupported approval language.",
+    "lane": "external-report-authority",
+    "proof_role": "Validate reviewer identity and authority, report/packet/target digests, complete finding count, full schema/evidence, risk authority, duplicate targets, and dispositions.",
     "acceptance_ids": [
+      "AC-1",
       "AC-2",
       "AC-3",
-      "AC-4"
-    ],
-    "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 240,
-    "budget_tokens": 1500,
-    "argv": [
-      "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/external-review-5847/validation.json')); abort 'handoff blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?; abort 'authority checks absent' unless r['authority_checks'].is_a?(Array) && !r['authority_checks'].empty?"
-    ],
-    "parallel_group": "negative",
-    "defer_reason": null
-  },
-  {
-    "lane": "received-report-integrity",
-    "proof_role": "Require a reviewer-authored report path, report digest, reviewer identity, packet digest, target SHA, and complete findings index.",
-    "acceptance_ids": [
+      "AC-4",
       "AC-5",
       "AC-6"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "resource_profile": "small",
+    "budget_seconds": 540,
+    "budget_tokens": 4500,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5847/validate-external-review.rb",
       "report"
     ],
-    "parallel_group": "receive",
+    "parallel_group": "report",
     "defer_reason": "Run only after the operator-authorized reviewer response is actually received."
   },
   {
     "lane": "typed-card-doctor",
-    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 60,
+    "budget_seconds": 120,
     "budget_tokens": 1000,
     "argv": [
       "csdlc-doctor",
@@ -118,7 +109,6 @@ Tokens: 10000
 ## Commands
 
 - `ruby .csdlc/prepared/issues/5847/validate-external-review.rb packet`
-- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/external-review-5847/validation.json')); abort 'handoff blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?; abort 'authority checks absent' unless r['authority_checks'].is_a?(Array) && !r['authority_checks'].empty?`
 - `ruby .csdlc/prepared/issues/5847/validate-external-review.rb report`
 - `csdlc-doctor --repo . --issue 5847`
 

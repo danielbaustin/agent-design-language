@@ -8,9 +8,10 @@ Issue #5841 and the WP-21A rows in `docs/milestones/v0.92/WBS_v0.92.md` and
 `docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml` define a behavior-preserving
 refactor after deletion, not a second deletion wave or feature tranche. Current
 source shows large mixed-responsibility candidates in `adl/src`, while the
-intended active owners are the smaller `adl-v2`, `adl-runtime-kernel`, and
-`csdlc-v2` products. WP-21 may materially change that inventory, so execution
-must profile the post-WP-21 exact revision rather than preserve stale hotspots.
+bounded active owner for this issue is `adl-runtime-kernel`. WP-21 may change
+the wider inventory, but the declared control and observability modules plus
+their characterization tests are the only writable Rust paths. Any different
+hotspot requires a typed scope and ownership amendment before execution.
 
 ## Outcome Contract
 
@@ -28,9 +29,9 @@ replaces local duplication with an unowned shared utility fails the objective.
 ## Execution Sequence
 
 1. Verify WP-20 and WP-21 are merged, terminal, claim-free, and ancestral.
-2. Rebuild the post-deletion Rust inventory and choose a small reviewed set of
-   hotspots with exact files, explicit active owners from `adl-v2`,
-   `adl-runtime-kernel`, or `csdlc-v2`, and behavior invariants.
+2. Rebuild the post-deletion Rust inventory and confirm the declared control
+   and observability paths remain valid hotspots with behavior invariants;
+   otherwise stop for a typed scope amendment.
 3. Capture characterization tests or existing proving tests before edits.
 4. Refactor one ownership boundary at a time and keep public behavior stable.
 5. Run focused parity, negative, lint, and affected-workspace tests after each
@@ -40,9 +41,12 @@ replaces local duplication with an unowned shared utility fails the objective.
 
 ## Owned Paths
 
+- `adl-runtime-kernel/src/control.rs`
+- `adl-runtime-kernel/tests/control.rs`
+- `adl-runtime-kernel/src/observability.rs`
+- `adl-runtime-kernel/tests/observability.rs`
 - `.csdlc/evidence/5841`
 - `.csdlc/prepared/issues/5841/validate-refactor-selection.rb`
-
 ## Read-Only Inputs
 
 - Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.

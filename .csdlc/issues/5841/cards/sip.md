@@ -20,9 +20,12 @@ behavior-preserving simplification of active Rust ownership boundaries, duplicat
 
 ## Scope
 
-- Profile the exact post-WP-21 active Rust products and rank ownership, duplication, dependency-direction, size, and test hotspots
-- Refactor a small exact-file set under one declared owner without changing supported behavior or public contracts
-- Retain characterization, negative, before/after LoC, dependency, lint, test, platform, and review proof
+- adl-runtime-kernel/src/control.rs
+- adl-runtime-kernel/tests/control.rs
+- adl-runtime-kernel/src/observability.rs
+- adl-runtime-kernel/tests/observability.rs
+- .csdlc/evidence/5841
+- .csdlc/prepared/issues/5841/validate-refactor-selection.rb
 
 ## Authority
 

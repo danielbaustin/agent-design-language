@@ -24,14 +24,15 @@ Diagram: .csdlc/prepared/issues/5786/diagram.mmd
 
 [
   {
-    "lane": "derived-reduction-proof",
-    "proof_role": "Derive the complete tracked adl/src and active-reference denominator, calculate the baseline reduction, require every row owned/dispositioned, run clean installation, bind native macOS/Linux receipts to HEAD, and reject every stale reference.",
+    "lane": "pinned-deletion-denominator",
+    "proof_role": "Reconstruct the immutable pre-change adl/src path, blob, file-count, and LoC denominator from its ancestral Git SHA; require complete dispositions, derived reduction and references, clean install, and native macOS/Linux exact-head proof.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
       "AC-4",
-      "AC-5"
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "medium",
@@ -46,14 +47,18 @@ Diagram: .csdlc/prepared/issues/5786/diagram.mmd
   },
   {
     "lane": "typed-card-doctor",
-    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, design approval, digests, statuses, and canonical issue record.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 60,
+    "budget_seconds": 120,
     "budget_tokens": 1000,
     "argv": [
       "csdlc-doctor",

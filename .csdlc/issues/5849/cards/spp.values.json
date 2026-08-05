@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-28] Next milestone planning",
     "slug": "v0-92-wp-28-next-milestone-planning",
     "version": "v0.92",
-    "generation": 12
+    "generation": 19
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 5,
+      "plan_revision": 7,
       "summary": "Consume terminal remediation, inventory the v0.93 candidate corpus, map every prerequisite to exact evidence/blocker/owner/non-claim, reconcile decision-ready candidate planning, validate dependencies and claim boundaries, and hand the reviewed packet to WP-28A.",
       "steps": [
         {
@@ -62,10 +62,37 @@
         }
       ],
       "affected_areas": [
-        "docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md",
-        "docs/reviews/v0.92/next-milestone-planning-5849",
         ".csdlc/evidence/5849",
-        ".csdlc/prepared/issues/5849/validate-handoff.rb"
+        ".csdlc/prepared/issues/5849/validate-handoff.rb",
+        "docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md",
+        "docs/milestones/v0.93/CONSTITUTIONAL_CITIZENSHIP_AND_POLIS_GOVERNANCE_PLAN_v0.93.md",
+        "docs/milestones/v0.93/DECISIONS_v0.93.md",
+        "docs/milestones/v0.93/DEMO_MATRIX_v0.93.md",
+        "docs/milestones/v0.93/DESIGN_v0.93.md",
+        "docs/milestones/v0.93/MILESTONE_CHECKLIST_v0.93.md",
+        "docs/milestones/v0.93/README.md",
+        "docs/milestones/v0.93/RED_BLUE_ADVERSARIAL_SECURITY_ISSUE_WAVE_v0.93.md",
+        "docs/milestones/v0.93/RELEASE_NOTES_v0.93.md",
+        "docs/milestones/v0.93/RELEASE_PLAN_v0.93.md",
+        "docs/milestones/v0.93/SPRINT_v0.93.md",
+        "docs/milestones/v0.93/VISION_v0.93.md",
+        "docs/milestones/v0.93/WBS_v0.93.md",
+        "docs/milestones/v0.93/WP_ISSUE_WAVE_v0.93.yaml",
+        "docs/milestones/v0.93/features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md",
+        "docs/milestones/v0.93/features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md",
+        "docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md",
+        "docs/milestones/v0.93/features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md",
+        "docs/milestones/v0.93/features/README.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S1_ZERO_TRUST_ARCHITECTURE_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S2_POLICY_ENFORCEMENT_AUTHORIZATION_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S3_SECRETS_KEYS_CRYPTOGRAPHIC_TRUST_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S4_AUDIT_COMPLIANCE_INCIDENT_EVIDENCE_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S5_ISOLATION_DATA_GOVERNANCE_PRIVACY_v0.93.md",
+        "docs/milestones/v0.93/features/SECURITY_WP_S6_SECURITY_OPERATIONS_ADVERSARIAL_PROVENANCE_v0.93.md",
+        "docs/milestones/v0.93/features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md",
+        "docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md",
+        "docs/reviews/v0.92/next-milestone-planning-5849",
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-doc-truth-to-handoff-v1\",\"paths\":[\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\"],\"issues\":[5843,5849],\"order\":[5843,5849]}"
       ],
       "invariants": [
         "No tracked work on main",
@@ -89,7 +116,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5849/design.md",
-      "design_digest": "ab486207a4471bec9cfc204ef26e452dc3a6c41605880f01db8bf84a0913fa68",
+      "design_digest": "44ca2597cf6decfd7b236d472854472dca421273ca4b0e5e7ed68704ad370c6d",
       "diagram_ref": ".csdlc/prepared/issues/5849/diagram.mmd",
       "diagram_digest": "71c4234b11ef676b8124bc3a101e7670f42ee734598fb52da48405843f96b070"
     }

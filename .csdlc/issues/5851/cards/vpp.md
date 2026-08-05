@@ -24,16 +24,20 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
 
 [
   {
-    "lane": "independent-derived-comparison",
-    "proof_role": "Revalidate the WP-28A live universe, rebuild its material fields independently, and require exact row and source-digest equality.",
+    "lane": "independent-live-universe",
+    "proof_role": "Independently reconstruct the issue denominator from the wave and reread every GitHub issue/PR/check/review plus typed terminal/claim state; reject upstream-row slicing.",
     "acceptance_ids": [
       "AC-1",
-      "AC-2"
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "budget_seconds": 420,
+    "budget_tokens": 3800,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5851/validate-readiness-review.rb",
@@ -43,11 +47,15 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "digest-bound-handoff-review",
-    "proof_role": "Bind reviewer identity, reviewed HEAD, every reviewed artifact digest, finding disposition, and candidate-only v0.93 claim boundary.",
+    "lane": "handoff-review",
+    "proof_role": "Validate exact-head reviewer identity, findings dispositions, artifact digests, and v0.93 non-activation boundaries.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
       "AC-3",
-      "AC-5"
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
@@ -62,17 +70,20 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "exercised-review-negatives",
-    "proof_role": "Require the full missing, stale, red, active-claim, absent-receipt, dirty, partial, duplicate, premature-closeout, and activation negative universe to produce validator failures.",
+    "lane": "readiness-negatives",
+    "proof_role": "Run every negative fixture through the actual independent comparison or handoff validator and require digest-bound failure.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
       "AC-4",
       "AC-5",
       "AC-6"
     ],
     "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 240,
-    "budget_tokens": 1800,
+    "resource_profile": "medium",
+    "budget_seconds": 360,
+    "budget_tokens": 3300,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5851/validate-readiness-review.rb",
@@ -83,14 +94,18 @@ Diagram: .csdlc/prepared/issues/5851/diagram.mmd
   },
   {
     "lane": "typed-card-doctor",
-    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+    "proof_role": "Validate the exact six-card bundle and design approval.",
     "acceptance_ids": [
       "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 60,
+    "budget_seconds": 120,
     "budget_tokens": 1000,
     "argv": [
       "csdlc-doctor",

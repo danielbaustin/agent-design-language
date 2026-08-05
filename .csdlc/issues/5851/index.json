@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1c65d63dcfb7c628b911d1171ec521d35dd85521a1615f401d78c4cada4e556d",
   "phase": "bound",
-  "generation": 12,
-  "digest": "01200d45f3fd5eddc13043e3e880a21e2f96584fc3def08c9d7bdb129b21c872",
+  "generation": 13,
+  "digest": "a64fa0223f6a4f68a43fe271c33438bb182003706ea5602f5b3c00d876385785",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "86cd1d2bd5f28f8275aa9b1dc05fa4aa77161f07e99c582e3759550f006439b3",
+      "values_digest": "1c093f05f72997516cfa401ab63f258bb08a5405f717dd23bd56f876266ed51b",
       "rendered_digest": "ea113d6c683170cbba996358a5c2f6d4e42a4817b3a5097392084e9e8753e9de",
       "ast_digest": "caf532389527629fca22fdc88077b6888859217d801367094adb5de6e3446a49"
     },
     "stp": {
-      "values_digest": "3a455930338577cb2d3d732ebadfa872dbe00c055b19cd7de88e3582ebe6e289",
+      "values_digest": "a72093b1287cddde49e23e9e2480acd893b16626485b53667983fb899134200f",
       "rendered_digest": "fdafcfa4792e9d14cd5e18454dd8b913bd1fb4400fbdeaf2c31c446fa8ae9891",
       "ast_digest": "e956bca68fce0ef8f5a4c72719564eb0b312c3828670f356bacb7cc9c2d237e0"
     },
     "spp": {
-      "values_digest": "053319bcff1e14509683ab77b25117c4891f17218232ac883c1ebe85fd933e95",
+      "values_digest": "0cf773e4961c667663ec323a992b6b7d82b843acb8539bd9ded39496b3f60b17",
       "rendered_digest": "2140bee55039133dd955a9e3e2208ad80b21b4ae33937be5793ecdba973e0dc8",
       "ast_digest": "04169c4904347bf5f78695cd7e8cd1f0a5925da06ad2da5a01a1eeb2c0779e29"
     },
     "vpp": {
-      "values_digest": "019c0b32bbe0e2bd7c895bf1fa0d879168d8011ddb1a0f3c1a0246ae18b8d8f2",
-      "rendered_digest": "0816ba0c09f410436d33fa6ee40ab65b5caa910b32218c19948c29fb5b0ed020",
-      "ast_digest": "f979d3c4eaea511ed59d8e9b5ded1e946b4725c91a81ced86a847448684e2045"
+      "values_digest": "cea50bd95487f76d934c449d4d6d7cbed41f3cbacf8c63b71da71c089c65848e",
+      "rendered_digest": "c1dad75902dc2f125371494ff60ff72d325b9efb61128be3b1de256cd9fcef51",
+      "ast_digest": "a0876b6946ad96e6da9165d4014509efb5432587fc02a602a835ac07b4c75cda"
     },
     "srp": {
-      "values_digest": "8ec66458f0eea63ce0536be03b18f2303277155f3c62480ea41f414e5378c3d0",
+      "values_digest": "b21fa7b90373b65b7325c168345e5759c182b5e25fe0aa84b775b18f5a7516d4",
       "rendered_digest": "fe236a0e8b3846da855ea05f672f1531f9dc6cd0c5848f9dd44e1814088fc780",
       "ast_digest": "462789fcf15f882db57b467bd4f2eefe89336419502104bdece9b788bae8d4b2"
     },
     "sor": {
-      "values_digest": "b26aac02683a714bcd0ce2cf4e18196d7388bd24f7fb38868ad708fa4f8c5048",
+      "values_digest": "1f0b91ea4ba2c8432d8a1a072b50c4d1272c24df8fdca1f57d07489ec60bb21d",
       "rendered_digest": "3fa1033ef6063f1a11912cbe289b8051a47c359d66d7b0167a239a05c3f67eec",
       "ast_digest": "1a3b3b6cc014cce10e8ce5836d2b9535fd23e00a1ba729de1ba8d98c7e081553"
     }
@@ -216,6 +216,27 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5851-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 12,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Acquire bounded preparation claim for exact-head quality/release readiness repair of issue 5851; no product implementation or aggregate mutation.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-exact-repair\",\"claim_id\":\"claim-5851-v092-quality-release-exact-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-exact-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5851\",\".csdlc/issues/5851\",\".csdlc/locks/5851.lock\",\".csdlc/prepared/issues/5851\"],\"purpose\":\"Repair issue 5851 design, exact ownership, and issue-local proving validator only; no product implementation, #5860 aggregate surfaces, #5861, GitHub bodies, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 13,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Replace incomplete or self-attested readiness proof with issue-local reconstructed and exact-head validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"independent-live-universe\",\"proof_role\":\"Independently reconstruct the issue denominator from the wave and reread every GitHub issue/PR/check/review plus typed terminal/claim state; reject upstream-row slicing.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":420,\"budget_tokens\":3800,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5851/validate-readiness-review.rb\",\"comparison\"],\"parallel_group\":\"comparison\",\"defer_reason\":null},{\"lane\":\"handoff-review\",\"proof_role\":\"Validate exact-head reviewer identity, findings dispositions, artifact digests, and v0.93 non-activation boundaries.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1800,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5851/validate-readiness-review.rb\",\"handoff\"],\"parallel_group\":\"handoff\",\"defer_reason\":null},{\"lane\":\"readiness-negatives\",\"proof_role\":\"Run every negative fixture through the actual independent comparison or handoff validator and require digest-bound failure.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":360,\"budget_tokens\":3300,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5851/validate-readiness-review.rb\",\"negative\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact six-card bundle and design approval.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5851\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 13,
+      "actor": "codex:5860-quality-release-exact-repair",
+      "reason": "Release bounded readiness-repair preparation claim after typed rendering, design approval, and focused validation.",
+      "operation": "{\"claim_id\":\"claim-5851-v092-quality-release-exact-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-quality-release-exact-repair-completion\",\"previous_owner\":\"codex:5860-quality-release-exact-repair\"}"
     }
   ]
 }

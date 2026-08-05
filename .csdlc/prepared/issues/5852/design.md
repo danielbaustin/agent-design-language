@@ -55,6 +55,24 @@ behavior that did not land.
 - Every repository path cited outside `## Owned Paths` is read-only unless it is repeated exactly in that section.
 - Dependency records, sibling issue outputs, historical evidence, and external systems remain read-only inputs.
 
+## Serialization Gates
+
+```json
+[
+  {
+    "schema": "csdlc.serialization_gate.v1",
+    "id": "v092-doc-truth-to-release-v1",
+    "paths": [
+      "docs/milestones/v0.92/RELEASE_NOTES_v0.92.md",
+      "docs/milestones/v0.92/RELEASE_PLAN_v0.92.md",
+      "docs/milestones/v0.92/MILESTONE_CHECKLIST_v0.92.md"
+    ],
+    "issues": [5843, 5852],
+    "order": [5843, 5852]
+  }
+]
+```
+
 ## Validation And Failure Policy
 
 Required lanes are evidence-manifest completeness with nonempty required
