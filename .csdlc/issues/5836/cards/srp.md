@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-18 issue 5836, its declared implementation paths, and retained proof
+Review the WP-18 runner, validator, tests, retained first-birthday packet, negative report, D1-D6 updates, and exact proof paths for real-Runtime provenance, fail-closed behavior, redaction, replay, and scope discipline.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-18 scope?
+- Is positive proof emitted by the real integrated Runtime rather than a fixture or lifecycle artifact?
+- Does every named ordinary lifecycle or missing-evidence case reject with an inspectable reason?
+- Are replay, interruption, platform, and redaction boundaries proven?
+- Do D1-D6 and launch-adjacent text avoid unsupported birthday or publication claims?
 
 ## Findings
 

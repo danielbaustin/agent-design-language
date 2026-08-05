@@ -24,25 +24,59 @@ Diagram: .csdlc/prepared/issues/5835/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-17",
-    "proof_role": "cross-polis continuity feature doc, design note, and boundary against WP-04 infrastructure",
+    "lane": "wp17-doc-contract",
+    "proof_role": "Prove all transfer rows, source paths, and WP-04/v0.93 boundaries are complete.",
     "acceptance_ids": [
       "AC-1",
-      "AC-2",
       "AC-3",
-      "AC-4",
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 2500,
+    "argv": [
+      "ruby",
+      ".csdlc/evidence/5835/validate-continuity-transfer.rb"
+    ],
+    "parallel_group": "docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp17-negative-semantics",
+    "proof_role": "Reject copied/conflicting state, raw-memory transfer, and production/governance overclaim.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 2500,
+    "argv": [
+      "ruby",
+      ".csdlc/evidence/5835/validate-continuity-transfer.rb",
+      "--negative"
+    ],
+    "parallel_group": "docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp17-diff-review",
+    "proof_role": "Prove clean patch structure before exact-head review.",
+    "acceptance_ids": [
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 1200,
-    "budget_tokens": 10000,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 500,
     "argv": [
       "git",
       "diff",
       "--check"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "hygiene",
     "defer_reason": null
   }
 ]
@@ -59,6 +93,8 @@ Tokens: 10000
 
 ## Commands
 
+- `ruby .csdlc/evidence/5835/validate-continuity-transfer.rb`
+- `ruby .csdlc/evidence/5835/validate-continuity-transfer.rb --negative`
 - `git diff --check`
 
 ## Failure Semantics

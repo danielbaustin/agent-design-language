@@ -12,36 +12,53 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify #5825-#5830 and #5832-#5834; bind to landed schemas; implement the positive Runtime harness and negative matrix; run replay, redaction, macOS/Linux, and interruption proof; update D1-D6 only from accepted evidence; then review exact head.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify all WP-18 dependency revisions, schemas, and commands",
     "acceptance_ids": [
+      "AC-1",
       "AC-2"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Implement the integrated positive runner and deterministic packet validator",
     "acceptance_ids": [
       "AC-1",
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Implement and retain the complete not-a-birthday matrix",
+    "acceptance_ids": [
+      "AC-2"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Run replay, interruption, redaction, platform, and D1-D6 artifact checks",
+    "acceptance_ids": [
       "AC-3",
       "AC-4"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S5",
+    "action": "Resolve exact-head review and retain the reviewer index",
     "acceptance_ids": [
       "AC-5"
     ],
@@ -51,15 +68,16 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Positive proof is Runtime-produced
+- Every negative case emits a typed rejection
+- Retained artifacts expose no private state or credentials
+- D1-D6 status changes only from accepted exact evidence
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Dependency schemas may land with different commands
+- Demo may accidentally validate a fixture
+- Platform or interruption behavior may be hidden
 
 ## Estimates
 
@@ -73,19 +91,19 @@ Revision 1
 
 .csdlc/prepared/issues/5836/design.md
 
-Digest: 5f034f62cd8b993f7fbe91b6388154dbffc39c318449d284a92ac4b4901b3630
+Digest: 6bfcd42e50a0009144b66283310fa4f0fa0511050a86d7c746b727fe1a9b2654
 
 ## Diagram
 
 .csdlc/prepared/issues/5836/diagram.mmd
 
-Digest: a348f1f8c06a39fd4f33842b58c01295c8a2006f6d94837120f0f8642ebaf270
+Digest: 039549736c17a86e37d74217aa9f5d20dade32c3a9e12e92c43a9975fd8d1a03
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- Any required dependency is unlanded
+- No integrated Runtime entrypoint can emit the packet
+- A required negative cannot be distinguished within issue scope
 
 ## Handoff
 

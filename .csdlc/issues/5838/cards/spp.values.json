@@ -7,52 +7,78 @@
     "title": "[v0.92][WP-18B] Provider-neutral multi-agent proof",
     "slug": "v0-92-wp-18b-provider-neutral-multi-agent-proof",
     "version": "v0.92",
-    "generation": 0
+    "generation": 22
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 8,
+      "summary": "Verify #5832, #5834, and #5836; select two real independently configured providers; run the identical scenario and retain redacted ACIP traces; execute malformed, denied, interrupted, unavailable, loss, and substitution cases; validate source/provider truth and review exact head.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify #5832, #5834, and #5836 exact contracts and select two real providers",
           "acceptance_ids": [
+            "AC-1",
             "AC-2"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Run the identical scenario and retain redacted ACIP traces",
           "acceptance_ids": [
             "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Execute provider failure and no-substitution negatives",
+          "acceptance_ids": [
             "AC-3",
             "AC-4"
           ],
           "status": "pending"
         },
         {
-          "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "id": "S4",
+          "action": "Generate and validate the matrix, artifact index, redaction, and platform posture",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Resolve exact-head review",
           "acceptance_ids": [
             "AC-5"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "adl/tools/demo_v092_provider_neutral_birthday.sh",
+        "adl/tools/validate_v092_provider_neutral_proof.py",
+        "adl/tools/test_v092_provider_neutral_proof.sh",
+        "demos/v0.92/provider-neutral-birthday/",
+        "docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md",
+        ".csdlc/evidence/5838/"
+      ],
       "invariants": [
-        "No tracked work on main",
-        "No scope absorption across work packages",
-        "Evidence claims remain exact-revision and source-grounded"
+        "Every positive column is a real provider invocation",
+        "The scenario and ACIP operation contract are identical across providers",
+        "One provider failure does not terminate Runtime or unrelated agents",
+        "Retained artifacts are credential-free and redacted"
       ],
       "risks": [
-        "Dependency drift",
-        "Scope overlap",
-        "Insufficient real-behavior proof"
+        "A provider may be unavailable or capability-incompatible",
+        "Adapters may hide provider-specific semantics",
+        "Trace redaction may remove evidence needed for comparison"
       ],
       "execution_estimates": {
         "elapsed_seconds": 21600,
@@ -60,15 +86,19 @@
         "validation_seconds": 3600
       },
       "stop_conditions": [
-        "Protected-path collision",
-        "Contradictory dependency evidence",
-        "Required proof cannot be produced within issue scope"
+        "Fewer than two real compatible providers are available",
+        "#5832/#5836 contracts are not landed",
+        "No safe redacted trace can prove semantic equivalence"
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "Provider capability or API contract changes",
+        "Landed ACIP operation sequence changes",
+        "A required platform lacks the provider tool"
+      ],
       "design_ref": ".csdlc/prepared/issues/5838/design.md",
-      "design_digest": "a7a094ce8e7d0403868717dbacd2e3f06e6362da0cdd72b6a50fd3a1cb3088da",
+      "design_digest": "9edd5d793d7fb009b2b655fb774846175ed5c156159bf964921ada07082264f5",
       "diagram_ref": ".csdlc/prepared/issues/5838/diagram.mmd",
-      "diagram_digest": "4dcd20590cf868b670c981b570a32cb377878f64d43ce7de34c77cdc0de6658d"
+      "diagram_digest": "66b8593a65f5605cd6e903d1954da188a9dada0abb3d75d1b6b1324da92a4f29"
     }
   }
 }

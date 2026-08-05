@@ -7,30 +7,42 @@
     "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
     "slug": "v0-92-wp-24a-podcast-studio-first-ten-episodes",
     "version": "v0.92",
-    "generation": 0
+    "generation": 21
   },
   "status": "ready",
   "content": {
     "card_kind": "sip",
     "values": {
-      "goal": "Complete WP-24A: Podcast Studio first ten episodes.",
-      "required_outcome": "all first ten episodes complete as review-ready production packages, not topic or schema placeholders",
+      "goal": "Produce ten complete Podcast Studio episode packages with final audio, metadata, feed records, and human and machine QA.",
+      "required_outcome": "Each of the first ten episodes is independently reviewable and contains final script, audio, transcript, notes, metadata, RSS enclosure data, redaction proof, listen-check evidence, and editorial/audio review.",
       "declared_scope": [
-        "Issue 5845 implementation paths to be narrowed during preparation",
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md",
-        ".adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md"
+        "demos/podcast/episodes/001-meet-the-ai-coworkers/ through 010-what-does-a-weekly-ai-studio-look-like/",
+        "demos/podcast/audio/",
+        "demos/podcast/feed.xml",
+        "demos/podcast/LAUNCH_READINESS.md",
+        "adl/tools/generate_podcast_launch_packet.py",
+        "adl/tools/validate_podcast_launch_packet.py",
+        "adl/tools/test_podcast_launch_packet.sh",
+        ".csdlc/evidence/5845/"
       ],
       "authority_boundary": [
-        "Issue 5845 owns only WP-24A: Podcast Studio first ten episodes",
-        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+        "WP-24A owns ten review-ready local episode packages",
+        "#5819 and the route/storage decision identify any canonical public destination",
+        "#3223/#3256 provide retained production-pipeline proof",
+        "The operator retains deployment and publication authority"
       ],
-      "initial_assumptions": [],
+      "initial_assumptions": [
+        "The #5702 ten-episode brief remains the launch sequence",
+        "Podcast Studio v2 proof remains inspectable",
+        "macOS and Linux validation are available before publication review"
+      ],
       "operator_constraints": [
-        "Prepare before execution",
-        "Never edit tracked work on main",
-        "Use one bounded pre-PR review",
-        "Do not substitute fixtures, receipts, or prose for required working behavior"
+        "Historical smoke WAV/feed proof is not final episode proof",
+        "Human guests remain draft until consent and participation are evidenced",
+        "Episode 002 may invite DeepSeek but cannot imply acceptance or persistent identity",
+        "All test temporary files stay under .csdlc/evidence/5845",
+        "No deployment or directory submission without separate authority",
+        "Release the preparation claim before implementation handoff"
       ]
     }
   }

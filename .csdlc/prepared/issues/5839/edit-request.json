@@ -1,0 +1,19 @@
+{
+  "issue": 5839,
+  "expected_generation": 20,
+  "expected_digest": "0984b801c26360ae9b42cc6e193d2fff57d7547acae2eb72ed9a4b00ceb5658f",
+  "claim_id": "claim-5839-v092-preparation",
+  "actor": "codex:5854-card-editor",
+  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+  "card": "srp",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Does every row cite exact accepted v0.92 evidence or an explicit blocker?",
+      "Is the v0.93 owner and allowed use concrete without granting governance authority?",
+      "Can any receipt, birthday, continuity, or proposed ADR be misread as citizenship or standing?",
+      "Are private inputs represented only through governed projections?"
+    ]
+  }
+}

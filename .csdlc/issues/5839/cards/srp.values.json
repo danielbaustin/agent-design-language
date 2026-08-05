@@ -7,19 +7,20 @@
     "title": "[v0.92][WP-19] Birthday-to-governance handoff",
     "slug": "v0-92-wp-19-birthday-to-governance-handoff",
     "version": "v0.92",
-    "generation": 0
+    "generation": 22
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "WP-19 issue 5839, its declared implementation paths, and retained proof",
+      "review_scope": "Review the WP-19 evidence map, handoff plan, ADR-plan update, validation proof, and exact candidate paths for source traceability, named consumer authority, redaction, explicit blockers, and no governance overclaim.",
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-19 scope?"
+        "Does every row cite exact accepted v0.92 evidence or an explicit blocker?",
+        "Is the v0.93 owner and allowed use concrete without granting governance authority?",
+        "Can any receipt, birthday, continuity, or proposed ADR be misread as citizenship or standing?",
+        "Are private inputs represented only through governed projections?"
       ],
       "findings": [],
       "residual_risk": [],

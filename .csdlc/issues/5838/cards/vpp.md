@@ -24,25 +24,63 @@ Diagram: .csdlc/prepared/issues/5838/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-18b",
-    "proof_role": "real multi-provider runs, protocol traces, negative cases, and no-provider-substitution proof",
+    "lane": "wp18b-real-providers",
+    "proof_role": "Require two real-provider positive runs through the identical scenario and ACIP contract.",
     "acceptance_ids": [
       "AC-1",
-      "AC-2",
+      "AC-2"
+    ],
+    "deterministic": false,
+    "resource_profile": "medium",
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
+    "argv": [
+      "bash",
+      "adl/tools/demo_v092_provider_neutral_birthday.sh",
+      "--real-only",
+      "--minimum-providers",
+      "2"
+    ],
+    "parallel_group": "provider-live",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp18b-no-substitution",
+    "proof_role": "Reject malformed, denied, unavailable, lost, interrupted, cached, fixture, and receipt-only substitutions.",
+    "acceptance_ids": [
       "AC-3",
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 350,
+    "budget_tokens": 2500,
+    "argv": [
+      "bash",
+      "adl/tools/test_v092_provider_neutral_proof.sh",
+      "--negative"
+    ],
+    "parallel_group": "provider-negative",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp18b-redaction-platform",
+    "proof_role": "Validate credentials/redaction, matrix parity, Runtime isolation, and macOS/Linux tooling posture.",
+    "acceptance_ids": [
+      "AC-2",
       "AC-4",
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 3600,
-    "budget_tokens": 25000,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 2000,
     "argv": [
-      "git",
-      "diff",
-      "--check"
+      "bash",
+      "adl/tools/test_v092_provider_neutral_proof.sh",
+      "--platform-contract"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "platform",
     "defer_reason": null
   }
 ]
@@ -59,7 +97,9 @@ Tokens: 25000
 
 ## Commands
 
-- `git diff --check`
+- `bash adl/tools/demo_v092_provider_neutral_birthday.sh --real-only --minimum-providers 2`
+- `bash adl/tools/test_v092_provider_neutral_proof.sh --negative`
+- `bash adl/tools/test_v092_provider_neutral_proof.sh --platform-contract`
 
 ## Failure Semantics
 

@@ -1,0 +1,19 @@
+{
+  "issue": 5838,
+  "expected_generation": 20,
+  "expected_digest": "15cda2ef72fde7f253f3ffd20b4464a846390ad7226af62cb008a49bac87162d",
+  "claim_id": "claim-5838-v092-preparation",
+  "actor": "codex:5854-card-editor",
+  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+  "card": "srp",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Do two real providers, rather than fixtures or cached output, complete the same scenario?",
+      "Are identity, authority, ordering, ACIP operations, and result semantics provider-neutral?",
+      "Do provider loss and substitution attempts fail visibly without collapsing Runtime?",
+      "Are all traces useful but credential-free and appropriately redacted?"
+    ]
+  }
+}

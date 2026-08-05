@@ -12,33 +12,36 @@ Status: ready
 
 ## Goal
 
-Complete WP-24: Ten-article launch series.
+Author the complete ten-article ADL launch series as source-grounded, review-ready publication packets.
 
 ## Required Outcome
 
-all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition
+Ten complete articles, each with a bounded source packet and editorial review, form a coherent series whose claims, citations, links, privacy posture, and release dependencies are explicit.
 
 ## Scope
 
-- Issue 5844 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/publication/ADL_MEDIUM_ARTICLE_LIST.md
-- .adl/docs/TBD/publication/MEDIUM_ARTICLE_SERIES_PLAN.md
-- .adl/docs/TBD/publication/medium_launch_articles/1-WHY-ADL.md
+- docs/milestones/v0.92/publication/articles/01-what-is-adl/ through 10-whats-next-for-adl/
+- docs/milestones/v0.92/publication/articles/SERIES_ARC_AND_CLAIM_MATRIX.md
+- docs/milestones/v0.92/publication/articles/PUBLICATION_DISPOSITION.md
+- .csdlc/evidence/5844/
 
 ## Authority
 
-- Issue 5844 owns only WP-24: Ten-article launch series
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- WP-24 owns the ten review-ready article packets
+- #5819 supplies canonical naming and link inputs
+- #5843 supplies final release truth
+- The operator retains publication authority
 
 ## Assumptions
 
-- none
+- The canonical ten-title sequence remains unchanged
+- Current repository sources can support bounded article claims
+- Historical evidence will be labeled as historical
 
 ## Operator Constraints
 
-- Prepare before execution
-- Never edit tracked work on main
-- Use one bounded pre-PR review
-- Do not substitute fixtures, receipts, or prose for required working behavior
+- All ten articles must be complete prose, not outlines or topic cards
+- Drafting depends on #5819 and final release claims depend on #5843
+- No invented citation, metric, customer claim, or delivery claim
+- No publication or scheduling without separate operator authority
+- Release the preparation claim before implementation handoff

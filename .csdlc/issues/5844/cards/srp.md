@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-24 issue 5844, its declared implementation paths, and retained proof
+Review all ten source packets, complete article drafts, editorial reviews, series claim matrix, publication disposition, and exact candidate paths for evidence grounding, audience fit, citation integrity, privacy, duplication, and no publication overclaim.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-24 scope?
+- Are all ten artifacts complete articles with bounded source packets rather than outlines?
+- Is every material claim and citation supportable without exposing private information?
+- Does the series remain coherent and avoid repeating the same argument under different titles?
+- Are #5843-dependent claims and publication status explicitly gated?
 
 ## Findings
 

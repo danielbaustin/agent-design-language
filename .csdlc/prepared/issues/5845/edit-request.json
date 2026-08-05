@@ -1,0 +1,19 @@
+{
+  "issue": 5845,
+  "expected_generation": 20,
+  "expected_digest": "9959d5de5edbac1ce7b26db8307cac5716f51ccec3ec253f16025fc22b1cff2e",
+  "claim_id": "claim-5845-v092-preparation",
+  "actor": "codex:5854-card-editor",
+  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+  "card": "srp",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Is every episode a complete final production package rather than a topic card or smoke artifact?",
+      "Do audio, manifest, ID3/artwork, enclosure, transcript, and feed values agree exactly?",
+      "Are guest consent, DeepSeek invitation language, source rights, and redaction truthful?",
+      "Does platform evidence prove playback without implying deployment or publication?"
+    ]
+  }
+}

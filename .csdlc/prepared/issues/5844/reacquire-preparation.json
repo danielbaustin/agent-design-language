@@ -1,0 +1,25 @@
+{
+  "issue": 5844,
+  "expected_generation": 21,
+  "expected_digest": "fbfb0acc66fd6c45949349ae54699cb3e8bae8b5ed9f7b0d3eb206d0a3f38cc0",
+  "now_unix_seconds": 1785949624,
+  "actor": "codex:5854-preparation",
+  "reason": "Reacquire the exact released preparation claim to refresh typed diagram projections.",
+  "replacement": {
+    "id": "claim-5844-v092-preparation",
+    "owner": "codex:5854-preparation",
+    "generation": 21,
+    "acquired_unix_seconds": 1785949624,
+    "expires_unix_seconds": 1786036024,
+    "heartbeat_unix_seconds": 1785949624,
+    "branch": "codex/5854-demo-publication-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5844",
+      ".csdlc/prepared/issues/5844",
+      ".csdlc/evidence/5844",
+      ".csdlc/locks/5844.lock"
+    ],
+    "purpose": "design-time readiness preparation only"
+  }
+}

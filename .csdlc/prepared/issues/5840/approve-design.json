@@ -1,0 +1,7 @@
+{
+  "issue": 5840,
+  "expected_generation": 21,
+  "expected_digest": "6ae3c164063843158b8a9fab8cc23e70c3c3af04dcb64a2ef641fc1aad9da9ef",
+  "claim_id": "claim-5840-v092-preparation",
+  "reviewer": "codex:5854-design-review"
+}

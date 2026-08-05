@@ -7,19 +7,20 @@
     "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
     "slug": "v0-92-wp-24a-podcast-studio-first-ten-episodes",
     "version": "v0.92",
-    "generation": 0
+    "generation": 21
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "WP-24A issue 5845, its declared implementation paths, and retained proof",
+      "review_scope": "Review all ten episode packages, final audio and manifests, feed parity, guest and consent truth, redaction, artwork/ID3 metadata, platform evidence, route/storage boundary, and exact candidate paths for completeness and no publication overclaim.",
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-24A scope?"
+        "Is every episode a complete final production package rather than a topic card or smoke artifact?",
+        "Do audio, manifest, ID3/artwork, enclosure, transcript, and feed values agree exactly?",
+        "Are guest consent, DeepSeek invitation language, source rights, and redaction truthful?",
+        "Does platform evidence prove playback without implying deployment or publication?"
       ],
       "findings": [],
       "residual_risk": [],

@@ -12,36 +12,53 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify dependencies; build ten bounded source packets; author all ten complete articles; validate claims, citations, links, privacy, and historical/current posture; review the series arc; record a stop-before-publish disposition.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify #5819 and establish ten bounded source packets",
     "acceptance_ids": [
+      "AC-1",
       "AC-2"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Author all ten complete canonical articles",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Run per-article claim, citation, link, privacy, and history/current review",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Review the ten-article series arc and resolve duplication or terminology drift",
+    "acceptance_ids": [
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Reconcile #5843-dependent truth and record stop-before-publish disposition",
     "acceptance_ids": [
       "AC-5"
     ],
@@ -51,15 +68,16 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Each article is grounded in a declared bounded source packet
+- Each citation is real, resolvable, and claim-relevant
+- Historical evidence is not presented as current delivery truth
+- Publication status remains review-ready until separately authorized
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Ten articles may duplicate claims or drift in terminology
+- Late #5843 truth may invalidate release language
+- External links or citations may be unavailable
 
 ## Estimates
 
@@ -73,19 +91,19 @@ Revision 1
 
 .csdlc/prepared/issues/5844/design.md
 
-Digest: 5205e7a8a3e87ce24405848a8e195a116b8d6d5e215a87ffbb02c9066fa57bab
+Digest: caf97377e1ac67efb5654eed761b04b5b433e194b37af252d10d0a0f5e500264
 
 ## Diagram
 
 .csdlc/prepared/issues/5844/diagram.mmd
 
-Digest: 3457a1de375efb2d8f55c6315c01483b076694a42949e3c6343da05264154781
+Digest: fd443e63c054166e3e4c71db483681f52038f49cafe19a5a5353a8cbb24673a1
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- #5819 naming/link truth is unresolved
+- A material claim lacks support
+- Privacy or citation review cannot be completed
 
 ## Handoff
 

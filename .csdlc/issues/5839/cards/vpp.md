@@ -24,25 +24,60 @@ Diagram: .csdlc/prepared/issues/5839/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-19",
-    "proof_role": "identity-evidence to governance-consumption mapping and ADR-plan update",
+    "lane": "wp19-map-completeness",
+    "proof_role": "Prove every required source row resolves to exact evidence or a blocker and names a consumer.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 2500,
+    "argv": [
+      "ruby",
+      ".csdlc/evidence/5839/validate-governance-handoff.rb"
+    ],
+    "parallel_group": "docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp19-negative-governance",
+    "proof_role": "Reject implicit approval, private-state exposure, ADR acceptance, citizenship, standing, and governance-completion claims.",
+    "acceptance_ids": [
+      "AC-2",
       "AC-3",
-      "AC-4",
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 2500,
+    "argv": [
+      "ruby",
+      ".csdlc/evidence/5839/validate-governance-handoff.rb",
+      "--negative"
+    ],
+    "parallel_group": "docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp19-diff-review",
+    "proof_role": "Prove clean patch structure before producer/consumer exact-head review.",
+    "acceptance_ids": [
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 1200,
-    "budget_tokens": 10000,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 500,
     "argv": [
       "git",
       "diff",
       "--check"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "hygiene",
     "defer_reason": null
   }
 ]
@@ -59,6 +94,8 @@ Tokens: 10000
 
 ## Commands
 
+- `ruby .csdlc/evidence/5839/validate-governance-handoff.rb`
+- `ruby .csdlc/evidence/5839/validate-governance-handoff.rb --negative`
 - `git diff --check`
 
 ## Failure Semantics

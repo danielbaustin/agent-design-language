@@ -1,2 +1,9 @@
 flowchart LR
-  I["Issue 5838"] --> D["Design required"]
+  S["Versioned birthday scenario"] --> A["Landed ACIP contract"]
+  A --> P1["Real provider A"]
+  A --> P2["Real provider B"]
+  P1 --> T["Redacted protocol traces"]
+  P2 --> T
+  T --> M["Provider-neutral proof matrix"]
+  U["Unavailable or substituted provider"] --> F["Visible non-pass"]
+  F --> M

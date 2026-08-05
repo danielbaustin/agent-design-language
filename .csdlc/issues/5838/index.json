@@ -3,9 +3,9 @@
   "issue": 5838,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "32be2775da7d29b623f133aa7284fea130d4fd34731c4f9b15c417f41bb01059",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "d071aabc2ebfe482dc4dc3bdf5f76e69d3a7149cba8017de7a741a8b4492591a",
+  "phase": "bound",
+  "generation": 22,
+  "digest": "25f08c3c70019e2bb06015c6ee99c70d8545d87d0818a4ab03948191ba1065da",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5838/design.md",
   "diagram_path": ".csdlc/prepared/issues/5838/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5854-design-review",
+      "revision": "9edd5d793d7fb009b2b655fb774846175ed5c156159bf964921ada07082264f5"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "b1c5677dffe0105c14098143702798f8f8dc14144563471e5d4dc922faaa8db1",
-      "rendered_digest": "21990b136aa8490c9540a96515a4c80ce817e54fcafc6921142dc5f6ac73649a",
-      "ast_digest": "9151b9508ea5ec0b02b12439a7e31975f7ed3ddfcb665ef3dcf4bec1176b23b9"
+      "values_digest": "e4be79784df81b8fb39f06dfab53a8cdb7b228e80209e919cf596692a7cad267",
+      "rendered_digest": "339a1941074f0cf96f2e657e465eecb1d7b9e3dd680d1d67cf643a0f103ed1b6",
+      "ast_digest": "c8def94eb0b19d23c05ce6f087fb550907808c8b50929a6d16ae2066349d7e11"
     },
     "stp": {
-      "values_digest": "e3a849dccc58ff0b842efb3d9d57406cd553ca18444cdb81239377d6d1751404",
-      "rendered_digest": "2a134df389c0e0ac114fb76c72160fc2ec99a821766b4eed3051487ac933dd02",
-      "ast_digest": "c188b534e435a2549d03a236d8270b38ae49790c0a96323fca4f8329793a6cf4"
+      "values_digest": "ddfa83561eac7ef4a22b90628fa320f8622369be8a8fda414e97f725e571f8a6",
+      "rendered_digest": "1444a8c2cf61a20aabba3b4d44ff13d9ba8a03e4ec4e45ab363fe219ae5e288c",
+      "ast_digest": "97c67232d75805316eedacc391a3306971fd152feb8016feb25876f7ae618d6a"
     },
     "spp": {
-      "values_digest": "d97633d1fae2bf07b853add83ece60e451aac17c2f4f2bff73df9379fe51023a",
-      "rendered_digest": "76e6fe6ed35bfa7642ce91704352503b503ddb0b546f7624ca1660ee1cdf1bc2",
-      "ast_digest": "2972b165937c36897611f329f16ec5622a430c2e828ff0eae09b8c11efc91c71"
+      "values_digest": "7231c0509996483836c78c071fdf51b0a7177b9348f36745c1325ecd9b6796d2",
+      "rendered_digest": "c443b8748ac404469bed2944fbf7a0f963085b2c1c92da540ee3c4f8b8a308fb",
+      "ast_digest": "fb1c5b8d61e76c2737f67143572b84d2eb92a6cd9cb105fabb09eaaecacc3caf"
     },
     "vpp": {
-      "values_digest": "7fcd146732c7f06d15688d1b46c8d139353c9ffe07d264b1252607342e8e5d17",
-      "rendered_digest": "d412fd019511dc148d79168de051162a036e0e3a786829a2decabee6bf5f9b6f",
-      "ast_digest": "fb899f5f1946767af9ff1f74d7f1f8cd6482200b990da893690e1104e1a62b6f"
+      "values_digest": "9148e85273ba4b408679ed3bed32e459169f2432bdf3121902c908f223a3655c",
+      "rendered_digest": "22670963e767a00788f734b8e5a6fbebb87c791f15cee5c15caae1ed602f0b00",
+      "ast_digest": "aefe3b3d15d6b57c032286c9ab9924ff908294667f2c5c43ff97d6f1136493d9"
     },
     "srp": {
-      "values_digest": "27fe4917535280e57132eac2f67a215fa2d400ce7a3436ca5ce37186d9a1c857",
-      "rendered_digest": "00b4f1f68eb037c1c51821280dfe1b9ab4cfd92df689289670ad154aa5414663",
-      "ast_digest": "4a04887bf3deee9fedf965d7da3e8fa39b48529bd1aa001d8be4100cbd4b27d5"
+      "values_digest": "1ec2e206717489825ef9490c0c684e010646b77e3d4b85023b7661949b69ae11",
+      "rendered_digest": "48a6d07a5e55bf0ec0ec3ee2965792840a60bf8b24ad29262b4301f62200fbca",
+      "ast_digest": "01c214c54d26abf163c33731700e79b0223934d010a2b7781d678fb9a3c360ec"
     },
     "sor": {
-      "values_digest": "505449b1a1be6142529deea445c835f25fa4e58509aa4f4c846e44d3f76c7826",
+      "values_digest": "c79334acfd3e41a6ac10d971c618a1238fa933b0e1bd8c6f0e4adddefde374dc",
       "rendered_digest": "54c0446d13e9fff136c9c400ad2ee8985fbf958252f1eb073c3ad8164a7af534",
       "ast_digest": "52178b8ee7eb467f2882e27a84b0cf3218729296aad0bddfc89a3189b9483fa6"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5854-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5854-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,195 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5838-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released WP-18B preparation claim to make the issue design-time execution-ready.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5838-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5838\",\".csdlc/prepared/issues/5838\",\".csdlc/evidence/5838\",\".csdlc/locks/5838.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5854-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5854-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific goal from the reviewed readiness spec.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Prove the same versioned birthday multi-agent scenario across at least two real providers without provider-specific success substitution.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-18B: Provider-neutral multi-agent proof.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific required_outcome from the reviewed readiness spec.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A redacted exact-revision matrix of real provider runs, equivalent ACIP semantics, negative/provider-loss cases, and visible rejection of fixture, cached, receipt-only, or synthetic substitution.\",\"operation\":\"replan\",\"previous_value\":\"provider-neutral multi-agent proof matrix and artifacts\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific task_boundary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Implement only the WP-18B provider-neutral harness, validator, proof matrix, traces, and failure cases over landed #5832, #5834, and #5836 contracts.\",\"operation\":\"replan\",\"previous_value\":\"Deliver provider-neutral multi-agent proof matrix and artifacts.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific plan_summary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify #5832, #5834, and #5836; select two real independently configured providers; run the identical scenario and retain redacted ACIP traces; execute malformed, denied, interrupted, unavailable, loss, and substitution cases; validate source/provider truth and review exact head.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific review_scope from the reviewed readiness spec.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review the WP-18B real-provider harness, validator, matrix, redacted traces, negative artifacts, and exact proof paths for identical scenario/ACIP semantics, no substitution, credential safety, provider-loss isolation, and scope discipline.\",\"operation\":\"replan\",\"previous_value\":\"WP-18B issue 5838, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace operator constraints from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"At least two independently configured real providers must pass\",\"Provider unavailability is a non-pass and cannot trigger substitution\",\"Never retain credentials, private prompts, or unredacted provider payloads\",\"Release the preparation claim before handoff\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace authority_boundary from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"WP-18B owns provider comparison and no-substitution proof\",\"#5832 owns ACIP protocol/transport\",\"#5836 owns the birthday scenario\",\"Provider credentials and private payloads remain outside retained artifacts\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace declared_scope from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl/tools/demo_v092_provider_neutral_birthday.sh\",\"adl/tools/validate_v092_provider_neutral_proof.py\",\"adl/tools/test_v092_provider_neutral_proof.sh\",\"demos/v0.92/provider-neutral-birthday/\",\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\",\".csdlc/evidence/5838/\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace initial_assumptions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"#5832 supplies the versioned ACIP contract\",\"#5834 supplies the integrated birthday review packet\",\"#5836 supplies the runnable scenario\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace deliverables from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Real-provider scenario harness\",\"Provider-neutral matrix with at least two positive columns\",\"Redacted ACIP traces and artifact digests\",\"Malformed, denied, interrupted, unavailable, loss, and substitution proof\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace dependencies from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"#5832 / WP-14 complete\",\"#5834 / WP-16 complete\",\"#5836 / WP-18 complete\",\"Two approved real-provider credential sources available at execution time\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace non_goals from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Identical prose or token usage\",\"Every possible provider\",\"Changing ACIP or the birthday scenario\",\"Publishing credentials, private prompts, or raw payloads\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace repo_inputs from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\",\"docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md\",\"adl/tools/real_multi_agent_provider_adapter.py\",\"adl/tools/provider_demo_common.sh\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace affected_areas from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl/tools/demo_v092_provider_neutral_birthday.sh\",\"adl/tools/validate_v092_provider_neutral_proof.py\",\"adl/tools/test_v092_provider_neutral_proof.sh\",\"demos/v0.92/provider-neutral-birthday/\",\"docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md\",\".csdlc/evidence/5838/\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace invariants from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Every positive column is a real provider invocation\",\"The scenario and ACIP operation contract are identical across providers\",\"One provider failure does not terminate Runtime or unrelated agents\",\"Retained artifacts are credential-free and redacted\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace replan_triggers from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"Provider capability or API contract changes\",\"Landed ACIP operation sequence changes\",\"A required platform lacks the provider tool\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace risks from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"A provider may be unavailable or capability-incompatible\",\"Adapters may hide provider-specific semantics\",\"Trace redaction may remove evidence needed for comparison\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace stop_conditions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Fewer than two real compatible providers are available\",\"#5832/#5836 contracts are not landed\",\"No safe redacted trace can prove semantic equivalence\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace acceptance, plan, and validation DAG from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: At least two real providers complete the identical versioned scenario through equivalent ACIP operations.\",\"AC-2: Provider identity/capability truth and bounded semantic differences are retained without credentials or private payloads.\",\"AC-3: Malformed, denied, interrupted, unavailable, provider-loss, and substitution cases have visible non-pass outcomes.\",\"AC-4: One provider failure leaves Runtime and unrelated agents available, with macOS/Linux tooling posture recorded.\",\"AC-5: Exact-head review has no unresolved actionable finding.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5832, #5834, and #5836 exact contracts and select two real providers\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Run the identical scenario and retain redacted ACIP traces\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Execute provider failure and no-substitution negatives\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Generate and validate the matrix, artifact index, redaction, and platform posture\",\"acceptance_ids\":[\"AC-2\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head review\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"wp18b-real-providers\",\"proof_role\":\"Require two real-provider positive runs through the identical scenario and ACIP contract.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/demo_v092_provider_neutral_birthday.sh\",\"--real-only\",\"--minimum-providers\",\"2\"],\"parallel_group\":\"provider-live\",\"defer_reason\":null},{\"lane\":\"wp18b-no-substitution\",\"proof_role\":\"Reject malformed, denied, unavailable, lost, interrupted, cached, fixture, and receipt-only substitutions.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":350,\"budget_tokens\":2500,\"argv\":[\"bash\",\"adl/tools/test_v092_provider_neutral_proof.sh\",\"--negative\"],\"parallel_group\":\"provider-negative\",\"defer_reason\":null},{\"lane\":\"wp18b-redaction-platform\",\"proof_role\":\"Validate credentials/redaction, matrix parity, Runtime isolation, and macOS/Linux tooling posture.\",\"acceptance_ids\":[\"AC-2\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"bash\",\"adl/tools/test_v092_provider_neutral_proof.sh\",\"--platform-contract\"],\"parallel_group\":\"platform\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Do two real providers, rather than fixtures or cached output, complete the same scenario?\",\"Are identity, authority, ordering, ACIP operations, and result semantics provider-neutral?\",\"Do provider loss and substitution attempts fail visibly without collapsing Runtime?\",\"Are all traces useful but credential-free and appropriately redacted?\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding so implementation can bind just in time",
+      "operation": "{\"claim_id\":\"claim-5838-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released preparation claim to refresh typed diagram projections.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5838-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5838\",\".csdlc/prepared/issues/5838\",\".csdlc/evidence/5838\",\".csdlc/locks/5838.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5854-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 29,
+      "generation": 22,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding after typed diagram projection refresh",
+      "operation": "{\"claim_id\":\"claim-5838-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
     }
   ]
 }

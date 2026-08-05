@@ -1,2 +1,9 @@
 flowchart LR
-  I["Issue 5845"] --> D["Design required"]
+  B["Ten locked episode briefs"] --> S["Scripts and source packets"]
+  S --> A["Segments and final audio"]
+  A --> M["Transcript, notes, ID3, artwork, enclosure"]
+  M --> Q["Machine QA and redaction"]
+  Q --> H["Human listen and editorial review"]
+  H --> R["Ten review-ready packages"]
+  F["Missing asset, guest ambiguity, local URL, or audio defect"] --> X["Blocked episode"]
+  X --> R

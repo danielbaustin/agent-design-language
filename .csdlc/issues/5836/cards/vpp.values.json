@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-18] First birthday demo",
     "slug": "v0-92-wp-18-first-birthday-demo",
     "version": "v0.92",
-    "generation": 0
+    "generation": 22
   },
   "status": "ready",
   "content": {
@@ -16,25 +16,60 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-18",
-          "proof_role": "demo feature doc, artifacts, negative-case report, and reviewer packet",
+          "lane": "wp18-positive-runtime",
+          "proof_role": "Prove the integrated Runtime emits one complete birthday packet.",
           "acceptance_ids": [
             "AC-1",
-            "AC-2",
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-4"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 3600,
-          "budget_tokens": 25000,
+          "budget_seconds": 400,
+          "budget_tokens": 3000,
           "argv": [
-            "git",
-            "diff",
-            "--check"
+            "bash",
+            "adl/tools/test_v092_first_birthday_demo.sh",
+            "--positive"
           ],
-          "parallel_group": "issue-local",
+          "parallel_group": "birthday",
+          "defer_reason": null
+        },
+        {
+          "lane": "wp18-negative-replay",
+          "proof_role": "Prove all not-a-birthday, interruption, replay, and redaction cases fail closed.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 400,
+          "budget_tokens": 3000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v092_first_birthday_demo.sh",
+            "--negative"
+          ],
+          "parallel_group": "birthday",
+          "defer_reason": null
+        },
+        {
+          "lane": "wp18-platform-contract",
+          "proof_role": "Prove the packet validator and command contract on required macOS/Linux lanes.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v092_first_birthday_demo.sh",
+            "--platform-contract"
+          ],
+          "parallel_group": "platform",
           "defer_reason": null
         }
       ],
@@ -42,9 +77,9 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5836/design.md",
-      "design_digest": "5f034f62cd8b993f7fbe91b6388154dbffc39c318449d284a92ac4b4901b3630",
+      "design_digest": "6bfcd42e50a0009144b66283310fa4f0fa0511050a86d7c746b727fe1a9b2654",
       "diagram_ref": ".csdlc/prepared/issues/5836/diagram.mmd",
-      "diagram_digest": "a348f1f8c06a39fd4f33842b58c01295c8a2006f6d94837120f0f8642ebaf270"
+      "diagram_digest": "039549736c17a86e37d74217aa9f5d20dade32c3a9e12e92c43a9975fd8d1a03"
     }
   }
 }

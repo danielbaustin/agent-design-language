@@ -1,0 +1,19 @@
+{
+  "issue": 5840,
+  "expected_generation": 20,
+  "expected_digest": "e4d9aa4e29960e0308fdff70e91dfa9490a35717626b9b3bd86018ea579bf066",
+  "claim_id": "claim-5840-v092-preparation",
+  "actor": "codex:5854-card-editor",
+  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+  "card": "srp",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Does every accepted row resolve to a current exact revision, command, artifact, owner, and review?",
+      "Are negative and platform limits explicit instead of inferred from positive proof?",
+      "Does the patch correct stale WP-20 ownership without taking WP-21/WP-21A scope?",
+      "Can any planned, synthetic, receipt-only, or historical artifact be mistaken for accepted feature proof?"
+    ]
+  }
+}

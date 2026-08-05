@@ -1,0 +1,42 @@
+{
+  "goal": "Author the complete ten-article ADL launch series as source-grounded, review-ready publication packets.",
+  "required_outcome": "Ten complete articles, each with a bounded source packet and editorial review, form a coherent series whose claims, citations, links, privacy posture, and release dependencies are explicit.",
+  "task_boundary": "Draft and review the ten named Medium articles after #5819, with final release-dependent claims gated by #5843; do not publish, schedule, submit, or absorb podcast and manuscript work.",
+  "plan_summary": "Verify dependencies; build ten bounded source packets; author all ten complete articles; validate claims, citations, links, privacy, and historical/current posture; review the series arc; record a stop-before-publish disposition.",
+  "review_scope": "Review all ten source packets, complete article drafts, editorial reviews, series claim matrix, publication disposition, and exact candidate paths for evidence grounding, audience fit, citation integrity, privacy, duplication, and no publication overclaim.",
+  "operator_constraints": ["All ten articles must be complete prose, not outlines or topic cards", "Drafting depends on #5819 and final release claims depend on #5843", "No invented citation, metric, customer claim, or delivery claim", "No publication or scheduling without separate operator authority", "Release the preparation claim before implementation handoff"],
+  "collections": {
+    "sip": {
+      "declared_scope": ["docs/milestones/v0.92/publication/articles/01-what-is-adl/ through 10-whats-next-for-adl/", "docs/milestones/v0.92/publication/articles/SERIES_ARC_AND_CLAIM_MATRIX.md", "docs/milestones/v0.92/publication/articles/PUBLICATION_DISPOSITION.md", ".csdlc/evidence/5844/"],
+      "authority_boundary": ["WP-24 owns the ten review-ready article packets", "#5819 supplies canonical naming and link inputs", "#5843 supplies final release truth", "The operator retains publication authority"],
+      "initial_assumptions": ["The canonical ten-title sequence remains unchanged", "Current repository sources can support bounded article claims", "Historical evidence will be labeled as historical"]
+    },
+    "stp": {
+      "deliverables": ["Ten bounded source packets", "Ten complete Medium-style articles", "Ten editorial review records", "Series arc and claim matrix", "Stop-before-publish disposition"],
+      "dependencies": ["#5819 complete before drafting", "#5843 complete before final release-dependent truth"],
+      "repo_inputs": ["docs/milestones/v0.91.2/review/publication_program/ARXIV_AND_MEDIUM_PUBLICATION_BACKLOG_v0.91.2.md", "docs/milestones/v0.91.2/review/publication_program/PUBLICATION_REVIEW_GATES_v0.91.2.md", "adl/tools/skills/medium-article-writer/", "docs/milestones/v0.92/external_launch/", "docs/milestones/v0.92/SPRINT_v0.92.md"],
+      "non_goals": ["Medium publication, upload, scheduling, or submission", "Paper or manuscript production", "Podcast episode production", "Milestone release approval", "Invented citations, metrics, or customer claims"]
+    },
+    "spp": {
+      "affected_areas": ["docs/milestones/v0.92/publication/articles/", ".csdlc/evidence/5844/"],
+      "invariants": ["Each article is grounded in a declared bounded source packet", "Each citation is real, resolvable, and claim-relevant", "Historical evidence is not presented as current delivery truth", "Publication status remains review-ready until separately authorized"],
+      "risks": ["Ten articles may duplicate claims or drift in terminology", "Late #5843 truth may invalidate release language", "External links or citations may be unavailable"],
+      "stop_conditions": ["#5819 naming/link truth is unresolved", "A material claim lacks support", "Privacy or citation review cannot be completed"],
+      "replan_triggers": ["Canonical titles or series order change", "#5843 changes release truth", "Publication-review policy changes"]
+    }
+  },
+  "acceptance_criteria": ["AC-1: All ten canonical titles have complete source-packet, article, and editorial-review artifacts.", "AC-2: Every material claim and citation is source-grounded, privacy-safe, and correctly labeled current, historical, planned, or unknown.", "AC-3: The series arc is coherent, non-duplicative, consistently named, and audience-appropriate.", "AC-4: Automated completeness, link/citation, claim-boundary, privacy, and negative placeholder scans pass.", "AC-5: The disposition remains review-ready or explicitly operator-approved; no autonomous publication occurs."],
+  "steps": [
+    {"id":"S1","action":"Verify #5819 and establish ten bounded source packets","acceptance_ids":["AC-1","AC-2"],"status":"pending"},
+    {"id":"S2","action":"Author all ten complete canonical articles","acceptance_ids":["AC-1","AC-3"],"status":"pending"},
+    {"id":"S3","action":"Run per-article claim, citation, link, privacy, and history/current review","acceptance_ids":["AC-2","AC-4"],"status":"pending"},
+    {"id":"S4","action":"Review the ten-article series arc and resolve duplication or terminology drift","acceptance_ids":["AC-3"],"status":"pending"},
+    {"id":"S5","action":"Reconcile #5843-dependent truth and record stop-before-publish disposition","acceptance_ids":["AC-5"],"status":"pending"}
+  ],
+  "validation_lanes": [
+    {"lane":"wp24-series-contract","proof_role":"Prove all ten complete packets satisfy the Medium writer and series contract.","acceptance_ids":["AC-1","AC-3","AC-4"],"deterministic":true,"resource_profile":"small","budget_seconds":450,"budget_tokens":4000,"argv":["ruby",".csdlc/evidence/5844/validate-article-series.rb"],"parallel_group":"articles","defer_reason":null},
+    {"lane":"wp24-claims-negative","proof_role":"Reject outlines, placeholders, fabricated or missing citations, private data, and unsupported current or release claims.","acceptance_ids":["AC-2","AC-4","AC-5"],"deterministic":true,"resource_profile":"small","budget_seconds":450,"budget_tokens":4000,"argv":["ruby",".csdlc/evidence/5844/validate-article-series.rb","--negative"],"parallel_group":"articles","defer_reason":null},
+    {"lane":"wp24-writer-contract","proof_role":"Prove the repository Medium article writer retains source-packet and stop-before-publish safeguards.","acceptance_ids":["AC-2","AC-5"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":2000,"argv":["bash","adl/tools/test_medium_article_writer_skill_contracts.sh"],"parallel_group":"contracts","defer_reason":null}
+  ],
+  "review_prompts": ["Are all ten artifacts complete articles with bounded source packets rather than outlines?", "Is every material claim and citation supportable without exposing private information?", "Does the series remain coherent and avoid repeating the same argument under different titles?", "Are #5843-dependent claims and publication status explicitly gated?"]
+}

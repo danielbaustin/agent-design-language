@@ -12,36 +12,54 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify #5826, #5827, and #5834; reconcile landed schemas; author the transfer matrix and WP-04 boundary; validate links, redaction, copied-state rejection, and forbidden production claims; then obtain exact-head review.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify #5826, #5827, and #5834 exact dependency truth and landed schemas",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Author the transfer matrix and continuity-transfer design note",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Update only concrete v0.93 handoff inputs",
+    "acceptance_ids": [
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Run path, redaction, copied-state, ambiguity, and forbidden-claim validation",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve exact-head review and retain proof",
     "acceptance_ids": [
       "AC-5"
     ],
@@ -51,15 +69,16 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Copied state is never continuity proof
+- Ambiguous lineage is quarantined
+- Private state moves only as governed redacted references
+- Production and governance authority remain downstream
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Migration prose could overclaim operational portability
+- A transfer row could expose private state
+- Landed dependency schemas may differ from planning names
 
 ## Estimates
 
@@ -73,19 +92,19 @@ Revision 1
 
 .csdlc/prepared/issues/5835/design.md
 
-Digest: a4133f0b98d7a52ac173165a63f7c0cc45caa57332fbe5d076eb040fa70a467c
+Digest: 98bb854103c27ca16f788f98c22594cf6bd9e356d92184498de6a134daa07b52
 
 ## Diagram
 
 .csdlc/prepared/issues/5835/diagram.mmd
 
-Digest: c92f5c34c8a4a3c46a9cbbf48220d216321b967ae235f9e9d9d15bab2b706d41
+Digest: 0a3ab8f4a8150b92ec738750c11ea59db723de5e8bdd6d4a18052b93ae7e632b
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- Any dependency is not current and accepted
+- Required schema or evidence path is absent
+- The design cannot preserve lineage or redaction without widening scope
 
 ## Handoff
 

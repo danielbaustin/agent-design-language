@@ -1,2 +1,12 @@
 flowchart LR
-  I["Issue 5835"] --> D["Design required"]
+  B["Landed v0.92 birthday evidence"] --> M["Field-level transfer matrix"]
+  M --> P["Portable reference"]
+  M --> L["Local-only or redacted state"]
+  M --> G["Requires v0.93 governance"]
+  M --> T["Requires later transport security"]
+  C["Copied or conflicting state"] --> Q["Reject or quarantine"]
+  P --> H["v0.93 handoff input"]
+  L --> H
+  G --> H
+  T --> H
+  Q --> H

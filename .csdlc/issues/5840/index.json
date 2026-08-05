@@ -3,9 +3,9 @@
   "issue": 5840,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1df5691bbbeab4d20e6be89d00ec42c2dd2f6a44809f68e64dce6d6fea447e90",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "a05bfdb7f1a264da5d1bed518dae0d9cebcd38533b647d8456af2d2e131db819",
+  "phase": "bound",
+  "generation": 22,
+  "digest": "8ed598bf525176ee31ed15441fe3e5def0d9caa557aaba32e8375a5cfd914f79",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5840/design.md",
   "diagram_path": ".csdlc/prepared/issues/5840/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5854-design-review",
+      "revision": "9431c5b9ecbb320ef0b0e61b86d1b686c9ab7f5e9d0093c7a63126478c3bcf40"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "230b180170cbe68e6a439f4cffbecd383a5e5528ca439709c933baffe3899e15",
-      "rendered_digest": "fece2ad4b1186ee200109c33cdf524d4b09836ba8dc85e1ce77f073394ddc832",
-      "ast_digest": "531e897a1eb21c72e09d478d2f2e939a9d08002c8015a070e3093e44ac9a74c2"
+      "values_digest": "a2ce0ed414ea181f6ede47a9fddcb24ccc36ec2657d3ee79b943e9bd13b3872d",
+      "rendered_digest": "4721c3cd735e1ef5d94f73aec8474e4a79d3b6c6624f19ca66374c1a101b8852",
+      "ast_digest": "0eb414faa79f813dee84591f77f538a533bae4823d6f4550cd4ecde025063a66"
     },
     "stp": {
-      "values_digest": "6e8fc67ce73cf96fabf76e4f83bdfc4b4440ae457c7f102df803dcb26187c7b2",
-      "rendered_digest": "368c30644759ac569664e8b2b92d452d62c4a1202181bbae8bd247de7e8da064",
-      "ast_digest": "12ba7e0747ecaea24961c5e2acf497e9f97100ad8bea2398d456a4e74c673799"
+      "values_digest": "713a7a488f7b4d7c746e09ee2ff957439414dea7cfad8bdede48a6f319a1c66a",
+      "rendered_digest": "89710059108f1b71ef76d9c18a4f0b5e006e5d12bbf9963d50948fd57abda541",
+      "ast_digest": "58ad82e0415338ea91183d54b9f52a856d327d3a6999f2078704119b79bc9db2"
     },
     "spp": {
-      "values_digest": "6f1d6832768ce4aaea9b8fa64ae927037de1d16c29b46ba4abe3a39216b713f6",
-      "rendered_digest": "dda7dbc2b80c42394260880aabbb489aec7d9811d3f597a323312e487c4b00dd",
-      "ast_digest": "c63dbde9399f91ae004380431b317ad346174b549d1e6cc4883b730fb557f942"
+      "values_digest": "401d38ad8d5dba81acf3e273973cdaa1f8c1379adc9649403ee568b4faab3eed",
+      "rendered_digest": "019e03d47d0d54419f25f3280d8b846a3d73323411563b892974a5518c91550d",
+      "ast_digest": "2ce9ea0150b1e47c7a13c3c5cdc6ed19179077b7aa53e28ba02254df5690576f"
     },
     "vpp": {
-      "values_digest": "da862c62555c465677b7b0b9607c0c8b4fc9d06298736f56cd7c73ada67a5c4a",
-      "rendered_digest": "6abc685a525cec2329799fd35f1c84a6d80e6aa9778a4d1c62a45e2e8bf1197c",
-      "ast_digest": "d38393d0fa5314a4ae6f4183e2d3f48904de4be5f2494cd2d55451994240e9b4"
+      "values_digest": "6f2799d5e13df3eb8433f25b39a4080fe762e0ee1849577d44b36c269bbc2a3f",
+      "rendered_digest": "4c27593e0cce44ee08ddc1a5068192498ca56799c7d749f3b5f164bc18bfed02",
+      "ast_digest": "307b384dd95e4211aaa4f566ee94849ec11a388558c1446c1def859bfaa4c113"
     },
     "srp": {
-      "values_digest": "3c3a8d0b52bec17f98e7441c0709d76beeb8843ccbf0647f995b1358fee555f9",
-      "rendered_digest": "a4e14baa4b1645dc64c6bccb2e452ab35ec0e6538d92dabeb1447328e1702abe",
-      "ast_digest": "03c4b7e965f4463752f3b93891742310af2828ca6f3280dda85e74bfe25489e1"
+      "values_digest": "64bea517d848a9cd582d4553bbd2bf3d20835e9b75b9c4cbdec2e2f9c9e938b1",
+      "rendered_digest": "282625afcf4ab5da59a183a825e93a67d1ba4bc6f2b4a096e5e01aa438cdd9cf",
+      "ast_digest": "14459b3bc69cdd00631d7aa3eb18fd3d8299e55c490a34fb10f8d0b3202d640a"
     },
     "sor": {
-      "values_digest": "0920ca8c15e029895c430a4505d92a508b7aa574e7570cac58167defda83bb22",
+      "values_digest": "26d27f5048594751ba6f6ce935ee791579467cdd056564820b5acf945aecf7a0",
       "rendered_digest": "aa681a63d290b05cb1fc8d1e229f1cdbdd6be71ad82c28717c625a69e559d924",
       "ast_digest": "7f81899c6a5095949519bd8e356c956f00810d47612f084f66e20d4f8320c033"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5854-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5854-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,195 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5840-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released WP-20 preparation claim to make the issue design-time execution-ready.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5840-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5840\",\".csdlc/prepared/issues/5840\",\".csdlc/evidence/5840\",\".csdlc/locks/5840.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5854-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5854-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific goal from the reviewed readiness spec.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Build the exact-revision v0.92 demo, AEE, and proof-coverage index and make unsupported coverage fail closed.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-20: Demo matrix, AEE proof, and proof coverage.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific required_outcome from the reviewed readiness spec.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"The demo matrix, feature coverage table, activation ledger, and AEE artifact index agree on commands, owners, revisions, platform posture, positive and negative artifacts, review state, and non-claims.\",\"operation\":\"replan\",\"previous_value\":\"demo matrix, AEE proof routing or packet, proof coverage, and validation commands\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific task_boundary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Reconcile and validate v0.92 demo/AEE proof metadata after #5836, #5837, #5838, and #5839; do not implement child features, absorb WP-21/WP-21A reduction work, or declare milestone release readiness.\",\"operation\":\"replan\",\"previous_value\":\"Deliver demo matrix, AEE proof routing or packet, proof coverage, and validation commands.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific plan_summary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify dependency revisions; correct stale WP-20 ownership while preserving WP-21/WP-21A; replace candidate rows only with accepted exact-revision evidence; build the AEE artifact index; add fail-closed coverage validation; resolve exact-head review.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific review_scope from the reviewed readiness spec.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review the WP-20 matrix, coverage table, activation ledger, AEE index, validator proof, and exact candidate paths for exact-revision traceability, ownership consistency, negative/platform coverage, and unsupported milestone claims.\",\"operation\":\"replan\",\"previous_value\":\"WP-20 issue 5840, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace operator constraints from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Accepted proof requires an exact revision and independently usable artifact\",\"Planned, blocked, failed, synthetic, or receipt-only evidence cannot satisfy coverage\",\"WP-21 and WP-21A retain repository-reduction ownership\",\"Release the preparation claim before implementation handoff\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace authority_boundary from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"WP-20 owns integrated demo, AEE, and proof-index truth\",\"Child issues own their feature behavior and primary evidence\",\"WP-21/WP-21A own reduction and refactoring\",\"WP-23/WP-30 own final quality and release decisions\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace declared_scope from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.92/review/V092_DEMO_AEE_ARTIFACT_INDEX.md\",\"adl/tools/validate_v092_demo_proof_coverage.py\",\"adl/tools/test_v092_demo_proof_coverage.sh\",\".csdlc/evidence/5840/\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace initial_assumptions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"#5836, #5837, #5838, and #5839 provide reviewed exact-revision inputs\",\"Current coverage prose contains a stale WP-20 reduction assignment\",\"Platform and credential limitations remain explicit row data\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace deliverables from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Reconciled demo matrix and feature coverage table\",\"Exact-revision AEE and artifact index\",\"Corrected WP-20 versus WP-21/WP-21A ownership\",\"Fail-closed coverage validator and focused tests\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace dependencies from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"#5836 / WP-18 complete\",\"#5837 / WP-18A complete\",\"#5838 / WP-18B complete\",\"#5839 / WP-19 complete\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace non_goals from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Feature implementation or rerouting child ownership\",\"Repository-wide reduction or Rust refactoring\",\"Synthetic proof generation\",\"Milestone quality, publication, or release approval\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace repo_inputs from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.92/QUALITY_GATE_v0.92.md\",\"docs/milestones/v0.91.6/features/AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace affected_areas from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\",\"docs/milestones/v0.92/review/V092_DEMO_AEE_ARTIFACT_INDEX.md\",\"adl/tools/validate_v092_demo_proof_coverage.py\",\"adl/tools/test_v092_demo_proof_coverage.sh\",\".csdlc/evidence/5840/\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace invariants from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Every accepted row names an exact revision, command, artifact, owner, and review state\",\"Positive evidence never substitutes for a required negative lane\",\"Platform-specific evidence is not generalized silently\",\"AEE uncertainty is recorded as a blocker, not relabeled as proof\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace replan_triggers from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"A dependency revision changes\",\"The AEE claim boundary changes\",\"Quality-gate or proof-status vocabulary changes\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace risks from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Dependency proof may be incomplete or superseded\",\"Stale ownership prose may conflict with the live wave\",\"Coverage rows may overstate platform or AEE support\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace stop_conditions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"A required dependency lacks accepted exact-revision evidence\",\"WP-20 ownership cannot be reconciled without changing the live wave\",\"A claimed artifact cannot be independently inspected\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace acceptance, plan, and validation DAG from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: Matrix, coverage, activation-ledger, and artifact-index rows agree on owner, command, status, and exact revision.\",\"AC-2: Every accepted demo/AEE claim has positive artifact, required negative artifact, platform/credential posture, review state, and non-claims.\",\"AC-3: WP-20 demo/proof ownership is corrected without absorbing WP-21/WP-21A reduction work.\",\"AC-4: The validator rejects missing paths, duplicate ownership, planned-as-passed status, synthetic proof, and unsupported platform claims.\",\"AC-5: Exact-head review has no unresolved actionable finding.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5836, #5837, #5838, and #5839 at accepted exact revisions\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Reconcile matrix, coverage, activation, and AEE index rows\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Correct WP-20 ownership while preserving WP-21/WP-21A\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Implement and run positive, negative, and platform coverage checks\",\"acceptance_ids\":[\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head proof-index review\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"wp20-coverage-positive\",\"proof_role\":\"Prove exact-revision parity across matrix, coverage, activation, and AEE index rows.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_v092_demo_proof_coverage.sh\",\"--positive\"],\"parallel_group\":\"proof-index\",\"defer_reason\":null},{\"lane\":\"wp20-coverage-negative\",\"proof_role\":\"Reject missing artifacts, duplicate owners, planned-as-passed, synthetic proof, and unsupported platform claims.\",\"acceptance_ids\":[\"AC-2\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_v092_demo_proof_coverage.sh\",\"--negative\"],\"parallel_group\":\"proof-index\",\"defer_reason\":null},{\"lane\":\"wp20-diff-review\",\"proof_role\":\"Prove clean patch structure before exact-head review.\",\"acceptance_ids\":[\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"hygiene\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every accepted row resolve to a current exact revision, command, artifact, owner, and review?\",\"Are negative and platform limits explicit instead of inferred from positive proof?\",\"Does the patch correct stale WP-20 ownership without taking WP-21/WP-21A scope?\",\"Can any planned, synthetic, receipt-only, or historical artifact be mistaken for accepted feature proof?\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding so implementation can bind just in time",
+      "operation": "{\"claim_id\":\"claim-5840-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released preparation claim to refresh typed diagram projections.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5840-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5840\",\".csdlc/prepared/issues/5840\",\".csdlc/evidence/5840\",\".csdlc/locks/5840.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5854-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 29,
+      "generation": 22,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding after typed diagram projection refresh",
+      "operation": "{\"claim_id\":\"claim-5840-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
     }
   ]
 }

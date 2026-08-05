@@ -7,38 +7,43 @@
     "title": "[v0.92][WP-18B] Provider-neutral multi-agent proof",
     "slug": "v0-92-wp-18b-provider-neutral-multi-agent-proof",
     "version": "v0.92",
-    "generation": 0
+    "generation": 22
   },
   "status": "ready",
   "content": {
     "card_kind": "stp",
     "values": {
-      "task_boundary": "Deliver provider-neutral multi-agent proof matrix and artifacts.",
+      "task_boundary": "Implement only the WP-18B provider-neutral harness, validator, proof matrix, traces, and failure cases over landed #5832, #5834, and #5836 contracts.",
       "deliverables": [
-        "provider-neutral multi-agent proof matrix and artifacts",
-        "real multi-provider runs, protocol traces, negative cases, and no-provider-substitution proof"
+        "Real-provider scenario harness",
+        "Provider-neutral matrix with at least two positive columns",
+        "Redacted ACIP traces and artifact digests",
+        "Malformed, denied, interrupted, unavailable, loss, and substitution proof"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "AC-1: At least two real providers complete the identical versioned scenario through equivalent ACIP operations.",
+        "AC-2: Provider identity/capability truth and bounded semantic differences are retained without credentials or private payloads.",
+        "AC-3: Malformed, denied, interrupted, unavailable, provider-loss, and substitution cases have visible non-pass outcomes.",
+        "AC-4: One provider failure leaves Runtime and unrelated agents available, with macOS/Linux tooling posture recorded.",
+        "AC-5: Exact-head review has no unresolved actionable finding."
       ],
       "dependencies": [
-        "WP-14",
-        "WP-16",
-        "WP-18"
+        "#5832 / WP-14 complete",
+        "#5834 / WP-16 complete",
+        "#5836 / WP-18 complete",
+        "Two approved real-provider credential sources available at execution time"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md",
-        ".adl/docs/TBD/multiagent_demos/"
+        "docs/milestones/v0.92/features/PROVIDER_NEUTRAL_MULTI_AGENT_PROOF_v0.92.md",
+        "docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md",
+        "adl/tools/real_multi_agent_provider_adapter.py",
+        "adl/tools/provider_demo_common.sh"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Identical prose or token usage",
+        "Every possible provider",
+        "Changing ACIP or the birthday scenario",
+        "Publishing credentials, private prompts, or raw payloads"
       ]
     }
   }

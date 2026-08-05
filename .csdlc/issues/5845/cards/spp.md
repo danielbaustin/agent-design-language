@@ -12,36 +12,54 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify #5819, #3223/#3256, and route/storage authority; lock episode and guest truth; produce ten complete packages; validate audio, metadata, RSS parity, redaction, consent, and platform playback; resolve exact-head editorial/audio review.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
-    "acceptance_ids": [
-      "AC-2"
-    ],
-    "status": "pending"
-  },
-  {
-    "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Verify #5819, #3223/#3256, route/storage authority, and ten episode briefs",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
       "AC-4"
     ],
     "status": "pending"
   },
   {
+    "id": "S2",
+    "action": "Produce ten complete scripts, audio masters, transcripts, notes, metadata, artwork, and manifests",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2"
+    ],
+    "status": "pending"
+  },
+  {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Generate RSS enclosure records and prove episode-to-feed parity without deployment",
+    "acceptance_ids": [
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Run audio, redaction, consent, metadata, missing-asset, and platform checks",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve exact-head editorial/audio review with publication still gated",
     "acceptance_ids": [
       "AC-5"
     ],
@@ -51,15 +69,18 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Every final audio digest matches its manifest and enclosure
+- Guest state never exceeds consent evidence
+- Feed records contain stable public-safe values, not local paths
+- Temporary validation state remains inside issue evidence
+- Publication status remains unclaimed
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Audio generation or mastering may vary by provider/platform
+- Route/storage authority may remain unresolved
+- Guest and artwork rights may block individual episodes
+- Large binary artifacts may exceed repository policy
 
 ## Estimates
 
@@ -73,19 +94,20 @@ Revision 1
 
 .csdlc/prepared/issues/5845/design.md
 
-Digest: da70240a0f6a9d2f22b1049322d0909fcc18088ee697763ae9cf6b289977630a
+Digest: 48be0a274ea1dc4ae4cef401ff486919f975323374808ac3e440564583822e71
 
 ## Diagram
 
 .csdlc/prepared/issues/5845/diagram.mmd
 
-Digest: 59228945ae5c542df0da0d9fb79bbc251eabce39fe7c65dcad2e39ef9852cd7c
+Digest: f93e767ad01814319f03d67e71121eeca0bbbaf725dbabb2e0997aaf7f37ccce
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- Route/storage or binary-artifact policy is unresolved
+- Required consent or source rights are unavailable
+- Audio QA cannot produce deterministic manifests
+- A credential would need to enter tracked evidence
 
 ## Handoff
 

@@ -1,0 +1,11 @@
+{
+  "issue": 5838,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5838-v092-preparation",
+  "expected_generation": 22,
+  "expected_digest": "1bf4ebd3545096177fa70640865339d46e391d6c159d0fec73aaeec7a62c3c69",
+  "now_unix_seconds": 1785949665,
+  "actor": "codex:5854-preparation",
+  "operator_authority": "operator-authorized:5860-preparation-clarification",
+  "reason": "Release temporary design-time preparation binding after typed diagram projection refresh"
+}

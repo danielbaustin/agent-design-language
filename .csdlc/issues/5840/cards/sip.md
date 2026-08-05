@@ -12,30 +12,38 @@ Status: ready
 
 ## Goal
 
-Complete WP-20: Demo matrix, AEE proof, and proof coverage.
+Build the exact-revision v0.92 demo, AEE, and proof-coverage index and make unsupported coverage fail closed.
 
 ## Required Outcome
 
-demo matrix, AEE proof routing or packet, proof coverage, and validation commands
+The demo matrix, feature coverage table, activation ledger, and AEE artifact index agree on commands, owners, revisions, platform posture, positive and negative artifacts, review state, and non-claims.
 
 ## Scope
 
-- Issue 5840 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- docs/milestones/v0.92/DEMO_MATRIX_v0.92.md
+- docs/milestones/v0.92/FEATURE_PROOF_COVERAGE_v0.92.md
+- docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md
+- docs/milestones/v0.92/review/V092_DEMO_AEE_ARTIFACT_INDEX.md
+- adl/tools/validate_v092_demo_proof_coverage.py
+- adl/tools/test_v092_demo_proof_coverage.sh
+- .csdlc/evidence/5840/
 
 ## Authority
 
-- Issue 5840 owns only WP-20: Demo matrix, AEE proof, and proof coverage
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- WP-20 owns integrated demo, AEE, and proof-index truth
+- Child issues own their feature behavior and primary evidence
+- WP-21/WP-21A own reduction and refactoring
+- WP-23/WP-30 own final quality and release decisions
 
 ## Assumptions
 
-- none
+- #5836, #5837, #5838, and #5839 provide reviewed exact-revision inputs
+- Current coverage prose contains a stale WP-20 reduction assignment
+- Platform and credential limitations remain explicit row data
 
 ## Operator Constraints
 
-- Prepare before execution
-- Never edit tracked work on main
-- Use one bounded pre-PR review
-- Do not substitute fixtures, receipts, or prose for required working behavior
+- Accepted proof requires an exact revision and independently usable artifact
+- Planned, blocked, failed, synthetic, or receipt-only evidence cannot satisfy coverage
+- WP-21 and WP-21A retain repository-reduction ownership
+- Release the preparation claim before implementation handoff

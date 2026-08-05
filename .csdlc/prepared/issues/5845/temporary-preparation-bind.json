@@ -1,0 +1,23 @@
+{
+  "base_branch": "main",
+  "branch": "codex/5854-demo-publication-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5845-v092-preparation",
+    "owner": "codex:5854-preparation",
+    "generation": 1,
+    "acquired_unix_seconds": 1785948674,
+    "expires_unix_seconds": 1786035074,
+    "heartbeat_unix_seconds": 1785948674,
+    "branch": "codex/5854-demo-publication-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5845",
+      ".csdlc/prepared/issues/5845",
+      ".csdlc/evidence/5845",
+      ".csdlc/locks/5845.lock"
+    ],
+    "purpose": "design-time readiness preparation only"
+  },
+  "issue": 5845
+}

@@ -12,36 +12,41 @@ Status: ready
 
 ## Task
 
-Deliver all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition.
+Draft and review the ten named Medium articles after #5819, with final release-dependent claims gated by #5843; do not publish, schedule, submit, or absorb podcast and manuscript work.
 
 ## Deliverables
 
-- all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition
-- ten reviewed article sources, series-arc review, per-article claim scans, links, milestone evidence updates, and publication boundary
+- Ten bounded source packets
+- Ten complete Medium-style articles
+- Ten editorial review records
+- Series arc and claim matrix
+- Stop-before-publish disposition
 
 ## Acceptance
 
-1. The declared required outcome is complete at the exact reviewed revision
-2. Declared dependencies are verified from current evidence
-3. The named proof surface is reproducible and retained
-4. Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned
-5. One bounded pre-PR review has no unresolved actionable findings
+1. AC-1: All ten canonical titles have complete source-packet, article, and editorial-review artifacts.
+2. AC-2: Every material claim and citation is source-grounded, privacy-safe, and correctly labeled current, historical, planned, or unknown.
+3. AC-3: The series arc is coherent, non-duplicative, consistently named, and audience-appropriate.
+4. AC-4: Automated completeness, link/citation, claim-boundary, privacy, and negative placeholder scans pass.
+5. AC-5: The disposition remains review-ready or explicitly operator-approved; no autonomous publication occurs.
 
 ## Dependencies
 
-- WP-02 for parallel drafting
-- WP-23 for final release-truth alignment
+- #5819 complete before drafting
+- #5843 complete before final release-dependent truth
 
 ## Inputs
 
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/publication/ADL_MEDIUM_ARTICLE_LIST.md
-- .adl/docs/TBD/publication/MEDIUM_ARTICLE_SERIES_PLAN.md
-- .adl/docs/TBD/publication/medium_launch_articles/1-WHY-ADL.md
+- docs/milestones/v0.91.2/review/publication_program/ARXIV_AND_MEDIUM_PUBLICATION_BACKLOG_v0.91.2.md
+- docs/milestones/v0.91.2/review/publication_program/PUBLICATION_REVIEW_GATES_v0.91.2.md
+- adl/tools/skills/medium-article-writer/
+- docs/milestones/v0.92/external_launch/
+- docs/milestones/v0.92/SPRINT_v0.92.md
 
 ## Non Goals
 
-- Adjacent work packages
-- Historical evidence rewriting
-- Unsupported downstream milestone claims
+- Medium publication, upload, scheduling, or submission
+- Paper or manuscript production
+- Podcast episode production
+- Milestone release approval
+- Invented citations, metrics, or customer claims

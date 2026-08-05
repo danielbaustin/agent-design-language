@@ -24,25 +24,60 @@ Diagram: .csdlc/prepared/issues/5840/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-20",
-    "proof_role": "demo matrix, AEE evidence, proof coverage document, and artifact index",
+    "lane": "wp20-coverage-positive",
+    "proof_role": "Prove exact-revision parity across matrix, coverage, activation, and AEE index rows.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-3",
-      "AC-4",
+      "AC-3"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
+    "argv": [
+      "bash",
+      "adl/tools/test_v092_demo_proof_coverage.sh",
+      "--positive"
+    ],
+    "parallel_group": "proof-index",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp20-coverage-negative",
+    "proof_role": "Reject missing artifacts, duplicate owners, planned-as-passed, synthetic proof, and unsupported platform claims.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
+    "argv": [
+      "bash",
+      "adl/tools/test_v092_demo_proof_coverage.sh",
+      "--negative"
+    ],
+    "parallel_group": "proof-index",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp20-diff-review",
+    "proof_role": "Prove clean patch structure before exact-head review.",
+    "acceptance_ids": [
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 3600,
-    "budget_tokens": 25000,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 500,
     "argv": [
       "git",
       "diff",
       "--check"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "hygiene",
     "defer_reason": null
   }
 ]
@@ -59,6 +94,8 @@ Tokens: 25000
 
 ## Commands
 
+- `bash adl/tools/test_v092_demo_proof_coverage.sh --positive`
+- `bash adl/tools/test_v092_demo_proof_coverage.sh --negative`
 - `git diff --check`
 
 ## Failure Semantics

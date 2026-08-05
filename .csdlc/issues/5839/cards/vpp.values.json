@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-19] Birthday-to-governance handoff",
     "slug": "v0-92-wp-19-birthday-to-governance-handoff",
     "version": "v0.92",
-    "generation": 0
+    "generation": 22
   },
   "status": "ready",
   "content": {
@@ -16,25 +16,60 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-19",
-          "proof_role": "identity-evidence to governance-consumption mapping and ADR-plan update",
+          "lane": "wp19-map-completeness",
+          "proof_role": "Prove every required source row resolves to exact evidence or a blocker and names a consumer.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2500,
+          "argv": [
+            "ruby",
+            ".csdlc/evidence/5839/validate-governance-handoff.rb"
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        },
+        {
+          "lane": "wp19-negative-governance",
+          "proof_role": "Reject implicit approval, private-state exposure, ADR acceptance, citizenship, standing, and governance-completion claims.",
+          "acceptance_ids": [
+            "AC-2",
             "AC-3",
-            "AC-4",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2500,
+          "argv": [
+            "ruby",
+            ".csdlc/evidence/5839/validate-governance-handoff.rb",
+            "--negative"
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        },
+        {
+          "lane": "wp19-diff-review",
+          "proof_role": "Prove clean patch structure before producer/consumer exact-head review.",
+          "acceptance_ids": [
             "AC-5"
           ],
           "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 1200,
-          "budget_tokens": 10000,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 500,
           "argv": [
             "git",
             "diff",
             "--check"
           ],
-          "parallel_group": "issue-local",
+          "parallel_group": "hygiene",
           "defer_reason": null
         }
       ],
@@ -42,9 +77,9 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5839/design.md",
-      "design_digest": "abcc2d700c78108b7ccd0068350b56868d4c5efaa81bfcc4aa800444d015f425",
+      "design_digest": "b458e4655affeb638620def0d4bec90af11e6104158d5d4e3dd4efcd080c0e00",
       "diagram_ref": ".csdlc/prepared/issues/5839/diagram.mmd",
-      "diagram_digest": "b1480349d97b80b91ce79e9e847f2081dd33676112c07d3f6eefbea84f6d9ad7"
+      "diagram_digest": "6b99d2a8f3fe9e3cb9e6d79e173dbf3833884262ae15d3fe86cc4bce9568d699"
     }
   }
 }

@@ -12,30 +12,34 @@ Status: ready
 
 ## Goal
 
-Complete WP-17: Migration and cross-polis continuity planning.
+Define a reviewable, non-production cross-polis continuity-transfer contract over landed v0.92 birthday evidence.
 
 ## Required Outcome
 
-bounded birthday-identity movement semantics and non-goals
+A field-level movement-semantics design that rejects copied state, quarantines ambiguity, preserves redaction, and leaves infrastructure and governance authority downstream.
 
 ## Scope
 
-- Issue 5835 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md
+- docs/milestones/v0.92/design/CROSS_POLIS_CONTINUITY_TRANSFER_DESIGN_v0.92.md
+- docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md
+- .csdlc/evidence/5835/
 
 ## Authority
 
-- Issue 5835 owns only WP-17: Migration and cross-polis continuity planning
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- WP-17 owns documentation-only movement semantics and explicit non-goals
+- WP-04 retains Runtime, storage, networking, and distributed polis infrastructure
+- v0.93 retains citizenship, standing, rights, and governance decisions
 
 ## Assumptions
 
-- none
+- #5826 supplies stable-name and identity-root truth
+- #5827 supplies bounded-cycle continuity truth
+- #5834 supplies the integrated birthday review packet
 
 ## Operator Constraints
 
-- Prepare before execution
-- Never edit tracked work on main
-- Use one bounded pre-PR review
-- Do not substitute fixtures, receipts, or prose for required working behavior
+- Preparation bind does not authorize product implementation
+- Use typed C-SDLC v2 cards and exact-revision review
+- Do not edit main or absorb WP-04 or v0.93 authority
+- Release the preparation claim before handoff

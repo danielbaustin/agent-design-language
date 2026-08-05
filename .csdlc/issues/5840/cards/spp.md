@@ -12,36 +12,52 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify dependency revisions; correct stale WP-20 ownership while preserving WP-21/WP-21A; replace candidate rows only with accepted exact-revision evidence; build the AEE artifact index; add fail-closed coverage validation; resolve exact-head review.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify #5836, #5837, #5838, and #5839 at accepted exact revisions",
     "acceptance_ids": [
+      "AC-1",
       "AC-2"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Reconcile matrix, coverage, activation, and AEE index rows",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-2"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Correct WP-20 ownership while preserving WP-21/WP-21A",
+    "acceptance_ids": [
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Implement and run positive, negative, and platform coverage checks",
+    "acceptance_ids": [
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve exact-head proof-index review",
     "acceptance_ids": [
       "AC-5"
     ],
@@ -51,15 +67,16 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Every accepted row names an exact revision, command, artifact, owner, and review state
+- Positive evidence never substitutes for a required negative lane
+- Platform-specific evidence is not generalized silently
+- AEE uncertainty is recorded as a blocker, not relabeled as proof
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Dependency proof may be incomplete or superseded
+- Stale ownership prose may conflict with the live wave
+- Coverage rows may overstate platform or AEE support
 
 ## Estimates
 
@@ -73,19 +90,19 @@ Revision 1
 
 .csdlc/prepared/issues/5840/design.md
 
-Digest: 496624036b8574a5a3fb0ee63eb55b27417b5c23fbf421582565ce70f1d195d5
+Digest: 9431c5b9ecbb320ef0b0e61b86d1b686c9ab7f5e9d0093c7a63126478c3bcf40
 
 ## Diagram
 
 .csdlc/prepared/issues/5840/diagram.mmd
 
-Digest: 306231500f23ed2bf9e37eeb666f371167b01333f715a9008ac35dae520d3bfe
+Digest: 57f3fcc1a7b7aac2e97794d4e761093a49874adc02355f69436b4811bb6538e2
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- A required dependency lacks accepted exact-revision evidence
+- WP-20 ownership cannot be reconciled without changing the live wave
+- A claimed artifact cannot be independently inspected
 
 ## Handoff
 

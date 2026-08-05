@@ -12,30 +12,34 @@ Status: ready
 
 ## Goal
 
-Complete WP-19: Birthday-to-governance handoff.
+Produce the traceable v0.92 identity-evidence map consumed by an explicitly allocated v0.93 governance owner.
 
 ## Required Outcome
 
-v0.93 governance handoff map
+A row-level map from accepted v0.92 artifacts to allowed v0.93 use, redacted projection, forbidden inference, unresolved decision, and named consumer.
 
 ## Scope
 
-- Issue 5839 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md
+- docs/milestones/v0.92/ADR_PLAN_v0.92.md
+- docs/milestones/v0.92/review/V092_TO_V093_GOVERNANCE_EVIDENCE_MAP.md
+- .csdlc/evidence/5839/
 
 ## Authority
 
-- Issue 5839 owns only WP-19: Birthday-to-governance handoff
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- WP-19 owns the evidence map and ADR planning update
+- v0.93 owns citizenship, standing, rights, duties, and governance implementation
+- WP-23/WP-30 own final milestone handoff after quality and ceremony
 
 ## Assumptions
 
-- none
+- #5834 supplies the integrated birthday review packet
+- #5835 supplies continuity-transfer semantics
+- A v0.93 allocation names the accepting consumer
 
 ## Operator Constraints
 
-- Prepare before execution
-- Never edit tracked work on main
-- Use one bounded pre-PR review
-- Do not substitute fixtures, receipts, or prose for required working behavior
+- A real v0.93 allocation and accepting owner are required
+- Missing v0.92 evidence remains unavailable rather than implicitly approved
+- Proposed ADR text is not accepted architecture
+- Release the preparation claim before handoff

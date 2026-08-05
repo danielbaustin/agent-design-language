@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-18B issue 5838, its declared implementation paths, and retained proof
+Review the WP-18B real-provider harness, validator, matrix, redacted traces, negative artifacts, and exact proof paths for identical scenario/ACIP semantics, no substitution, credential safety, provider-loss isolation, and scope discipline.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-18B scope?
+- Do two real providers, rather than fixtures or cached output, complete the same scenario?
+- Are identity, authority, ordering, ACIP operations, and result semantics provider-neutral?
+- Do provider loss and substitution attempts fail visibly without collapsing Runtime?
+- Are all traces useful but credential-free and appropriately redacted?
 
 ## Findings
 

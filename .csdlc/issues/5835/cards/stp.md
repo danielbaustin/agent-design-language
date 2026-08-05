@@ -12,34 +12,39 @@ Status: ready
 
 ## Task
 
-Deliver bounded birthday-identity movement semantics and non-goals.
+Author the WP-17 continuity-transfer feature/design notes and v0.93 handoff inputs without implementing Runtime, storage, networking, or migration behavior.
 
 ## Deliverables
 
-- bounded birthday-identity movement semantics and non-goals
-- cross-polis continuity feature doc, design note, and boundary against WP-04 infrastructure
+- Field-level continuity-transfer matrix
+- Cross-polis continuity design note with WP-04 boundary
+- Updated v0.93 handoff inputs
+- Copied-state, ambiguity, redaction, and forbidden-claim validation evidence
 
 ## Acceptance
 
-1. The declared required outcome is complete at the exact reviewed revision
-2. Declared dependencies are verified from current evidence
-3. The named proof surface is reproducible and retained
-4. Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned
-5. One bounded pre-PR review has no unresolved actionable findings
+1. AC-1: The transfer matrix covers every declared birthday artifact with portability, locality, governance, transport, lineage, and redaction dispositions.
+2. AC-2: Copied, conflicting, ambiguous, and raw-private-state cases fail closed or quarantine explicitly.
+3. AC-3: The feature/design notes preserve the exact boundary against WP-04 and v0.93 authority.
+4. AC-4: Every cited path resolves and forbidden production/governance claims are absent.
+5. AC-5: Exact-head review has no unresolved actionable finding.
 
 ## Dependencies
 
-- WP-09
-- WP-10
-- WP-16
+- #5826 / WP-09 complete at current exact revision
+- #5827 / WP-10 complete at current exact revision
+- #5834 / WP-16 complete at current exact revision
 
 ## Inputs
 
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md
+- docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md
+- docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md
+- docs/milestones/v0.92/ADR_PLAN_v0.92.md
 
 ## Non Goals
 
-- Adjacent work packages
-- Historical evidence rewriting
-- Unsupported downstream milestone claims
+- Production migration, federation, portability, or key lifecycle
+- Runtime, storage, network, or WP-04 implementation
+- v0.93 governance or citizenship decisions
+- Raw private-memory transfer

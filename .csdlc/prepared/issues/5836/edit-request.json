@@ -1,0 +1,19 @@
+{
+  "issue": 5836,
+  "expected_generation": 20,
+  "expected_digest": "462cdcda9b3415c0f535a0bc6e9f6c7dfb82fdc9ebec54b0edf126abfe8fd5d6",
+  "claim_id": "claim-5836-v092-preparation",
+  "actor": "codex:5854-card-editor",
+  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+  "card": "srp",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Is positive proof emitted by the real integrated Runtime rather than a fixture or lifecycle artifact?",
+      "Does every named ordinary lifecycle or missing-evidence case reject with an inspectable reason?",
+      "Are replay, interruption, platform, and redaction boundaries proven?",
+      "Do D1-D6 and launch-adjacent text avoid unsupported birthday or publication claims?"
+    ]
+  }
+}

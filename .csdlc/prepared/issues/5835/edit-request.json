@@ -1,0 +1,19 @@
+{
+  "issue": 5835,
+  "expected_generation": 20,
+  "expected_digest": "69fe5da4fda1b14f1ce50dc53e96152e0abcc1c03bb50af8b632e7fb8e7f84b2",
+  "claim_id": "claim-5835-v092-preparation",
+  "actor": "codex:5854-card-editor",
+  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+  "card": "srp",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Does every movement-semantics row cite landed v0.92 evidence and preserve lineage?",
+      "Can copied, ambiguous, or private state be misread as transferable continuity?",
+      "Does any text absorb WP-04 infrastructure or v0.93 governance authority?",
+      "Are the exact candidate paths and validation artifacts independently usable?"
+    ]
+  }
+}

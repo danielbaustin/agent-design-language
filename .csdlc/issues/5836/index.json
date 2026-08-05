@@ -3,9 +3,9 @@
   "issue": 5836,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "846869967e550e7f6dc78805815062a71d7c828653ce0a668e7c479663588d00",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "ac4052b7424d94bef9ba8e46dfc855add66dac6db073456cd0800b3bc99545f2",
+  "phase": "bound",
+  "generation": 22,
+  "digest": "9930d762f5a09838cdfd95f4202b68c7fee39843ee99afa503cdb5d90bc965fa",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5836/design.md",
   "diagram_path": ".csdlc/prepared/issues/5836/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5854-design-review",
+      "revision": "6bfcd42e50a0009144b66283310fa4f0fa0511050a86d7c746b727fe1a9b2654"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "740ae21050246e67bd979d2638f8a4f2987f468af3c092e3a778d773e2202f08",
-      "rendered_digest": "7123eb4da890ab3849f9755471b24f987afa3bb3b0ddd4284968451c1acd8a87",
-      "ast_digest": "56db33240e6f4b9ad357965e16a50c9a04b139d05c5b26019b73b3fdcc53833d"
+      "values_digest": "31d16150a25e5d4831757b39310fabd863e675cffdb2f52c8d81c20be8dc2b43",
+      "rendered_digest": "672c4362c2a2efa5b21478490c4ca514d4339c81b3bc603d56517b28f8ee9e4e",
+      "ast_digest": "7e98dd4abd18cad9bb53287f3072fb44ff90398d0b6973c81f67273eb23b5fb1"
     },
     "stp": {
-      "values_digest": "c4610c6e79364876830d82158d12523720612c067220f5d72acc99b6549d74ce",
-      "rendered_digest": "66cac0be79c588831ac7dc62a6007b05158ba6499ad9128ac9700a5a7a4d3bdd",
-      "ast_digest": "ff6fa082afd264915b4030a1ab923bf8ebded81e7fb0434e433a1ccc64e14b37"
+      "values_digest": "b183fd8d22d4498640c527377ab3de204c5210bb4a21f899a6c56dc885b4b8e7",
+      "rendered_digest": "423f51d73e1fb9ef89d2b36226547b1289e52c063148703487b999032b0bc9c0",
+      "ast_digest": "9c87a8dd5ceebdcbc548549e298d8369a6f1e45dd988c504779b9d0d8bbf9d72"
     },
     "spp": {
-      "values_digest": "19ad1b47f8b5f88e6d5ba8471d0dd901858ab9bcb5a0d3a07cec94af237993fb",
-      "rendered_digest": "2de422fba6b3e2cc1763f7e4a21c0dae5da3b876f750ea2c1b293bf81ea50e65",
-      "ast_digest": "08bb365d00fcec523851cd90efb99202b82e77b373f531e2aab436bb88387656"
+      "values_digest": "6048d52f91a38493060fd493a9e49748eae48df3e7aecdec573b2cb65d26d5a9",
+      "rendered_digest": "f56cab6cadd80a6ab1b8094d05ec46bfca947f909a29571e8ecf91ac628bc702",
+      "ast_digest": "4b6204466b682773bcfa1d096e41d1a4e78378a1b206b093edcb9e88704d2cd0"
     },
     "vpp": {
-      "values_digest": "c4241a919991aede5f933a97b5da8784b81ec42b04d98a897ad228215ae5d408",
-      "rendered_digest": "6fd9b49f3386adc92f7ea60ce519104932511bb451809eebec2395fb4c782ba3",
-      "ast_digest": "a484dae4021ed3c275ff19470659615141b97f6afd37948714d26e68d4abe0a1"
+      "values_digest": "4c76f3f0f9e583a821f1928ece2854fd8ee86b050ecb56c4ac5b68cb6f05172e",
+      "rendered_digest": "3511fcfec6aa5ddfac7cd6fe4db6da0bb9efd5f0d2ddeffce884b61c5e16b27e",
+      "ast_digest": "e2f1163533ed02ab9ef01929ccbbe4c52083b8659a52ad5d8b34f0fd8d54e4e3"
     },
     "srp": {
-      "values_digest": "f3734936f99bd18d08f8c1024991c1ff32de10403fe7e8af3e96c667a323db1d",
-      "rendered_digest": "9e5da80fab2d962939eba02b96a720837a29a5df5ac2539426745e100c42ec5f",
-      "ast_digest": "4b7b578c4d081f286840d3a137f3b3f51e4a066385cfb80ed77276e420c318d8"
+      "values_digest": "38f97f7e1b8ccd163699e3b62c8e82a17afecbbd37e05174e7555029b2bd082e",
+      "rendered_digest": "effeb2dc571ff39b68bafbe764b5b12d19286a0a856df06d3b68a4d1948ec4ee",
+      "ast_digest": "c1221ba532e8cde1ffa3ae6f0e93463333da42ae174fea0d11d2a7c23c1e2198"
     },
     "sor": {
-      "values_digest": "c4f3b758f946b284b36db0358cdfcc73175296b3b7d1079d74b98b4a0f584135",
+      "values_digest": "e80737d67e9093ec99c4d513ebb19a79dc3410c74fdf9c64e28959620e39e59a",
       "rendered_digest": "4fbc680667c00745e3761cbb9cc6d40c3b11080eee395b41fa5972125cafb61b",
       "ast_digest": "63699a396361f0a5b765229460953191b0069437f235102e2abcd22d70aca6e7"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5854-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5854-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,195 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5836-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released WP-18 preparation claim to make the issue design-time execution-ready.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5836-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5836\",\".csdlc/prepared/issues/5836\",\".csdlc/evidence/5836\",\".csdlc/locks/5836.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5854-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5854-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific goal from the reviewed readiness spec.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Build one repeatable integrated Runtime proof of a valid first birthday plus a fail-closed not-a-birthday suite.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-18: First birthday demo.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific required_outcome from the reviewed readiness spec.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A real Runtime-produced birthday packet, deterministic validator, retained reviewer index, and typed rejection evidence for every named negative case.\",\"operation\":\"replan\",\"previous_value\":\"runnable first-birthday proof demo and negative suite\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific task_boundary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Add the WP-18 demo runner, validator, fixtures, artifacts, and D1-D6 matrix updates without absorbing consumer integration, provider comparison, governance, or publication.\",\"operation\":\"replan\",\"previous_value\":\"Deliver runnable first-birthday proof demo and negative suite.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific plan_summary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify #5825-#5830 and #5832-#5834; bind to landed schemas; implement the positive Runtime harness and negative matrix; run replay, redaction, macOS/Linux, and interruption proof; update D1-D6 only from accepted evidence; then review exact head.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific review_scope from the reviewed readiness spec.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review the WP-18 runner, validator, tests, retained first-birthday packet, negative report, D1-D6 updates, and exact proof paths for real-Runtime provenance, fail-closed behavior, redaction, replay, and scope discipline.\",\"operation\":\"replan\",\"previous_value\":\"WP-18 issue 5836, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace operator constraints from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Temporary preparation binding authorizes card rendering only\",\"Positive proof must come from the integrated Runtime path\",\"No fixture, receipt, cached packet, or synthetic output earns positive credit\",\"Release the preparation claim before handoff\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace authority_boundary from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"WP-18 owns the integrated birthday demo and negative suite\",\"#5837 owns Observatory/Unity consumers\",\"#5838 owns provider-neutral comparison\",\"#5839 and release-tail issues own governance and publication\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace declared_scope from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl/tools/demo_v092_first_birthday.sh\",\"adl/tools/validate_v092_first_birthday_packet.py\",\"adl/tools/test_v092_first_birthday_demo.sh\",\"demos/v0.92/first-birthday/\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\".csdlc/evidence/5836/\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace initial_assumptions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"#5825-#5830 provide birth, identity, continuity, memory, capability, and profile contracts\",\"#5832-#5834 provide ACIP, witness/receipt, and integrated review-packet truth\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace deliverables from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Runnable integrated first-birthday command\",\"Runtime-produced positive packet and deterministic validator\",\"Not-a-birthday fixture matrix and rejection report\",\"Reviewer index and D1-D6 exact command/artifact updates\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace dependencies from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"#5825, #5826, #5827, #5828, #5829, and #5830 complete\",\"#5832, #5833, and #5834 complete\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace non_goals from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Observatory/Unity integration\",\"Provider-neutral comparison\",\"v0.93 governance\",\"Legal personhood, consciousness, production citizenship, or public launch\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace repo_inputs from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\"docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\",\"docs/milestones/v0.91.8/review/v092_handoff_4762/\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace affected_areas from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl/tools/demo_v092_first_birthday.sh\",\"adl/tools/validate_v092_first_birthday_packet.py\",\"adl/tools/test_v092_first_birthday_demo.sh\",\"demos/v0.92/first-birthday/\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\".csdlc/evidence/5836/\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace invariants from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Positive proof is Runtime-produced\",\"Every negative case emits a typed rejection\",\"Retained artifacts expose no private state or credentials\",\"D1-D6 status changes only from accepted exact evidence\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace replan_triggers from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"Landed birthday packet schema changes\",\"Runtime binary/command ownership changes\",\"Required platform lane changes\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace risks from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Dependency schemas may land with different commands\",\"Demo may accidentally validate a fixture\",\"Platform or interruption behavior may be hidden\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace stop_conditions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any required dependency is unlanded\",\"No integrated Runtime entrypoint can emit the packet\",\"A required negative cannot be distinguished within issue scope\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace acceptance, plan, and validation DAG from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: One documented command emits a structurally complete Runtime-produced birthday packet.\",\"AC-2: Startup, wake, restore, snapshot, admission, copied state, simulation, named fixture, and missing-evidence cases reject with typed reasons.\",\"AC-3: Replay, interruption, redaction, and macOS/Linux packet validation pass with allowed nondeterminism declared.\",\"AC-4: D1-D6 and the reviewer index cite exact commands, artifacts, and revisions without publication overclaim.\",\"AC-5: Exact-head review has no unresolved actionable finding.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify all WP-18 dependency revisions, schemas, and commands\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the integrated positive runner and deterministic packet validator\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Implement and retain the complete not-a-birthday matrix\",\"acceptance_ids\":[\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run replay, interruption, redaction, platform, and D1-D6 artifact checks\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head review and retain the reviewer index\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"wp18-positive-runtime\",\"proof_role\":\"Prove the integrated Runtime emits one complete birthday packet.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_v092_first_birthday_demo.sh\",\"--positive\"],\"parallel_group\":\"birthday\",\"defer_reason\":null},{\"lane\":\"wp18-negative-replay\",\"proof_role\":\"Prove all not-a-birthday, interruption, replay, and redaction cases fail closed.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_v092_first_birthday_demo.sh\",\"--negative\"],\"parallel_group\":\"birthday\",\"defer_reason\":null},{\"lane\":\"wp18-platform-contract\",\"proof_role\":\"Prove the packet validator and command contract on required macOS/Linux lanes.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"bash\",\"adl/tools/test_v092_first_birthday_demo.sh\",\"--platform-contract\"],\"parallel_group\":\"platform\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Is positive proof emitted by the real integrated Runtime rather than a fixture or lifecycle artifact?\",\"Does every named ordinary lifecycle or missing-evidence case reject with an inspectable reason?\",\"Are replay, interruption, platform, and redaction boundaries proven?\",\"Do D1-D6 and launch-adjacent text avoid unsupported birthday or publication claims?\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding so implementation can bind just in time",
+      "operation": "{\"claim_id\":\"claim-5836-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released preparation claim to refresh typed diagram projections.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5836-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5836\",\".csdlc/prepared/issues/5836\",\".csdlc/evidence/5836\",\".csdlc/locks/5836.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5854-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 29,
+      "generation": 22,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding after typed diagram projection refresh",
+      "operation": "{\"claim_id\":\"claim-5836-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
     }
   ]
 }

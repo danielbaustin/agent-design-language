@@ -12,13 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-WP-24A issue 5845, its declared implementation paths, and retained proof
+Review all ten episode packages, final audio and manifests, feed parity, guest and consent truth, redaction, artwork/ID3 metadata, platform evidence, route/storage boundary, and exact candidate paths for completeness and no publication overclaim.
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-24A scope?
+- Is every episode a complete final production package rather than a topic card or smoke artifact?
+- Do audio, manifest, ID3/artwork, enclosure, transcript, and feed values agree exactly?
+- Are guest consent, DeepSeek invitation language, source rights, and redaction truthful?
+- Does platform evidence prove playback without implying deployment or publication?
 
 ## Findings
 

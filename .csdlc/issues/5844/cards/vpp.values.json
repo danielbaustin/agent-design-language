@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-24] Ten-article launch series",
     "slug": "v0-92-wp-24-ten-article-launch-series",
     "version": "v0.92",
-    "generation": 0
+    "generation": 22
   },
   "status": "ready",
   "content": {
@@ -16,25 +16,60 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-24",
-          "proof_role": "ten reviewed article sources, series-arc review, per-article claim scans, links, milestone evidence updates, and publication boundary",
+          "lane": "wp24-series-contract",
+          "proof_role": "Prove all ten complete packets satisfy the Medium writer and series contract.",
           "acceptance_ids": [
             "AC-1",
-            "AC-2",
             "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 450,
+          "budget_tokens": 4000,
+          "argv": [
+            "ruby",
+            ".csdlc/evidence/5844/validate-article-series.rb"
+          ],
+          "parallel_group": "articles",
+          "defer_reason": null
+        },
+        {
+          "lane": "wp24-claims-negative",
+          "proof_role": "Reject outlines, placeholders, fabricated or missing citations, private data, and unsupported current or release claims.",
+          "acceptance_ids": [
+            "AC-2",
             "AC-4",
             "AC-5"
           ],
           "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 1200,
-          "budget_tokens": 10000,
+          "resource_profile": "small",
+          "budget_seconds": 450,
+          "budget_tokens": 4000,
           "argv": [
-            "git",
-            "diff",
-            "--check"
+            "ruby",
+            ".csdlc/evidence/5844/validate-article-series.rb",
+            "--negative"
           ],
-          "parallel_group": "issue-local",
+          "parallel_group": "articles",
+          "defer_reason": null
+        },
+        {
+          "lane": "wp24-writer-contract",
+          "proof_role": "Prove the repository Medium article writer retains source-packet and stop-before-publish safeguards.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2000,
+          "argv": [
+            "bash",
+            "adl/tools/test_medium_article_writer_skill_contracts.sh"
+          ],
+          "parallel_group": "contracts",
           "defer_reason": null
         }
       ],
@@ -42,9 +77,9 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5844/design.md",
-      "design_digest": "5205e7a8a3e87ce24405848a8e195a116b8d6d5e215a87ffbb02c9066fa57bab",
+      "design_digest": "caf97377e1ac67efb5654eed761b04b5b433e194b37af252d10d0a0f5e500264",
       "diagram_ref": ".csdlc/prepared/issues/5844/diagram.mmd",
-      "diagram_digest": "3457a1de375efb2d8f55c6315c01483b076694a42949e3c6343da05264154781"
+      "diagram_digest": "fd443e63c054166e3e4c71db483681f52038f49cafe19a5a5353a8cbb24673a1"
     }
   }
 }

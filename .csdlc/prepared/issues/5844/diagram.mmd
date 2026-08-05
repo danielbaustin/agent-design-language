@@ -1,2 +1,8 @@
 flowchart LR
-  I["Issue 5844"] --> D["Design required"]
+  S["Canonical evidence and #5735 sequence"] --> P["Ten source packets"]
+  P --> A["Ten complete articles"]
+  A --> C["Per-article claim and citation scan"]
+  C --> R["Editorial and series-arc review"]
+  T["#5843 release truth"] --> F["Final claim alignment"]
+  R --> F
+  F --> D["Publication disposition, no autonomous publish"]

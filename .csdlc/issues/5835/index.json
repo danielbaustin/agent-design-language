@@ -3,9 +3,9 @@
   "issue": 5835,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "214155e897000ad4b833bad3f333909588f03629f193b672e5967e62750e2c3f",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "4234235cecd76fee57343e9cfc7a0178350ffcffa8e41fb76f6b2053f40c6ede",
+  "phase": "bound",
+  "generation": 22,
+  "digest": "c816639ac8e888028fd6eb12c00ec7a9b2248e23ee75338d65ca4eb6b00e2670",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5835/design.md",
   "diagram_path": ".csdlc/prepared/issues/5835/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5854-design-review",
+      "revision": "98bb854103c27ca16f788f98c22594cf6bd9e356d92184498de6a134daa07b52"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "c4f8d3fe8ee71846e8da3220c11918b619b2391ef148df92747202a3e996b50b",
-      "rendered_digest": "bcbd27aab1a96a91f757e0925b7eda18bc83b3c0008a5337163d79f816388d42",
-      "ast_digest": "ad942809686e60e9e4ff252422b6ed12a713679d477bb9ac283cdec857a407f7"
+      "values_digest": "865356bae43da2f84a6f1b4204d5cda41f865bc0b80305f0542fb091dd44c2f6",
+      "rendered_digest": "ea219f7c2ad80c54b6605416ea548e9b49b04d6c32541d319e432c11d059af2b",
+      "ast_digest": "1827286784c167e52045948c1bf934beb8f503390bd63db8c0e36c14d61f85ed"
     },
     "stp": {
-      "values_digest": "5889c683ba2a7d99d2243c74f4b5d60e6adfe87a1e82d894840799b18003420f",
-      "rendered_digest": "15ac4bfd7c7df482795f58ce805d508e7cd51ee2339452f107d7ca74c8598c79",
-      "ast_digest": "d79d5c22eaf7dd29a30050c32bae1dd4fdea31a4482677d53f85ce128edbb882"
+      "values_digest": "12424c807e75d43359212a33483a60cdd79b0b54d1b149b2012a10c497c5f5e5",
+      "rendered_digest": "f0b6964543326e05101ccee0dc23b87ce811677d4afe89496f3659f755a53661",
+      "ast_digest": "01b29ffad3b615d0a5896e1bfc9c5b9838177b2567f8bc64bb996cfb3fb85bff"
     },
     "spp": {
-      "values_digest": "e731e1ccd6a51ec7f600c744e3df218904acd0c80b0da5ee557dd8ae22643544",
-      "rendered_digest": "1ed786a884da31833ffd8b2a174f63372ba3cde175876dafebb56b99fb478031",
-      "ast_digest": "10aa20774b467819470efdac2975d800c6a92b3cd9567ce2e508f5d67c279c9e"
+      "values_digest": "31e11c6cde65a37cf2f588d71a2c5af00ffb71ea8064a0ce491def99035e623a",
+      "rendered_digest": "c421c9543d26fc1f3a62a90da564f316522c491cf87f13ce5ab7d7257b5e33b0",
+      "ast_digest": "36cfda853c1bf91371e43d14ad21141c57ee7b1ac3853f45a78124bb456d9233"
     },
     "vpp": {
-      "values_digest": "aa1442327e193df47bf471f2b02dfe155885228c498abc92480e0a4024f3f52e",
-      "rendered_digest": "7d48bba44118b0226d9746318b0b708cf8f19e7fb423f0b6f5359a524c3de39c",
-      "ast_digest": "40a4951f464cd3476977299de0ca3c1cf2a11ccf13fefa70a676803201cf3c4d"
+      "values_digest": "a0d0fc9bd2c2af81f538c16fe87ef3c268cfafc56d713fb29c1f79759b5533bb",
+      "rendered_digest": "dcf5fa300522d7f5456f6fff5261cd402539f9dd43696288df2604d0f82559ac",
+      "ast_digest": "e3156e7f3ab4a49bca087fbb7c4d8fe09a1386c9e2b7c4610ec3ae10c37768a5"
     },
     "srp": {
-      "values_digest": "0b41e7cd4cc94aa335a1fe8d0ce04d6f78f60c6d0414c90ef40e7f276d2e932b",
-      "rendered_digest": "c7b54cacd042c30afa3b3c37d2a1df6ea4eae77a08621d8939525ae68406f659",
-      "ast_digest": "05be4f790022dff9346a9e914de120a3d6710125f4bb6f386ff220e959915fea"
+      "values_digest": "1bf4b1a41096463bea99b8b5d185b4a4b217380c2a880c80bffa291481f44a47",
+      "rendered_digest": "1e6d53b2e231ae2f279f48d790af5e861b2807fbb318f4b9a19cc0bd380a722b",
+      "ast_digest": "91b972a8c1f18ad574dd5032aacc36b7082d8968e8dc8f3447db572cb244e415"
     },
     "sor": {
-      "values_digest": "13e79a61f9958dd75d1cc0d4064e222d408f47e5f6bdd1620f98c4d73e2a8b1e",
+      "values_digest": "118af412fa7abbf334bed692fa52b1014cd1e4dedb387578b6274fc13525571b",
       "rendered_digest": "c886fa8cc0dc871153357eeadecb0ec0b390f00b0f9f25ca704f77b11809c88d",
       "ast_digest": "6aea77a4c7a369e4f16374211b9c606951de5f21c57053c28d811be4a2ffe185"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5854-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5854-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,195 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5835-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released WP-17 preparation claim to make the issue design-time execution-ready.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5835-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5835\",\".csdlc/prepared/issues/5835\",\".csdlc/evidence/5835\",\".csdlc/locks/5835.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5854-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5854-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific goal from the reviewed readiness spec.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Define a reviewable, non-production cross-polis continuity-transfer contract over landed v0.92 birthday evidence.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-17: Migration and cross-polis continuity planning.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific required_outcome from the reviewed readiness spec.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A field-level movement-semantics design that rejects copied state, quarantines ambiguity, preserves redaction, and leaves infrastructure and governance authority downstream.\",\"operation\":\"replan\",\"previous_value\":\"bounded birthday-identity movement semantics and non-goals\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific task_boundary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Author the WP-17 continuity-transfer feature/design notes and v0.93 handoff inputs without implementing Runtime, storage, networking, or migration behavior.\",\"operation\":\"replan\",\"previous_value\":\"Deliver bounded birthday-identity movement semantics and non-goals.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific plan_summary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify #5826, #5827, and #5834; reconcile landed schemas; author the transfer matrix and WP-04 boundary; validate links, redaction, copied-state rejection, and forbidden production claims; then obtain exact-head review.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific review_scope from the reviewed readiness spec.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review only the WP-17 transfer contract, design note, v0.93 handoff edits, issue proof, and their exact candidate paths for evidence fidelity, copied-state rejection, privacy, and WP-04/v0.93 boundary discipline.\",\"operation\":\"replan\",\"previous_value\":\"WP-17 issue 5835, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace operator constraints from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Preparation bind does not authorize product implementation\",\"Use typed C-SDLC v2 cards and exact-revision review\",\"Do not edit main or absorb WP-04 or v0.93 authority\",\"Release the preparation claim before handoff\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace authority_boundary from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"WP-17 owns documentation-only movement semantics and explicit non-goals\",\"WP-04 retains Runtime, storage, networking, and distributed polis infrastructure\",\"v0.93 retains citizenship, standing, rights, and governance decisions\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace declared_scope from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md\",\"docs/milestones/v0.92/design/CROSS_POLIS_CONTINUITY_TRANSFER_DESIGN_v0.92.md\",\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\".csdlc/evidence/5835/\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace initial_assumptions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"#5826 supplies stable-name and identity-root truth\",\"#5827 supplies bounded-cycle continuity truth\",\"#5834 supplies the integrated birthday review packet\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace deliverables from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Field-level continuity-transfer matrix\",\"Cross-polis continuity design note with WP-04 boundary\",\"Updated v0.93 handoff inputs\",\"Copied-state, ambiguity, redaction, and forbidden-claim validation evidence\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace dependencies from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"#5826 / WP-09 complete at current exact revision\",\"#5827 / WP-10 complete at current exact revision\",\"#5834 / WP-16 complete at current exact revision\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace non_goals from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Production migration, federation, portability, or key lifecycle\",\"Runtime, storage, network, or WP-04 implementation\",\"v0.93 governance or citizenship decisions\",\"Raw private-memory transfer\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace repo_inputs from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md\",\"docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md\",\"docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md\",\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace affected_areas from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md\",\"docs/milestones/v0.92/design/CROSS_POLIS_CONTINUITY_TRANSFER_DESIGN_v0.92.md\",\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\".csdlc/evidence/5835/\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace invariants from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Copied state is never continuity proof\",\"Ambiguous lineage is quarantined\",\"Private state moves only as governed redacted references\",\"Production and governance authority remain downstream\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace replan_triggers from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"Landed identity/continuity schema changes field names\",\"WP-04 boundary changes\",\"v0.93 allocation requires a different handoff shape\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace risks from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Migration prose could overclaim operational portability\",\"A transfer row could expose private state\",\"Landed dependency schemas may differ from planning names\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace stop_conditions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any dependency is not current and accepted\",\"Required schema or evidence path is absent\",\"The design cannot preserve lineage or redaction without widening scope\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace acceptance, plan, and validation DAG from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: The transfer matrix covers every declared birthday artifact with portability, locality, governance, transport, lineage, and redaction dispositions.\",\"AC-2: Copied, conflicting, ambiguous, and raw-private-state cases fail closed or quarantine explicitly.\",\"AC-3: The feature/design notes preserve the exact boundary against WP-04 and v0.93 authority.\",\"AC-4: Every cited path resolves and forbidden production/governance claims are absent.\",\"AC-5: Exact-head review has no unresolved actionable finding.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5826, #5827, and #5834 exact dependency truth and landed schemas\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Author the transfer matrix and continuity-transfer design note\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Update only concrete v0.93 handoff inputs\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run path, redaction, copied-state, ambiguity, and forbidden-claim validation\",\"acceptance_ids\":[\"AC-2\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head review and retain proof\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"wp17-doc-contract\",\"proof_role\":\"Prove all transfer rows, source paths, and WP-04/v0.93 boundaries are complete.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2500,\"argv\":[\"ruby\",\".csdlc/evidence/5835/validate-continuity-transfer.rb\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"wp17-negative-semantics\",\"proof_role\":\"Reject copied/conflicting state, raw-memory transfer, and production/governance overclaim.\",\"acceptance_ids\":[\"AC-2\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2500,\"argv\":[\"ruby\",\".csdlc/evidence/5835/validate-continuity-transfer.rb\",\"--negative\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"wp17-diff-review\",\"proof_role\":\"Prove clean patch structure before exact-head review.\",\"acceptance_ids\":[\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"hygiene\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every movement-semantics row cite landed v0.92 evidence and preserve lineage?\",\"Can copied, ambiguous, or private state be misread as transferable continuity?\",\"Does any text absorb WP-04 infrastructure or v0.93 governance authority?\",\"Are the exact candidate paths and validation artifacts independently usable?\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding so implementation can bind just in time",
+      "operation": "{\"claim_id\":\"claim-5835-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released preparation claim to refresh typed diagram projections.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5835-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5835\",\".csdlc/prepared/issues/5835\",\".csdlc/evidence/5835\",\".csdlc/locks/5835.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5854-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 29,
+      "generation": 22,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding after typed diagram projection refresh",
+      "operation": "{\"claim_id\":\"claim-5835-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
     }
   ]
 }

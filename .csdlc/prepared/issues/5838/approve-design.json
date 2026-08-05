@@ -1,0 +1,7 @@
+{
+  "issue": 5838,
+  "expected_generation": 21,
+  "expected_digest": "65a69c6bf8433970a64396ebd2d1eebabb9b519cfdc11a57bd7941aa7fc43085",
+  "claim_id": "claim-5838-v092-preparation",
+  "reviewer": "codex:5854-design-review"
+}

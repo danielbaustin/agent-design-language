@@ -24,26 +24,66 @@ Diagram: .csdlc/prepared/issues/5845/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-24a",
-    "proof_role": "ten scripts, transcripts, show notes, final audio files and QA reports, guest metadata, artwork and ID3 metadata, RSS-ready enclosure records, redaction checks, and editorial/audio review packets",
+    "lane": "wp24a-package-positive",
+    "proof_role": "Prove all ten packages, final audio manifests, and feed records are complete and internally consistent.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-3",
-      "AC-4",
-      "AC-5"
+      "AC-3"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 1200,
-    "budget_tokens": 10000,
+    "budget_seconds": 400,
+    "budget_tokens": 4000,
     "argv": [
-      "git",
-      "diff",
-      "--check"
+      "env",
+      "TMPDIR=.csdlc/evidence/5845/tmp",
+      "bash",
+      "adl/tools/test_podcast_launch_packet.sh",
+      "--ten-episode-positive"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "podcast",
     "defer_reason": null
+  },
+  {
+    "lane": "wp24a-package-negative",
+    "proof_role": "Reject missing or silent audio, digest and metadata mismatch, local feed paths, draft guests, unsafe text, and publication overclaims.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 400,
+    "budget_tokens": 4000,
+    "argv": [
+      "env",
+      "TMPDIR=.csdlc/evidence/5845/tmp",
+      "bash",
+      "adl/tools/test_podcast_launch_packet.sh",
+      "--ten-episode-negative"
+    ],
+    "parallel_group": "podcast",
+    "defer_reason": null
+  },
+  {
+    "lane": "wp24a-platform-playback",
+    "proof_role": "Record non-synthetic macOS, Linux, desktop-browser, and iOS Safari playback evidence for required episodes.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-5"
+    ],
+    "deterministic": false,
+    "resource_profile": "medium",
+    "budget_seconds": 400,
+    "budget_tokens": 2000,
+    "argv": [
+      "python3",
+      ".csdlc/evidence/5845/validate-platform-playback.py"
+    ],
+    "parallel_group": "platform",
+    "defer_reason": "Run only where the required operating systems and browser/device targets are available; absence blocks publication readiness."
   }
 ]
 
@@ -59,7 +99,9 @@ Tokens: 10000
 
 ## Commands
 
-- `git diff --check`
+- `env TMPDIR=.csdlc/evidence/5845/tmp bash adl/tools/test_podcast_launch_packet.sh --ten-episode-positive`
+- `env TMPDIR=.csdlc/evidence/5845/tmp bash adl/tools/test_podcast_launch_packet.sh --ten-episode-negative`
+- `python3 .csdlc/evidence/5845/validate-platform-playback.py`
 
 ## Failure Semantics
 

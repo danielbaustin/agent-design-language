@@ -3,9 +3,9 @@
   "issue": 5839,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "10b57804d863de9ac5cda1e29dd5aeee90e4b00bd8f1569549bc8a878b5c5d6c",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "40cb3caeecbe908ce482fc518696a7525e0f8369461d1d1c9e9005879c4f137b",
+  "phase": "bound",
+  "generation": 22,
+  "digest": "a74c6420e10035a38525d7fb4be1364b04a522f686dd8d3fef355cb3754d1de2",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5839/design.md",
   "diagram_path": ".csdlc/prepared/issues/5839/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5854-design-review",
+      "revision": "b458e4655affeb638620def0d4bec90af11e6104158d5d4e3dd4efcd080c0e00"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "a84481396ed7428c0735a3133a39449415ea409bdd1d46902af34d9eef5b0ffe",
-      "rendered_digest": "af23186930b2aa902b865701ac87a1b4f65e7a3249149413a732231dd45fd08f",
-      "ast_digest": "9d7970656f5b0b7877e79e0667fc9b7c7c575a0d4443fd69f17942cce13f4f67"
+      "values_digest": "0ca5b7cab9eaa22aee1ef7e9dda1737de4cb9404902d6e6e5310cbd319c2dd3c",
+      "rendered_digest": "88f5f1d3c57353d3d011ae5c5fbfe66ba50df2c03352e3f67dcec0e0da303684",
+      "ast_digest": "a9dbc727e263b5035d18037f45f9351999beb8d56e0805573394665b1f7f6dfd"
     },
     "stp": {
-      "values_digest": "168e25314f9c171e2b4762106db61f7b6d0dd7a8327d8ad58660a5d2f120a931",
-      "rendered_digest": "2911970dcba5e33b6b7561f9c1fa3db6091292961949a7b40a68ec9323de4166",
-      "ast_digest": "2820276d199684a7760a7c19ab22500d4e0eae313fd55be46d984aedd4c1c805"
+      "values_digest": "6361cfe48dfebc8f7ddbe859ed69f9a103c83bf46f051957263c1d715753a16c",
+      "rendered_digest": "b6a780b5f628f3d0625ea83e95aa9907cc3b38a463baf6ef3ff5e809e71cb082",
+      "ast_digest": "a7cb6c40d14307ed4d08e5b5e345237a259f244f8d1ad15521919bdf1fe625b8"
     },
     "spp": {
-      "values_digest": "a7955dd8f2c9809090715e77991d0b45ac8fcd743b377a6fce53db592d910ab5",
-      "rendered_digest": "f0e5ddcdb2aed2b75eeff66239e12fffefce1fb26ca1432bf1c4e1d8750d1e02",
-      "ast_digest": "1e1c58b208fa06dfa0be47d67b120d95889a02401f9b4f7a9aca801823db18bc"
+      "values_digest": "0486a5d31ac1ccf05efcfc4a7691e9b7927a0d98a44612632b2b46a0f900c64d",
+      "rendered_digest": "20b2af17f58325de0fe0357e9c4b786d34e3591685960bda2df5e7ffb5fc0845",
+      "ast_digest": "08f4e037dd0ec7cdb49f1aa5e7a3e8896a69c4bb2e201fcce1d950205969e3a6"
     },
     "vpp": {
-      "values_digest": "87ba217542ddb1292ee6935a6406641275698c5759ee791cfeead55dd91b7b8a",
-      "rendered_digest": "19dfbc52ab5c284e425271e444c271c9610d860c541937703b3d379e03436a10",
-      "ast_digest": "a245909a3d3eb0b975b42ecb42e99afeec12fd57b3724581dc869306d0cc5f0f"
+      "values_digest": "8526868e77cfb99192f6a7e2d72d5ae84317ccdc72412533ceb58c2740936a01",
+      "rendered_digest": "098ccfeb33726daf260b7372b6af9e85671ed325ecfdfe0b7f2cb51f3590125f",
+      "ast_digest": "fc4baafaac9ec2ef173fc4d1b1bc88fea3c5a92c0f3243400da5b87bdb5385cb"
     },
     "srp": {
-      "values_digest": "22e00db3afb8e77c125d0290ab79d61571ff074262861a8706ad9d9c86774b9a",
-      "rendered_digest": "ca99c99dd5cdd8f8327d3af368143e0c998a1b6d6ee4b6fe67de85761bcc2a95",
-      "ast_digest": "8a1ff33899873877f60c35eb525aeecf7b175ff96c8d57a3711d84ec24aee3e3"
+      "values_digest": "f4d449e66f724303a52982696852fc0631c53772ad3f1f3ac71bea84b94dafd8",
+      "rendered_digest": "1ba628e8a13f4d92eb6cb2adea05136d85f96d239d48caa5d10698ae326124f8",
+      "ast_digest": "797664cb3acec61fcabcd329021db6bfcec0b8da2df735a399e444e351b81a07"
     },
     "sor": {
-      "values_digest": "4ecb28963a9744fe33f6f0cf48af59029981d11200b7fb94f7ba9df42e814364",
+      "values_digest": "d2df95e5802cd63fed3e2da6528b2a23ce2cab4640980c16025fe8b4b0122abd",
       "rendered_digest": "d829c572fae3ca6425298b5e8895b59ced47f8d7c4f18114a0e936cede751417",
       "ast_digest": "84b8dcf3c18a0f039f1665cdde6bcae35da4a42984f3a4505cacbdfb7175612a"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5854-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5854-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,195 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5839-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released WP-19 preparation claim to make the issue design-time execution-ready.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5839-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5839\",\".csdlc/prepared/issues/5839\",\".csdlc/evidence/5839\",\".csdlc/locks/5839.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5854-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5854-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific goal from the reviewed readiness spec.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Produce the traceable v0.92 identity-evidence map consumed by an explicitly allocated v0.93 governance owner.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-19: Birthday-to-governance handoff.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific required_outcome from the reviewed readiness spec.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"A row-level map from accepted v0.92 artifacts to allowed v0.93 use, redacted projection, forbidden inference, unresolved decision, and named consumer.\",\"operation\":\"replan\",\"previous_value\":\"v0.93 governance handoff map\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific task_boundary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Author the WP-19 handoff map and evidence-grounded ADR-plan update without assigning citizenship, standing, rights, duties, polis authority, or final milestone handoff.\",\"operation\":\"replan\",\"previous_value\":\"Deliver v0.93 governance handoff map.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific plan_summary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify #5834, #5835, and the v0.93 allocation; inventory exact accepted artifacts; author consumer, redaction, forbidden-inference, and unresolved-decision columns; update ADR 0033 planning without acceptance; validate completeness and review from producer/consumer perspectives.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific review_scope from the reviewed readiness spec.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review the WP-19 evidence map, handoff plan, ADR-plan update, validation proof, and exact candidate paths for source traceability, named consumer authority, redaction, explicit blockers, and no governance overclaim.\",\"operation\":\"replan\",\"previous_value\":\"WP-19 issue 5839, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace operator constraints from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"A real v0.93 allocation and accepting owner are required\",\"Missing v0.92 evidence remains unavailable rather than implicitly approved\",\"Proposed ADR text is not accepted architecture\",\"Release the preparation claim before handoff\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace authority_boundary from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"WP-19 owns the evidence map and ADR planning update\",\"v0.93 owns citizenship, standing, rights, duties, and governance implementation\",\"WP-23/WP-30 own final milestone handoff after quality and ceremony\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace declared_scope from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\",\"docs/milestones/v0.92/review/V092_TO_V093_GOVERNANCE_EVIDENCE_MAP.md\",\".csdlc/evidence/5839/\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace initial_assumptions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"#5834 supplies the integrated birthday review packet\",\"#5835 supplies continuity-transfer semantics\",\"A v0.93 allocation names the accepting consumer\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace deliverables from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"v0.92-to-v0.93 governance evidence map\",\"Allowed-use and forbidden-inference matrix\",\"Unresolved-decision and blocker register\",\"Evidence-grounded ADR 0033 planning update\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace dependencies from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"#5834 / WP-16 complete\",\"#5835 / WP-17 complete\",\"v0.93 allocation and owner accepted\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace non_goals from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"v0.93 governance implementation\",\"Citizenship, standing, rights, duties, or legal/moral-status decisions\",\"Accepting an ADR by editing the plan\",\"Final milestone handoff or ceremony\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace repo_inputs from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\",\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace affected_areas from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/ADR_PLAN_v0.92.md\",\"docs/milestones/v0.92/review/V092_TO_V093_GOVERNANCE_EVIDENCE_MAP.md\",\".csdlc/evidence/5839/\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace invariants from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Every handoff row resolves to exact evidence or an explicit blocker\",\"Every allowed use has a named v0.93 consumer\",\"Private inputs expose only governed projections\",\"Birthday evidence never establishes governance authority by itself\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace replan_triggers from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"v0.93 ownership changes\",\"WP-17 changes transfer semantics\",\"ADR numbering or promotion policy changes\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace risks from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"v0.93 allocation may be absent or vague\",\"Handoff prose may imply citizenship or standing\",\"Evidence could drift between draft and review\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace stop_conditions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"No v0.93 allocation/owner exists\",\"#5834 or #5835 is not accepted\",\"A required source cannot be safely projected\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace acceptance, plan, and validation DAG from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: Every required identity/continuity artifact maps to exact evidence or an explicit blocker.\",\"AC-2: Every row names allowed v0.93 use, forbidden inference, redaction posture, unresolved decision, and accepting owner.\",\"AC-3: ADR 0033 remains proposed and source-grounded; no governance/citizenship completion is claimed.\",\"AC-4: Completeness, path, redaction, and forbidden-governance-claim validation pass.\",\"AC-5: Exact-head producer/consumer review has no unresolved actionable finding.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5834, #5835, and the v0.93 allocation/owner\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Inventory exact v0.92 evidence and author the row-level handoff map\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Update ADR 0033 planning and unresolved decisions without acceptance\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run completeness, path, redaction, and forbidden-inference checks\",\"acceptance_ids\":[\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head producer/consumer review\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"wp19-map-completeness\",\"proof_role\":\"Prove every required source row resolves to exact evidence or a blocker and names a consumer.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2500,\"argv\":[\"ruby\",\".csdlc/evidence/5839/validate-governance-handoff.rb\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"wp19-negative-governance\",\"proof_role\":\"Reject implicit approval, private-state exposure, ADR acceptance, citizenship, standing, and governance-completion claims.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2500,\"argv\":[\"ruby\",\".csdlc/evidence/5839/validate-governance-handoff.rb\",\"--negative\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"wp19-diff-review\",\"proof_role\":\"Prove clean patch structure before producer/consumer exact-head review.\",\"acceptance_ids\":[\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"hygiene\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every row cite exact accepted v0.92 evidence or an explicit blocker?\",\"Is the v0.93 owner and allowed use concrete without granting governance authority?\",\"Can any receipt, birthday, continuity, or proposed ADR be misread as citizenship or standing?\",\"Are private inputs represented only through governed projections?\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding so implementation can bind just in time",
+      "operation": "{\"claim_id\":\"claim-5839-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released preparation claim to refresh typed diagram projections.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5839-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5839\",\".csdlc/prepared/issues/5839\",\".csdlc/evidence/5839\",\".csdlc/locks/5839.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5854-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 29,
+      "generation": 22,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding after typed diagram projection refresh",
+      "operation": "{\"claim_id\":\"claim-5839-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
     }
   ]
 }

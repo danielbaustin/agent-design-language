@@ -3,9 +3,9 @@
   "issue": 5844,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "6c7ce7fb4fe22e8f08686d792bda8917ba0ffb8f5c1a83398ffcd14748b28e07",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "6c1daee7b55adc7af807583f9aae436147c8cf86761dae672e0dc62dbc76e6c9",
+  "phase": "bound",
+  "generation": 22,
+  "digest": "21bafd52199be22369a85421a8676b59ac23bbd00496ec21d301b11bb01da531",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5844/design.md",
   "diagram_path": ".csdlc/prepared/issues/5844/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5854-design-review",
+      "revision": "caf97377e1ac67efb5654eed761b04b5b433e194b37af252d10d0a0f5e500264"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "a0417dc6c86a9d0d66b2fa49aa0baa99fc824b111404d0ad6f78407471cdcbf9",
-      "rendered_digest": "814d2b221e844ca995b95ebf1f58734d3e0a06ce804db83f4b90bc1a0601ae0a",
-      "ast_digest": "140c1a4f28e3e22de66ebd6e705c423a26fa96b25b13a9f4a1a0a91b1c2fe3dd"
+      "values_digest": "c48e029bbe190b965a91cdb1a9386fa12282984a9921887aa96cbfd768210a8f",
+      "rendered_digest": "76e0528891dd577838830be0d5fbf114956313a530312a5f6a8eb8b3844a1d3f",
+      "ast_digest": "68b46129281d359c518769bf62f9bd3b4ccbfd155672434cee81ca1ba72f47fb"
     },
     "stp": {
-      "values_digest": "7cf7689dde85b00effd103c5c0dcf04f16828a1ed5d3e3244bc0eb53ae1942df",
-      "rendered_digest": "69091b7af30a883757eec01b28e349e9608bc8d2bef94ff85defb67dfefe911e",
-      "ast_digest": "48eded1abf99293ba238e68b7203878c3efd8983619818fc79bebe686256904a"
+      "values_digest": "9e48060ca4696b6bace19083a2796ee4d10459ad69f68c55261a5cff12a7b0ed",
+      "rendered_digest": "84431b7638f979f1a64978416f19224f0df6fde81ab7535773adfe4f3ef1f101",
+      "ast_digest": "fb34abfacccd0a27310d4727a4aa84646d5715d8ec5268ecb0621e708bc59ac8"
     },
     "spp": {
-      "values_digest": "557a8e93b26489aba5a9f83dac16ed96154d1b9913736a54ac8d9e8fe838d1ff",
-      "rendered_digest": "908ce9d00f25a48b72cc0470392e7513b82b91d230203e2fd6860179fac55cb5",
-      "ast_digest": "cba33df91d98b7e8585d3fdb478f41e4074dc490ea31baa6a833e8d09397425d"
+      "values_digest": "6a7cbcacf22d1a2eeb1b490141993b61724971c68fd9ab45c2c70bed09d69a0b",
+      "rendered_digest": "2ab68559968ec2f921f148670d8d82dd7980a1497f7caee94ca2196fe9b1c038",
+      "ast_digest": "ea56eaaf68ae1b371d662c4b8e3282bacb70f8bbe8950e517e5cfea232f3b170"
     },
     "vpp": {
-      "values_digest": "c9cf0f59292c824ef23c601db43890b51f1243c2eb599def59c68f7fc2c830cc",
-      "rendered_digest": "a22839c834bab47bc100b1d6eceece749985fbb6e9003dd7a70a5b73c8935487",
-      "ast_digest": "367f48b17624e6f1533aadc362a886afaa67f9e3c2f2691a54718a76a941241c"
+      "values_digest": "957d77607eedc4fb51962ea5631606ee776b81dc8e3b4205f7fed13647716563",
+      "rendered_digest": "6d3b4fc9d6c378adc58b7b86d1088600461903d91c567660b94e6aca88d51380",
+      "ast_digest": "47c6310fa4b182d344b783943b2dbeac4612d6db1faa14d5924ad42b8c5b0279"
     },
     "srp": {
-      "values_digest": "9ff4cb0e02f94a91903240d1792278e78c545cda5fb5884e2303433adf2d889e",
-      "rendered_digest": "a659da5483b7ae24108e17fe9d1516dcaf4d356764593ed36ee32df1e6386074",
-      "ast_digest": "0703bcda0edcd20ddebf4bd48c783cd4f13c55d65e2dd455e9001555e5780d65"
+      "values_digest": "665e611f66126c53a6d2f8add662870ec5e0e92a5fb374222b57f772e479951a",
+      "rendered_digest": "47d83d14b67ab7816e2d8e3058beda3334ccb0fc96703d3a0b2dc4692d4da3dd",
+      "ast_digest": "40349d873128f131c86c541d2ebb3b78aa9095a847eb428f7f0a349aa42db625"
     },
     "sor": {
-      "values_digest": "5c7cbeae6a0d23ddfc612bf268929f779b0033370d38daf9306a82bbbf9e7ed9",
+      "values_digest": "efd10545d2bac519fb211b569a70103278335f8446819462820321e998287cc3",
       "rendered_digest": "eda3b995d480b9efc950b4c4e0cccc9f208e1c9f35da5420f422b05167026b66",
       "ast_digest": "14909c3af4a2013f17b0d2d884dbde9a170bdbf0691f61616b1d27dd75b4248a"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5854-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5854-preparation",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,195 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5844-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released WP-24 preparation claim to make the issue design-time execution-ready.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5844-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5844\",\".csdlc/prepared/issues/5844\",\".csdlc/evidence/5844\",\".csdlc/locks/5844.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5854-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5854-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific goal from the reviewed readiness spec.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Author the complete ten-article ADL launch series as source-grounded, review-ready publication packets.\",\"operation\":\"replan\",\"previous_value\":\"Complete WP-24: Ten-article launch series.\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific required_outcome from the reviewed readiness spec.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"Ten complete articles, each with a bounded source packet and editorial review, form a coherent series whose claims, citations, links, privacy posture, and release dependencies are explicit.\",\"operation\":\"replan\",\"previous_value\":\"all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific task_boundary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"task_boundary\",\"new_value\":\"Draft and review the ten named Medium articles after #5819, with final release-dependent claims gated by #5843; do not publish, schedule, submit, or absorb podcast and manuscript work.\",\"operation\":\"replan\",\"previous_value\":\"Deliver all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific plan_summary from the reviewed readiness spec.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify dependencies; build ten bounded source packets; author all ten complete articles; validate claims, citations, links, privacy, and historical/current posture; review the series arc; record a stop-before-publish disposition.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5854-card-editor",
+      "reason": "Set issue-specific review_scope from the reviewed readiness spec.",
+      "operation": "{\"field\":\"review_scope\",\"new_value\":\"Review all ten source packets, complete article drafts, editorial reviews, series claim matrix, publication disposition, and exact candidate paths for evidence grounding, audience fit, citation integrity, privacy, duplication, and no publication overclaim.\",\"operation\":\"replan\",\"previous_value\":\"WP-24 issue 5844, its declared implementation paths, and retained proof\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace operator constraints from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"All ten articles must be complete prose, not outlines or topic cards\",\"Drafting depends on #5819 and final release claims depend on #5843\",\"No invented citation, metric, customer claim, or delivery claim\",\"No publication or scheduling without separate operator authority\",\"Release the preparation claim before implementation handoff\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace authority_boundary from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"WP-24 owns the ten review-ready article packets\",\"#5819 supplies canonical naming and link inputs\",\"#5843 supplies final release truth\",\"The operator retains publication authority\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace declared_scope from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/publication/articles/01-what-is-adl/ through 10-whats-next-for-adl/\",\"docs/milestones/v0.92/publication/articles/SERIES_ARC_AND_CLAIM_MATRIX.md\",\"docs/milestones/v0.92/publication/articles/PUBLICATION_DISPOSITION.md\",\".csdlc/evidence/5844/\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace initial_assumptions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"The canonical ten-title sequence remains unchanged\",\"Current repository sources can support bounded article claims\",\"Historical evidence will be labeled as historical\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace deliverables from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Ten bounded source packets\",\"Ten complete Medium-style articles\",\"Ten editorial review records\",\"Series arc and claim matrix\",\"Stop-before-publish disposition\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace dependencies from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"#5819 complete before drafting\",\"#5843 complete before final release-dependent truth\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace non_goals from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Medium publication, upload, scheduling, or submission\",\"Paper or manuscript production\",\"Podcast episode production\",\"Milestone release approval\",\"Invented citations, metrics, or customer claims\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace repo_inputs from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.91.2/review/publication_program/ARXIV_AND_MEDIUM_PUBLICATION_BACKLOG_v0.91.2.md\",\"docs/milestones/v0.91.2/review/publication_program/PUBLICATION_REVIEW_GATES_v0.91.2.md\",\"adl/tools/skills/medium-article-writer/\",\"docs/milestones/v0.92/external_launch/\",\"docs/milestones/v0.92/SPRINT_v0.92.md\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace affected_areas from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/publication/articles/\",\".csdlc/evidence/5844/\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace invariants from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Each article is grounded in a declared bounded source packet\",\"Each citation is real, resolvable, and claim-relevant\",\"Historical evidence is not presented as current delivery truth\",\"Publication status remains review-ready until separately authorized\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace replan_triggers from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"Canonical titles or series order change\",\"#5843 changes release truth\",\"Publication-review policy changes\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace risks from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Ten articles may duplicate claims or drift in terminology\",\"Late #5843 truth may invalidate release language\",\"External links or citations may be unavailable\"]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace stop_conditions from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"#5819 naming/link truth is unresolved\",\"A material claim lacks support\",\"Privacy or citation review cannot be completed\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace acceptance, plan, and validation DAG from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: All ten canonical titles have complete source-packet, article, and editorial-review artifacts.\",\"AC-2: Every material claim and citation is source-grounded, privacy-safe, and correctly labeled current, historical, planned, or unknown.\",\"AC-3: The series arc is coherent, non-duplicative, consistently named, and audience-appropriate.\",\"AC-4: Automated completeness, link/citation, claim-boundary, privacy, and negative placeholder scans pass.\",\"AC-5: The disposition remains review-ready or explicitly operator-approved; no autonomous publication occurs.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5819 and establish ten bounded source packets\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Author all ten complete canonical articles\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run per-article claim, citation, link, privacy, and history/current review\",\"acceptance_ids\":[\"AC-2\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Review the ten-article series arc and resolve duplication or terminology drift\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Reconcile #5843-dependent truth and record stop-before-publish disposition\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"wp24-series-contract\",\"proof_role\":\"Prove all ten complete packets satisfy the Medium writer and series contract.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":450,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/evidence/5844/validate-article-series.rb\"],\"parallel_group\":\"articles\",\"defer_reason\":null},{\"lane\":\"wp24-claims-negative\",\"proof_role\":\"Reject outlines, placeholders, fabricated or missing citations, private data, and unsupported current or release claims.\",\"acceptance_ids\":[\"AC-2\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":450,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/evidence/5844/validate-article-series.rb\",\"--negative\"],\"parallel_group\":\"articles\",\"defer_reason\":null},{\"lane\":\"wp24-writer-contract\",\"proof_role\":\"Prove the repository Medium article writer retains source-packet and stop-before-publish safeguards.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"bash\",\"adl/tools/test_medium_article_writer_skill_contracts.sh\"],\"parallel_group\":\"contracts\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex:5854-card-editor",
+      "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Are all ten artifacts complete articles with bounded source packets rather than outlines?\",\"Is every material claim and citation supportable without exposing private information?\",\"Does the series remain coherent and avoid repeating the same argument under different titles?\",\"Are #5843-dependent claims and publication status explicitly gated?\"]}"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding so implementation can bind just in time",
+      "operation": "{\"claim_id\":\"claim-5844-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5854-preparation",
+      "reason": "Reacquire the exact released preparation claim to refresh typed diagram projections.",
+      "operation": "{\"branch\":\"codex/5854-demo-publication-preparation\",\"claim_id\":\"claim-5844-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5854-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5844\",\".csdlc/prepared/issues/5844\",\".csdlc/evidence/5844\",\".csdlc/locks/5844.lock\"],\"purpose\":\"design-time readiness preparation only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5854-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 29,
+      "generation": 22,
+      "actor": "codex:5854-preparation",
+      "reason": "Release temporary design-time preparation binding after typed diagram projection refresh",
+      "operation": "{\"claim_id\":\"claim-5844-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
     }
   ]
 }

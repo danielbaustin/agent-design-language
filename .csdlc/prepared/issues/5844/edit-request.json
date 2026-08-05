@@ -1,0 +1,19 @@
+{
+  "issue": 5844,
+  "expected_generation": 20,
+  "expected_digest": "f209e2600b82d741b2735d0ef3a108aea17287aa61e29a1089fc11e0eef4ef96",
+  "claim_id": "claim-5844-v092-preparation",
+  "actor": "codex:5854-card-editor",
+  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
+  "card": "srp",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Are all ten artifacts complete articles with bounded source packets rather than outlines?",
+      "Is every material claim and citation supportable without exposing private information?",
+      "Does the series remain coherent and avoid repeating the same argument under different titles?",
+      "Are #5843-dependent claims and publication status explicitly gated?"
+    ]
+  }
+}
