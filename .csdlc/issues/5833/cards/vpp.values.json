@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-15] Birth witnesses and receipts",
     "slug": "v0-92-wp-15-birth-witnesses-and-receipts",
     "version": "v0.92",
-    "generation": 0
+    "generation": 1
   },
   "status": "ready",
   "content": {
@@ -42,9 +42,9 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5833/design.md",
-      "design_digest": "fd69d217f8e33b02b25b13860d3314bde4e71192cd9b7c1cea54e21149ff524a",
+      "design_digest": "820499657712f7fe97c21567e3f015c6cdcbc7dfdf5249f6600207693174df8c",
       "diagram_ref": ".csdlc/prepared/issues/5833/diagram.mmd",
-      "diagram_digest": "af00e001a861181a50f459f55e7c9ab91b2538b005a7adc200b0549f62d0f248"
+      "diagram_digest": "0255242ebe93f2857c2a9dc5f2d0c1a083fa373b340935cbfe34749941f0d599"
     }
   }
 }

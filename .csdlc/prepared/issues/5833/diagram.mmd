@@ -1,2 +1,8 @@
 flowchart LR
-  I["Issue 5833"] --> D["Design required"]
+  C["Exact birthday candidate digest"] --> W["Witness set validation"]
+  E["Identity, continuity, memory, capability evidence"] --> W
+  W --> V{"Distinct, authorized, current, non-equivocating?"}
+  V -- "No" --> R["Rejected witness disposition"]
+  V -- "Yes" --> D["Validated witness decision"]
+  D --> P["Redaction-safe citizen receipt"]
+  P --> H["WP-16 review packet input"]

@@ -1,2 +1,7 @@
 flowchart LR
-  I["Issue 5827"] --> D["Design required"]
+  A["Cycle N identity root and head"] --> C["Cycle N+1 evidence"]
+  C --> V{"Lineage, order, witnesses valid?"}
+  V -- "No" --> R["Rejected continuity record"]
+  V -- "Yes" --> H["Canonical next continuity head"]
+  H --> P["Bounded multi-cycle proof"]
+  P --> M["WP-11 memory and WP-13 profile inputs"]

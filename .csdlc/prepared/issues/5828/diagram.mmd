@@ -1,2 +1,8 @@
-flowchart LR
-  I["Issue 5828"] --> D["Design required"]
+flowchart TD
+  I["Witnessed memory records and citations"] --> T["Canonical context topology"]
+  C["Identity root and continuity head"] --> G{"Binding, provenance, freshness, redaction gates"}
+  T --> G
+  G -- "Fail" --> R["Reject item or packet with reason"]
+  G -- "Pass" --> W["Bounded deterministic working set"]
+  W --> P["Memory Palace context packet"]
+  P --> L["Long-lived agent cycle artifact"]

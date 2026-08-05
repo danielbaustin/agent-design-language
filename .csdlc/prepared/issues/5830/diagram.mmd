@@ -1,2 +1,7 @@
-flowchart LR
-  I["Issue 5830"] --> D["Design required"]
+flowchart TD
+  E["Continuity, memory, capability, ToM, intelligence, learning evidence"] --> A["Allowed evidence filter"]
+  A --> P["Versioned ACP profile"]
+  P --> V{"Privacy, provenance, non-claim validation"}
+  V -- "Fail" --> R["Reject update with reason"]
+  V -- "Pass" --> Q["Redacted reviewer projection"]
+  Q --> B["Birthday packet reference"]

@@ -1,8 +1,11 @@
-flowchart LR
-  L["Qualified Runtime v3 loop"] --> E["Evaluation evidence"]
-  E --> S["Durable state delta"]
-  S --> P["Mutation policy"]
-  P --> A["Accepted graph delta"]
-  P --> R["Rejected graph delta"]
-  A --> D["Deterministic replay"]
-  R --> D
+flowchart TD
+  L["Bounded Runtime v3 loop event"] --> E["Evaluation binding"]
+  E --> S["Durable adaptation delta proposal"]
+  S --> G["Reasoning-graph change proposal"]
+  G --> P{"Policy decision"}
+  P -- "Reject" --> R["Durable rejection; graph unchanged"]
+  P -- "Accept" --> A["Apply bounded graph delta"]
+  A --> H["Replay history with before and after hashes"]
+  H --> D{"Deterministic replay and prefix continuity?"}
+  D -- "No" --> X["Fail closed and preserve rollback evidence"]
+  D -- "Yes" --> O["Adaptive Learning DAG proof packet"]

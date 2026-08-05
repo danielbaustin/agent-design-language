@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 0
+    "generation": 1
   },
   "status": "ready",
   "content": {
@@ -67,9 +67,9 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5831/design.md",
-      "design_digest": "986bb1c7d340128e1243295d45bd916943962c880ba0642207c5be51296e527b",
+      "design_digest": "24460a2aafdbc8f6076f5503f41bb945f313268fb975783efcbdbed3b0baaaf6",
       "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",
-      "diagram_digest": "f40afa817703e09d193f792f8221caf122e64f881b6020e0c9e8ea320158c6bc"
+      "diagram_digest": "4830e2ee5a1da3b7673f5b3ef82de34dad490fdea86817cf0483f37930c2bdc5"
     }
   }
 }

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-08] Birthday contract and negative cases",
     "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
     "version": "v0.92",
-    "generation": 0
+    "generation": 1
   },
   "status": "ready",
   "content": {
@@ -66,9 +66,9 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5825/design.md",
-      "design_digest": "f35ff4071d3302b89ec9e2377805c28c5e5cd1fba23f547c38881485b21694f9",
+      "design_digest": "2aad71a9b6c268efedd68fcae15e49dabc706fc42428eb048f61ff0b4d748b34",
       "diagram_ref": ".csdlc/prepared/issues/5825/diagram.mmd",
-      "diagram_digest": "10b00a557a108eaf99aac7ee704480acbc7f20af9b0a64ead413fc2abc7dcb92"
+      "diagram_digest": "af3ccfe3d575efcd6afdf4b661f1a73ffef8cd1ac35a93da986e2d10d55ed3a9"
     }
   }
 }

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "a13e7b2cafb69b7f88ae5bf1b68f54d9860fcc0d88fdba8c0376532d63b714ad",
   "phase": "initialized",
-  "generation": 0,
-  "digest": "63d2ebb96af9cbb23c18fb561e12e3e74ff0f8a15cb9a6f80421c2f9b95ad98b",
+  "generation": 1,
+  "digest": "f653b3bdeffe85b90c24da743e4dc21b0fe8a13899101cba04ffec7e41e217eb",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,35 +15,40 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5827/design.md",
   "diagram_path": ".csdlc/prepared/issues/5827/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-5860-design-review",
+      "revision": "a28d472d60100fccbd7ba12e39cd6e6a0f2c1574e09372017a01ca90ae40801b"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "6ec5f9ac3a74e360acba4c48a0aa5b8d14020c70f19937a188e8199edfb9db95",
+      "values_digest": "08dbef0c73dc23d15bd7785c904f12a9e9cfd17ec36d87e0820507f1639752f6",
       "rendered_digest": "77478649aeb227286ea08ad939573742df02c30136ca00b2027decc96a14e5fb",
       "ast_digest": "245962806deee73820bb808e6d2f158800cd53b511e223f6cd65cfa6776a76f7"
     },
     "stp": {
-      "values_digest": "462e3f56c0b96398d13c92920ed6647f26299cd8c7394e3950792c6ad05dad9d",
+      "values_digest": "8813d020ead9718e322a13866f7d8a63ec6cd16a667ba4e7015b0b4f7948789a",
       "rendered_digest": "2555f4b4e1a9b2e8bed4cb475600f0d606b304b3151382886ccb5859c8af79cc",
       "ast_digest": "82823489b718977270272d2757c0dde2a24ba27d8425ab1867277ac0046eae0e"
     },
     "spp": {
-      "values_digest": "dc5ca146f69fbb1ec2198bd7b0098aa08abe6064360b71c14675f9446e43ab46",
-      "rendered_digest": "7b1fddaa736f4238a22056820f984b1f24e9b6547ef0de75c6cb64098c271fc3",
-      "ast_digest": "afd8d8ded72207a74920d3eec16306500a1125fe192196def0da215c75375739"
+      "values_digest": "8b4660222464b8c0e66bd1aa0ea3345c81763d7e1aad2c9b3a267990d2712c68",
+      "rendered_digest": "253472f55d728eab28668fddc2d88871098733fc9799ca5a503ecc5cf710b886",
+      "ast_digest": "b3974fb851c558bc4e184a6ac47054a34262e67d12c5ff6eb36347cedd33e577"
     },
     "vpp": {
-      "values_digest": "ec46ed7fdfd21c445968d02575319a8cca1495d4045d7b1b19e634f74c925a5d",
+      "values_digest": "440e2351bf7a3be86e389389212e1077f6e197df29ee37a11343c2b99dbc3ba7",
       "rendered_digest": "3c4148b0975ac3e1c02749044baad2171344f4be389bb35246a3d53bf30b628c",
       "ast_digest": "b8da2bf100cb8e7e3ccea4b10762362ffed9b2442b49714dac0474304f1d90f6"
     },
     "srp": {
-      "values_digest": "b9e7e9c49e61ae30234f8b52bbf129b592ef6fb56c171ce418755419c41f3243",
+      "values_digest": "3f97931b48ecff1fe60f389d445fdc2fc7256329ce282ac9205470d095abbf70",
       "rendered_digest": "ffeae164e9d54eb08b1119b28f5269176fa5a2c7db68bdc659f213c9ddf4c4d4",
       "ast_digest": "fe1d72c5165ff731a8fae2d720066e62f06e248a4e0e38edf52deac6979ca8a4"
     },
     "sor": {
-      "values_digest": "833bc74792046117fae9b00f1f240f182cae1ba1944232d3d7985fabe0547b07",
+      "values_digest": "54ca4ef5a14adbab073c1a8c1120ef53b8b2e1be32eaba5b9a884c557e7ee5cc",
       "rendered_digest": "3a69a324072fd6da1c046abb9f997553d34a98b7bdba715993262d95c8f0591b",
       "ast_digest": "58b596fb24fb01930291dc99121bd298ac15b5a6f7ee7e7bca09383eb8132b2c"
     }
@@ -63,6 +68,27 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5827-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Reacquire released preparation claim under issue 5860 operator assignment",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"prep-5860-5827\",\"operation\":\"reacquire_claim\",\"owner\":\"codex-5860-birthday-preparation\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5827\",\".csdlc/prepared/issues/5827\",\".csdlc/evidence/5827\",\".csdlc/locks/5827.lock\"],\"purpose\":\"Design-time readiness repair only; no product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex-5860-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex-5860-birthday-preparation",
+      "reason": "Release completed preparation claim so implementation can bind just in time",
+      "operation": "{\"claim_id\":\"prep-5860-5827\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
     }
   ]
 }

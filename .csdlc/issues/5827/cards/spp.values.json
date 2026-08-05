@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-10] Continuity across bounded cycles",
     "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
     "version": "v0.92",
-    "generation": 0
+    "generation": 1
   },
   "status": "ready",
   "content": {
@@ -66,9 +66,9 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5827/design.md",
-      "design_digest": "835319cf3a32161665cdec2ddb81db6da8365b15650d95c94f00b63f8de9105e",
+      "design_digest": "a28d472d60100fccbd7ba12e39cd6e6a0f2c1574e09372017a01ca90ae40801b",
       "diagram_ref": ".csdlc/prepared/issues/5827/diagram.mmd",
-      "diagram_digest": "a05f2b202743ba3c236670070ddf8e0b19f61db3d94ee0ebfbd3837b41dfd026"
+      "diagram_digest": "b8e8902ce03c1fd254d2be626f03fb412db939612b74f42de3942fcfd6cdbbb4"
     }
   }
 }

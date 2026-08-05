@@ -1,2 +1,7 @@
 flowchart LR
-  I["Issue 5829"] --> D["Design required"]
+  P["Provider and model inventory"] --> E["Capability envelope builder"]
+  T["Tools, skills, authority, limits"] --> E
+  R["#4761 provenance and identity root"] --> E
+  E --> V{"Complete, current, bounded, secret-free?"}
+  V -- "No" --> X["Reject envelope"]
+  V -- "Yes" --> B["Birthday-consumable envelope"]

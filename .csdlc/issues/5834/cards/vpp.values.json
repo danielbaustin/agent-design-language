@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-16] Birthday review packet",
     "slug": "v0-92-wp-16-birthday-review-packet",
     "version": "v0.92",
-    "generation": 0
+    "generation": 1
   },
   "status": "ready",
   "content": {
@@ -42,9 +42,9 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5834/design.md",
-      "design_digest": "32faee838e6dfc5b8c5eb4121cdc1aabfea55d559069a5bff42d86c2513efba2",
+      "design_digest": "b01caf72240ffae18cadcb91dc543b34394499e30f3cd73f5c7b0fd56afacd6e",
       "diagram_ref": ".csdlc/prepared/issues/5834/diagram.mmd",
-      "diagram_digest": "4fbf9141c2b5d1090bf07fd82a10d5e1b4ebc70e82ffef84456cb5684d5dd2ec"
+      "diagram_digest": "8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224"
     }
   }
 }

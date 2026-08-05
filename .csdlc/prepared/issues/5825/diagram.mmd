@@ -1,2 +1,7 @@
-flowchart LR
-  I["Issue 5825"] --> D["Design required"]
+flowchart TD
+  E["Candidate birthday evidence"] --> C{"All required surfaces present and coherent?"}
+  C -- "Yes" --> B["Deterministic birth decision"]
+  C -- "No" --> R["Stable rejection reason"]
+  N["Startup, wake, snapshot, copy, admission, simulation"] --> R
+  B --> P["WP-08 contract and retained validation report"]
+  P --> H["WP-09 identity consumer"]

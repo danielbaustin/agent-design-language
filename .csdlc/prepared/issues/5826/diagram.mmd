@@ -1,2 +1,8 @@
 flowchart LR
-  I["Issue 5826"] --> D["Design required"]
+  O["Origin and lineage evidence"] --> R["Identity root"]
+  N["Stable name and aliases"] --> I["Identity record"]
+  R --> I
+  C["Continuity head reference"] --> I
+  I --> V{"Schema, provenance, redaction valid?"}
+  V -- "No" --> X["Reject with field-specific reason"]
+  V -- "Yes" --> W["WP-10 continuity input"]

@@ -1,2 +1,8 @@
-flowchart LR
-  I["Issue 5834"] --> D["Design required"]
+flowchart TD
+  C["WP-08 through WP-15 exact-revision evidence"] --> I["Evidence inventory and digest checks"]
+  N["Negative suite and claim boundaries"] --> I
+  I --> G{"Complete, terminal, current, reviewable?"}
+  G -- "No" --> B["Blocked packet with named gap"]
+  G -- "Yes" --> P["Redaction-safe birthday review packet"]
+  P --> Q["Reviewer questions and caveats"]
+  Q --> H["Downstream demo, release, and governance handoffs"]
