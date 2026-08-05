@@ -2,13 +2,13 @@ use std::fs;
 
 use csdlc_v2::cards::{digest, PlanStep, ResourceProfile, StepStatus, ValidationLane};
 use csdlc_v2::doctor::DoctorStatus;
+use csdlc_v2::test_support::{initialize_native_json, BootstrapRequest};
 use csdlc_v2::{
-    create_issue_draft, diagnose, initialize_native_json, load_binding_intent,
-    load_preparation_manifest, migrate_legacy_preparation, release_derived_bind,
-    repair_legacy_preparation, run_derived_bind, run_preparation, run_preparation_batch,
-    seal_preparation, sync_preparation, BatchChildOutcome, BindReleaseRequest, BindingIntent,
-    BootstrapRequest, Claim, DerivedBindRequest, ErrorCode, InitialCardInput, IssueCreateRequest,
-    LegacyPreparationDisposition, LegacyPreparationMigrationRequest,
+    create_issue_draft, diagnose, load_binding_intent, load_preparation_manifest,
+    migrate_legacy_preparation, release_derived_bind, repair_legacy_preparation, run_derived_bind,
+    run_preparation, run_preparation_batch, seal_preparation, sync_preparation, BatchChildOutcome,
+    BindReleaseRequest, BindingIntent, Claim, DerivedBindRequest, ErrorCode, InitialCardInput,
+    IssueCreateRequest, LegacyPreparationDisposition, LegacyPreparationMigrationRequest,
     LegacyPreparationRepairDisposition, LegacyPreparationRepairRequest, PlanningProfile,
     PreparationState, PrepareBatchRequest, PrepareRunRequest, PrepareSealRequest,
     PrepareSyncRequest, Store,
@@ -711,7 +711,7 @@ fn migration_releases_preparation_only_claim_and_preserves_snapshot() {
     assert_eq!(interrupted.status, DoctorStatus::Corrupt);
     assert_eq!(
         interrupted.next_operation.as_deref(),
-        Some("csdlc-migrate run")
+        Some("csdlc-migrate preparation")
     );
     let result = migrate_legacy_preparation(
         &store,
@@ -1011,35 +1011,7 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
     let error = load_binding_intent(&store, 8001).expect_err("invalid intent identity must fail");
     assert_eq!(error.code, ErrorCode::CorruptRecord);
     fs::write(&intent_path, original_intent).unwrap();
-    let mut intent: BindingIntent =
-        serde_json::from_slice(&fs::read(&intent_path).unwrap()).unwrap();
-    // Simulate process loss after Git mutation but before artifact-ledger update.
-    intent.created_artifacts.clear();
-    intent.digest.clear();
-    intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
-    fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
-
-    let error = release_derived_bind(
-        &store,
-        BindReleaseRequest {
-            issue: 8001,
-            session_id: "session-8001".into(),
-            expected_intent_digest: None,
-        },
-    )
-    .expect_err("unproven artifact ownership must fail closed");
-    assert_eq!(error.code, ErrorCode::ReconciliationRequired);
-    assert!(temp.path().join(&first.worktree).exists());
-
-    intent.created_artifacts = vec![
-        format!("branch:{}", first.branch),
-        format!("worktree:{}", first.worktree),
-    ];
-    intent.state = csdlc_v2::BindingIntentState::Bound;
-    intent.digest.clear();
-    intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
-    fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
-
+    let intent: BindingIntent = serde_json::from_slice(&fs::read(&intent_path).unwrap()).unwrap();
     let materialized_card = temp
         .path()
         .join(&first.worktree)
@@ -1062,6 +1034,8 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
 
     let mut intent: BindingIntent =
         serde_json::from_slice(&fs::read(&intent_path).unwrap()).unwrap();
+    // Simulate process loss after Git mutation but before artifact-ledger update.
+    intent.created_artifacts.clear();
     intent.state = csdlc_v2::BindingIntentState::Bound;
     intent.acquired_unix_seconds = 0;
     intent.expires_unix_seconds = 0;
@@ -1069,15 +1043,6 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
     intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
     fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
     write_session_ledger(temp.path(), &[(8001, "replacement-session".into())]);
-    git(
-        temp.path(),
-        &["worktree", "remove", "--force", first.worktree.as_str()],
-    );
-    git(temp.path(), &["branch", "-D", first.branch.as_str()]);
-    intent.state = csdlc_v2::BindingIntentState::Releasing;
-    intent.digest.clear();
-    intent.digest = digest(&serde_json::to_vec(&intent).unwrap());
-    fs::write(&intent_path, serde_json::to_vec_pretty(&intent).unwrap()).unwrap();
     let released = release_derived_bind(
         &store,
         BindReleaseRequest {
@@ -1086,7 +1051,7 @@ fn derived_bind_is_retryable_and_release_removes_only_created_git_artifacts() {
             expected_intent_digest: Some(intent.digest),
         },
     )
-    .expect("digest-pinned takeover resumes a partially released expired intent");
+    .expect("digest-pinned takeover recovers interrupted artifact evidence");
     assert!(released.released);
     assert!(!temp.path().join(first.worktree).exists());
     assert_eq!(
@@ -1198,6 +1163,19 @@ fn derived_bind_uses_the_existing_issue_worktree_in_place() {
     )
     .expect_err("bound preparation edit must fail");
     assert_eq!(error.code, ErrorCode::InvalidTransition);
+    fs::create_dir_all(temp.path().join("src")).unwrap();
+    fs::write(temp.path().join("src/issue-local.rs"), "fn started() {}\n").unwrap();
+    let error = release_derived_bind(
+        &store,
+        BindReleaseRequest {
+            issue: 9001,
+            session_id: "session-9001".into(),
+            expected_intent_digest: None,
+        },
+    )
+    .expect_err("issue-local implementation work must block release");
+    assert_eq!(error.code, ErrorCode::UnsafeCheckout);
+    fs::remove_file(temp.path().join("src/issue-local.rs")).unwrap();
     release_derived_bind(
         &store,
         BindReleaseRequest {

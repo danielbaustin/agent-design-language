@@ -1,8 +1,9 @@
 use csdlc_v2::operator::validate_external_cargo_target;
+use csdlc_v2::test_support::{initialize_native_json, BootstrapRequest};
 use csdlc_v2::{
     build_and_install_binaries, edit_issue, install_binaries, resolve_operator_generation,
-    verify_coexistence, BootstrapRequest, CardKind, Claim, CoexistenceInventory, EditRequest,
-    Generation, LifecyclePhase, SemanticOperation, SkillManifest, Store,
+    verify_coexistence, CardKind, Claim, CoexistenceInventory, EditRequest, Generation,
+    LifecyclePhase, SemanticOperation, SkillManifest, Store,
 };
 use std::fs;
 use std::path::Path;
@@ -24,6 +25,33 @@ fn eleven_skills_are_typed_and_bind_the_generation_selector() {
         .skills
         .iter()
         .any(|route| route.name == "csdlc-v2-clean" && route.binary == "csdlc-clean"));
+}
+
+#[test]
+fn legacy_init_bind_and_reacquire_are_not_public_release_apis() {
+    let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let lib = fs::read_to_string(manifest.join("src/lib.rs")).unwrap();
+    assert!(lib.contains("mod lifecycle;"));
+    let release_exports = lib
+        .split("#[cfg(debug_assertions)]")
+        .next()
+        .expect("release API section");
+    for deleted in [
+        " initialize_native_json,",
+        " bind_issue,",
+        " reacquire_claim,",
+        " BindRequest,",
+        " ReacquireClaimRequest,",
+    ] {
+        assert!(
+            !release_exports.contains(deleted),
+            "legacy release API remains public: {deleted}"
+        );
+    }
+    let skill =
+        fs::read_to_string(manifest.join("operator/skills/csdlc-v2-bind/SKILL.md")).unwrap();
+    assert!(skill.contains("Legacy caller-supplied init, bind, and reacquire routes are deleted"));
+    assert!(!skill.contains("compatibility-only"));
 }
 
 #[test]
@@ -359,11 +387,8 @@ fn freshly_installed_stable_edit_binary_is_executable() {
     .unwrap();
     install_native_authority(fixture.path());
     let store = Store::new(fixture.path());
-    let initialized = csdlc_v2::initialize_native_json(
-        &store,
-        &serde_json::to_vec(&bootstrap_request()).unwrap(),
-    )
-    .unwrap();
+    let initialized =
+        initialize_native_json(&store, &serde_json::to_vec(&bootstrap_request()).unwrap()).unwrap();
     let ready = edit_issue(
         &store,
         edit(

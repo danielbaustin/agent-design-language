@@ -37,6 +37,7 @@ pub struct RecoverClaimRequest {
     pub reason: String,
 }
 
+#[cfg(debug_assertions)]
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ReacquireClaimRequest {
     pub issue: u64,
@@ -48,6 +49,7 @@ pub struct ReacquireClaimRequest {
     pub replacement: Claim,
 }
 
+#[cfg(debug_assertions)]
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ReacquireClaimResult {
     pub schema: String,
@@ -646,6 +648,7 @@ pub(crate) fn initialize_prepared_issue_under_binding_lock(
     initialize_issue_under_binding_lock(store, request)
 }
 
+#[cfg(debug_assertions)]
 fn initialize_native_issue(store: &Store, request: BootstrapRequest) -> Result<crate::IssueRecord> {
     crate::registry::validate_native_registry(store.root())?;
     initialize_issue(store, request)
@@ -660,6 +663,7 @@ fn initialize_native_issue(store: &Store, request: BootstrapRequest) -> Result<c
 /// let _ = csdlc_v2::initialize_native_issue;
 /// let _ = csdlc_v2::bootstrap_issue;
 /// ```
+#[cfg(debug_assertions)]
 pub fn initialize_native_json(store: &Store, bytes: &[u8]) -> Result<crate::IssueRecord> {
     let value: serde_json::Value = serde_json::from_slice(bytes)?;
     let initial = value
@@ -1391,6 +1395,7 @@ pub fn recover_claim(store: &Store, request: RecoverClaimRequest) -> Result<Clai
     Ok(evidence)
 }
 
+#[cfg(debug_assertions)]
 pub fn reacquire_claim(
     store: &Store,
     request: ReacquireClaimRequest,

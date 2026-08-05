@@ -450,6 +450,7 @@ impl Store {
         self.commit(issue, record, &cards, false)
     }
 
+    #[cfg(debug_assertions)]
     pub(crate) fn replace_authority_record(
         &self,
         issue: u64,

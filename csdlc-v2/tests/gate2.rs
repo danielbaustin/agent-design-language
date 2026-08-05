@@ -2,10 +2,13 @@ use std::fs;
 
 use csdlc_v2::cards::CardContent;
 use csdlc_v2::doctor::DoctorStatus;
+use csdlc_v2::test_support::{
+    bind_issue, initialize_native_json, reacquire_claim, BindRequest, BootstrapRequest,
+    ReacquireClaimRequest,
+};
 use csdlc_v2::{
-    amend_claim_scope, diagnose, edit_issue, AmendClaimScopeRequest, BootstrapRequest, CardKind,
-    Claim, EditRequest, ErrorCode, LifecyclePhase, PlanningCollectionField, ReacquireClaimRequest,
-    SemanticOperation, Store,
+    amend_claim_scope, diagnose, edit_issue, AmendClaimScopeRequest, CardKind, Claim, EditRequest,
+    ErrorCode, LifecyclePhase, PlanningCollectionField, SemanticOperation, Store,
 };
 use tempfile::TempDir;
 
@@ -46,7 +49,7 @@ fn initialize_issue(
     )
     .expect("manifest fixture");
     let bytes = serde_json::to_vec(&request).expect("native request bytes");
-    csdlc_v2::initialize_native_json(store, &bytes)
+    initialize_native_json(store, &bytes)
 }
 
 fn request() -> BootstrapRequest {
@@ -141,9 +144,9 @@ fn bind_fixture() -> (TempDir, Store, csdlc_v2::IssueRecord) {
     git(temp.path(), &["add", "."]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let claim = record.claim.clone().expect("claim");
-    csdlc_v2::bind_issue(
+    bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -180,9 +183,9 @@ fn bind_issue_5337_fixture() -> (TempDir, Store, csdlc_v2::IssueRecord) {
     git(temp.path(), &["add", "."]);
     git(temp.path(), &["commit", "-m", "prepared #5337 fixture"]);
     let claim = record.claim.clone().expect("claim");
-    csdlc_v2::bind_issue(
+    bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 5_337,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -348,7 +351,7 @@ fn native_registry_is_required_and_shape_checked_before_issue_authoring() {
             fs::write(path, bytes).unwrap();
         }
         let bytes = serde_json::to_vec(&request()).expect("native request bytes");
-        let error = csdlc_v2::initialize_native_json(&Store::new(temp.path()), &bytes)
+        let error = initialize_native_json(&Store::new(temp.path()), &bytes)
             .expect_err("invalid registry must fail closed");
         assert!(matches!(error.code, ErrorCode::InvalidManifest));
         assert!(!temp.path().join(".csdlc/issues/42").exists());
@@ -374,7 +377,7 @@ fn native_registry_and_manifest_symlink_escapes_fail_before_authoring() {
         .join("docs/templates/prompts/current.json");
     fs::create_dir_all(registry_path.parent().unwrap()).unwrap();
     symlink(&outside_registry, &registry_path).unwrap();
-    let error = csdlc_v2::initialize_native_json(&Store::new(escaped_registry.path()), &bytes)
+    let error = initialize_native_json(&Store::new(escaped_registry.path()), &bytes)
         .expect_err("registry symlink escape");
     assert!(matches!(error.code, ErrorCode::InvalidManifest));
     assert!(!escaped_registry.path().join(".csdlc/issues/42").exists());
@@ -400,7 +403,7 @@ fn native_registry_and_manifest_symlink_escapes_fail_before_authoring() {
         .join("csdlc-v2/operator/native-card-shape.json");
     fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
     symlink(&outside_manifest, &manifest_path).unwrap();
-    let error = csdlc_v2::initialize_native_json(&Store::new(escaped_manifest.path()), &bytes)
+    let error = initialize_native_json(&Store::new(escaped_manifest.path()), &bytes)
         .expect_err("manifest symlink escape");
     assert!(matches!(error.code, ErrorCode::InvalidManifest));
     assert!(!escaped_manifest.path().join(".csdlc/issues/42").exists());
@@ -418,7 +421,7 @@ fn retained_bootstrap_without_new_fields_loads_as_explicit_none() {
     assert_eq!(retained.initial.review_scope, "none");
     let temp = tempfile::tempdir().expect("tempdir");
     let bytes = serde_json::to_vec(&value).expect("retained bytes");
-    let error = csdlc_v2::initialize_native_json(&Store::new(temp.path()), &bytes)
+    let error = initialize_native_json(&Store::new(temp.path()), &bytes)
         .expect_err("native entrypoint requires explicit fields");
     assert!(matches!(error.code, ErrorCode::InvalidInput));
     assert!(!temp.path().join(".csdlc/issues/42").exists());
@@ -448,14 +451,14 @@ fn bind_creates_and_idempotently_reuses_typed_worktree() {
     git(temp.path(), &["add", "docs"]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let claim = record.claim.clone().expect("claim");
-    let request = csdlc_v2::BindRequest {
+    let request = BindRequest {
         issue: 42,
         base_branch: "main".into(),
         branch: claim.branch.clone(),
         worktree: claim.worktree.clone(),
         claim,
     };
-    let first = csdlc_v2::bind_issue(&store, request.clone()).expect("bind");
+    let first = bind_issue(&store, request.clone()).expect("bind");
     assert!(first.created);
     let bound_store = Store::new(temp.path().join(".worktrees/issue-42"));
     let bound_digest = bound_store.load_record(42).expect("bound record").digest;
@@ -463,7 +466,7 @@ fn bind_creates_and_idempotently_reuses_typed_worktree() {
         bound_store.load_record(42).expect("bound record").phase,
         csdlc_v2::LifecyclePhase::Bound
     );
-    let second = csdlc_v2::bind_issue(&store, request).expect("rebind");
+    let second = bind_issue(&store, request).expect("rebind");
     assert!(!second.created);
     assert_eq!(
         bound_store.load_record(42).expect("reused record").digest,
@@ -495,14 +498,14 @@ fn bind_supports_issue_local_state_without_touching_primary_checkout() {
     git(temp.path(), &["commit", "-m", "fixture"]);
     git(temp.path(), &["switch", "-c", "issue-42"]);
     let claim = record.claim.clone().expect("claim");
-    let request = csdlc_v2::BindRequest {
+    let request = BindRequest {
         issue: 42,
         base_branch: "main".into(),
         branch: "issue-42".into(),
         worktree: ".".into(),
         claim,
     };
-    let result = csdlc_v2::bind_issue(&store, request).expect("issue-local bind");
+    let result = bind_issue(&store, request).expect("issue-local bind");
     assert!(!result.created);
     assert_eq!(
         store.load_record(42).unwrap().phase,
@@ -546,9 +549,9 @@ fn bind_activates_exact_reserved_claim_from_existing_worktree() {
     let issue_root = temp.path().join(".worktrees/issue-42");
     let issue_store = Store::new(&issue_root);
     let claim = issue_store.load_record(42).unwrap().claim.unwrap();
-    let result = csdlc_v2::bind_issue(
+    let result = bind_issue(
         &issue_store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -602,9 +605,9 @@ fn bind_rejects_reserved_worktree_that_does_not_match_current_checkout() {
     let issue_root = temp.path().join(".worktrees/issue-42");
     let issue_store = Store::new(&issue_root);
     let claim = issue_store.load_record(42).unwrap().claim.unwrap();
-    let error = csdlc_v2::bind_issue(
+    let error = bind_issue(
         &issue_store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -644,9 +647,9 @@ fn bind_rejects_standalone_repository_with_matching_worktree_suffix() {
     git(&issue_root, &["commit", "-m", "copied prepared issue"]);
     let claim = record.claim.unwrap();
 
-    let error = csdlc_v2::bind_issue(
+    let error = bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -1138,9 +1141,9 @@ fn bind_refuses_primary_checkout_and_worktree_mismatch() {
     git(temp.path(), &["add", "docs"]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let claim = record.claim.clone().expect("claim");
-    let error = csdlc_v2::bind_issue(
+    let error = bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -1175,9 +1178,9 @@ fn bind_refuses_branch_at_a_different_worktree() {
         ],
     );
     let claim = record.claim.clone().expect("claim");
-    let error = csdlc_v2::bind_issue(
+    let error = bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -1213,9 +1216,9 @@ fn bind_refuses_overlapping_protected_path_reserved_by_another_issue() {
     )
     .expect("other record");
     let claim = record.claim.clone().expect("claim");
-    let error = csdlc_v2::bind_issue(
+    let error = bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -1362,7 +1365,7 @@ fn released_claim_reacquires_without_phase_or_audit_rewind() {
         Some("csdlc-migrate repair")
     );
 
-    let result = csdlc_v2::reacquire_claim(
+    let result = reacquire_claim(
         &store,
         ReacquireClaimRequest {
             issue: 42,
@@ -1413,7 +1416,7 @@ fn expired_claim_reacquires_and_preserves_previous_owner_evidence() {
     bootstrap.claim.expires_unix_seconds = u64::MAX - 2;
     let record = initialize_issue(&store, bootstrap).expect("initialize");
     git(temp.path(), &["branch", "-m", "issue-42"]);
-    let result = csdlc_v2::reacquire_claim(
+    let result = reacquire_claim(
         &store,
         ReacquireClaimRequest {
             issue: 42,
@@ -1454,7 +1457,7 @@ fn reacquire_fails_closed_for_stale_binding_and_live_overlap() {
     )
     .expect("release");
     let dormant = store.load_record(42).expect("dormant");
-    let stale = csdlc_v2::reacquire_claim(
+    let stale = reacquire_claim(
         &store,
         ReacquireClaimRequest {
             issue: 42,
@@ -1469,7 +1472,7 @@ fn reacquire_fails_closed_for_stale_binding_and_live_overlap() {
     .expect_err("stale generation");
     assert_eq!(stale.code, ErrorCode::StaleGeneration);
 
-    let stale_digest = csdlc_v2::reacquire_claim(
+    let stale_digest = reacquire_claim(
         &store,
         ReacquireClaimRequest {
             issue: 42,
@@ -1486,7 +1489,7 @@ fn reacquire_fails_closed_for_stale_binding_and_live_overlap() {
 
     let mut invalid_binding = reacquired_claim(dormant.generation);
     invalid_binding.branch = "other-branch".into();
-    let invalid = csdlc_v2::reacquire_claim(
+    let invalid = reacquire_claim(
         &store,
         ReacquireClaimRequest {
             issue: 42,
@@ -1503,7 +1506,7 @@ fn reacquire_fails_closed_for_stale_binding_and_live_overlap() {
 
     let mut invalid_worktree = reacquired_claim(dormant.generation);
     invalid_worktree.worktree = ".worktrees/not-this-one".into();
-    let invalid = csdlc_v2::reacquire_claim(
+    let invalid = reacquire_claim(
         &store,
         ReacquireClaimRequest {
             issue: 42,
@@ -1525,7 +1528,7 @@ fn reacquire_fails_closed_for_stale_binding_and_live_overlap() {
     other_request.claim.worktree = ".".into();
     other_request.claim.protected_paths = vec!["src/nested".into()];
     initialize_issue(&store, other_request).expect("other issue");
-    let collision = csdlc_v2::reacquire_claim(
+    let collision = reacquire_claim(
         &store,
         ReacquireClaimRequest {
             issue: 42,
@@ -1754,7 +1757,7 @@ fn reacquire_rejects_direct_rendered_card_drift() {
     let dormant = store.load_record(42).expect("dormant");
     fs::write(store.issue_dir(42).join("cards/sip.md"), "# direct drift\n")
         .expect("write direct drift");
-    let error = csdlc_v2::reacquire_claim(
+    let error = reacquire_claim(
         &store,
         ReacquireClaimRequest {
             issue: 42,
@@ -1864,7 +1867,7 @@ fn concurrent_reacquisition_across_worktrees_allows_only_one_overlapping_writer(
         let path = path.to_owned();
         std::thread::spawn(move || {
             barrier.wait();
-            csdlc_v2::reacquire_claim(
+            reacquire_claim(
                 &Store::new(root),
                 ReacquireClaimRequest {
                     issue,
@@ -2077,9 +2080,9 @@ fn bound_claim_scope_amendment_is_collision_checked_and_audited() {
     git(temp.path(), &["add", "."]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let claim = record.claim.clone().expect("claim");
-    csdlc_v2::bind_issue(
+    bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -2229,9 +2232,9 @@ fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
     git(temp.path(), &["add", "."]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let claim = record.claim.clone().expect("claim");
-    csdlc_v2::bind_issue(
+    bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: "issue-42".into(),
@@ -2427,9 +2430,9 @@ fn bound_plan_progress_and_validation_lane_replacement_are_typed() {
     git(temp.path(), &["add", "."]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let claim = record.claim.clone().expect("claim");
-    csdlc_v2::bind_issue(
+    bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),
@@ -3538,9 +3541,9 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
     git(temp.path(), &["add", "."]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let claim = approved.claim.clone().expect("claim");
-    csdlc_v2::bind_issue(
+    bind_issue(
         &store,
-        csdlc_v2::BindRequest {
+        BindRequest {
             issue: 42,
             base_branch: "main".into(),
             branch: claim.branch.clone(),

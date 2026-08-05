@@ -263,7 +263,7 @@ disposition creates, rewrites, or releases an active claim.
 | `validation_failed` during seal | Current generation is complete but not ready | Correct semantic input, sync a successor, then seal |
 | `stale_digest` during bind | Receipt or base revision is no longer current | Re-sync and re-seal; do not copy old binding data |
 | `claim_collision` | Another issue or session won path authority | Inspect the named owner/issue and wait or route release |
-| `binding`/intent remains after interruption | Bind did not reach a stable terminal state | Retry with the same issue and session, or release with the same owner |
+| `binding`/intent remains after interruption | Bind did not reach a stable terminal state | Retry with the same issue and session; after expiry, a governed replacement session may release only with the exact intent digest and proven topology |
 | ambiguous Git topology | Existing artifacts cannot be proven intent-owned | Stop and use an audited repair path; do not delete manually |
 
 ## Compatibility boundary
@@ -271,4 +271,7 @@ disposition creates, rewrites, or releases an active claim.
 The legacy `csdlc-init` route is deleted. New v0.92 work uses the claim-free
 issue and preparation commands followed by `csdlc-bind run`. Do not recreate a
 wrapper, alias, compatibility retry, operator-supplied hidden claim, or manual
-canonical-state edit for the deleted route.
+canonical-state edit for the deleted route. The caller-supplied init, bind, and
+reacquire Rust APIs are also absent from release builds. A debug-only hidden
+test-support surface retains historical fixture construction for regression
+tests; it is not linked into release binaries and is not operator authority.

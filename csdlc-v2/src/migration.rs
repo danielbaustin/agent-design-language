@@ -12,9 +12,9 @@ use crate::cards::{CardContent, CardKind, InitialCardInput, PlanStep, StepStatus
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::lifecycle::initialize_issue;
 use crate::model::{LifecyclePhase, MigrationEvidence};
+use crate::store::BootstrapRequest;
 use crate::{
-    edit_issue, BootstrapRequest, CardStatus, Claim, EditRequest, PlanningProfile,
-    SemanticOperation, Store,
+    edit_issue, CardStatus, Claim, EditRequest, PlanningProfile, SemanticOperation, Store,
 };
 
 #[derive(

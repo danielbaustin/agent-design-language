@@ -10,7 +10,7 @@ pub mod finish;
 pub mod git;
 pub mod github;
 pub mod github_token;
-pub mod lifecycle;
+mod lifecycle;
 pub mod migration;
 pub mod model;
 pub mod operator;
@@ -52,10 +52,9 @@ pub use github::{
     GithubActionResult, GithubIssuePacket, PrCheck, PrStatePacket, PrStateRequest,
 };
 pub use lifecycle::{
-    amend_claim_scope, bind_issue, heartbeat_claim, initialize_native_json, reacquire_claim,
-    recover_claim, rehome_claim_authority, release_closed_claim, revoke_active_claim,
-    transition_active_claim, AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest,
-    ReacquireClaimRequest, ReacquireClaimResult, RecoverClaimRequest, RehomeClaimAuthorityRequest,
+    amend_claim_scope, heartbeat_claim, recover_claim, rehome_claim_authority,
+    release_closed_claim, revoke_active_claim, transition_active_claim, AmendClaimScopeRequest,
+    BindResult, HeartbeatRequest, RecoverClaimRequest, RehomeClaimAuthorityRequest,
     RehomeClaimAuthorityResult, ReleaseClosedClaimRequest, RevokeActiveClaimRequest,
     RevokeActiveClaimResult, TransitionActiveClaimRequest,
 };
@@ -111,6 +110,14 @@ pub use soak::{
     SamplePacket, ScenarioEvidence, ScenarioOutcome, SoakDecisionPacket, SoakEvidenceInput,
     SoakScenario,
 };
-pub use store::{
-    approve_design, edit_issue, ApproveDesignRequest, BootstrapRequest, EditRequest, Store,
-};
+pub use store::{approve_design, edit_issue, ApproveDesignRequest, EditRequest, Store};
+
+#[cfg(debug_assertions)]
+#[doc(hidden)]
+pub mod test_support {
+    pub use crate::lifecycle::{
+        bind_issue, initialize_native_json, reacquire_claim, BindRequest, ReacquireClaimRequest,
+        ReacquireClaimResult,
+    };
+    pub use crate::store::BootstrapRequest;
+}

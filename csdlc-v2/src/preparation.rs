@@ -359,6 +359,10 @@ pub struct BindReleaseResult {
 pub fn create_issue_draft(store: &Store, request: IssueCreateRequest) -> Result<IssueDraft> {
     validate_identity(request.issue, &request.repository, &request.slug)?;
     let _lock = preparation_lock(store, request.issue)?;
+    create_issue_draft_locked(store, request)
+}
+
+fn create_issue_draft_locked(store: &Store, request: IssueCreateRequest) -> Result<IssueDraft> {
     let path = issue_preparation_dir(store, request.issue).join("draft.json");
     if path.exists() {
         let existing: IssueDraft = read_json(&path)?;
@@ -710,6 +714,7 @@ pub fn migrate_legacy_preparation(
             "migration actor, reason, and base revision are required",
         ));
     }
+    let _preparation = preparation_lock(store, request.issue)?;
     let record = store.load_record(request.issue)?;
     if record.digest != request.expected_legacy_digest {
         return Err(V2Error::new(
@@ -718,27 +723,24 @@ pub fn migrate_legacy_preparation(
         ));
     }
     let preparation_dir = issue_preparation_dir(store, request.issue);
-    {
-        let _lock = preparation_lock(store, request.issue)?;
-        if preparation_dir.exists() {
-            let snapshot = preparation_dir
-                .join("migration")
-                .join(format!("legacy-{}.json", record.digest));
-            if !snapshot.exists() {
-                return Err(V2Error::new(
-                    ErrorCode::ReconciliationRequired,
-                    "canonical legacy authority coexists with unrelated preparation state",
-                ));
-            }
-            let retained: crate::IssueRecord = read_json(&snapshot)?;
-            if retained.digest != record.digest {
-                return Err(V2Error::new(
-                    ErrorCode::CorruptRecord,
-                    "interrupted migration snapshot does not match canonical authority",
-                ));
-            }
-            fs::remove_dir_all(&preparation_dir)?;
+    if preparation_dir.exists() {
+        let snapshot = preparation_dir
+            .join("migration")
+            .join(format!("legacy-{}.json", record.digest));
+        if !snapshot.exists() {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "canonical legacy authority coexists with unrelated preparation state",
+            ));
         }
+        let retained: crate::IssueRecord = read_json(&snapshot)?;
+        if retained.digest != record.digest {
+            return Err(V2Error::new(
+                ErrorCode::CorruptRecord,
+                "interrupted migration snapshot does not match canonical authority",
+            ));
+        }
+        fs::remove_dir_all(&preparation_dir)?;
     }
     if matches!(
         record.phase,
@@ -821,7 +823,7 @@ pub fn migrate_legacy_preparation(
             return quarantine_migration(store, &record, "legacy design approval is stale")
         }
     };
-    create_issue_draft(
+    create_issue_draft_locked(
         store,
         IssueCreateRequest {
             issue: record.issue,
@@ -831,7 +833,6 @@ pub fn migrate_legacy_preparation(
             version: initial.version.clone(),
         },
     )?;
-    let _lock = preparation_lock(store, request.issue)?;
     let current = load_manifest(store, request.issue)?;
     let sequence = current.current_sequence + 1;
     let owned_paths = normalize_paths(&claim.protected_paths)?;
@@ -1506,6 +1507,9 @@ pub fn release_derived_bind(
             "current session does not own binding intent; expired recovery requires its exact digest",
         ));
     }
+    if governed_takeover {
+        recover_interrupted_artifact_evidence(store, &mut intent)?;
+    }
     intent.state = BindingIntentState::Releasing;
     intent.digest.clear();
     intent.digest = object_digest(&intent)?;
@@ -1520,6 +1524,15 @@ pub fn release_derived_bind(
         .iter()
         .any(|artifact| artifact == &format!("branch:{}", intent.branch));
     let worktrees = crate::git::worktrees(store.root())?;
+    if intent.worktree == "." {
+        if crate::git::current_branch(store.root())? != intent.branch {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "issue-local binding branch no longer matches durable intent",
+            ));
+        }
+        validate_release_target(store.root(), request.issue, &intent)?;
+    }
     if intent.worktree != "."
         && !intent.worktree_preexisting
         && worktrees.iter().any(|(branch, _)| branch == &intent.branch)
@@ -1547,33 +1560,7 @@ pub fn release_derived_bind(
             ));
         }
         let target = PathBuf::from(registered);
-        let target_store = Store::new(&target);
-        let target_revision = crate::git::run(&target, &["rev-parse", "HEAD"])?.stdout;
-        if target_revision != intent.base_revision {
-            return Err(V2Error::new(
-                ErrorCode::InvalidTransition,
-                "binding worktree advanced beyond its sealed base revision",
-            ));
-        }
-        if target_store.issue_dir(request.issue).exists() {
-            let record = target_store.load_record(request.issue)?;
-            if record.claim.as_ref().map(|claim| claim.id.as_str()) != Some(&intent.claim_id)
-                || record.phase != crate::LifecyclePhase::Bound
-                || record.review.is_some()
-                || record.publication.is_some()
-                || record.terminal.is_some()
-            {
-                return Err(V2Error::new(
-                    ErrorCode::InvalidTransition,
-                    "bound worktree has started execution or no longer matches intent",
-                ));
-            }
-        }
-        validate_release_dirty_paths(
-            &target,
-            request.issue,
-            intent.materialized_lifecycle_digest.as_deref(),
-        )?;
+        validate_release_target(&target, request.issue, &intent)?;
         crate::git::run(
             store.root(),
             &["worktree", "remove", "--force", registered.as_str()],
@@ -1626,6 +1613,96 @@ pub fn release_derived_bind(
     })
 }
 
+fn recover_interrupted_artifact_evidence(store: &Store, intent: &mut BindingIntent) -> Result<()> {
+    if intent.worktree == "." || intent.worktree_preexisting || intent.branch_preexisting {
+        return Ok(());
+    }
+    let worktrees = crate::git::worktrees(store.root())?;
+    if let Some((branch, registered)) = worktrees
+        .iter()
+        .find(|(branch, _)| branch == &intent.branch)
+    {
+        let expected = store.root().join(&intent.worktree);
+        let expected = expected.canonicalize()?.to_string_lossy().to_string();
+        if branch != &intent.branch || registered != &expected {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "interrupted binding topology does not match durable intent",
+            ));
+        }
+        let target = PathBuf::from(registered);
+        let target_store = Store::new(&target);
+        let record = target_store.load_record(intent.issue)?;
+        let cards = target_store.load_cards(intent.issue)?;
+        target_store.verify_canonical_authority_projection(&record, &cards)?;
+        if record.claim.as_ref().map(|claim| claim.id.as_str()) != Some(&intent.claim_id)
+            || record.phase != crate::LifecyclePhase::Bound
+            || record.review.is_some()
+            || record.publication.is_some()
+            || record.terminal.is_some()
+            || crate::git::run(&target, &["rev-parse", "HEAD"])?.stdout != intent.base_revision
+        {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "interrupted binding worktree does not prove unstarted intent ownership",
+            ));
+        }
+        intent
+            .created_artifacts
+            .push(format!("worktree:{}", intent.worktree));
+        intent
+            .created_artifacts
+            .push(format!("branch:{}", intent.branch));
+        intent.materialized_lifecycle_digest =
+            Some(materialized_lifecycle_digest(&target, intent.issue)?);
+    } else if git_branch_exists(store.root(), &intent.branch)? {
+        let revision =
+            crate::git::run(store.root(), &["rev-parse", intent.branch.as_str()])?.stdout;
+        if revision != intent.base_revision {
+            return Err(V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                "interrupted binding branch does not match the sealed base revision",
+            ));
+        }
+        intent
+            .created_artifacts
+            .push(format!("branch:{}", intent.branch));
+    }
+    intent.created_artifacts.sort();
+    intent.created_artifacts.dedup();
+    Ok(())
+}
+
+fn validate_release_target(target: &Path, issue: u64, intent: &BindingIntent) -> Result<()> {
+    let target_store = Store::new(target);
+    let target_revision = crate::git::run(target, &["rev-parse", "HEAD"])?.stdout;
+    if target_revision != intent.base_revision {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "binding worktree advanced beyond its sealed base revision",
+        ));
+    }
+    if target_store.issue_dir(issue).exists() {
+        let record = target_store.load_record(issue)?;
+        if record.claim.as_ref().map(|claim| claim.id.as_str()) != Some(&intent.claim_id)
+            || record.phase != crate::LifecyclePhase::Bound
+            || record.review.is_some()
+            || record.publication.is_some()
+            || record.terminal.is_some()
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "bound worktree has started execution or no longer matches intent",
+            ));
+        }
+    }
+    validate_release_dirty_paths(
+        target,
+        issue,
+        intent.materialized_lifecycle_digest.as_deref(),
+    )
+}
+
 fn validate_release_dirty_paths(
     target_root: &Path,
     issue: u64,
@@ -1652,13 +1729,17 @@ fn validate_release_dirty_paths(
         ));
     }
     let allowed_lock = format!(".csdlc/locks/{issue}.lock");
+    let allowed_preparation_lock = format!(".csdlc/preparation/locks/{issue}.lock");
     let unexpected = status
         .stdout
         .lines()
         .filter_map(|line| {
             let path = line.get(3..)?.split(" -> ").last()?.trim_matches('"');
-            (path != allowed_lock && !lifecycle.iter().any(|prefix| path.starts_with(prefix)))
-                .then(|| path.to_string())
+            (path != allowed_lock
+                && path != allowed_preparation_lock
+                && path != ".adl/session-ledger/ledger.json"
+                && !lifecycle.iter().any(|prefix| path.starts_with(prefix)))
+            .then(|| path.to_string())
         })
         .collect::<Vec<_>>();
     if !unexpected.is_empty() {
@@ -2161,7 +2242,6 @@ fn quarantine_migration(
         digest: String::new(),
     };
     packet.digest = object_digest(&packet)?;
-    let _lock = preparation_lock(store, record.issue)?;
     write_immutable_json(&store.root().join(&relative), &packet)?;
     Ok(LegacyPreparationMigrationResult {
         schema: "csdlc.legacy_preparation_migration_result.v1".into(),

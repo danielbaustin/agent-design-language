@@ -6,5 +6,5 @@ Invoke `csdlc-bind run` or `csdlc-bind release` with typed argv and report its
 typed result. The run request contains issue and governed session identity, not
 a copied claim, branch, worktree, or protected-path reservation. Do not create
 hidden operator claims, edit cards, or fall back to shell/Python lifecycle
-mutation. The full legacy bind request remains compatibility-only during
-v0.92 parity.
+mutation. Legacy caller-supplied init, bind, and reacquire routes are deleted;
+do not restore or emulate them.
