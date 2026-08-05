@@ -3,13 +3,13 @@
   "issue": 5359,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1e45fdeda7d0795b7290a037be238e7e7c8624af5008b8c868d9e3b0a4c50365",
-  "phase": "implemented",
-  "generation": 14,
-  "digest": "462ac5e2b37953b5f281cf9fcc734111d06352928eaae907e6a341c50cca0323",
+  "phase": "reviewed",
+  "generation": 15,
+  "digest": "a808da3965f2da2884f7cff2db91aa126aaa49ae9a6605f212e8634e35e3f1b8",
   "claim": {
     "id": "claim-5359-v0918-prep-recovery-20260804",
     "owner": "codex:5359-preparation-owner",
-    "generation": 14,
+    "generation": 15,
     "acquired_unix_seconds": 1785865465,
     "expires_unix_seconds": 1786470265,
     "heartbeat_unix_seconds": 1785865465,
@@ -26,8 +26,38 @@
     ],
     "purpose": "Prepare #5359 WP-22 next-milestone planning review only; no execution until WP-21A #5355 is live-merged and ancestral"
   },
-  "review_assignment": null,
-  "review": null,
+  "review_assignment": {
+    "reviewer": "subagent:gpt-5.5:Peirce",
+    "assigned_by": "codex:5359-planning-review",
+    "revision": "git-blake3:635515106d991ff036f9bf9c353d730a731c4378:10c2e27ea8ea73db0228049b74e883c08f291d59bcd8c0f8619e0375abcda70f",
+    "scope": [
+      ".csdlc/issues/5359",
+      ".csdlc/evidence/5359",
+      ".csdlc/prepared/issues/5359",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:gpt-5.5:Peirce",
+    "scope": [
+      ".csdlc/issues/5359",
+      ".csdlc/evidence/5359",
+      ".csdlc/prepared/issues/5359",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
+    ],
+    "reviewed_revision": "git-blake3:635515106d991ff036f9bf9c353d730a731c4378:10c2e27ea8ea73db0228049b74e883c08f291d59bcd8c0f8619e0375abcda70f",
+    "findings": [],
+    "residual_risks": [
+      "This planning-only review schedules but does not author, produce, publish, or accept the ten articles or ten podcast episodes.",
+      "Final article claims remain subject to WP-23 release-truth alignment; podcast publication remains subject to editorial, audio, RSS, route, and operator approval gates."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -42,32 +72,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "632e84a98bb783d3b22c0bc2941895b3907c0c626ce4f0383d4ccc268ceebd90",
+      "values_digest": "7209a11fc152206d7bb8ec894d7dff414e51fd45c29e3bcbf2f4ad441144635f",
       "rendered_digest": "b5b05423d638e93763bbb471be206e9a35ec25d30f99900e0f97e789c0d928ab",
       "ast_digest": "3413b735bfe7ddbedd9595dde0373caedd93e4f2d53fe1eb5a2db6c78dd47ef7"
     },
     "stp": {
-      "values_digest": "438bd3de2343515c40d67b4264d72e83a0faa3ca3d08769fd1c2946e5c81cc2f",
+      "values_digest": "5c736699efa9c2acb6dbdf713544afe37f8a8d2440b97d6060eec44c208e432a",
       "rendered_digest": "709a96bb616f3e3591b958f7eda47f81a8c21588ac42b4dc8dd49b03b128b98e",
       "ast_digest": "eebc1238aefc97fda13ea37fca2b8eafd5a65dc00f7c3f140f37d0853f7b58a0"
     },
     "spp": {
-      "values_digest": "c3c69b88f6dd2adc40b4a36bf53b9ad8460439e9baabe4fea5d29b8e9fdc769e",
+      "values_digest": "86df050b192e9e8f838b0c80b9e0b481e3b4371caa091cb18dce93ef10f736a4",
       "rendered_digest": "76b9658f0c0cd986e58d96c68590fe5e2645c26b1860704d99f3951c132637e7",
       "ast_digest": "55c93f3f78c5e88784167dbc380ce05eea0bea38176b2468178ec6f7e5adf647"
     },
     "vpp": {
-      "values_digest": "e989b862aa159ed136fc122fa8f99838daf51255193c0b00e003f69ffc4cf243",
+      "values_digest": "1069f2b858cc4c113ff95ce9efafe8e13360726a975390603bd6034df68f4d06",
       "rendered_digest": "ceb39c57a89d83c4a8ac5b88043a6b036b8f4a7bd76643e5262299605778d662",
       "ast_digest": "7b19a1624305e712a92f1ec429ab2c5ec28e3688f72c4bb5b979dcaf9080fc3b"
     },
     "srp": {
-      "values_digest": "1252eff7d59c10224b97605d80d34807c5d50b789b60fe816537af36e1dc2edb",
-      "rendered_digest": "fad9251a61bc087fb7e5770003bd94acb2955929b6b25df24b9dfde14a4766e2",
-      "ast_digest": "1191ce0e7c7e1a7b759ee9070c2a4e0fdf67806c5bee6fba14867de2035eea2b"
+      "values_digest": "2d9d549a78621a8a11dfec963a0e2e303e9b7294bddde7d41fd190151185a582",
+      "rendered_digest": "af5c697dc1efad92458bfeb76d764d4a31476ab669f75006440afe7138504513",
+      "ast_digest": "a0c232ca1ac480d856d8fac519ca64f98698ee9b8e0f1d5b65a6f6bce8ebefb4"
     },
     "sor": {
-      "values_digest": "8ca6dc1c03d69466ba99d8f87f72192d01fcc09f874502197c31b0a3570258a3",
+      "values_digest": "4a2bf3f0fa32fbef61b465db685b0ebb12c5257d0d317ec175485ddaeef39dac",
       "rendered_digest": "e2607825ebce69c854623c837e64e4af3698892e9ee85af452bf9a8d63c7edb7",
       "ast_digest": "fc1764cde6b253566f273a0d8dd54fa9a831acf7514fb00c0b3aa71e2fed48f7"
     }
@@ -114,6 +144,13 @@
       "to": "implemented",
       "actor": "codex:5359-planning-review",
       "reason": "Recover published review truth to add the operator-required ten-article and ten-podcast parallel publication tranches omitted from the reviewed package."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5359-planning-review",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -249,6 +286,20 @@
       "actor": "codex:5359-planning-review",
       "reason": "Refresh WP-22 execution truth after adding the operator-required ten-article and ten-podcast parallel production tranches.",
       "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, ten-article, ten-podcast, and release tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.\",\"changes\":[\"Expanded the v0.92 WBS to a 36-row candidate sequence with the Agent Logic repository migration before substantive work, ten parallel review-ready articles, ten parallel review-ready podcast episodes, parallel reliability/tooling tracks, and a complete review/closeout tail.\",\"Updated the sprint plan with migration, parallel article and podcast production, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.\",\"Updated the issue-wave YAML with exact WP/title parity, scheduled source ownership, deferred source retention, and later backlog.\",\"Added the WP-22 planning review packet with blockers, stale assumptions, overclaims, non-claims, and WP-23 disposition.\",\"Preserved draft_pre_open status and opened no v0.92 execution issues.\"],\"artifacts\":[\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"validation\":[{\"command\":[\"ruby\",\"-ryaml\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"purpose\":\"Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, and six-card policy.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"},{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5359\"],\"purpose\":\"Prove typed lifecycle integrity and all six card projections.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5359/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove the bounded planning changes contain no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"}]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:5359-planning-review",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5359-planning-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }
