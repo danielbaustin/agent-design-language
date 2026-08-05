@@ -4,9 +4,15 @@ slug: first-birthday-core
 execution_mode: hybrid
 ordered_issue_numbers: [5825, 5826, 5827, 5828, 5829, 5830, 5831, 5833, 5834]
 safe_parallel_lanes:
-  - issues: [5828, 5829, 5830, 5831]
-    gate: declared issue dependencies satisfied
-    boundary: Memory, capability, cognitive-profile, and learning work retain separate child ownership.
+  - issues: [5828, 5829]
+    gate: issue 5827 is complete
+    boundary: Memory and capability work retain separate child ownership.
+  - issues: [5830]
+    gate: issues 5827, 5828, and 5829 are complete
+    boundary: Cognitive-profile work starts only after its memory and capability dependencies.
+  - issues: [5831]
+    gate: issue 5830 and the declared loop evidence are complete
+    boundary: Adaptive-learning work starts only after its cognitive-profile dependency.
 serial_gates:
   - 5825 before 5826 and 5829
   - 5826 before 5827 and 5828

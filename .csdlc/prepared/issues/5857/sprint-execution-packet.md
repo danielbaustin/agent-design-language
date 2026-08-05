@@ -80,13 +80,17 @@ Out of scope:
 
 | Lane | Issues | Why parallel-safe | Required coordination |
 |---|---|---|---|
-| lane 1 | `#5828`, `#5829`, `#5830`, `#5831` | Memory, capability, cognitive-profile, and learning work retain separate child ownership. | declared issue dependencies satisfied |
+| lane 1 | `#5828`, `#5829` | Memory and capability work retain separate child ownership. | issue 5827 is complete |
+| lane 2 | `#5830` | Cognitive-profile work starts only after its memory and capability dependencies. | issues 5827, 5828, and 5829 are complete |
+| lane 3 | `#5831` | Adaptive-learning work starts only after its cognitive-profile dependency. | issue 5830 and the declared loop evidence are complete |
 
 ## Candidate Parallel Lanes
 
 | Lane | Classification | Issues | Expected write sets | Dependency gate | Collision posture |
 |---|---|---|---|---|---|
-| candidate 1 | safe_parallel | `#5828`, `#5829`, `#5830`, `#5831` | disjoint child worktrees | declared issue dependencies satisfied | collapse to serial on overlap |
+| candidate 1 | safe_parallel | `#5828`, `#5829` | disjoint child worktrees | issue 5827 is complete | collapse to serial on overlap |
+| candidate 2 | safe_parallel | `#5830` | child worktree | issues 5827, 5828, and 5829 are complete | collapse to serial on overlap |
+| candidate 3 | safe_parallel | `#5831` | child worktree | issue 5830 and the declared loop evidence are complete | collapse to serial on overlap |
 
 ## Serial Gates
 

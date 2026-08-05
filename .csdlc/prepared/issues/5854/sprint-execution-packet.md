@@ -75,14 +75,16 @@ Out of scope:
 | Lane | Issues | Why parallel-safe | Required coordination |
 |---|---|---|---|
 | lane 1 | `#5844`, `#5845` | Articles and podcasts are independently reviewable publication packages. | issue 5819 complete |
-| lane 2 | `#5835`, `#5836`, `#5839` | Demo, migration, and governance handoff retain separate child worktrees. | each declared child dependency satisfied |
+| lane 2 | `#5835`, `#5836` | Demo and migration planning retain separate child worktrees. | issue 5834 and each remaining declared child dependency are complete |
+| lane 3 | `#5839` | Governance handoff starts only after its migration-planning dependency. | issues 5834 and 5835 and the v0.93 allocation are complete |
 
 ## Candidate Parallel Lanes
 
 | Lane | Classification | Issues | Expected write sets | Dependency gate | Collision posture |
 |---|---|---|---|---|---|
 | candidate 1 | safe_parallel | `#5844`, `#5845` | disjoint child worktrees | issue 5819 complete | collapse to serial on overlap |
-| candidate 2 | safe_parallel | `#5835`, `#5836`, `#5839` | disjoint child worktrees | each declared child dependency satisfied | collapse to serial on overlap |
+| candidate 2 | safe_parallel | `#5835`, `#5836` | disjoint child worktrees | issue 5834 and each remaining declared child dependency are complete | collapse to serial on overlap |
+| candidate 3 | safe_parallel | `#5839` | child worktree | issues 5834 and 5835 and the v0.93 allocation are complete | collapse to serial on overlap |
 
 ## Serial Gates
 

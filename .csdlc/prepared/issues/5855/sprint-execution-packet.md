@@ -71,15 +71,17 @@ Out of scope:
 
 | Lane | Issues | Why parallel-safe | Required coordination |
 |---|---|---|---|
-| lane 1 | `#5821`, `#5832` | Distributed-polis and protocol work use separate child worktrees. | Runtime ingress contracts from issue 5820 are stable |
-| lane 2 | `#5795` | Local-provider work cannot redefine Observatory or Runtime contracts. | preparation may precede integration; integration waits for issues 5800 and 5820 |
+| lane 1 | `#5821` | Distributed-polis architecture and security work remains in its child worktree. | Runtime ingress contracts from issue 5820 are stable |
+| lane 2 | `#5832` | Protocol work is isolated after its distributed-runtime dependency. | issue 5821 and the declared ACIP substrate and trace baselines are complete |
+| lane 3 | `#5795` | Local-provider work cannot redefine Observatory or Runtime contracts. | preparation may precede integration; integration waits for issues 5800 and 5820 |
 
 ## Candidate Parallel Lanes
 
 | Lane | Classification | Issues | Expected write sets | Dependency gate | Collision posture |
 |---|---|---|---|---|---|
-| candidate 1 | safe_parallel | `#5821`, `#5832` | disjoint child worktrees | Runtime ingress contracts from issue 5820 are stable | collapse to serial on overlap |
-| candidate 2 | safe_parallel | `#5795` | disjoint child worktrees | preparation may precede integration; integration waits for issues 5800 and 5820 | collapse to serial on overlap |
+| candidate 1 | safe_parallel | `#5821` | child worktree | Runtime ingress contracts from issue 5820 are stable | collapse to serial on overlap |
+| candidate 2 | safe_parallel | `#5832` | child worktree | issue 5821 and declared protocol baselines are complete | collapse to serial on overlap |
+| candidate 3 | safe_parallel | `#5795` | child worktree | preparation may precede integration; integration waits for issues 5800 and 5820 | collapse to serial on overlap |
 
 ## Serial Gates
 

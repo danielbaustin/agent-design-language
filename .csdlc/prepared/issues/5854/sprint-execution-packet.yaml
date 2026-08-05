@@ -7,9 +7,12 @@ safe_parallel_lanes:
   - issues: [5844, 5845]
     gate: issue 5819 complete
     boundary: Articles and podcasts are independently reviewable publication packages.
-  - issues: [5835, 5836, 5839]
-    gate: each declared child dependency satisfied
-    boundary: Demo, migration, and governance handoff retain separate child worktrees.
+  - issues: [5835, 5836]
+    gate: issue 5834 and each remaining declared child dependency are complete
+    boundary: Demo and migration planning retain separate child worktrees.
+  - issues: [5839]
+    gate: issues 5834 and 5835 and the v0.93 allocation are complete
+    boundary: Governance handoff starts only after its migration-planning dependency.
 serial_gates:
   - issues 5835 and 5836 follow issue 5834
   - issue 5838 follows issues 5832, 5834, and 5836

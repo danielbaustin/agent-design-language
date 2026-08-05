@@ -42,9 +42,10 @@ Serial gates:
 - #5827, #5828, #5829, and #5830 before #5833
 - #5831 and #5833 before #5834
 
-After their gates open, #5828, #5829, #5830, and #5831 may use separate child
-sessions. Keep their state and proof surfaces separate and reconcile only
-through declared contracts.
+After #5827, #5828 and #5829 may use separate child sessions. #5830 waits for
+both of them and #5831 waits for #5830; these dependency-linked children do not
+run in parallel. Keep their state and proof surfaces separate and reconcile
+only through declared contracts.
 
 For each ready child, deliver the whole useful outcome and both positive and
 negative proof. Obtain exact-head independent review, remediate all findings,

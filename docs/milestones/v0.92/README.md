@@ -18,8 +18,8 @@ in `WP_ISSUE_WAVE_v0.92.yaml`, and each child issue has an initialized typed
 not started through this planning issue.
 
 - Planning: active under `#5817`
-- Issue wave: open; 38 child work-package issues and three supporting issues
-  are mapped in the wave file
+- Issue wave: open; 38 child work-package issues, three supporting issues, and
+  five coordination-only sprint umbrellas are mapped in the wave file
 - Cards: initialized for every mapped child issue; issue owners must complete
   issue-specific design approval and binding before implementation
 - Execution: WP-01 only; child WPs remain dependency-gated

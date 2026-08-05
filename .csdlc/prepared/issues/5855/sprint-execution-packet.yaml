@@ -4,9 +4,12 @@ slug: runtime-observatory-polis-protocol
 execution_mode: hybrid
 ordered_issue_numbers: [5800, 5820, 5795, 5821, 5832, 5837]
 safe_parallel_lanes:
-  - issues: [5821, 5832]
+  - issues: [5821]
     gate: Runtime ingress contracts from issue 5820 are stable
-    boundary: Distributed-polis and protocol work use separate child worktrees.
+    boundary: Distributed-polis architecture and security work remains in its child worktree.
+  - issues: [5832]
+    gate: issue 5821 and the declared ACIP substrate and trace baselines are complete
+    boundary: Protocol work starts only after its distributed-runtime dependency is satisfied.
   - issues: [5795]
     gate: preparation may precede integration; integration waits for issues 5800 and 5820
     boundary: Local-provider work cannot redefine Observatory or Runtime contracts.

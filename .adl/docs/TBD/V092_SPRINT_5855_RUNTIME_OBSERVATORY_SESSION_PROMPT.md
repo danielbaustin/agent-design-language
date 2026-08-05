@@ -48,8 +48,10 @@ Serial gates:
 
 Safe preparation and parallelism:
 
-- #5821 architecture/security preparation and #5832 protocol preparation may
-  proceed in separate child worktrees after Runtime ingress contracts stabilize.
+- #5821 architecture/security work may proceed after Runtime ingress contracts
+  stabilize. #5832 is a later lane and must wait for #5821 plus its declared
+  ACIP substrate and trace baselines; do not run these dependent children in
+  parallel.
 - #5795 may prepare local-provider work before its final integration gate, but
   it may not redefine Runtime or Observatory contracts.
 

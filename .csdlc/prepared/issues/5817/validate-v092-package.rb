@@ -56,6 +56,15 @@ visit = lambda do |wp|
 end
 wps.each { |wp| visit.call(wp) }
 
+dependency_reaches = lambda do |wp, target, seen|
+  return false if seen.include?(wp)
+  return true if edges[wp].include?(target)
+
+  seen << wp
+  edges[wp].any? { |dependency| dependency_reaches.call(dependency, target, seen) }
+end
+issue_to_wp = rows.to_h { |row| [Integer(row.fetch("issue")), row.fetch("wp")] }
+
 child_rows = rows.reject { |row| row.fetch("wp") == "WP-01" } + supporting_rows
 child_rows.each do |row|
   issue = Integer(row.fetch("issue"))
@@ -158,6 +167,19 @@ sprints.each do |sprint|
   raise "sprint packet #{issue} lacks review path" if packet.fetch("review_path").strip.empty?
   raise "sprint packet #{issue} lacks activity log" if packet.fetch("activity_log_path").strip.empty?
   raise "sprint packet #{issue} lacks child goal rule" if packet.fetch("child_goal_rule").strip.empty?
+  packet.fetch("safe_parallel_lanes").each do |lane|
+    lane.fetch("issues").map { |lane_issue| Integer(lane_issue) }.combination(2) do |left_issue, right_issue|
+      left_wp = issue_to_wp[left_issue]
+      right_wp = issue_to_wp[right_issue]
+      next unless left_wp && right_wp
+
+      linked = dependency_reaches.call(left_wp, right_wp, Set.new) ||
+        dependency_reaches.call(right_wp, left_wp, Set.new)
+      if linked
+        raise "sprint packet #{issue} marks dependency-linked issues #{left_issue} and #{right_issue} safe_parallel"
+      end
+    end
+  end
 
   human_packet_path = File.join(ROOT, ".csdlc/prepared/issues", issue.to_s, "sprint-execution-packet.md")
   human_packet = File.read(human_packet_path)
