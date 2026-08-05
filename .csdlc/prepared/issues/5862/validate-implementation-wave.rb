@@ -8,6 +8,7 @@ require "open3"
 require "yaml"
 
 EXPECTED = (1..16).to_h { |number| [format("WP-04.%02d", number), 5862 + number] }.freeze
+SESSION_PROMPT = ".adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md"
 SHA = /\A[0-9a-f]{40}\z/
 SHA256 = /\A[0-9a-f]{64}\z/
 PREFLIGHT = ARGV.delete("--preflight")
@@ -27,8 +28,15 @@ def checked_digest(path, expected, label)
 end
 
 wave = YAML.safe_load(File.read("docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"), aliases: true)
-canonical = Array(wave["work_packages"]).select { |row| EXPECTED.key?(row["wp"]) }.to_h { |row| [row["wp"], row["issue"]] }
+canonical_rows = Array(wave["work_packages"]).select { |row| EXPECTED.key?(row["wp"]) }
+canonical = canonical_rows.to_h { |row| [row["wp"], row["issue"]] }
 abort "canonical WP-04 child denominator drift" unless canonical == EXPECTED
+
+prompt = File.read(SESSION_PROMPT)
+canonical_rows.each do |row|
+  expected_line = "- ##{row.fetch("issue")} #{row.fetch("wp")}: #{row.fetch("title")}"
+  abort "session prompt scope drift for #{row.fetch("wp")}" unless prompt.lines.map(&:chomp).include?(expected_line)
+end
 
 all_paths = {}
 records = {}

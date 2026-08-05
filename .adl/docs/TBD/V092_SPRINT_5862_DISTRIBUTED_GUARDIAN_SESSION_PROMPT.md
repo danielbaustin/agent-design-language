@@ -28,22 +28,22 @@ Startup contract:
 
 Exact child wave:
 
-- #5863 WP-04.01: membership and node identity
-- #5864 WP-04.02: transport envelope and protocol
-- #5865 WP-04.03: Runtime registration and manifest integration
-- #5866 WP-04.04: authenticated peer ingress
-- #5867 WP-04.05: quorum and membership transitions
-- #5868 WP-04.06: partition behavior
-- #5869 WP-04.07: fencing and stale-owner rejection
-- #5870 WP-04.08: governed operation authorization
-- #5871 WP-04.09: adversarial transport handling
-- #5872 WP-04.10: distributed state transfer
-- #5873 WP-04.11: migration and continuity
-- #5874 WP-04.12: persistence and recovery
-- #5875 WP-04.13: restart and rejoin
-- #5876 WP-04.14: shutdown and drain
-- #5877 WP-04.15: public API and WSS integration
-- #5878 WP-04.16: final production, native, and adversarial integration proof
+- #5863 WP-04.01: Node identity and authenticated enrollment
+- #5864 WP-04.02: Distributed certificate purposes and lifecycle
+- #5865 WP-04.03: Maintained QUIC/TLS transport adapter
+- #5866 WP-04.04: Seed discovery and authenticated join
+- #5867 WP-04.05: Membership state and topology convergence
+- #5868 WP-04.06: Failure detection and partition classification
+- #5869 WP-04.07: Epoch and lease authority
+- #5870 WP-04.08: Fencing and single-owner enforcement
+- #5871 WP-04.09: Signed capability advertisements
+- #5872 WP-04.10: Signed resource-weather advertisements
+- #5873 WP-04.11: Bounded placement decisions
+- #5874 WP-04.12: Snapshot catalog and transfer manifest
+- #5875 WP-04.13: Migration state machine
+- #5876 WP-04.14: Rollback, recovery, and relocation failure
+- #5877 WP-04.15: Versioned distributed topology and migration projection
+- #5878 WP-04.16: Distributed integration, adversarial, and native-platform proof
 
 Scheduling contract:
 
