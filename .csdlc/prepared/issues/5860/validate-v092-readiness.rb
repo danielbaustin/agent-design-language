@@ -46,10 +46,19 @@ def protected_paths(design)
     .select { |value| repo_path?(value) }.uniq.sort
 end
 
-def dependency_tokens(values)
+def dependency_tokens(values, canonical: false)
   Array(values).flat_map do |value|
-    value.to_s.scan(/WP-\d+[A-Z]?|issue-\d+|#\d+/i).map do |token|
-      token.start_with?("#") ? "issue-#{token.delete_prefix('#')}" : token.upcase.sub("ISSUE-", "issue-")
+    text = value.to_s
+    text.to_enum(:scan, /WP-\d+[A-Z]?|issue(?:-|\s+)#?\d+|#\d+/i).each_with_object([]) do |_matched, tokens|
+      match = Regexp.last_match
+      next if canonical && text[0...match.begin(0)].match?(/before\s+\z/i)
+
+      token = match[0]
+      if token.start_with?("#") || token.match?(/\Aissue/i)
+        tokens << "issue-#{token[/\d+/]}"
+      else
+        tokens << token.upcase
+      end
     end
   end.uniq
 end
@@ -87,7 +96,8 @@ def live_issue(issue)
 end
 
 if ARGV.include?("--self-test")
-  raise "dependency token normalization failed" unless dependency_tokens(["WP-02 and #5815", "issue-5800"]) == ["WP-02", "issue-5815", "issue-5800"]
+  raise "dependency token normalization failed" unless dependency_tokens(["WP-02 and #5815", "Issue 5800"]) == ["WP-02", "issue-5815", "issue-5800"]
+  raise "dependency direction failed" unless dependency_tokens(["coordination before WP-03"], canonical: true).empty?
   raise "repo path acceptance failed" unless repo_path?("docs/milestones/v0.92/README.md")
   raise "absolute path rejection failed" if repo_path?("/Users/example/repo/file.md")
   raise "command rejection failed" if repo_path?("cargo test --locked")
@@ -239,7 +249,7 @@ SPRINTS.each do |sprint, issues|
 
     canonical = rows_by_issue.fetch(issue, {})
     expected_dependencies = Array(canonical["depends_on"])
-    expected_tokens = dependency_tokens(expected_dependencies)
+    expected_tokens = dependency_tokens(expected_dependencies, canonical: true)
     declared_tokens = dependency_tokens(stp["dependencies"])
     expected_tokens.each do |token|
       alias_token = token.start_with?("WP-") && wp_to_issue[token] ? "issue-#{wp_to_issue[token]}" : nil

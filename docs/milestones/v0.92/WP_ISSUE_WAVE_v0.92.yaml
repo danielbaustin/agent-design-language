@@ -317,11 +317,12 @@ work_packages:
     proof_surface: cross-platform start-stop, recovery, configuration, and clean-log proof
   - wp: WP-04
     issue: 5821
-    title: Distributed Guardian/polis runtime
+    title: Distributed Guardian architecture, security, and child-wave gate
     queue: runtime_security
     depends_on: [WP-03]
-    primary_deliverable: architecture and security gate followed by completion of the bounded 16-issue distributed-runtime program within v0.92
-    proof_surface: reviewed architecture, threat model, all 16 child issues landed, integrated distributed proof, and relocation failure cases
+    primary_deliverable: reviewed architecture and security gate plus an exact validated 16-child implementation ledger
+    proof_surface: reviewed architecture, threat model, exact child ownership and dependency ledger, protected-path disjointness, and implementation-umbrella handoff
+    follow_on: WP-04-IMP remains in v0.92 and may start only after issue 5821 passes; it prepares and executes exactly WP-04.01 through WP-04.16
   - wp: WP-05
     issue: 5822
     title: C-SDLC estimation and cycle-time reduction
