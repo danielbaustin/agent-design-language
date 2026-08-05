@@ -7,15 +7,15 @@
     "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
     "slug": "v0-92-wp-01-planning-promote-canonical-docs-and-open-final-issue-wave",
     "version": "v0.92",
-    "generation": 22
+    "generation": 23
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": ".adl/docs/TBD/V092_SPRINT_5854_DEMO_PUBLICATION_SESSION_PROMPT.md\n.adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md\n.adl/docs/TBD/V092_SPRINT_5856_QUALITY_RELEASE_SESSION_PROMPT.md\n.adl/docs/TBD/V092_SPRINT_5857_BIRTHDAY_CORE_SESSION_PROMPT.md\n.adl/docs/TBD/V092_SPRINT_5858_FOUNDATION_SESSION_PROMPT.md\n.csdlc/evidence/5817\n.csdlc/issues/5786\n.csdlc/issues/5795\n.csdlc/issues/5800\n.csdlc/issues/5801\n.csdlc/issues/5812\n.csdlc/issues/5817\n.csdlc/issues/5818\n.csdlc/issues/5819\n.csdlc/issues/5820\n.csdlc/issues/5821\n.csdlc/issues/5822\n.csdlc/issues/5823\n.csdlc/issues/5824\n.csdlc/issues/5825\n.csdlc/issues/5826\n.csdlc/issues/5827\n.csdlc/issues/5828\n.csdlc/issues/5829\n.csdlc/issues/5830\n.csdlc/issues/5831\n.csdlc/issues/5832\n.csdlc/issues/5833\n.csdlc/issues/5834\n.csdlc/issues/5835\n.csdlc/issues/5836\n.csdlc/issues/5837\n.csdlc/issues/5838\n.csdlc/issues/5839\n.csdlc/issues/5840\n.csdlc/issues/5841\n.csdlc/issues/5842\n.csdlc/issues/5843\n.csdlc/issues/5844\n.csdlc/issues/5845\n.csdlc/issues/5846\n.csdlc/issues/5847\n.csdlc/issues/5848\n.csdlc/issues/5849\n.csdlc/issues/5850\n.csdlc/issues/5851\n.csdlc/issues/5852\n.csdlc/issues/5853\n.csdlc/issues/5854\n.csdlc/issues/5855\n.csdlc/issues/5856\n.csdlc/issues/5857\n.csdlc/issues/5858\n.csdlc/locks/5786.lock\n.csdlc/locks/5795.lock\n.csdlc/locks/5800.lock\n.csdlc/locks/5801.lock\n.csdlc/locks/5812.lock\n.csdlc/locks/5817.lock\n.csdlc/locks/5818.lock\n.csdlc/locks/5819.lock\n.csdlc/locks/5820.lock\n.csdlc/locks/5821.lock\n.csdlc/locks/5822.lock\n.csdlc/locks/5823.lock\n.csdlc/locks/5824.lock\n.csdlc/locks/5825.lock\n.csdlc/locks/5826.lock\n.csdlc/locks/5827.lock\n.csdlc/locks/5828.lock\n.csdlc/locks/5829.lock\n.csdlc/locks/5830.lock\n.csdlc/locks/5831.lock\n.csdlc/locks/5832.lock\n.csdlc/locks/5833.lock\n.csdlc/locks/5834.lock\n.csdlc/locks/5835.lock\n.csdlc/locks/5836.lock\n.csdlc/locks/5837.lock\n.csdlc/locks/5838.lock\n.csdlc/locks/5839.lock\n.csdlc/locks/5840.lock\n.csdlc/locks/5841.lock\n.csdlc/locks/5842.lock\n.csdlc/locks/5843.lock\n.csdlc/locks/5844.lock\n.csdlc/locks/5845.lock\n.csdlc/locks/5846.lock\n.csdlc/locks/5847.lock\n.csdlc/locks/5848.lock\n.csdlc/locks/5849.lock\n.csdlc/locks/5850.lock\n.csdlc/locks/5851.lock\n.csdlc/locks/5852.lock\n.csdlc/locks/5853.lock\n.csdlc/locks/5854.lock\n.csdlc/locks/5855.lock\n.csdlc/locks/5856.lock\n.csdlc/locks/5857.lock\n.csdlc/locks/5858.lock\n.csdlc/prepared/issues/5786\n.csdlc/prepared/issues/5795\n.csdlc/prepared/issues/5800\n.csdlc/prepared/issues/5801\n.csdlc/prepared/issues/5812\n.csdlc/prepared/issues/5817\n.csdlc/prepared/issues/5818\n.csdlc/prepared/issues/5819\n.csdlc/prepared/issues/5820\n.csdlc/prepared/issues/5821\n.csdlc/prepared/issues/5822\n.csdlc/prepared/issues/5823\n.csdlc/prepared/issues/5824\n.csdlc/prepared/issues/5825\n.csdlc/prepared/issues/5826\n.csdlc/prepared/issues/5827\n.csdlc/prepared/issues/5828\n.csdlc/prepared/issues/5829\n.csdlc/prepared/issues/5830\n.csdlc/prepared/issues/5831\n.csdlc/prepared/issues/5832\n.csdlc/prepared/issues/5833\n.csdlc/prepared/issues/5834\n.csdlc/prepared/issues/5835\n.csdlc/prepared/issues/5836\n.csdlc/prepared/issues/5837\n.csdlc/prepared/issues/5838\n.csdlc/prepared/issues/5839\n.csdlc/prepared/issues/5840\n.csdlc/prepared/issues/5841\n.csdlc/prepared/issues/5842\n.csdlc/prepared/issues/5843\n.csdlc/prepared/issues/5844\n.csdlc/prepared/issues/5845\n.csdlc/prepared/issues/5846\n.csdlc/prepared/issues/5847\n.csdlc/prepared/issues/5848\n.csdlc/prepared/issues/5849\n.csdlc/prepared/issues/5850\n.csdlc/prepared/issues/5851\n.csdlc/prepared/issues/5852\n.csdlc/prepared/issues/5853\n.csdlc/prepared/issues/5854\n.csdlc/prepared/issues/5855\n.csdlc/prepared/issues/5856\n.csdlc/prepared/issues/5857\n.csdlc/prepared/issues/5858\n.csdlc/publication/5817.intent.json\nREADME.md\nadl/Cargo.lock\nadl/Cargo.toml\ndocs/README.md\ndocs/milestones/v0.92",
+      "review_revision": "git-blake3:125a40124d1c66c4491706d086dd363433289410:ec27259dde64cb2301df815fd4ef20ccdbf6d84a4ad148eaa1e75ff301de542a",
+      "reviewer": "gemini:gemini-3.1-pro-preview+codex-remediation-review",
       "review_prompts": [
         "Do canonical v0.92 docs and versions agree?",
         "Are all prerequisite and deferred-source dispositions evidence-grounded?",
@@ -23,8 +23,12 @@
         "Are all child card bundles issue-specific and structurally valid?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "The live GitHub contract packet is a point-in-time readback; future issue-body changes require rerunning capture-live-issue-contracts.rb before relying on package validation.",
+        "WP-01 proves planning and publication contracts only; child implementation, integration, and terminal truth remain owned by their issues.",
+        "Runtime reasoning tests were not rerun for this docs and lifecycle remediation; the earlier 13/13 prerequisite result remains historical evidence only."
+      ],
+      "review_result": "pass"
     }
   }
 }
