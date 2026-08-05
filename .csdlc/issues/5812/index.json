@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "00ffe4f675d8a5fb02d44c4860d3f331ef37cbc03e595286463aa7d700e358d4",
   "phase": "bound",
-  "generation": 14,
-  "digest": "75edaa1809412aeba59857a9d07da2afc56960da62f455d8a9a9966cee533a18",
+  "generation": 15,
+  "digest": "4e308ab8f8d145aa7854c201266000984f4e0e97ada1b7f458b40a0590b0be65",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -23,32 +23,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "1f0860acd6a9ceb2fa2b2e39fdd1e4d8e258181faec38bde8d24169bce201095",
+      "values_digest": "ff0821303eba9870e287959ea2be24575c2627ebae13b1352def7e70db35664d",
       "rendered_digest": "eea1e855587938558d63612a7aac5412155ff5eec16e1408e712fe87f92b744b",
       "ast_digest": "932a85ba546430881677b05014186d8f7960ccaf4bf5f3612e4d834438bf93e6"
     },
     "stp": {
-      "values_digest": "d510f2c4287dbf4dd762823c6c4f8492f92a6fee47cf0ef1f020f8a0ba2b9980",
+      "values_digest": "91de9e476f9e41d64dcb4853087e63b0e655ea62a25643f4bd9ae7b2e1a4a3bd",
       "rendered_digest": "f3a23c1b6120ed496b6d61d025b690328bce9c8aecaff2b8301f1f16cbc5e645",
       "ast_digest": "56598d1027a79dae8800d2b6b67d4dd7efadce542b0b2f7d00f6ace7689a7ce2"
     },
     "spp": {
-      "values_digest": "3e55d0958a72ec28580b677546c645c28fb9227f40f22f77f264357da2cdb424",
+      "values_digest": "ceab59481af0fbeeacd1386dc082c0de27c3239a13410dfe83635399a3d20b5d",
       "rendered_digest": "b679064e7c9b34f74fe01a4be3c6c1f9316f6635126e4898290646fb6468f014",
       "ast_digest": "c24726ae41926d0c4938fc0a0feb843d32f27be1bd2b28c7c9b592c4d5027422"
     },
     "vpp": {
-      "values_digest": "9c6f0ea21123a1a8a17c47bd20cf0e53eb06b6f456f71e5f57c3f53e85fe9b79",
-      "rendered_digest": "b2ecb82d57728fdaf682f65b7a21bfea824a68e3a6ba533318143874b7e00892",
-      "ast_digest": "2a4487735b869e66540c7201cb5f6b9601024d150369a9384d397bca109867bf"
+      "values_digest": "ded4ae5fa2bf8c512400ce4e1ed8c33e37234b2ae1c38c0165d5cf5ddd1cba40",
+      "rendered_digest": "2d8d76ec59c960610e4dd4932b555d3f811ab8a4aca17c7717535db1b982f188",
+      "ast_digest": "3b026020ca51b87ba259e409531054eb64cece0b2d5b4a68ef62c5c655dc227d"
     },
     "srp": {
-      "values_digest": "4b2af40910ceff3cbda6162931d6e42dbb342e3f3a4da9eafda82319c9295fe5",
+      "values_digest": "f228e01a7764f48a1ec768410f7516ad4537692dde6c22d099d85b42b854cd85",
       "rendered_digest": "c83dd84e8956d3c4cc9283fc8b4302ad937f73f3836aa4561d9d72dda4df14df",
       "ast_digest": "b5a6ecd08df3b59851ae285651c0be23e649888f2d8d4e0d8076ec9dfdca09af"
     },
     "sor": {
-      "values_digest": "62e36649ff80df066a9be51b344d7320dd5bb024ed71a22b9defa8a274f18064",
+      "values_digest": "b14825a84072db71f5c687aab4af6d510fc8ebfb93cc9602c2a72cf86735ee35",
       "rendered_digest": "4ff0dbcf96ef65210fa23f69dbf49528e3d73a11fc06b0895efbd4bf474a9780",
       "ast_digest": "86e1a36f42bafe12e44ff4801e8c2f186041c38de1baeb98af920e8232c8c94d"
     }
@@ -300,6 +300,27 @@
       "actor": "codex:5860-finalize-evidence-repair",
       "reason": "Release issue #5812 after typed VPP contract reconciliation; child implementation remains unstarted.",
       "operation": "{\"claim_id\":\"claim-5812-v092-finalize-evidence-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-finalize-evidence-repair\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 14,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "Acquire the bounded child record only to refresh its exact parent-head pre-execution rejection contract.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5812-v092-readiness-proof-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-readiness-integration\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5812\",\".csdlc/prepared/issues/5812\",\".csdlc/evidence/5812\",\".csdlc/locks/5812.lock\"],\"purpose\":\"Refresh only the exact-head pre-execution diagnostic hash required by #5860 readiness validation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 15,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "Pin the exact fail-closed path-scope diagnostic after the final parent ownership repair paths are committed.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"freedom-gate-module-tests\",\"proof_role\":\"Prove both defaults and unsafe retained-artifact rejection remain behaviorally unchanged.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl/Cargo.toml\",\"--lib\",\"csm_freedom_gate::tests\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"freedom-gate-clippy\",\"proof_role\":\"Eliminate the exact production-binary warnings with warnings denied.\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl/Cargo.toml\",\"--bin\",\"adl-gws-context-mirror\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"rust-format\",\"proof_role\":\"Reject unintended Rust formatting churn.\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":100,\"budget_tokens\":500,\"argv\":[\"cargo\",\"fmt\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all\",\"--\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null},{\"lane\":\"exact-path-scope-negative\",\"proof_role\":\"Require the two substitutions and reject every unauthorized path. [preexec_rejection exit=1 diagnostic_sha256=a7cd33de340c1dc4ed426afae4bcd2416560c1f3ae870f15538cd04b774a4eac]\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5812/validate-path-scope.rb\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors after exact-path proof.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 36,
+      "generation": 15,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "Release #5812 after its exact-head pre-execution diagnostic contract is refreshed; child implementation remains unstarted.",
+      "operation": "{\"claim_id\":\"claim-5812-v092-readiness-proof-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-readiness-integration\"}"
     }
   ]
 }
