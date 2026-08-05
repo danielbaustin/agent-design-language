@@ -1,0 +1,260 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5355,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "624106bf52f25a8a94eb0717fe157e89f3023d6e610c0ed2ca2f6f9d257233f4",
+  "phase": "published",
+  "generation": 10,
+  "digest": "6b8874224de5f371c9831f5fb5c38d73ba174170b8ff9a92304869100dca965a",
+  "claim": {
+    "id": "claim-5355-v0918-preparation",
+    "owner": "codex:5355-preparation-owner",
+    "generation": 10,
+    "acquired_unix_seconds": 1785865720,
+    "expires_unix_seconds": 1786470520,
+    "heartbeat_unix_seconds": 1785865720,
+    "branch": "codex/5355-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5355",
+      ".csdlc/locks/5355.lock",
+      ".csdlc/prepared/issues/5355",
+      ".csdlc/evidence/5355"
+    ],
+    "purpose": "Prepare #5355 WP-21A v0.91.8 next-milestone closeout-planning handoff only; no execution until WP-21 #5362 is live-merged and ancestral"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:gpt-5.5:WP21A-reviewer",
+    "assigned_by": "codex:wp21a-conductor",
+    "revision": "git-blake3:bd5501be6be7bdb4b1aefac09da58fde7912c51a:6b8f88f469939c7b937d13f04b153635dba010ddd04047c5b555ba2e7f86ff15",
+    "scope": [
+      ".csdlc/issues/5355",
+      ".csdlc/evidence/5355",
+      ".csdlc/prepared/issues/5355",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/README.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:gpt-5.5:WP21A-reviewer",
+    "scope": [
+      ".csdlc/issues/5355",
+      ".csdlc/evidence/5355",
+      ".csdlc/prepared/issues/5355",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/README.md",
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md"
+    ],
+    "reviewed_revision": "git-blake3:bd5501be6be7bdb4b1aefac09da58fde7912c51a:6b8f88f469939c7b937d13f04b153635dba010ddd04047c5b555ba2e7f86ff15",
+    "findings": [],
+    "residual_risks": [
+      "WP-22 review and WP-23 release ceremony remain future work.",
+      "This planning packet does not execute v0.92 or claim first-birthday readiness."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5355,
+    "pull_request": 5808,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5808",
+    "base": "main",
+    "head": "codex/5355-v0918-preparation",
+    "revision": "git-blake3:52765450b5379f545ff95b70de5aceb6eda9b396:081095755a29b5838276925bd69f8b39ec7e948e6a408d3616af6d2ec61991ad",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5355/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5355/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator-policy:release-tail-preparation",
+      "revision": "e4dd6dbc4b549584aace09c823c15e65144e547ee7b0ebf42f25cecf4ff1efae"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "653d60f7357144efbecda23bbb81f23aa864a9eabd3277244d7a67e49045ca87",
+      "rendered_digest": "425ea6fe39456e84cb7df142f9f6de1bc71f749be3badba3d0745e90e1f0b523",
+      "ast_digest": "c18fa3c30281bcbc676c36a17c9236e70a8d62fca6038ed848ed3b70d7ef72e7"
+    },
+    "stp": {
+      "values_digest": "65e3dc4b5250356756af425847c22c2f4290ea73bceb592499f170e8500f8d44",
+      "rendered_digest": "363e89456263bb797673d2c8a31bbf81c021af93db236ec70569244dbcb628ad",
+      "ast_digest": "89ac830e0e28c75f05821dec5fc2695bde978758e4c862f9d959ac3c237b0bcb"
+    },
+    "spp": {
+      "values_digest": "d93038af6adc806f8b404916ea751faae15050a7ae94f16f6004b4f1940ead96",
+      "rendered_digest": "6bc14d7154db99d829a59058ac07ee8c31ebf78bc1d6d27749c01c49cfce6082",
+      "ast_digest": "ed103aa81ff791df04ef3c9f34ea896538216b12b4669db9bd22f9d40211480d"
+    },
+    "vpp": {
+      "values_digest": "1f24485d65c920366be81c83d31aee4a6f133eef227ec566c4d329b44346ae31",
+      "rendered_digest": "c37020001a2b54d9beed6d92218c3eee48972c22883709f82f8bbfbbedaba980",
+      "ast_digest": "5aceabafb5a775c75ab527a3e701a8c2cdf6a9693aa4787a438bef00ae2198ee"
+    },
+    "srp": {
+      "values_digest": "d495e2580a3c9b1b04ac51d959a368b55f2de680dfb1aa4ec4fbb5ec2bc89f86",
+      "rendered_digest": "123aefa3afe6e1e9c94b9cc406a064ce654410c022ce6671079824140ea482bb",
+      "ast_digest": "76798f0fd121bd8b60befe8640fe142851bf7af27d11431be18e45a49b6712f1"
+    },
+    "sor": {
+      "values_digest": "cc012248a883bd04c5daf78b2fd1a4dbe271056f6df6200157d43669f3a5a64b",
+      "rendered_digest": "d7a727d33ec384c616a59e9a68e1b65cd2ed819045fc83c3d3ae09ad8af417de",
+      "ast_digest": "01b2ae6e379ea3b88bc27e33e256ddf9f6e36d6a2dd6ba22e54b48009a6318ea"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5355-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5355-preparation-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:wp21a-conductor",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:wp21a-conductor",
+      "reason": "The single bounded GPT-5.5 WP-21A review passed exact revision bd5501be6 with zero blockers after the squash-ancestry wording fix."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:wp21a-conductor",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5355-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5355-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5355-preparation-owner",
+      "reason": "Reacquire expired issue-local preparation claim before typed card preparation.",
+      "operation": "{\"previous_owner\":\"codex:5355-preparation-owner\",\"observed_expiry_unix_seconds\":1785359675,\"recovery_actor\":\"codex:5355-preparation-owner\",\"reason\":\"Reacquire expired issue-local preparation claim before typed card preparation.\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5355-preparation-owner",
+      "reason": "Make WP-21A preparation acceptance, plan, and validation issue-specific before later execution.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: six cards, design, and diagram are issue-specific and generated or regenerated through typed C-SDLC v2 routes\",\"AC-2: later execution is blocked until WP-21 issue #5362 has a live merged PR and the observed merge commit is ancestral to refreshed origin/main and the exact #5355 execution base\",\"AC-3: the future closeout-planning packet consumes reviewed WP-21 feature-list and v0.92 planning truth without mutating any version:v0.92 issue\",\"AC-4: preparation remains issue-local and performs no implementation, #5357 remediation, PR publication, merge, closeout, AWS, or main-checkout mutation\",\"AC-5: focused validation includes C-SDLC doctor, request-driven C-SDLC validation, predecessor live-state/ancestry checks, canonical docs/YAML checks, and diff hygiene\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Refresh #5362 live issue/PR state, fetch origin, and block unless the observed #5362 merge commit is ancestral to refreshed origin/main and the exact #5355 execution base.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Read accepted WP-21 outputs and canonical v0.91.8 planning inputs, then author only the WP-21A closeout-planning packet and review-ready handoff.\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused docs, YAML, link/crosswalk, typed C-SDLC, and diff hygiene checks; record exact commands and evidence without claiming deferred proof.\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Obtain exact-head bounded review before any publication and hand WP-22 forward only when blockers are absent or explicitly preserved.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"csdlc-doctor-5355\",\"proof_role\":\"Validate the typed C-SDLC v2 issue record, card projections, claim, and design/diagram digests for #5355.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5355\"],\"parallel_group\":\"wp21a-prep-local\",\"defer_reason\":null},{\"lane\":\"csdlc-validate-request-5355\",\"proof_role\":\"Run the declared request-driven typed validation profile for the #5355 preparation packet.\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5355/validate-prep-request.json\"],\"parallel_group\":\"wp21a-prep-local\",\"defer_reason\":null},{\"lane\":\"predecessor-live-merge-ancestry\",\"proof_role\":\"Confirm #5362 is closed by a live merged PR and its observed merge commit is ancestral to refreshed origin/main and the exact #5355 execution base.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"gh\",\"issue/pr live-state plus git merge-base --is-ancestor checks\"],\"parallel_group\":\"wp21a-execution-gate\",\"defer_reason\":\"Execution-time gate; current preparation observed #5362 open, so this lane is intentionally blocked before later execution.\"},{\"lane\":\"focused-docs-yaml-diff-hygiene\",\"proof_role\":\"Validate canonical v0.91.8 docs/YAML/link surfaces touched by future WP-21A work and verify diff hygiene.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":3000,\"argv\":[\"git\",\"diff --check plus focused docs/YAML/link checks for touched WP-21A paths\"],\"parallel_group\":\"wp21a-prep-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5355-preparation-owner",
+      "reason": "Prepare exact-head review prompts for the later WP-21A execution boundary.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does the WP-21A closeout-planning packet consume current reviewed WP-21 #5362 truth without treating historical #5489/#5383 packets as live authority?\",\"Is #5362 proved by live merged PR state and ancestry to refreshed origin/main and the exact #5355 execution base before execution claims are accepted?\",\"Are version:v0.92 issues, #5357 remediation, PR publication, merge, closeout, AWS, and main-checkout mutations absent from #5355 scope?\",\"Do focused docs/YAML/link checks, typed C-SDLC validation, and diff hygiene match the actual touched WP-21A surfaces without overclaiming deferred proof?\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5355-preparation-owner",
+      "reason": "Record the issue-local preparation packet without claiming implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Preparation-only packet updated for later WP-21A execution; no closeout-plan implementation, PR publication, merge, closeout, #5357 remediation, version:v0.92 issue mutation, AWS work, or main-checkout mutation was performed.\",\"changes\":[\".csdlc/issues/5355 cards regenerated through typed C-SDLC v2 card-edit requests\",\".csdlc/prepared/issues/5355 typed request artifacts retained for preparation evidence\"],\"artifacts\":[\".csdlc/prepared/issues/5355/edit-acceptance-plan.json\",\".csdlc/prepared/issues/5355/edit-review-prompts.json\",\".csdlc/prepared/issues/5355/edit-prep-sor.json\",\".csdlc/prepared/issues/5355/validate-prep-request.json\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "operator-policy:release-tail-preparation",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5355-preparation-owner",
+      "reason": "Record request-driven typed validation result for the #5355 preparation packet.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5355/validate-prep-request.json\"],\"purpose\":\"Request-driven typed PVF validation for #5355 preparation packet.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5355/prep-validation/csdlc-doctor-5355.log\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5355-preparation-owner",
+      "reason": "Record focused diff and YAML hygiene for the #5355 preparation packet.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git diff --check\",\"ruby -e 'require \\\"yaml\\\"; YAML.load_file(\\\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\\\")'\"],\"purpose\":\"Diff hygiene and v0.91.8 issue-wave YAML parse for the preparation packet.\",\"outcome\":\"passed\",\"evidence_ref\":\"command output in Codex task: both commands exited 0\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:wp21a-conductor",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:wp21a-conductor",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex:wp21a-conductor",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:wp21a-conductor",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:wp21a-conductor",
+      "reason": "The single bounded GPT-5.5 WP-21A review passed exact revision bd5501be6 with zero blockers after the squash-ancestry wording fix.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:wp21a-conductor",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

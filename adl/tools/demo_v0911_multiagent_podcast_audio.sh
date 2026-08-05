@@ -154,8 +154,12 @@ PY
   rm -f "$response_json"
 }
 
-load_key OPENAI_API_KEY "$OPENAI_KEY_FILE"
-load_key GEMINI_API_KEY "$GEMINI_KEY_FILE"
+if [[ "${ADL_PODCAST_AUDIO_TEST_TONES:-0}" != "1" ]]; then
+  load_key OPENAI_API_KEY "$OPENAI_KEY_FILE"
+  if [[ "$GEMINI_AUDIO_PROVIDER" == "gemini" ]]; then
+    load_key GEMINI_API_KEY "$GEMINI_KEY_FILE"
+  fi
+fi
 
 rm -rf "$OUT_DIR"
 mkdir -p "$SEGMENTS_DIR"

@@ -1,0 +1,11 @@
+{
+  "issue": 5354,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5354-wp14a-reconciliation-release-only",
+  "expected_generation": 1,
+  "expected_digest": "458b5024e38b78c9cf104214dd2792b9bf524410d49949117ea4de2116871355",
+  "now_unix_seconds": 1785346023,
+  "actor": "codex:wp14a-preparation",
+  "operator_authority": "operator-authorized:wp15-not-started-no-ownership",
+  "reason": "Release dormant WP-15 ownership from the WP-14A planning projection"
+}

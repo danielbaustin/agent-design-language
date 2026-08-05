@@ -1,0 +1,11 @@
+{
+  "schema": "csdlc.edit_request.v1",
+  "issue": 5675,
+  "card": "srp",
+  "expected_generation": 4,
+  "expected_digest": "2974926984b2754279adfc8255a1e8d6f98a6b3e264a8560ca6d7ae82a90de9e",
+  "claim_id": "claim-5675-provider-adapter-routes",
+  "actor": "codex:5675-execution",
+  "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"}
+}

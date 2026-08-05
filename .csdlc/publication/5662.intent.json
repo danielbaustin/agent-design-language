@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5662,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5662-v0918-unity-observatory-polish",
+  "title": "[v0.91.8][WP-15][unity][demo] Polish flagship Polis Observatory visual and runtime presentation",
+  "body": "Closes #5662\n\n## Summary\n- ground and visually polish the flagship Unity Polis Observatory environment\n- deliver a fixed investor-facing dashboard with clear navigation, bounded internal scrolling, and fail-closed state labels\n- support the current Runtime v3 Observatory feed contract with HTTPS endpoint policy, bearer-header construction, exact signed-control truth, strict legacy compatibility, and visible parsed projections\n- retain exact Full HD and QHD Play Mode evidence without publishing licensed source assets or building a player/replacement runtime binary\n\n## Focused proof\n- Unity-MCP `ObservatoryMcpProof.Run`: `flagship-stage-and-runtime-shell-valid`\n- `bash adl/tools/test_v0916_unity_observatory_contract.sh`\n- `git diff --check`\n- exact 1920x1080 and 2560x1440 capture dimensions and SHA-256 identities recorded in the proof packet\n- bounded subagent review PASS with all eleven findings fixed\n\n## Truth boundary\nThe final captures are explicitly DEMO / FIXTURE. Runtime v3 proof is executable in-editor endpoint policy, bearer-header construction, parser, classifier, and UI projection proof; it is not a live HTTPS listener exchange. Rendering depends on operator-provisioned licensed assets outside Git.",
+  "draft": false,
+  "revision": "git-blake3:ac3278e8b0a7e98783ca6d6e1333358e84f3c01a:b888bcdeafdef7f93680e59591a2d42417bf7accebefc35cbe2ccf5ad7cb2420",
+  "commit_sha": "ac3278e8b0a7e98783ca6d6e1333358e84f3c01a"
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 5737,
+  "card": "srp",
+  "expected_generation": 5,
+  "expected_digest": "a779e9d46d5a0cf89512aa3d17dddd8169a2485cd73eb3950e93efdbc4e51780",
+  "claim_id": "claim-5737-csdlc-authority-recovery",
+  "actor": "codex:5737-execution",
+  "reason": "The assigned exact-head review is complete with no safety blockers.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

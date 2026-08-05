@@ -1,0 +1,35 @@
+
+running 28 tests
+test parity_c_boundary_contract::retained_evidence_excludes_credentials_private_state_and_machine_paths ... ok
+test parity_c_boundary_contract::runtime_v2_aws_and_cross_lane_paths_are_absent ... ok
+test parity_c_live_governance::denial_revocation_and_quarantine_prevent_actuation ... ok
+test parity_c_live_governance::signed_appeal_disposition_is_recorded_without_actuation ... ok
+test parity_c_production_credit::degraded_fixture_mock_and_metadata_paths_receive_zero_credit ... ok
+test parity_c_private_identity::cross_identity_read_and_write_fail_closed ... ok
+test parity_c_delegation_resources::widened_expired_or_replayed_delegation_is_rejected ... ok
+test parity_c_live_governance::tampered_request_cannot_masquerade_as_an_appeal ... ok
+test parity_c_private_identity::provider_or_display_identity_cannot_substitute_for_citizen_identity ... ok
+test parity_c_delegation_resources::delegation_chain_only_attenuates ... ok
+test parity_c_live_governance::signed_gate_precedes_provider_actuation ... ok
+test parity_c_private_identity::restart_preserves_redacted_identity_scoped_state ... ok
+test parity_c_provider_scheduler_tools::shepherd_cannot_grant_or_bypass_authority ... ok
+test parity_c_production_credit::all_owned_components_use_production_or_cots_adapters ... ok
+test parity_c_delegation_resources::pre_dispatch_cancellation_releases_capacity ... ok
+test parity_c_delegation_resources::retry_and_idempotency_bounds_prevent_duplicate_work ... ok
+test parity_c_live_governance::expired_or_replayed_gate_receipt_fails_closed ... ok
+test parity_c_private_identity::private_state_is_partitioned_by_authoritative_identity ... ok
+test parity_c_time_continuity::authenticated_checkpoint_is_the_only_restore_authority ... ok
+test parity_c_time_continuity::restart_revalidates_revocation_without_duplicate_side_effects ... ok
+test parity_c_time_continuity::shutdown_orders_batch_and_blocks_later_actuation ... ok
+test parity_c_time_continuity::shutdown_commits_final_checkpoint_and_closes_future_admission ... ok
+test parity_c_time_continuity::unqualified_or_regressing_time_cannot_authorize_actuation ... ok
+test parity_c_delegation_resources::in_flight_cancellation_kills_provider_and_releases_capacity ... ok
+test parity_c_provider_scheduler_tools::two_agents_execute_governed_provider_and_tool_work ... ok
+test parity_c_provider_scheduler_tools::scheduler_dispatch_is_deterministic_and_bounded ... ok
+test parity_c_time_continuity::lifelog_is_redacted_append_only_and_non_authoritative ... ok
+test parity_c_provider_scheduler_tools::provider_timeout_auth_quota_and_malformed_output_are_classified ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.07s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/governed_operations.rs (target/debug/deps/governed_operations-226f7271ef760be1)

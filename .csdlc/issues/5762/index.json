@@ -1,0 +1,337 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5762,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "b0163f8dcda50dfb601d5200558056a562b9343f92f1f994c2ddf2b8ff49d298",
+  "phase": "closed_out",
+  "generation": 7,
+  "digest": "a139b69ceeeeae2e00c9df1992144712403bd4ef8f3248ed4938bc9d5e695ffe",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex:issue-5748-peer",
+    "assigned_by": "codex",
+    "revision": "git-blake3:4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5:dbc11d76a892efb57be4c6cc53b368f03e5bbe03490a44736b5a1b00440d3325",
+    "scope": [
+      "csdlc-v2/src/store.rs test-only changes at 4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5",
+      ".csdlc/evidence/5762 validation evidence"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:issue-5748-peer",
+    "scope": [
+      "csdlc-v2/src/store.rs test-only changes at 4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5",
+      ".csdlc/evidence/5762 validation evidence"
+    ],
+    "reviewed_revision": "git-blake3:4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5:dbc11d76a892efb57be4c6cc53b368f03e5bbe03490a44736b5a1b00440d3325",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5762,
+    "pull_request": 5768,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5768",
+    "base": "main",
+    "head": "codex/5762-terminal-sor-validation-fixtures",
+    "revision": "git-blake3:4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5:dbc11d76a892efb57be4c6cc53b368f03e5bbe03490a44736b5a1b00440d3325",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5768,
+    "head_sha": "4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91353118920"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352881692"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851659"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851889"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851982"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851798"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851846"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352831614"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851908"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851909"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851734"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851765"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851887"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851474"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851823"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693710787/job/91352851479"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5768,
+    "disposition": "merged",
+    "observed_sha": "4a44e4a6b6feb64cfe566cb97e04aa0d888c57f5",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5762.json",
+    "released_branch": "codex/5762-terminal-sor-validation-fixtures",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "csdlc-v2/src/store.rs",
+      ".csdlc/designs/5762",
+      ".csdlc/evidence/5762",
+      ".csdlc/issues/5762",
+      ".csdlc/prepared/issues/5762",
+      ".csdlc/requests/5762"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5762/retained/design.md",
+  "diagram_path": ".csdlc/issues/5762/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator",
+      "revision": "ac6d85e2f2ec631133731b7d4f07d0066fc83d19f6b89a7f041cefe20ac3e246"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "41b306591ecf8864afafbd75f72d433747f35fff52735abe9a43ad6b5372c52e",
+      "rendered_digest": "097e446c15b25d89f1790d68a1922c6483c575a4a4938f51cf3caee6f980bd5d",
+      "ast_digest": "a88663cf02b1cbe14be1bde2a15f5533467562faffa5f715490465f16676928c"
+    },
+    "stp": {
+      "values_digest": "278c59904526c48fa4d99c16d4c2f446e2a4d6c38adcfbcae4cde2f72b31e732",
+      "rendered_digest": "24093e67736f914405eb2892bf53b88c3257ea5d46e4f91f4d051cc6aac2481e",
+      "ast_digest": "efb2c57cfa82f64c20402ac76d98cafd8fb6da3b724d748bb350c95864b8c3cd"
+    },
+    "spp": {
+      "values_digest": "cff15cee9195a2714a18c41eb9d18f734e8064bf4e4ff470169d846dc57cff40",
+      "rendered_digest": "12cd490b4e33fe2fd0fcaaa1d751c48fb94c6feefb34aa855027b8a31d0bbff5",
+      "ast_digest": "1ef66445bf27761beca6bdaea5730f9a25e1d81fc4b0495901c4921b58927145"
+    },
+    "vpp": {
+      "values_digest": "fc6cd9e6d5900ae1eb8e6547831aabc6368a690913da13bc3f6ce40c94290ebf",
+      "rendered_digest": "fd6bc308d5dff8678a0fcd2b2d52f7531274238ae8cb8cf0e1aa78050b39fe80",
+      "ast_digest": "2e34ac3340ca54ba51a55b1a5ced4198a2ac73a05639396240a10c8e0c02818c"
+    },
+    "srp": {
+      "values_digest": "fcb5257855507562d401a5d13ddb750fd7451d7e50e0ec98d0ae2d05cbc6a1e1",
+      "rendered_digest": "7bb0cf08b38ad692245d746a3dbe553e0ab4149903c94b2b90b0d33cde3b010e",
+      "ast_digest": "7c91a47b31a0cd0c81938e08e70a9b680a01565c9d1cb46251282c9fbd8fd043"
+    },
+    "sor": {
+      "values_digest": "837f8854628a3cc2a0700317d2325cbb2b81e01ff0b4bf148586f191888c6935",
+      "rendered_digest": "dd353536c6d6d0bf16b912a71d0c70596eef707575fdf8a5344aeb2d494df435",
+      "ast_digest": "c543ec2be245cde9118db02ec1a792d790652863ca9c35a571483ed327f704f1"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Independent exact-head review passed with no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "Independent exact-head review passed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the retained #5762 terminal receipt in the dedicated v0.91.8 aggregate closeout projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "issue": 5765,
+  "expected_generation": 7,
+  "expected_digest": "7c81640721f62ee30ae34ecacdf0ad5e49a29a03495c5bebd9a287c8479a8696",
+  "claim_id": "claim-5765-v092-account-migration-scheduling",
+  "actor": "subagent:review-5765b",
+  "evidence": {
+    "completed": true,
+    "reviewer": "subagent:review-5765b",
+    "reviewed_revision": "git-blake3:cbd9cd0af076e70965443b90279ed5a6ce136ffc:5d06e9748d96851d4088861a5dfdd2d123d46520dd154b3b5e9cfc6b4c690224",
+    "scope": ["docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml", ".csdlc/issues/5765", ".csdlc/prepared/issues/5765"],
+    "findings": [],
+    "residual_risks": ["The source migration plan remains operator-local and unpublished under the ignored .adl/TBD boundary; the YAML marks that visibility explicitly."],
+    "non_substantive_proof": null
+  }
+}

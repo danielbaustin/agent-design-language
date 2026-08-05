@@ -1,0 +1,21 @@
+{
+  "issue": 5356,
+  "card": "sip",
+  "expected_generation": 0,
+  "expected_digest": "4c03bc432bc6ad7e633e55637d715dc2bf3e7c3deebfa8bbaed838a64c4e4546",
+  "claim_id": "claim-5356-v0918-wp18-preparation",
+  "actor": "codex:5356-preparation-owner",
+  "reason": "Retain the operator-selected external-volume constraint without machine-local path authority",
+  "operation": {
+    "operation": "replace_operator_constraints",
+    "values": [
+      "Read root AGENTS.md and canonical v0.91.8 planning/review handoff before preparation",
+      "Typed C-SDLC v2 only; no tracked root-main work, raw gh, AWS, Runtime v2, provider credentials, or paid service",
+      "Use the operator-selected external build volume for the dedicated issue worktree and generated validation output; retain only repo-relative evidence paths",
+      "Render all six cards through the current native v2 registry path and validate them",
+      "Require WP-17 #5360 actual merge, typed closed_out, claim release, retained terminal receipt, and ancestry before review execution",
+      "Run bounded preparation review, fix every actionable finding, typed validate/bind/doctor, commit, push, and stop without publication"
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,15 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 2,
+  "expected_digest": "09a6411df3b2a069c2f73af473dad031aa7680622a29e621898e536fe84e8c85",
+  "expected_purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "now_unix_seconds": 1784835263,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Enable Tokio networking already used by the cross-platform authenticated Guardian lease",
+  "purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "add_protected_paths": [
+    "adl-runtime/Cargo.toml"
+  ]
+}

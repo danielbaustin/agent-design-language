@@ -1,0 +1,142 @@
+{
+  "issue": 4763,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/4763/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4763/diagram.mmd",
+  "design_reviewer": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+  "design_approved": true,
+  "claim": {
+    "id": "prep-4763-v0918-wp14",
+    "owner": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+    "generation": 0,
+    "acquired_unix_seconds": 1784755804,
+    "expires_unix_seconds": 1785360604,
+    "heartbeat_unix_seconds": 1784755804,
+    "branch": "codex/4763-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4763",
+      ".csdlc/locks/4763.lock",
+      ".csdlc/prepared/issues/4763"
+    ],
+    "purpose": "Preparation only for later execution of the WP-14 first-birthday docs and non-claims; no implementation, PR, review, merge, or closeout."
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-14][birthday-docs] Prepare #4763 first-birthday docs and external non-claims",
+    "slug": "v0918-wp14-birthday-docs-nonclaims-prep-4763",
+    "version": "v0.91.8",
+    "goal": "Prepare typed C-SDLC v2 state for later execution of first-birthday docs and external-facing non-claims.",
+    "required_outcome": "A later execution session can bind this issue from the issue worktree and produce evidence-backed birthday docs/non-claims or an operator-approved blocker.",
+    "declared_scope": [
+      "Create minimal typed v2 issue state for #4763.",
+      "Preserve the birthday-docs and external non-claims concern from the existing task bundle.",
+      "Keep this session preparation-only."
+    ],
+    "authority_boundary": [
+      "Typed C-SDLC v2 artifacts are the preparation authority.",
+      "Legacy .adl task bundle is source context only.",
+      "Receipts are audit-only and non-blocking for this preparation pass."
+    ],
+    "operator_constraints": [
+      "No implementation.",
+      "No PR, prep review, broad tests, raw gh, AWS, or root-main writes.",
+      "Use one issue-bound worktree under /Volumes/FastWork from origin/main."
+    ],
+    "task_boundary": "Preparation only: seed v2 cards, concise design and diagram, then run focused doctor.",
+    "deliverables": [
+      "Minimal six-card v2 packet for #4763.",
+      "Concise design and Mermaid diagram.",
+      "Focused csdlc-doctor result."
+    ],
+    "acceptance_criteria": [
+      "AC1: All six v2 cards exist for #4763.",
+      "AC2: Design and diagram identify the later execution boundary without implementation.",
+      "AC3: Focused v2 doctor is run and recorded in the handoff report."
+    ],
+    "dependencies": [
+      "Existing .adl/v0.91.7 task bundle for #4763.",
+      "origin/main at 79c7dccf12540863f6c038e1fd7ef45e2357a55e."
+    ],
+    "repo_inputs": [
+      ".adl/v0.91.7/tasks/issue-4763__v0-91-7-wp-14-birthday-docs-prepare-first-birthday-docs-and-external-non-claims/stp.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+      "docs/milestones/v0.91.7/README.md"
+    ],
+    "non_goals": [
+      "Do not draft final public claims in this prep issue.",
+      "Do not start v0.92 implementation.",
+      "Do not claim birthday readiness without retained integrated evidence."
+    ],
+    "plan_summary": "Seed typed v2 preparation artifacts and leave birthday-doc execution to a later bound session.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Inspect existing #4763 task context and preserve the birthday-docs boundary.",
+        "acceptance_ids": [
+          "AC-2"
+        ],
+        "status": "completed"
+      },
+      {
+        "id": "S2",
+        "action": "Generate minimal typed v2 cards, design, and diagram.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused csdlc-doctor and report prep-only handoff.",
+        "acceptance_ids": [
+          "AC-3"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Preparation does not implement or publish #4763.",
+      "External non-claims remain explicit.",
+      "Birthday docs must not outrun retained evidence."
+    ],
+    "risks": [
+      "Public-facing wording can overclaim if execution lacks evidence.",
+      "Legacy issue version labels may differ from the v0.91.8 preparation wave."
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "A live claim collision appears.",
+      "The focused doctor fails on v2 state integrity.",
+      "The task requires implementation or GitHub mutation."
+    ],
+    "validation_lanes": [
+      {
+        "lane": "prep-doctor",
+        "proof_role": "Focused v2 state integrity check only.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "csdlc-doctor",
+          "--issue",
+          "4763"
+        ],
+        "parallel_group": "prep",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed and report the exact v2 doctor or init error; do not repair outside the prep boundary.",
+    "review_prompts": [
+      "Later review should verify that external-facing claims and non-claims match retained evidence."
+    ],
+    "review_scope": "No prep review requested; later execution review only."
+  }
+}

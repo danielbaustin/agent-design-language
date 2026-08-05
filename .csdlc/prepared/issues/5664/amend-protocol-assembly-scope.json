@@ -1,0 +1,13 @@
+{
+  "issue": 5664,
+  "claim_id": "claim-5664-runtime-v3-protocol-adapters",
+  "expected_generation": 0,
+  "expected_digest": "b6238b9c94003e59b2e6d1038d3d6ca87dc79e965097046bd6c6d849c73fe087",
+  "now_unix_seconds": 1784998013,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Reserve Runtime v3 kernel manifest and assembly integration paths required for real protocol adapters while remaining disjoint from #5657 and #5665 protected paths.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/Cargo.toml",
+    "adl-runtime-kernel/src/assembly.rs"
+  ]
+}

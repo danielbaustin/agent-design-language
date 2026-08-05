@@ -1,0 +1,9 @@
+{
+  "issue": 5756,
+  "expected_initialization_digest": "4d17d6d585363c1f9d984fc262eae3544b655682c1a09740c0cdff2d8e49bd39",
+  "expected_branch": "codex/5748-terminal-recovery",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5748",
+  "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+  "reason": "Materialize the retained terminal receipt for v0.91.8 corrective issue 5756 in the dedicated aggregate closeout projection.",
+  "follow_ups": []
+}

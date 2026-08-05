@@ -1,0 +1,24 @@
+{
+  "issue": 5362,
+  "card": "stp",
+  "expected_generation": 2,
+  "expected_digest": "8ce301d479c29b07f9d61a5d42ea02e3e64c41aea2f9a5be88e8dc0b3b4904e2",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:5362-preparation-owner",
+  "reason": "replace stale WP-20-only dependency gate with exact WP-21 sidecar dependency set",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "#5352 CLOSED/closed_out/merged on current origin/main as exact-revision v0.92 consumption handoff",
+      "#4758 CLOSED/closed_out/merged on current origin/main as launch readiness input",
+      "#4759 CLOSED/closed_out/merged on current origin/main as activation-map input",
+      "#4760 CLOSED/closed_out/merged on current origin/main as Memory Palace handoff input",
+      "#4761 CLOSED/closed_out/merged on current origin/main as capability-envelope input",
+      "#4762 CLOSED/closed_out/merged on current origin/main as birth-witness and receipt input",
+      "#4763 CLOSED/closed_out/merged on current origin/main as birthday-doc and external-launch input",
+      "#5007 CLOSED/closed_out/merged on current origin/main as Memory Palace ADR input",
+      "#5107 CLOSED/closed_out/merged on current origin/main as Adaptive Learning DAG queue input only"
+    ]
+  }
+}

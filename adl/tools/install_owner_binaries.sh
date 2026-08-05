@@ -57,14 +57,8 @@ done
 
 if [[ "${#BINS[@]}" -eq 0 ]]; then
   BINS=(
-    adl csdlc adl-csdlc adl-runtime csm adl-review
-    adl-validate-structured-prompt adl-lint-prompt-spec adl-prompt-template
-    adl-pr-create adl-pr-init adl-pr-repair-issue-body
-    adl-pr-run adl-pr-doctor adl-pr-ready adl-pr-preflight
-    adl-pr-finish adl-pr-validation adl-pr-inventory
-    adl-pr-shepherd adl-pr-closing-linkage adl-issue adl-pr-closeout
-    adl-session adl-process adl-remote adl-aws-remote-validation
-    adl-provider-adapter
+    adl adl-runtime csm csmctl adl-review adl-process adl-remote
+    adl-aws-remote-validation adl-provider-adapter
   )
 fi
 
@@ -130,16 +124,20 @@ if [[ "${#BUILD_BINS[@]}" -eq 0 ]]; then
   exit 0
 fi
 
-if [[ -z "$SOURCE_BIN_DIR" ]]; then
-  SOURCE_BIN_DIR="${CARGO_TARGET_DIR:-$ROOT_DIR/adl/target}/debug"
-fi
-
 if [[ "$NO_BUILD" != "1" ]]; then
-  cargo_args=(cargo build --quiet --manifest-path "$MANIFEST")
+  OWNER_BUILD_ROOT="${ADL_OWNER_BUILD_ROOT:-${ADL_FASTWORK_ROOT:-/Volumes/FastWork}/adl-owner-binaries}"
+  mkdir -p "$OWNER_BUILD_ROOT"
+  cargo_args=(cargo build --quiet --locked --manifest-path "$MANIFEST")
   for bin in "${BUILD_BINS[@]}"; do
     cargo_args+=(--bin "$bin")
   done
-  "${cargo_args[@]}"
+  ADL_CARGO_BUILD_ROOT="$OWNER_BUILD_ROOT" \
+    bash "$ROOT_DIR/adl/tools/run_cargo_validation.sh" "${cargo_args[@]}"
+  if [[ -z "$SOURCE_BIN_DIR" ]]; then
+    SOURCE_BIN_DIR="$OWNER_BUILD_ROOT/cargo-target/debug"
+  fi
+elif [[ -z "$SOURCE_BIN_DIR" ]]; then
+  SOURCE_BIN_DIR="${CARGO_TARGET_DIR:-$ROOT_DIR/adl/target}/debug"
 fi
 
 mkdir -p "$STABLE_BIN_DIR/.provenance"

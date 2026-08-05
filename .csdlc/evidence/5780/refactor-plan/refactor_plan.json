@@ -1,0 +1,354 @@
+{
+  "created_at": "2026-08-03T18:44:46Z",
+  "current_behavior": "# Current Behavior\n\nThe normal v2 lifecycle can finish an exact reviewed green PR through `csdlc-finish`, which derives immutable terminal truth in the Git common directory without rewriting tracked lifecycle state. Cleanup is independently provided by `csdlc-clean`.\n\nAn older parallel authority remains: `csdlc-closeout` exposes post-merge readiness, `merge_ready`, `merged`, and `closed_out` mutations; full terminal receipts duplicating the record, six cards, design, diagram, and authored artifacts; repair and transport commands; historical reconciliation; and closeout-coupled prune operations. The public schema and operator installation inventory still advertise those mutation surfaces.\n\nLegacy tracked records and retained receipts are consumed read-only by the compatibility index added in issue 5779. Lifecycle phase variants and terminal receipt deserialization must therefore remain readable even after their writers are removed.",
+  "invariants": [
+    "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+    "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+    "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+    "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+    "No second PR is required solely to record that an implementation PR merged.",
+    "Historical tracked records and evidence are not rewritten or deleted.",
+    "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+    "All tracked implementation changes remain in the issue 5780 worktree."
+  ],
+  "refactor_intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+  "residual_risk": [
+    "Behavior change is explicitly in scope; review this separately from structural cleanup.",
+    "Human review and CI remain required before any slice is merged."
+  ],
+  "risks": [
+    {
+      "id": "R-001",
+      "mitigation": "Address or validate before the affected slice lands.",
+      "risk": "Removing receipt writers may accidentally remove the reader needed for legacy compatibility indexing."
+    },
+    {
+      "id": "R-002",
+      "mitigation": "Address or validate before the affected slice lands.",
+      "risk": "Store terminal-repair code is interleaved with current lifecycle persistence helpers, so broad deletion could break non-terminal operations."
+    },
+    {
+      "id": "R-003",
+      "mitigation": "Address or validate before the affected slice lands.",
+      "risk": "Public schema and library exports can silently preserve unsupported mutation authority even after the CLI binary is deleted."
+    },
+    {
+      "id": "R-004",
+      "mitigation": "Address or validate before the affected slice lands.",
+      "risk": "Existing tests may encode obsolete closeout behavior and hide a missing negative guard against its reintroduction."
+    },
+    {
+      "id": "R-005",
+      "mitigation": "Address or validate before the affected slice lands.",
+      "risk": "Active documentation or installer manifests may continue advertising the deleted binary."
+    },
+    {
+      "id": "R-006",
+      "mitigation": "Address or validate before the affected slice lands.",
+      "risk": "Historical architecture and evidence files must remain immutable even when they describe the retired design."
+    }
+  ],
+  "rollback_notes": [
+    "Revert this slice independently if validation for csdlc-v2/src/bin/csdlc-closeout.rs fails.",
+    "Revert this slice independently if validation for csdlc-v2/src/store.rs fails.",
+    "Revert this slice independently if validation for csdlc-v2/src/readiness.rs fails.",
+    "Revert this slice independently if validation for csdlc-v2/src/model.rs fails.",
+    "Revert this slice independently if validation for csdlc-v2/src/lib.rs and csdlc-v2/src/schema.rs fails.",
+    "Revert this slice independently if validation for csdlc-v2/operator and csdlc-v2/Cargo.toml fails.",
+    "Revert this slice independently if validation for csdlc-v2/tests/gate7_lifecycle.rs fails.",
+    "Revert this slice independently if validation for active C-SDLC v2 operator documentation fails."
+  ],
+  "run_id": "5780-terminal-authority-deletion",
+  "schema": "adl.refactor_plan.v1",
+  "scope": "Issue 5780 terminal reconciliation and receipt-authority deletion",
+  "slices": [
+    {
+      "behavior_change": true,
+      "follow_up": "Continue with the next bounded slice after validation passes.",
+      "id": "S-001",
+      "intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+      "invariants": [
+        "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+        "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+        "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+        "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+        "No second PR is required solely to record that an implementation PR merged.",
+        "Historical tracked records and evidence are not rewritten or deleted.",
+        "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+        "All tracked implementation changes remain in the issue 5780 worktree."
+      ],
+      "residual_risk": "Review call sites and tests for behavior assumptions not visible in the supplied bundle.",
+      "rollback_notes": "Revert this slice independently if validation for csdlc-v2/src/bin/csdlc-closeout.rs fails.",
+      "target_files": [
+        "csdlc-v2/src/bin/csdlc-closeout.rs"
+      ],
+      "title": "Refactor csdlc-v2/src/bin/csdlc-closeout.rs",
+      "validation_commands": [
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+        "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+        "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+        "`bash adl/tools/install_owner_binaries.sh --check`",
+        "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+      ]
+    },
+    {
+      "behavior_change": true,
+      "follow_up": "Continue with the next bounded slice after validation passes.",
+      "id": "S-002",
+      "intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+      "invariants": [
+        "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+        "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+        "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+        "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+        "No second PR is required solely to record that an implementation PR merged.",
+        "Historical tracked records and evidence are not rewritten or deleted.",
+        "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+        "All tracked implementation changes remain in the issue 5780 worktree."
+      ],
+      "residual_risk": "Review call sites and tests for behavior assumptions not visible in the supplied bundle.",
+      "rollback_notes": "Revert this slice independently if validation for csdlc-v2/src/store.rs fails.",
+      "target_files": [
+        "csdlc-v2/src/store.rs"
+      ],
+      "title": "Refactor csdlc-v2/src/store.rs",
+      "validation_commands": [
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+        "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+        "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+        "`bash adl/tools/install_owner_binaries.sh --check`",
+        "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+      ]
+    },
+    {
+      "behavior_change": true,
+      "follow_up": "Continue with the next bounded slice after validation passes.",
+      "id": "S-003",
+      "intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+      "invariants": [
+        "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+        "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+        "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+        "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+        "No second PR is required solely to record that an implementation PR merged.",
+        "Historical tracked records and evidence are not rewritten or deleted.",
+        "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+        "All tracked implementation changes remain in the issue 5780 worktree."
+      ],
+      "residual_risk": "Review call sites and tests for behavior assumptions not visible in the supplied bundle.",
+      "rollback_notes": "Revert this slice independently if validation for csdlc-v2/src/readiness.rs fails.",
+      "target_files": [
+        "csdlc-v2/src/readiness.rs"
+      ],
+      "title": "Refactor csdlc-v2/src/readiness.rs",
+      "validation_commands": [
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+        "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+        "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+        "`bash adl/tools/install_owner_binaries.sh --check`",
+        "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+      ]
+    },
+    {
+      "behavior_change": true,
+      "follow_up": "Continue with the next bounded slice after validation passes.",
+      "id": "S-004",
+      "intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+      "invariants": [
+        "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+        "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+        "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+        "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+        "No second PR is required solely to record that an implementation PR merged.",
+        "Historical tracked records and evidence are not rewritten or deleted.",
+        "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+        "All tracked implementation changes remain in the issue 5780 worktree."
+      ],
+      "residual_risk": "Review call sites and tests for behavior assumptions not visible in the supplied bundle.",
+      "rollback_notes": "Revert this slice independently if validation for csdlc-v2/src/model.rs fails.",
+      "target_files": [
+        "csdlc-v2/src/model.rs"
+      ],
+      "title": "Refactor csdlc-v2/src/model.rs",
+      "validation_commands": [
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+        "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+        "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+        "`bash adl/tools/install_owner_binaries.sh --check`",
+        "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+      ]
+    },
+    {
+      "behavior_change": true,
+      "follow_up": "Continue with the next bounded slice after validation passes.",
+      "id": "S-005",
+      "intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+      "invariants": [
+        "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+        "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+        "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+        "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+        "No second PR is required solely to record that an implementation PR merged.",
+        "Historical tracked records and evidence are not rewritten or deleted.",
+        "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+        "All tracked implementation changes remain in the issue 5780 worktree."
+      ],
+      "residual_risk": "Review call sites and tests for behavior assumptions not visible in the supplied bundle.",
+      "rollback_notes": "Revert this slice independently if validation for csdlc-v2/src/lib.rs and csdlc-v2/src/schema.rs fails.",
+      "target_files": [
+        "csdlc-v2/src/lib.rs and csdlc-v2/src/schema.rs"
+      ],
+      "title": "Refactor csdlc-v2/src/lib.rs and csdlc-v2/src/schema.rs",
+      "validation_commands": [
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+        "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+        "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+        "`bash adl/tools/install_owner_binaries.sh --check`",
+        "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+      ]
+    },
+    {
+      "behavior_change": true,
+      "follow_up": "Continue with the next bounded slice after validation passes.",
+      "id": "S-006",
+      "intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+      "invariants": [
+        "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+        "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+        "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+        "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+        "No second PR is required solely to record that an implementation PR merged.",
+        "Historical tracked records and evidence are not rewritten or deleted.",
+        "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+        "All tracked implementation changes remain in the issue 5780 worktree."
+      ],
+      "residual_risk": "Review call sites and tests for behavior assumptions not visible in the supplied bundle.",
+      "rollback_notes": "Revert this slice independently if validation for csdlc-v2/operator and csdlc-v2/Cargo.toml fails.",
+      "target_files": [
+        "csdlc-v2/operator and csdlc-v2/Cargo.toml"
+      ],
+      "title": "Refactor csdlc-v2/operator and csdlc-v2/Cargo.toml",
+      "validation_commands": [
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+        "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+        "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+        "`bash adl/tools/install_owner_binaries.sh --check`",
+        "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+      ]
+    },
+    {
+      "behavior_change": true,
+      "follow_up": "Continue with the next bounded slice after validation passes.",
+      "id": "S-007",
+      "intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+      "invariants": [
+        "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+        "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+        "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+        "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+        "No second PR is required solely to record that an implementation PR merged.",
+        "Historical tracked records and evidence are not rewritten or deleted.",
+        "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+        "All tracked implementation changes remain in the issue 5780 worktree."
+      ],
+      "residual_risk": "Review call sites and tests for behavior assumptions not visible in the supplied bundle.",
+      "rollback_notes": "Revert this slice independently if validation for csdlc-v2/tests/gate7_lifecycle.rs fails.",
+      "target_files": [
+        "csdlc-v2/tests/gate7_lifecycle.rs"
+      ],
+      "title": "Refactor csdlc-v2/tests/gate7_lifecycle.rs",
+      "validation_commands": [
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+        "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+        "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+        "`bash adl/tools/install_owner_binaries.sh --check`",
+        "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+      ]
+    },
+    {
+      "behavior_change": true,
+      "follow_up": "None.",
+      "id": "S-008",
+      "intent": "# Refactor Intent\n\nThis is an explicit supported-behavior change: remove every supported command and library export that creates, repairs, transports, reconciles, or treats tracked post-merge terminal projections and receipts as authority. Delete the `csdlc-closeout` binary and skill instead of retaining a compatibility wrapper. Preserve read-only deserialization and legacy terminal indexing, while making `csdlc-finish`, `csdlc-pr-state`, and `csdlc-clean` the only supported finish, status, and cleanup surfaces.\n\nSequence the work as characterization, operator-surface deletion, writer/API deletion, test contraction with new negative guards, then documentation and reduction evidence.",
+      "invariants": [
+        "`csdlc-finish` remains the sole terminal mutation authority and still validates the exact published head, required checks, review evidence, live GitHub identity, and claim lineage.",
+        "`csdlc-clean` remains independent of delivery truth and continues to read historical terminal projections and receipts without mutating them.",
+        "Existing `merge_ready`, `merged`, and `closed_out` records and terminal receipts continue to deserialize and resolve to the same compatibility outcomes.",
+        "No supported binary, skill, schema writer, or library export can create or reconcile a tracked post-merge terminal projection or full terminal receipt.",
+        "No second PR is required solely to record that an implementation PR merged.",
+        "Historical tracked records and evidence are not rewritten or deleted.",
+        "Current issue initialization, binding, validation, review, publication, finish, status, and cleanup behavior remains deterministic and fail-closed.",
+        "All tracked implementation changes remain in the issue 5780 worktree."
+      ],
+      "residual_risk": "Review call sites and tests for behavior assumptions not visible in the supplied bundle.",
+      "rollback_notes": "Revert this slice independently if validation for active C-SDLC v2 operator documentation fails.",
+      "target_files": [
+        "active C-SDLC v2 operator documentation"
+      ],
+      "title": "Refactor active C-SDLC v2 operator documentation",
+      "validation_commands": [
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+        "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+        "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+        "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+        "`bash adl/tools/install_owner_binaries.sh --check`",
+        "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+      ]
+    }
+  ],
+  "status": "ready",
+  "stop_boundary": {
+    "changed_behavior": false,
+    "committed_changes": false,
+    "created_issues": false,
+    "created_prs": false,
+    "mutated_repository": false,
+    "performed_refactor": false
+  },
+  "target": {
+    "mode": "slice_refactor",
+    "paths": [
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/readiness.rs",
+      "csdlc-v2/src/model.rs",
+      "csdlc-v2/src/lib.rs and csdlc-v2/src/schema.rs",
+      "csdlc-v2/operator and csdlc-v2/Cargo.toml",
+      "csdlc-v2/tests/gate7_lifecycle.rs",
+      "active C-SDLC v2 operator documentation"
+    ]
+  },
+  "validation_plan": [
+    "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_finish`",
+    "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate_cleanup`",
+    "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked --test gate10a`",
+    "`cargo test --manifest-path csdlc-v2/Cargo.toml --locked`",
+    "`cargo clippy --manifest-path csdlc-v2/Cargo.toml --locked --all-targets -- -D warnings`",
+    "`cargo fmt --manifest-path csdlc-v2/Cargo.toml --all -- --check`",
+    "`bash adl/tools/install_owner_binaries.sh --check`",
+    "`rg` negative guards for the deleted binary, skill, mutation requests, receipt writers, reconciliation commands, and prune coupling"
+  ]
+}

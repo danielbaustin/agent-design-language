@@ -1,0 +1,11 @@
+{
+  "issue": 5347,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5347-current-preparation-refresh",
+  "expected_generation": 10,
+  "expected_digest": "4e6f4f0b14d54d6825afd863bbc8214fc44d25b978d67d6db825a486c94302aa",
+  "now_unix_seconds": 1785548138,
+  "actor": "codex:5347-execution-owner",
+  "operator_authority": "operator-authorized:do-not-widen-scope-with-incidental-lockfile-or-retained-binaries",
+  "reason": "Release over-broad execution claim after restoring incidental adl/Cargo.lock churn and deciding retained current binaries do not belong to #5347 mutation authority."
+}

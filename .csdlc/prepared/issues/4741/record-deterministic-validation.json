@@ -1,0 +1,22 @@
+{
+  "issue": 4741,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "605c2713f69e094a4ac96bd860f9c8977d69b013b811efb5d6d6f36199d9bb2b",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-execution",
+  "reason": "Record the focused deterministic Unity liveness proof",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+      ],
+      "purpose": "Prove safe mode selection, exact process-status routing, relative packet invocation, semantic progress, contextual readonly handling, idle/crash/licensing/external outcomes, and cleanup without launching Unity; coupled contract, selector, shell syntax, JSON, and diff checks also passed.",
+      "outcome": "passed",
+      "evidence_ref": "Local focused proof passed: unit PASS, v0.91.6 contract guardrails PASS, validation selector PASS, four wrapper syntax checks PASS, JSON parsing PASS, and git diff --check PASS."
+    }
+  },
+  "fail_after_backup": false
+}

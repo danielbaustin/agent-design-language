@@ -1,0 +1,13 @@
+{
+  "issue": 5361,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "b47fb428375d49f03af427c62da99ad8798a19e644be516cf82ba22b62761d6f",
+  "claim_id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
+  "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+  "reason": "Complete bounded #5361 Runtime v3 acceptance evidence and validation; ready for the required exact-head GPT-5.5 review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

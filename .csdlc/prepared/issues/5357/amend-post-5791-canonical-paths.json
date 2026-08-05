@@ -1,0 +1,14 @@
+{
+  "issue": 5357,
+  "claim_id": "claim-5357-v0918-wp19-review-readiness",
+  "expected_generation": 10,
+  "expected_digest": "eec962baaa4830c564bf8e41e078762e8ca7655b222c4454ab32e6c6530cacbe",
+  "now_unix_seconds": 1785814000,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Consume merged PR #5799 and transfer its three canonical documentation paths into WP-19 freeze readiness; no closeout or receipt state is required.",
+  "add_protected_paths": [
+    "README.md",
+    "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md"
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5691,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][observability] Integrate tracing with Vector durable master logging",
+    "slug": "runtime-v3-vector-otel-master-log",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "runtime-v3-observability-focused",
+          "proof_role": "Rust unit/integration proof for tracing, Vector config, status, redaction, drain, and auditor",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9",
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 10000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "target",
+            "--test",
+            "observability"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-clippy",
+          "proof_role": "strict Rust lint proof for touched Runtime v3 crate",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 6000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime-kernel/Cargo.toml",
+            "--target-dir",
+            "target",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "pinned-vector-proof",
+          "proof_role": "real repo-pinned Vector config validation and local output/OTLP exchange proof",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 6000,
+          "argv": [
+            "/Users/daniel/git/agent-design-language/.adl/bin/vector",
+            "validate",
+            "--config-yaml",
+            "adl-runtime-kernel/vector/runtime-v3.yaml"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on missing Vector, invalid config, remote/export-health overclaim, unredacted secret, incomplete drain, malformed log, or exact-head review finding.",
+      "design_ref": ".csdlc/issues/5691/retained/design.md",
+      "design_digest": "13f250b1e7c82f3bb0aa7d0dc41f77547639292508eb8c680e48813e8af58002",
+      "diagram_ref": ".csdlc/issues/5691/retained/diagram.mmd",
+      "diagram_digest": "9b6e31fa7377a82d1c7ab8f6e2b0b2c6a8b2e4786ceec37bbcedcd7833068a9a"
+    }
+  }
+}

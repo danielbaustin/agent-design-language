@@ -1,0 +1,19 @@
+{
+  "issue": 5733,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "fcaaca97e569a703d337461872f732300b858d75d53d563b36fd364d3ddc5f02",
+  "claim_id": "claim-5733-demo-matrix-proof-coverage",
+  "actor": "codex:5733-execution",
+  "reason": "Record focused v0.91.8 demo matrix validator result.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["python3", "adl/tools/validate_v0918_demo_matrix.py"],
+      "purpose": "Prove owner, evidence, disposition, status, non-claim, and #5354 consumption coverage for the v0.91.8 demo and feature-proof matrices.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5733/v0918-demo-matrix-validator.log"
+    }
+  },
+  "fail_after_backup": false
+}

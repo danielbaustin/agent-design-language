@@ -1,0 +1,78 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5779,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Decouple safe cleanup and migrate legacy terminal receipts",
+    "slug": "standalone-cleanup",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "csdlc-v2-cleanup",
+          "proof_role": "Prove safe cleanup classifications, idempotent removal, concurrency, and legacy compatibility parity",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 8000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked",
+            "--test",
+            "gate_cleanup"
+          ],
+          "parallel_group": "csdlc-v2-cleanup",
+          "defer_reason": null
+        },
+        {
+          "lane": "csdlc-v2-cleanup-clippy",
+          "proof_role": "Prove warning-free standalone cleanup implementation",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "csdlc-v2-cleanup",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on stale claim, dirty or ambiguous topology, legacy parity mismatch, failed focused proof, or stale review.",
+      "design_ref": ".csdlc/prepared/issues/5779/design.md",
+      "design_digest": "286b1824e9e5fe467106ef630ef1e8710cc2c257ddabb969b220c923a9aef91a",
+      "diagram_ref": ".csdlc/prepared/issues/5779/diagram.mmd",
+      "diagram_digest": "692c322f2cba4034328e5f59df1ac9eb64c4f253385d4dee7998c1b145960fe9"
+    }
+  }
+}

@@ -1,0 +1,109 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5763
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Initialize and bind #5763, update the stale crosswalk source-row digest only, run focused docs validators and diff hygiene, obtain one bounded GPT-5.5 review, publish ready PR with Closes #5763, and shepherd CI green.
+
+## Plan
+
+Revision 1
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Initialize and bind the #5763 issue worktree",
+    "acceptance_ids": [
+      "AC-1"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S2",
+    "action": "Update only stale crosswalk digest metadata",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Run feature-crosswalk, structured-planning, link, YAML, and diff-hygiene validation",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Run bounded GPT-5.5 review and fix actionable findings",
+    "acceptance_ids": [
+      "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Publish ready PR with Closes #5763 and shepherd required checks green",
+    "acceptance_ids": [
+      "AC-6"
+    ],
+    "status": "pending"
+  }
+]
+
+## Invariants
+
+- The feature-crosswalk validator remains source-row digest authoritative
+- Row count remains 122 real canonical feature rows
+- Only the stale digest metadata and #5763 issue-local records are changed
+
+## Risks
+
+- Accidentally weakening digest validation would invalidate the planning guard
+- Regenerating broader docs could widen scope and collide with other lanes
+- A stale review or post-validation commit would make publication truth stale
+
+## Estimates
+
+{
+  "elapsed_seconds": 7200,
+  "total_tokens": 40000,
+  "validation_seconds": 1200
+}
+
+## Design
+
+.csdlc/issues/5763/retained/design.md
+
+Digest: a15bb8517379c5226e034356eacee4ad228b50d23e1e297a1334bd8ca97d81b5
+
+## Diagram
+
+.csdlc/issues/5763/retained/diagram.mmd
+
+Digest: 1c26d05d624ee41b1a49c559738e437abece7f47303fd61d5174f6d4715e2efd
+
+## Stop Conditions
+
+- Any protected-path collision on the crosswalk artifact
+- Any validation need that requires changing feature-list prose or validator semantics
+- Any actionable pre-PR review finding not fixed
+
+## Handoff
+
+Proceed only after doctor readiness.

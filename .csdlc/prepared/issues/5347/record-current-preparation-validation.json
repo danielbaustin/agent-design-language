@@ -1,0 +1,19 @@
+{
+  "issue": 5347,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "887c9cb6c8c8730ee9c090fe69fdd97447ae2824515a66b444adc78d0d3ed4ad",
+  "claim_id": "claim-5347-current-preparation-refresh",
+  "actor": "codex:5347-preparation-refresh",
+  "reason": "Record current #5347 preparation-only validation without advancing to deletion execution.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-validate", "--root", ".", "--request", ".csdlc/prepared/issues/5347/validation-request.json"],
+      "purpose": "Prove #5347 preparation contract, future lane contract, diff hygiene, and fail-closed blocked execution admission with product_changes=0",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5347/preparation-validation/{preparation-contract.log,future-lane-contract.log,blocked-execution-admission.log,diff-hygiene.log}"
+    }
+  },
+  "fail_after_backup": false
+}

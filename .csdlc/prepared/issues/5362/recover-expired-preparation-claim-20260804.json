@@ -1,0 +1,25 @@
+{
+  "issue": 5362,
+  "expected_claim_id": "claim-5362-v0918-preparation",
+  "expected_generation": 0,
+  "now_unix_seconds": 1785865601,
+  "replacement": {
+    "id": "claim-5362-v0918-preparation-20260804",
+    "owner": "codex:5362-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1785865601,
+    "expires_unix_seconds": 1786470401,
+    "heartbeat_unix_seconds": 1785865601,
+    "branch": "codex/5362-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5362",
+      ".csdlc/locks/5362.lock",
+      ".csdlc/prepared/issues/5362",
+      ".csdlc/evidence/5362"
+    ],
+    "purpose": "Prepare #5362 WP-21 feature-list and v0.92 planning-truth handoff only; consume closed/completed WP-21 sidecar evidence from current origin/main; no execution, publication, PR, product implementation, predecessor mutation, or version:v0.92 issue mutation"
+  },
+  "recovery_actor": "codex:5362-preparation-owner",
+  "reason": "recover expired issue-local preparation claim before typed card and design refresh"
+}

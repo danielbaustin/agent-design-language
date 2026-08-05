@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5733,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5733-demo-matrix-proof-coverage",
+  "title": "[v0.91.8][WP-15] Reconcile demo matrix proof coverage",
+  "body": "Closes #5733\n\nReconciles the v0.91.8 demo matrix and feature-proof coverage with current owner, evidence, and non-claim truth after WP-15 convergence and podcast launch-route work. The docs now distinguish proven, retained-proof, planning, open-gate, deferred, and non-claim surfaces instead of presenting every row as equivalent proof.\n\nKey boundaries preserved:\n- #5354 is consumed as bounded integrated convergence proof; this PR does not rerun or replace its proof.\n- Podcast #5717/#5720 source routes, RSS, and smoke audio are represented without claiming public hosting, directory approval, final audio, video, mailbox verification, or weekly cadence durability.\n- v0.92 handoff and release-tail rows remain open gates where their owner issues are still open.\n\nValidation:\n- `python3 docs/milestones/v0.91.8/review/wp15_demo_matrix_5733/validate_v0918_demo_matrix.py` -> PASS\n- `git diff --check` -> PASS\n- `adl/tools/ci_path_policy.sh --event-name pull_request --base origin/main --head HEAD --ref refs/pull/5747/merge` -> docs-only, `coverage_required=false`, `full_coverage_required=false`\n- GitHub CI on `6c943ed2`: `adl-ci` PASS, `adl-coverage-hosted` PASS, broad Rust/coverage/demo/slow-proof lanes skipped\n\nReview:\n- Tesla subagent exact-commit review CLEAN at `58e44a84a` for the matrix reconciliation.\n- Leibniz subagent exact-head delta review CLEAN at `6c943ed2` for the docs-local validator move; typed C-SDLC review recorded with `git-blake3:6c943ed2fa215883ef73c504d3a0fe70571a3f1e:073044a9d63cc2e5614e827a8f983e50c75f5abef560476371b869085a1dea6c`.",
+  "draft": false,
+  "revision": "git-blake3:6c943ed2fa215883ef73c504d3a0fe70571a3f1e:073044a9d63cc2e5614e827a8f983e50c75f5abef560476371b869085a1dea6c",
+  "commit_sha": "6c943ed2fa215883ef73c504d3a0fe70571a3f1e"
+}

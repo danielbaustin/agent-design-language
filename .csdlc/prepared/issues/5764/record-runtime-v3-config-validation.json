@@ -1,0 +1,22 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "422ebac8719a463f44f6cf40f86d53bb233885f990ec03645647cd241291c5ad",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record the operator-requested Runtime v3 Observatory endpoint config file and focused validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "node --check demos/html-observatory/app.js",
+        "python3 -m json.tool demos/html-observatory/runtime-v3.config.json >/dev/null",
+        "git diff --check"
+      ],
+      "purpose": "Prove the HTML Observatory loads Runtime v3 browser endpoint paths from a JSON config file with parseable JavaScript, valid JSON, and clean diff hygiene.",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork terminal output: node --check demos/html-observatory/app.js passed; python3 -m json.tool demos/html-observatory/runtime-v3.config.json passed; git diff --check passed"
+    }
+  }
+}

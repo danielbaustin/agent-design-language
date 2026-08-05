@@ -1,0 +1,97 @@
+{
+  "issue": 5788,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5788/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5788/diagram.mmd",
+  "design_reviewer": "operator:issue-5788",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5788-lockfile-preservation",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1785779765,
+    "expires_unix_seconds": 1785866165,
+    "heartbeat_unix_seconds": 1785779765,
+    "branch": "codex/5788-lockfile-preservation",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/install_owner_binaries.sh",
+      "adl/tools/run_owner_validation_lane.sh",
+      "adl/tools/test_owner_binary_install.sh",
+      "adl/tools/test_owner_validation_lane.sh"
+    ],
+    "purpose": "Prevent repository validation and owner-binary installation from mutating tracked Cargo.lock files"
+  },
+  "initial": {
+    "title": "[v0.91.8][tooling][lockfile] Prevent validation and binary installation from rewriting tracked Cargo.lock files",
+    "slug": "lockfile-preservation",
+    "version": "v0.91.8",
+    "goal": "Make repository-native owner builds and validation lock-preserving and current-target-only.",
+    "required_outcome": "Failed or successful owner build paths leave the caller's exact Cargo.lock state unchanged unless dependency mutation is explicitly requested.",
+    "declared_scope": [
+      "adl/tools/install_owner_binaries.sh",
+      "adl/tools/run_owner_validation_lane.sh",
+      "adl/tools/test_owner_binary_install.sh",
+      "adl/tools/test_owner_validation_lane.sh"
+    ],
+    "authority_boundary": [
+      "Issue #5788 owns only repository lock-preservation and current owner-binary inventory",
+      "No dependency upgrade or lockfile content change is authorized",
+      "No tracked work occurs on main"
+    ],
+    "task_boundary": "Use current targets, --locked, and exact pre-invocation byte restoration for invocation-created drift.",
+    "deliverables": [
+      "Current owner-binary inventory",
+      "Lock-preserving installer and validation builds",
+      "Removed-target and dependency-drift regressions"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Removed target failure leaves Cargo.lock byte-identical",
+      "AC-2: Dependency-resolution drift is restored fail-closed",
+      "AC-3: Pre-existing user-owned lock changes remain byte-identical",
+      "AC-4: Repository-native Cargo validation uses --locked",
+      "AC-5: Default owner inventory contains only current Cargo targets"
+    ],
+    "dependencies": ["Issue #5788 is open", "Current origin/main"],
+    "repo_inputs": ["adl/Cargo.toml", "adl/tools/install_owner_binaries.sh", "adl/tools/run_owner_validation_lane.sh"],
+    "non_goals": ["No dependency upgrades", "No Cargo.lock edits", "No AWS", "No broad Rust rebuild"],
+    "plan_summary": "Harden the two owner build paths, add fixture-only shell regressions, review exact head, and publish.",
+    "steps": [
+      {"id":"S1","action":"Implement current inventory and lock guard","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"]},
+      {"id":"S2","action":"Run focused shell contracts and exact review","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"]},
+      {"id":"S3","action":"Publish with Closes #5788","status":"pending","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"]}
+    ],
+    "risks": ["Restoration could overwrite pre-existing user changes", "Inventory could omit a current operational binary"],
+    "invariants": ["Exact pre-invocation lock bytes are authoritative", "No v1-sunset target returns to the inventory"],
+    "stop_conditions": ["Any dependency mutation is required", "Any protected-path collision is reported"],
+    "review_prompts": ["Can any failure leave Cargo.lock changed?", "Are all requested default bins current?", "Are pre-existing dirty bytes preserved?"],
+    "operator_constraints": ["Typed C-SDLC v2 only", "No tracked main edits", "One pre-PR subagent review"],
+    "review_scope": "adl/tools/install_owner_binaries.sh\nadl/tools/run_owner_validation_lane.sh\nadl/tools/test_owner_binary_install.sh\nadl/tools/test_owner_validation_lane.sh",
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "owner-binary-install-contract",
+        "proof_role": "Prove current inventory and exact lockfile preservation",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "tooling-contracts",
+        "budget_seconds": 120,
+        "budget_tokens": 1500,
+        "argv": ["bash", "adl/tools/test_owner_binary_install.sh"],
+        "acceptance_ids": ["AC-1","AC-2","AC-3","AC-5"]
+      },
+      {
+        "lane": "owner-validation-contract",
+        "proof_role": "Prove validation plans use lock-preserving current targets",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "tooling-contracts",
+        "budget_seconds": 120,
+        "budget_tokens": 1500,
+        "argv": ["bash", "adl/tools/test_owner_validation_lane.sh"],
+        "acceptance_ids": ["AC-4","AC-5"]
+      }
+    ],
+    "failure_policy": "Restore only invocation-created lock drift to exact pre-invocation bytes and return nonzero with the affected path."
+  }
+}

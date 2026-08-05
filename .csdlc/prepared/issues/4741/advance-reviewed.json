@@ -1,0 +1,14 @@
+{
+  "issue": 4741,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "8237a6d0068e9e6653f004819cc93030f0b5c2004cccc5490d7310eb2fafed45",
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "actor": "codex:issue-4741-execution",
+  "reason": "Advance the assigned exact-revision PASS review to reviewed phase with retained residual risks",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

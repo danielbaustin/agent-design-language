@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5695,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5695-pr-state-mergeability",
+  "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states (#5695)",
+  "body": "Closes #5695\n\nPreserves GitHub mergeability distinctions in csdlc-pr-state: only behind is stale_base, dirty is conflicted, blocked/unstable/draft/unknown remain waiting, and HasHooks normalizes to the clean merge target accepted by csdlc-merge. Adds focused classification and merge-gate regression tests.\n\nValidation: cargo fmt --check; cargo test -p csdlc-v2 github::tests; cargo test -p csdlc-v2 merge::tests; cargo clippy -p csdlc-v2 --lib -- -D warnings; git diff --check. Exact-head subagent review completed with no actionable findings after current-main rebase.",
+  "draft": false,
+  "revision": "git-blake3:ac0df9138d3b80d48d8480bf7761bd581da787bb:91b31c0fb64a9065135b6e8b340b714e18a66bea661a18a31bbcb8cdc956406c",
+  "commit_sha": "ac0df9138d3b80d48d8480bf7761bd581da787bb"
+}

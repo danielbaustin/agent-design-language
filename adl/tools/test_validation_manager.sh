@@ -65,6 +65,43 @@ assert recorded["status"] == "ready_to_run"
 assert recorded == stdout_profile
 PY
 
+podcast_static_demo="$TMP/podcast-static-demo.txt"
+cat >"$podcast_static_demo" <<'EOF'
+A	demos/podcast/index.html
+A	demos/podcast/feed.xml
+A	demos/podcast/studio/podcast-studio.html
+A	demos/_preview/podcast/index.html
+EOF
+bash "$SCRIPT" --changed-files "$podcast_static_demo" --json >"$TMP/podcast-static-demo.json"
+python3 - <<'PY' "$TMP/podcast-static-demo.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["selected_profile"] == "selected_2_lane_profile", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["status"] == "ready_to_run", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["pr_publication_sufficient"] is True, json.dumps(profile, indent=2, sort_keys=True)
+assert [item["lane_id"] for item in profile["run"]] == [
+    "podcast_launch_packet",
+    "podcast_static_demo_surface",
+], json.dumps(profile, indent=2, sort_keys=True)
+surfaces = {surface["lane_id"]: surface for surface in profile["behavior_surfaces"]}
+launch_surface = surfaces["podcast_launch_packet"]
+assert launch_surface["id"] == "demo_contract_podcast_launch_packet"
+assert launch_surface["owner"] == "review"
+assert launch_surface["proof_role"] == "demo_contract"
+assert launch_surface["resource_class"] == "small"
+static_surface = surfaces["podcast_static_demo_surface"]
+assert static_surface["id"] == "demo_contract_podcast_static_demo_surface"
+assert static_surface["owner"] == "site"
+assert static_surface["proof_role"] == "demo_contract"
+assert static_surface["resource_class"] == "tiny"
+assert profile["escalation"]["required"] is False
+assert profile["escalation"]["reasons"] == []
+assert profile["diagnostics"] == []
+PY
+
 docs_run_log_dir="$TMP/build-action-logs"
 bash "$SCRIPT" \
   --changed-files "$docs_only" \
@@ -79,10 +116,12 @@ from pathlib import Path
 
 profile = json.load(open(sys.argv[1]))
 log_dir = Path(sys.argv[2])
-assert profile["run_status"] == "passed"
-assert profile["build_action_logs"]["schema_version"] == "adl.build_action_log_manifest.v1"
-assert profile["build_action_logs"]["packet_count"] == 1
-packet_ref = profile["run"][0]["build_action_log"]
+assert profile["run_status"] == "passed", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["build_action_logs"]["schema_version"] == "adl.build_action_log_manifest.v1", json.dumps(profile, indent=2, sort_keys=True)
+assert profile["build_action_logs"]["packet_count"] >= 1, json.dumps(profile, indent=2, sort_keys=True)
+docs_items = [item for item in profile["run"] if item["lane_id"] == "docs_diff_check"]
+assert len(docs_items) == 1, json.dumps(profile, indent=2, sort_keys=True)
+packet_ref = docs_items[0]["build_action_log"]
 packet_path = Path(packet_ref)
 if not packet_path.is_absolute():
     packet_path = Path.cwd() / packet_path
@@ -550,15 +589,12 @@ assert_has "$TMP/mixed-run.err" "refusing --run for non-runnable profile"
 workflow_metrics_backfill="$TMP/workflow-metrics-backfill.txt"
 cat >"$workflow_metrics_backfill" <<'EOF'
 M	adl/config/validation_lane_selector.v0.91.6.json
-M	adl/src/cli/pr_cmd.rs
-M	adl/src/cli/pr_cmd/github.rs
-M	adl/src/cli/pr_cmd/github/tests/transport.rs
-M	adl/src/cli/pr_cmd/github/tests/watch.rs
-M	adl/src/cli/tests/pr_cmd_inline/basics.rs
-M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
 M	adl/tools/build_v0916_workflow_metric_backfill_inventory.py
+M	adl/tools/test_build_v0916_workflow_metric_backfill_inventory.py
 M	adl/tools/test_select_validation_lanes.sh
 M	adl/tools/test_validation_manager.sh
+M	csdlc-v2/src/github.rs
+M	csdlc-v2/tests/gate_github_actions.rs
 M	docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json
 EOF
 bash "$SCRIPT" --changed-files "$workflow_metrics_backfill" --json >"$TMP/workflow-metrics-backfill.json"
@@ -568,83 +604,53 @@ import sys
 
 profile = json.load(open(sys.argv[1]))
 assert profile["schema_version"] == "adl.validation_profile.v1"
-assert profile["selected_profile"] == "escalated_4_lane_profile"
-assert profile["status"] == "escalation_required"
-assert profile["pr_publication_sufficient"] is False
+assert profile["selected_profile"] == "selected_4_lane_profile"
+assert profile["status"] == "ready_to_run"
+assert profile["pr_publication_sufficient"] is True
 assert [item["lane_id"] for item in profile["run"]] == [
     "ci_path_policy_contracts",
     "csdlc_owner_lane",
+    "csdlc_v2_standalone",
     "docs_diff_check",
 ]
-assert profile["escalation"]["required"] is True
-assert any(
-    reason["lane_id"] == "rust_pr_fast"
-    and reason["reason"] == "slow_pr_cmd_e2e_surface_requires_explicit_slow_lane"
-    and "adl/src/cli/tests/pr_cmd_inline/basics.rs" in reason["matched_paths"]
-    for reason in profile["escalation"]["reasons"]
-)
-assert any(
-    diagnostic["code"] == "rust_pr_fast_requires_escalation"
-    and diagnostic["message"] == "rust_pr_fast requires escalation because slow_pr_cmd_e2e_surface_requires_explicit_slow_lane"
-    for diagnostic in profile["diagnostics"]
-)
+assert profile["escalation"]["required"] is False
+assert profile["escalation"]["reasons"] == []
+assert profile["diagnostics"] == []
+lanes = {item["lane_id"]: item for item in profile["run"]}
+assert lanes["csdlc_owner_lane"]["matched_paths"] == [
+    "adl/tools/build_v0916_workflow_metric_backfill_inventory.py",
+    "adl/tools/test_build_v0916_workflow_metric_backfill_inventory.py",
+]
+assert lanes["csdlc_v2_standalone"]["matched_paths"] == [
+    "csdlc-v2/src/github.rs",
+    "csdlc-v2/tests/gate_github_actions.rs",
+]
 PY
 
-pr_inventory_finish="$TMP/pr-inventory-finish.txt"
-cat >"$pr_inventory_finish" <<'EOF'
-M	adl/Cargo.toml
+typed_csdlc_finish="$TMP/typed-csdlc-finish.txt"
+cat >"$typed_csdlc_finish" <<'EOF'
 M	adl/config/validation_lane_selector.v0.91.6.json
-M	adl/src/bin/adl_pr_inventory.rs
-M	adl/src/cli/pr_cmd.rs
-M	adl/src/cli/pr_cmd/github.rs
-M	adl/src/cli/pr_cmd/github/tests/validation.rs
-M	adl/src/cli/pr_cmd/github/tests/watch.rs
-M	adl/src/cli/pr_cmd/github/transport.rs
-M	adl/src/cli/pr_cmd/lifecycle/tests.rs
-M	adl/src/cli/pr_cmd_args.rs
-M	adl/src/cli/tests/pr_cmd_inline/basics.rs
-M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
-M	adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs
-M	adl/src/cli/tests/pr_cmd_inline/support.rs
-M	adl/tools/pr.sh
-M	adl/tools/pr_delegate.sh
-M	adl/tools/pr_usage.sh
-M	adl/tools/run_pr_fast_test_lane.sh
-M	adl/tools/test_ci_path_policy.sh
-M	adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh
 M	adl/tools/test_validation_manager.sh
-M	docs/milestones/v0.91.7/README.md
-M	docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md
-M	docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml
-M	docs/tooling/PR_INVENTORY_COMMAND.md
+M	csdlc-v2/src/github.rs
+M	csdlc-v2/tests/gate_github_actions.rs
 EOF
-bash "$SCRIPT" --changed-files "$pr_inventory_finish" --json >"$TMP/pr-inventory-finish.json"
-python3 - <<'PY' "$TMP/pr-inventory-finish.json"
+bash "$SCRIPT" --changed-files "$typed_csdlc_finish" --json >"$TMP/typed-csdlc-finish.json"
+python3 - <<'PY' "$TMP/typed-csdlc-finish.json"
 import json
 import sys
 
 profile = json.load(open(sys.argv[1]))
 assert profile["schema_version"] == "adl.validation_profile.v1"
-assert profile["selected_profile"] == "escalated_4_lane_profile"
-assert profile["status"] == "escalation_required"
-assert profile["pr_publication_sufficient"] is False
-assert profile["escalation"]["required"] is True
+assert profile["selected_profile"] == "selected_2_lane_profile"
+assert profile["status"] == "ready_to_run"
+assert profile["pr_publication_sufficient"] is True
+assert profile["escalation"]["required"] is False
 assert {item["lane_id"] for item in profile["run"]} == {
     "ci_path_policy_contracts",
-    "csdlc_owner_lane",
-    "docs_diff_check",
+    "csdlc_v2_standalone",
 }
-assert any(
-    reason["lane_id"] == "rust_pr_fast"
-    and reason["reason"] == "slow_pr_cmd_e2e_surface_requires_explicit_slow_lane"
-    and "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs" in reason["matched_paths"]
-    for reason in profile["escalation"]["reasons"]
-)
-assert any(
-    diagnostic["code"] == "pr_fast_mode_full"
-    and diagnostic["manifest_rule"] == "manager_guardrails.pr_fast.blocked_modes"
-    for diagnostic in profile["diagnostics"]
-)
+assert profile["escalation"]["reasons"] == []
+assert profile["diagnostics"] == []
 PY
 
 sprint_conductor="$TMP/sprint-conductor.txt"
@@ -773,21 +779,28 @@ assert not any(
     for diagnostic in profile["diagnostics"]
 )
 lanes = {item["lane_id"]: item for item in profile["run"]}
-owner_paths = lanes["csdlc_owner_lane"]["matched_paths"]
+assert lanes["csdlc_owner_lane"]["matched_paths"] == [
+    "adl/tools/install_owner_binaries.sh",
+    "adl/tools/run_owner_validation_lane.sh",
+    "adl/tools/test_owner_validation_lane.sh",
+]
+runtime_owner_paths = lanes["runtime_owner_lane"]["matched_paths"]
 for path in [
     "adl/tools/csm_binary_availability.sh",
     "adl/tools/demo_d11_signed_remote.sh",
     "adl/tools/demo_smoke_v07_story.sh",
     "adl/tools/ensure_csm_binary.sh",
+    "adl/tools/owner_binary_resolution.sh",
     "adl/tools/test_ensure_csm_binary.sh",
+    "adl/tools/test_owner_binary_install.sh",
 ]:
-    assert path in owner_paths
+    assert path in runtime_owner_paths
 assert "adl/src/cli/csm_service_cmd.rs" in lanes["rust_pr_fast"]["matched_paths"]
 assert "adl/src/csm_runtime_api.rs" in lanes["rust_pr_fast"]["matched_paths"]
 PY
 
 owner_mix="$TMP/owner-mix.txt"
-printf 'M\tadl/tools/pr.sh\nM\tadl/src/bin/adl_runtime.rs\n' >"$owner_mix"
+printf 'M\tadl/tools/build_v0916_workflow_metric_backfill_inventory.py\nM\tadl/src/bin/adl_runtime.rs\n' >"$owner_mix"
 bash "$SCRIPT" --changed-files "$owner_mix" --json >"$TMP/owner-mix.json"
 python3 - <<'PY' "$TMP/owner-mix.json"
 import json

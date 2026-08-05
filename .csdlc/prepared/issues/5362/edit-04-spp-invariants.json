@@ -1,0 +1,20 @@
+{
+  "issue": 5362,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "604fd21e0e178adb09bb8df2c3f08210775d47c47514d637e5ff0ffb83790fb0",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:5362-preparation-owner",
+  "reason": "tighten execution invariants around current-main evidence consumption and non-claims",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "invariants",
+    "values": [
+      "current-main lifecycle records and terminal receipts are the dependency consumption authority",
+      "closed dependency records do not by themselves prove v0.92 birthday readiness or adaptive-learning implementation",
+      "feature-list dispositions require exact evidence paths or explicit blockers/non-claims",
+      "preparation does not mutate #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, #5107, #5357, PR #5805, #5804, version:v0.92 issues, or product implementation",
+      "no PR publication or work-package execution occurs in this preparation branch"
+    ]
+  }
+}

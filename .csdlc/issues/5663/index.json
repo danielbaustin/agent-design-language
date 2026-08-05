@@ -1,0 +1,631 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5663,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "9ae48371048e17e2df859779e157e43a5d9e4ada902e49a33a66eddacd56daf5",
+  "phase": "closed_out",
+  "generation": 40,
+  "digest": "1e146a5a44529ce6b127749ee70a2d1addb5648d8d59e506b8ed519e8d415d38",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex:terminal-closeout-5663",
+    "assigned_by": "codex:terminal-closeout-5663",
+    "revision": "git-blake3:fb04c9fa29c528c06a7b3c76e5f6560b7700d43e:63d9cae55cf4e1e08f8e37bbb7e766d6221a50993ae347a92c31ce62f0fad259",
+    "scope": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/operations.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:terminal-closeout-5663",
+    "scope": [
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/operations.rs"
+    ],
+    "reviewed_revision": "git-blake3:fb04c9fa29c528c06a7b3c76e5f6560b7700d43e:63d9cae55cf4e1e08f8e37bbb7e766d6221a50993ae347a92c31ce62f0fad259",
+    "findings": [],
+    "residual_risks": [
+      "Exact-head closeout review found no additional closeout-blocking code findings in the six-path #5663 scope. The merged PR head does not itself establish the later partial-lock recovery wording; that post-PR source repair was rehomed by audit truth to closed #5697 / merged PR #5699 and is not credited here as #5663 product implementation."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5663,
+    "pull_request": 5669,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5669",
+    "base": "main",
+    "head": "codex/5663-runtime-v3-durable-local-adapters",
+    "revision": "git-blake3:fb04c9fa29c528c06a7b3c76e5f6560b7700d43e:63d9cae55cf4e1e08f8e37bbb7e766d6221a50993ae347a92c31ce62f0fad259",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5669,
+    "head_sha": "fb04c9fa29c528c06a7b3c76e5f6560b7700d43e",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858330326"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858048376"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024077"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024137"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024159"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/4)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024235"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024144"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858002932"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858023830"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024069"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024197"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024135"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024088"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024214"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858023876"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30226710654/job/89858024058"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5669,
+    "disposition": "merged",
+    "observed_sha": "fb04c9fa29c528c06a7b3c76e5f6560b7700d43e",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5663.json",
+    "released_branch": "codex/5663-runtime-v3-durable-local-adapters",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5663",
+      ".csdlc/issues/5663",
+      ".csdlc/locks/5663.lock",
+      ".csdlc/prepared/issues/5663",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/governed_operations.rs",
+      "adl-runtime-kernel/tests/operations.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5663/retained/design.md",
+  "diagram_path": ".csdlc/issues/5663/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5663",
+      "revision": "8dbec1cb6e092383069f56bab7993e0472ae3f5c9085e5d6ecba7db4aee12efc"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "7a9ae3c2293e0dae8da01339a210e9613a6822a45bf0a7e4e66c7630cfeca215",
+      "rendered_digest": "dd9a80fb70cba5ab51ce7219aa7d6bcb896f05905288c9ed337ca78b0433956c",
+      "ast_digest": "236c4929b368dcdbd83131534e0477c144bc2586d06f79a6b924f7e97453893b"
+    },
+    "stp": {
+      "values_digest": "cea84136c0c5c772dc7fa2815ed1555c61189b5aa4e9799ab003d0280325b265",
+      "rendered_digest": "860089b661813be46a57d17782652a3753affcb7867a42b867720d39bd4b8148",
+      "ast_digest": "716150200b112efd93bfbc429f7eb7a1842fa1f1cec75462ceec9f4756213e4f"
+    },
+    "spp": {
+      "values_digest": "aa7ef6c87652aef60205c0f4a533b842f915d96243fa0dca4616e7596f9b6e0a",
+      "rendered_digest": "8e7b85f4de9a14002b608645557c606bdfb4bc52ebe301fdff8e19fc52486231",
+      "ast_digest": "e8e2ee2cc17fcc9317417d0fb62267bdd72bb09bb8b8959ddb2a6148bc1b2278"
+    },
+    "vpp": {
+      "values_digest": "c2b6dcd59fe473e3f112e5756be78c345cf39a0c87879824f465030d5920b23d",
+      "rendered_digest": "f41cddc6a0926aa26e980c3c38e279e8eb0283334ee533b951a8cbf68718637d",
+      "ast_digest": "02e8b7e2a86de7fe642dfd9f9a530694fa1f89bd59f19e0b221749f7274878c8"
+    },
+    "srp": {
+      "values_digest": "41ebc54ac7da2b62115708d5175021a7cd019282c49df5b0db84111e479a4665",
+      "rendered_digest": "07dfa31e3c0b312b70cb9847ef8c2fc77e40006602ccdfcb29925d40a06f0f2b",
+      "ast_digest": "ece0e7f30a91c7c7cfa96f1fd7fc85e4352c00e6d1387a8f06da0b5b1649a267"
+    },
+    "sor": {
+      "values_digest": "d10454ad0424c293846a76e6d3bba39b20cb31222f13aaedcbbab1fe79952f1f",
+      "rendered_digest": "6b9f50c65495a52705f0eb503286f5c7b805a5132e37d5b80cd90e96a603b44c",
+      "ast_digest": "7a34c63798bb97e31a1f3e3bc25aed8b5efeb6cd67ea66d5cfbed51feb9a7302"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Recover from published/reviewed state to implemented after exact PR review found five in-scope Runtime v3 adapter findings requiring substantive code and proof corrections before merge."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Consolidated external exact-head review passed with zero findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "Recover stale reviewed truth because the canonical gen33 review covers 9e388b86, while merged PR #5669 head is fb04c9fa29c528c06a7b3c76e5f6560b7700d43e and requires exact-head review before typed publication reconciliation."
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "Exact-head closeout review for merged PR #5669 head fb04c9fa29c528c06a7b3c76e5f6560b7700d43e completed with no closeout-blocking findings; residual rehomed source repair is recorded in SRP."
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 12,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 13,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Net LoC reduction and duplicate durable local adapter deletion require editing the existing duplicate Runtime v3 local adapter surfaces rather than growing assembly-only code.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/operations.rs\",\"adl-runtime-kernel/tests/governed_operations.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Align validation truth with the amended Runtime v3 local adapter scope and retained net LoC reduction gate.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove production assembly uses real bounded local adapters and fails closed for external transports\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-operations\",\"proof_role\":\"Prove operation executor retry, idempotency, admission, saturation, timeout, and shutdown bounds remain intact after deleting duplicate fixture topology paths\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior remains green after production executor consolidation\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for the claimed source and test paths; before 2481, after 2461, net -20\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Supersede pre-review validation truth with FastWork target storage, expanded adapter failure coverage, and corrected net LoC measurement after review fixes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove production assembly uses real bounded local adapters, restart-stable checkpoints, failure boundaries, and fail-closed external transports\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-operations\",\"proof_role\":\"Prove operation executor retry, idempotency, timeout, and failure classes remain intact after deleting duplicate fixture topology paths\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior remains green after production executor consolidation\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate on FastWork target storage\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for the claimed source and test paths; before 2481, after 2471, net -10\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record exact pre-PR review remediations before final review rerun.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented durable bounded local Runtime v3 adapters, fixed exact-review findings for restart-stable local checkpoints and missing failure proofs, refreshed FastWork validation evidence, and retained net physical LoC reduction: before 2481, after 2471, net -10.\",\"changes\":[\"Made the default local Runtime v3 adapter state directory stable for the same runtime working directory instead of process/id scoped.\",\"Added isolated assembly proof for restart restore, timeout, cancellation, duplicate idempotency, malformed request, missing checkpoint, and corrupt checkpoint boundaries.\",\"Superseded pre-review validation with FastWork target-dir lanes and corrected the net physical LoC measurement to -10.\"],\"artifacts\":[\".csdlc/prepared/issues/5663/validate-after-review.json\",\".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record superseding FastWork assembly validation after exact-review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"purpose\":\"Prove production assembly uses real bounded local adapters, restart-stable checkpoints, failure boundaries, and fail-closed external transports after review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record superseding FastWork strict Clippy validation after exact-review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate after review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record corrected net physical LoC validation after exact-review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--numstat\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"purpose\":\"Record physical LoC delta for claimed source and test paths after review fixes: before 2481, after 2471, net -10.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record superseding FastWork operation-executor validation after exact-review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"operations\"],\"purpose\":\"Prove operation executor retry, idempotency, timeout, and failure classes after review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-operations.log\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record superseding FastWork governed-operation validation after exact-review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"purpose\":\"Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior after review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Supersede pre-review validation truth with FastWork target storage, default fresh-executor checkpoint proof, and corrected final net LoC measurement after review fixes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove production assembly uses real bounded local adapters, restart-stable checkpoints, failure boundaries, and fail-closed external transports\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-operations\",\"proof_role\":\"Prove operation executor retry, idempotency, timeout, and failure classes remain intact after deleting duplicate fixture topology paths\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior remains green after production executor consolidation\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate on FastWork target storage\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for the claimed source and test paths; before 2481, after 2449, net -32\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record final SOR correction for superseded pre-review and intermediate LoC/validation rows.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented durable bounded local Runtime v3 adapters with final review fixes. Current authoritative validation is the FastWork target-dir PVF local_pass in .csdlc/evidence/5663, and current physical LoC for claimed source/test paths is before 2481, after 2449, net -32. Earlier SOR rows with no target-dir commands, after 2461/net -20, and after 2471/net -10 are retained only as superseded pre-final lifecycle history.\",\"changes\":[\"Integrated default fresh-executor CheckpointStore restore proof into the production adapter assembly test to avoid parallel default-state cleanup races.\",\"Updated final typed VPP and PVF evidence to before 2481, after 2449, net -32.\",\"Marked earlier non-FastWork and intermediate LoC SOR rows as superseded pre-final lifecycle history.\"],\"artifacts\":[\".csdlc/prepared/issues/5663/replace-validation-lanes-after-review.json\",\".csdlc/prepared/issues/5663/validate-after-review.json\",\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record final authoritative net physical LoC validation after all exact-review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--numstat\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"purpose\":\"Record final physical LoC delta for claimed source and test paths: before 2481, after 2449, net -32.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Supersede pre-review validation truth with FastWork target storage, default fresh-executor checkpoint proof, external-adapter fail-closed review fix, and corrected final net LoC measurement after review fixes.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove production assembly uses real bounded local adapters, restart-stable checkpoints, failure boundaries, and fail-closed external transports\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-operations\",\"proof_role\":\"Prove operation executor retry, idempotency, timeout, and failure classes remain intact after deleting duplicate fixture topology paths\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed local Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, and shutdown behavior remains green after production executor consolidation\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate on FastWork target storage\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for the claimed source and test paths; before 2481, after 2453, net -28\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record final SOR correction for superseded pre-review, intermediate LoC/validation rows, and the external-adapter fail-closed review fix.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented durable bounded local Runtime v3 adapters with final review fixes. Current authoritative validation is the FastWork target-dir PVF local_pass in .csdlc/evidence/5663, and current physical LoC for claimed source/test paths is before 2481, after 2453, net -28. Earlier SOR rows with no target-dir commands, after 2461/net -20, after 2471/net -10, and after 2449/net -32 are retained only as superseded pre-final lifecycle history.\",\"changes\":[\"Integrated default fresh-executor CheckpointStore restore proof into the production adapter assembly test to avoid parallel default-state cleanup races.\",\"Moved external transport refusal ahead of local timeout/cancel branches and covered timeout/cancel payloads for Provider, ACIP, A2A, and Cloud Bridge.\",\"Updated final typed VPP and PVF evidence to before 2481, after 2453, net -28.\",\"Marked earlier non-FastWork and intermediate LoC SOR rows as superseded pre-final lifecycle history.\"],\"artifacts\":[\".csdlc/prepared/issues/5663/replace-validation-lanes-after-review.json\",\".csdlc/prepared/issues/5663/validate-after-review.json\",\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record final authoritative net physical LoC validation after all exact-review fixes including external-adapter fail-closed coverage.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--numstat\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"purpose\":\"Record final physical LoC delta for claimed source and test paths: before 2481, after 2453, net -28.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\"}}"
+    },
+    {
+      "sequence": 19,
+      "generation": 16,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 17,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 18,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Recover from published/reviewed state to implemented after exact PR review found five in-scope Runtime v3 adapter findings requiring substantive code and proof corrections before merge.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 19,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Replace validation lanes after fixing all five PR #5669 exact-review findings with real adapter behavior and deleting the superseded fixture-only operations test target.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live cancellation, safe configured storage locking, production assembly wiring, ingress dispatch, and fail-closed external transports.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for touched source and test paths; before 3796, after 3728, net -68.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"origin/main\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-diff-check\",\"proof_role\":\"Prove tracked diff whitespace hygiene after regenerating evidence logs.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 23,
+      "generation": 20,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record implementation of the five PR #5669 exact-review fixes while holding the external review/publication gate.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Fixed all five in-scope PR #5669 exact-review findings with real local Runtime v3 behavior. Agent now executes bounded typed work; Scheduler retires completed jobs and remains reusable; CheckpointStore persists and restores state bytes with principal/integrity checks; cancellation propagates through CancellationToken state; production local storage requires an explicit absolute state root with a single-writer lock. Current touched source/test physical LoC is before 3796, after 3728, net -68. Publication and merge remain held for exact external Opus 5 review.\",\"changes\":[\"Replaced receipt/text-trigger local Agent behavior with typed bounded blake3 and cancellation-aware sleep work, plus canonical ingress proof for real Agent dispatch.\",\"Replaced Scheduler saturation-by-text behavior with a typed local schedule command that retires each completed job and accepts repeated sequential work beyond four requests.\",\"Replaced metadata-only checkpointing with state_hex byte persistence, atomic checkpoint writes, restore-time principal verification, and payload hash integrity verification.\",\"Replaced payload-text cancellation triggers with CancellationToken propagation through OperationalAdapter and in-process Agent execution.\",\"Removed cwd/temp fallback state creation from production local adapters; callers must provide an explicit absolute state root guarded by writer.lock unique-writer behavior.\",\"Deleted the superseded fixture-only operations test target and folded real adapter proof into assembly/governed end-to-end tests.\"],\"artifacts\":[\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log\"]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 21,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record focused real local adapter assembly proof after five PR #5669 fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"purpose\":\"Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live cancellation, safe configured storage locking, production assembly wiring, ingress dispatch, and fail-closed external transports.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log\"}}"
+    },
+    {
+      "sequence": 25,
+      "generation": 22,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record focused governed operations regression proof after five PR #5669 fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"purpose\":\"Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log\"}}"
+    },
+    {
+      "sequence": 26,
+      "generation": 23,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record strict Clippy proof after five PR #5669 fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log\"}}"
+    },
+    {
+      "sequence": 27,
+      "generation": 24,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record final net-negative physical LoC proof after five PR #5669 fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--numstat\",\"origin/main\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"purpose\":\"Record touched source/test physical LoC delta: before 3796, after 3728, net -68.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\"}}"
+    },
+    {
+      "sequence": 28,
+      "generation": 25,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record diff whitespace hygiene after regenerating proof logs.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove tracked diff whitespace hygiene after source, test, typed evidence, and retained proof updates.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log\"}}"
+    },
+    {
+      "sequence": 29,
+      "generation": 26,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Replace validation lanes after fixing the consolidated exact-review blockers for cancellation idempotency retry, writer-lock ownership/stale recovery, and production state configuration errors.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live cancellation retry semantics, safe configured storage locking with ownership/stale recovery, production assembly wiring, ingress dispatch, and fail-closed external transports.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for touched source and test paths; before 3796, after 3737, net -59.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"origin/main\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-diff-check\",\"proof_role\":\"Prove tracked diff whitespace hygiene after regenerating evidence logs.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 30,
+      "generation": 27,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record implementation of the consolidated exact-review blocker fixes before rerouting exact review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved the consolidated exact-review blockers on top of the five real adapter fixes. Cancellation results are no longer cached as completed idempotent work, so the same cancelled request key can be retried successfully. writer.lock is now an owner-recorded directory lock with pid-based stale recovery and ownership-checked release. Production local executor construction now returns configuration errors to callers instead of panicking. Current touched source/test physical LoC is before 3796, after 3737, net -59.\",\"changes\":[\"Skipped completed-idempotency caching for AdmissionClosed cancellation results and added same-idempotency retry proof.\",\"Replaced the plain writer.lock file with an owner.json directory lock, live-pid stale detection, atomic stale-lock rename recovery, and ownership-checked drop cleanup.\",\"Changed build_production_operation_executors to return io::Result and updated binary/governed/test callers to handle invalid configured state roots without panic.\",\"Trimmed duplicate assembly tests while preserving real end-to-end proofs for the five required behaviors and review blockers.\"],\"artifacts\":[\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\",\".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log\"]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 28,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record typed PVF local_pass after consolidated exact-review blocker fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\"],\"purpose\":\"Run the typed PVF manifest covering real adapter assembly behavior, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the consolidated exact-review blocker fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663\"}}"
+    },
+    {
+      "sequence": 32,
+      "generation": 29,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Refresh validation lanes after fixing the remaining exact-review blockers for duplicate waiter cancellation and partial writer-lock recovery.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"runtime-v3-local-adapters-assembly\",\"proof_role\":\"Prove real Agent execution, scheduler retirement/reuse, checkpoint byte persistence/restore with integrity and identity checks, live owner and duplicate-waiter cancellation semantics, safe configured storage locking with ownership/stale/partial-lock recovery, production assembly wiring, ingress dispatch, and fail-closed external transports.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":840,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"assembly\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-governed\",\"proof_role\":\"Prove governed Runtime v3 restart, checkpoint, lifelog, scheduler, shepherd, cancellation, provider, and shutdown behavior remains green after local adapter correction.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--test\",\"governed_operations\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-clippy\",\"proof_role\":\"Prove strict all-target Rust lint cleanliness for the touched Runtime v3 kernel crate.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5663/target\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-loc\",\"proof_role\":\"Retain physical LoC measurement for touched source and test paths; before 3796, after 3791, net -5.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--numstat\",\"origin/main\",\"--\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null},{\"lane\":\"runtime-v3-local-adapters-diff-check\",\"proof_role\":\"Prove tracked diff whitespace hygiene after regenerating evidence logs.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"runtime-v3-local-adapters\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 30,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record implementation of the remaining exact-review fixes before consolidated exact-head review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved the two remaining consolidated review findings after the five real Runtime v3 adapter fixes. Duplicate in-flight callers now wait on the owner result through a cancellation-aware watch channel and cannot become synthetic executors; each waiter can cancel independently without poisoning the owner result. writer.lock acquisition now publishes owner.json through a pending lock directory and recovers partial locks without owner metadata. Current touched source/test physical LoC is before 3796, after 3791, net -5.\",\"changes\":[\"Replaced duplicate in-flight OnceCell get_or_init waiting with owner-only execution plus watch-based result notification, so duplicate callers honor their own CancellationToken and never initialize work.\",\"Notified duplicate waiters on owner-side governed admission errors before removing the in-flight record.\",\"Changed writer-lock acquisition to write owner.json inside a pending directory before publishing writer.lock, and to recover missing or invalid owner metadata as stale partial locks.\",\"Kept ownership-checked writer lock release, live-pid stale detection, and explicit configured absolute state roots.\",\"Trimmed the proof harness while retaining end-to-end coverage for real execution, scheduler reuse, checkpoint restore identity/integrity, live cancellation, and safe storage locking.\"],\"artifacts\":[\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/operations.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\",\".csdlc/evidence/5663/runtime-v3-local-adapters-assembly.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-governed.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-clippy.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-loc.log\",\".csdlc/evidence/5663/runtime-v3-local-adapters-diff-check.log\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 31,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Record typed PVF local_pass after remaining exact-review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5663/validate-real-fixes.json\"],\"purpose\":\"Run the typed PVF manifest covering real Agent owner/duplicate cancellation, scheduler reuse, checkpoint byte restore identity/integrity, safe durable storage locking including partial-lock recovery, governed regression, strict Clippy, net-negative LoC, and diff hygiene after the remaining exact-review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5663\"}}"
+    },
+    {
+      "sequence": 35,
+      "generation": 31,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 36,
+      "generation": 32,
+      "actor": "external:consolidated-opus-5",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 37,
+      "generation": 33,
+      "actor": "codex:issue-5663-runtime-adapters",
+      "reason": "Consolidated external exact-head review passed with zero findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 38,
+      "generation": 34,
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "Recover stale reviewed truth because the canonical gen33 review covers 9e388b86, while merged PR #5669 head is fb04c9fa29c528c06a7b3c76e5f6560b7700d43e and requires exact-head review before typed publication reconciliation.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 39,
+      "generation": 34,
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 40,
+      "generation": 35,
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 41,
+      "generation": 36,
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "Exact-head closeout review for merged PR #5669 head fb04c9fa29c528c06a7b3c76e5f6560b7700d43e completed with no closeout-blocking findings; residual rehomed source repair is recorded in SRP.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 37,
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 43,
+      "generation": 38,
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 44,
+      "generation": 39,
+      "actor": "codex:terminal-closeout-5663",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 45,
+      "generation": 40,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the authentic released terminal receipt into the v0.91.8 aggregate inventory.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

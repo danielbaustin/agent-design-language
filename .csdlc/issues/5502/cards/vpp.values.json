@@ -1,0 +1,109 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5502,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement output convergence and deterministic replanning",
+    "slug": "v0918-wp10a-output-convergence-deterministic-replanning",
+    "version": "v0.91.8",
+    "generation": 22
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "preparation-contract",
+          "proof_role": "Prove six-card, design, diagram, live dependency rule, scope, COTS, budget, PVF, and no-product-change preparation truth",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 2500,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5502/validate-preparation.rb"
+          ],
+          "parallel_group": "preparation",
+          "defer_reason": null
+        },
+        {
+          "lane": "dependency-live-merge-ancestry",
+          "proof_role": "Fail closed until #5499 and #5498 have live GitHub merged revisions that are ancestors of the #5502 execution base; typed closeout, receipts, and claim release are audit-only",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5502/check-dependencies.rb"
+          ],
+          "parallel_group": "execution-gate",
+          "defer_reason": "Run when implementation is requested; it must fail closed until both dependencies are live merged and ancestral"
+        },
+        {
+          "lane": "convergence-contract",
+          "proof_role": "Run offline deterministic identity, overlap, ordering, partial-success, replan, blocked, and non-authority tests",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 120,
+          "budget_tokens": 4000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5502/run-validation-lane.rb",
+            "convergence-contract"
+          ],
+          "parallel_group": "implementation",
+          "defer_reason": "Mandatory after live merged ancestral dependencies and implementation; not selected during preparation"
+        },
+        {
+          "lane": "post-merge-exact",
+          "proof_role": "Re-run dependency ancestry, deterministic contracts, budgets, exact revision identity, CI, and #5501 handoff after authorized merge",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 600,
+          "budget_tokens": 6000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5502/run-validation-lane.rb",
+            "post-merge-exact"
+          ],
+          "parallel_group": "post-merge",
+          "defer_reason": "Mandatory after authorized merge and before closeout"
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed without implementation, publication, merge, closeout, or #5501 handoff on incomplete dependencies, claim collision, stale/forged/overlapping/out-of-scope output, changed assumptions without typed replan, hidden authority, nondeterminism, deferred proof, red CI, stale review, or budget breach.",
+      "design_ref": ".csdlc/issues/5502/retained/design.md",
+      "design_digest": "ffbac550ad54511cc08e7ed520ad15ae3e9f96e607656a7621163e364698ae09",
+      "diagram_ref": ".csdlc/issues/5502/retained/diagram.mmd",
+      "diagram_digest": "c325ba1c7d2cb4f6230cd3b3da135d46799189b3c2d6ca48021dea774d8cf985"
+    }
+  }
+}

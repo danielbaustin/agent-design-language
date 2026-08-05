@@ -1,0 +1,14 @@
+{
+  "issue": 4761,
+  "expected_generation": 9,
+  "expected_digest": "90512d03df8e1418d90a6b196b2e5ae81e0eb43977428b5ca9e76addfd267d88",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "reviewer": "codex-review:4761-capability-envelope",
+  "assigned_by": "codex:gpt-5.5-execution-4761",
+  "scope": [
+    ".csdlc/evidence/4761/capability-envelope",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+    "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+    "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+  ]
+}

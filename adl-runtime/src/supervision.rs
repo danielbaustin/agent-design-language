@@ -8,6 +8,7 @@ use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
+use adl_resilience::capped_exponential_backoff;
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};
 use tokio::sync::{mpsc, oneshot};
@@ -402,14 +403,7 @@ pub fn policy_for(component: ComponentId) -> ComponentSupervisionPolicy {
 }
 
 pub fn backoff_for_failure(policy: &ComponentSupervisionPolicy, failures: u32) -> Duration {
-    let exponent = failures.saturating_sub(1).min(20);
-    let multiplier = 1_u64.checked_shl(exponent).unwrap_or(u64::MAX);
-    Duration::from_millis(
-        policy
-            .backoff_base_ms
-            .saturating_mul(multiplier)
-            .min(policy.backoff_cap_ms),
-    )
+    capped_exponential_backoff(policy.backoff_base_ms, policy.backoff_cap_ms, failures)
 }
 
 pub fn decide_after_exit(

@@ -1,0 +1,14 @@
+{
+  "issue": 5713,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "741aef022dd1a0579bedeee63247dd3028560863daaead8de2841972e3dbea34",
+  "claim_id": "claim-5713-runtime-v3-rcgen-local-tls",
+  "actor": "codex:5713-review-remediation",
+  "reason": "Exact-head GPT-5.5 review completed with zero findings after all remediation.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

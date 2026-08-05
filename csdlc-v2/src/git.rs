@@ -40,13 +40,21 @@ pub fn worktrees(root: &Path) -> Result<Vec<(String, String)>> {
     let text = run(root, &["worktree", "list", "--porcelain"])?.stdout;
     let mut result = Vec::new();
     let mut path = None;
+    let mut branch = None;
     for line in text.lines().chain(std::iter::once("")) {
         if let Some(value) = line.strip_prefix("worktree ") {
             path = Some(value.to_owned());
         }
-        if let (Some(branch), Some(path)) = (line.strip_prefix("branch refs/heads/"), path.as_ref())
-        {
-            result.push((branch.to_owned(), path.clone()));
+        if let Some(value) = line.strip_prefix("branch refs/heads/") {
+            branch = Some(value.to_owned());
+        }
+        if line == "detached" {
+            branch = Some(String::new());
+        }
+        if line.is_empty() {
+            if let Some(path) = path.take() {
+                result.push((branch.take().unwrap_or_default(), path));
+            }
         }
     }
     Ok(result)
@@ -101,6 +109,164 @@ pub fn substantive_revision(root: &Path, scope: &[String]) -> Result<String> {
         hasher.update(&fs::read(root.join(path))?);
     }
     Ok(format!("git-blake3:{head}:{}", hasher.finalize().to_hex()))
+}
+
+pub fn substantive_content_digest(root: &Path, scope: &[String]) -> Result<String> {
+    if scope.is_empty() {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "revision scope is empty",
+        ));
+    }
+    let pathspec = scoped_pathspec(scope);
+    let tracked = Command::new("git")
+        .current_dir(root)
+        .args(["ls-files", "--cached", "--"])
+        .args(&pathspec)
+        .output()
+        .map_err(|error| V2Error::new(ErrorCode::GitFailure, error.to_string()))?;
+    if !tracked.status.success() {
+        return Err(V2Error::new(
+            ErrorCode::GitFailure,
+            String::from_utf8_lossy(&tracked.stderr),
+        ));
+    }
+    let untracked = Command::new("git")
+        .current_dir(root)
+        .args(["ls-files", "--others", "--exclude-standard", "--"])
+        .args(&pathspec)
+        .output()
+        .map_err(|error| V2Error::new(ErrorCode::GitFailure, error.to_string()))?;
+    if !untracked.status.success() {
+        return Err(V2Error::new(
+            ErrorCode::GitFailure,
+            String::from_utf8_lossy(&untracked.stderr),
+        ));
+    }
+    let mut paths = String::from_utf8_lossy(&tracked.stdout)
+        .lines()
+        .map(|path| (b'T', path.to_owned()))
+        .chain(
+            String::from_utf8_lossy(&untracked.stdout)
+                .lines()
+                .map(|path| (b'U', path.to_owned())),
+        )
+        .collect::<Vec<_>>();
+    paths.sort();
+    paths.dedup();
+    let mut hasher = blake3::Hasher::new();
+    for (classification, relative) in paths {
+        let path = root.join(&relative);
+        let metadata = fs::symlink_metadata(&path).map_err(|error| {
+            V2Error::new(
+                ErrorCode::ReconciliationRequired,
+                format!("reviewed scope path is unavailable at {relative}: {error}"),
+            )
+        })?;
+        if metadata.file_type().is_symlink() || !metadata.is_file() {
+            return Err(V2Error::new(
+                ErrorCode::UnsafeCheckout,
+                format!("reviewed scope contains non-regular path {relative}"),
+            ));
+        }
+        hasher.update(&[classification]);
+        hasher.update(relative.as_bytes());
+        hasher.update(&[0]);
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            hasher.update(&(metadata.permissions().mode() & 0o111).to_le_bytes());
+        }
+        hasher.update(&fs::read(path)?);
+        hasher.update(&[0]);
+    }
+    Ok(hasher.finalize().to_hex().to_string())
+}
+
+pub fn substantive_scope_matches_commit(
+    root: &Path,
+    commit: &str,
+    scope: &[String],
+) -> Result<bool> {
+    if scope.is_empty()
+        || commit.len() != 40
+        || !commit.bytes().all(|byte| byte.is_ascii_hexdigit())
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "exact commit and non-empty review scope are required",
+        ));
+    }
+    let pathspec = scoped_pathspec(scope);
+    let status = Command::new("git")
+        .current_dir(root)
+        .args(["diff", "--quiet", "--no-ext-diff", commit, "--"])
+        .args(&pathspec)
+        .status()
+        .map_err(|error| V2Error::new(ErrorCode::GitFailure, error.to_string()))?;
+    if status.code() == Some(1) {
+        return Ok(false);
+    }
+    if !status.success() {
+        return Err(V2Error::new(
+            ErrorCode::GitFailure,
+            "git diff failed while evaluating historical review scope",
+        ));
+    }
+    let output = Command::new("git")
+        .current_dir(root)
+        .args(["ls-files", "--others", "--exclude-standard", "--"])
+        .args(&pathspec)
+        .output()
+        .map_err(|error| V2Error::new(ErrorCode::GitFailure, error.to_string()))?;
+    if !output.status.success() {
+        return Err(V2Error::new(
+            ErrorCode::GitFailure,
+            String::from_utf8_lossy(&output.stderr),
+        ));
+    }
+    Ok(output.stdout.is_empty())
+}
+
+pub fn substantive_scope_matches_revisions(
+    root: &Path,
+    reviewed_commit: &str,
+    candidate_commit: &str,
+    scope: &[String],
+) -> Result<bool> {
+    if scope.is_empty()
+        || [reviewed_commit, candidate_commit].iter().any(|commit| {
+            commit.len() != 40 || !commit.bytes().all(|byte| byte.is_ascii_hexdigit())
+        })
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "two exact commits and a non-empty review scope are required",
+        ));
+    }
+    let status = Command::new("git")
+        .current_dir(root)
+        .args([
+            "diff",
+            "--quiet",
+            "--no-ext-diff",
+            reviewed_commit,
+            candidate_commit,
+            "--",
+        ])
+        .args(scoped_pathspec(scope))
+        .status()
+        .map_err(|error| V2Error::new(ErrorCode::GitFailure, error.to_string()))?;
+    if status.code() == Some(1) {
+        return Ok(false);
+    }
+    if !status.success() {
+        return Err(V2Error::new(
+            ErrorCode::GitFailure,
+            "git diff failed while comparing reviewed and candidate revisions",
+        ));
+    }
+    Ok(true)
 }
 
 fn scoped_pathspec(scope: &[String]) -> Vec<String> {

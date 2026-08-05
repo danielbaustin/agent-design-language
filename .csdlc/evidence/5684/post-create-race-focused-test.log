@@ -1,0 +1,9 @@
+command: /usr/bin/env CARGO_TARGET_DIR=/Volumes/FastWork/cargo-targets/adl-csdlc-install-manifest cargo test --manifest-path csdlc-v2/Cargo.toml --test gate_github_actions issue_create_and_comment_reconcile_by_marker_with_exact_readback -- --nocapture
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests/gate_github_actions.rs (/Volumes/FastWork/cargo-targets/adl-csdlc-install-manifest/debug/deps/gate_github_actions-16aab2ff6195a608)
+
+running 1 test
+test issue_create_and_comment_reconcile_by_marker_with_exact_readback ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.12s

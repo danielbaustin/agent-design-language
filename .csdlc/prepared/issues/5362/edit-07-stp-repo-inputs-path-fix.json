@@ -1,0 +1,25 @@
+{
+  "issue": 5362,
+  "card": "stp",
+  "expected_generation": 7,
+  "expected_digest": "8c6de27a883ca51247bf6f3a3200d12bc6e2b215e2b2ab5bc4b80ec219864861",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:5362-preparation-owner",
+  "reason": "fix grouped dependency input path wording",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "repo_inputs",
+    "values": [
+      "issue #5362 live body",
+      "origin/main 8621b6f3b1b91d3ea290e16d07f80ec29afd4ece",
+      ".csdlc/evidence/5362/dependency-verification.v1.json",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/SPRINT_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      ".csdlc/issues/5352/index.json and .csdlc/evidence/5352/* on current main",
+      ".csdlc/issues/4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 current-main records and evidence"
+    ]
+  }
+}

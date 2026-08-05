@@ -1,0 +1,28 @@
+{
+  "issue": 5362,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "dfed6365c9f9024c628ab62d0f99295887092b603ee402ab84a68acd0da414a7",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:5362-wp21-doc-reconciliation",
+  "reason": "Record operator-authorized WP-21 documentation reconciliation execution without publication or v0.92 mutation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Reconciled WP-21 documentation and planning truth against the closed #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 child tracks while preserving v0.92 non-claims.",
+    "changes": [
+      "Updated docs/planning/ADL_FEATURE_LIST.md current-status and planning-focus language to consume the closed WP-21 child tracks as retained inputs.",
+      "Updated v0.91.8 feature preservation and proof coverage docs so closed child tracks remain handoff inputs, not implementation or release-approval claims.",
+      "Updated v0.91.8 handoff docs to replace stale publication-candidate and future-review wording with current closed/merged/closed_out child-track truth.",
+      "Preserved the explicit non-claims for v0.92 birthday readiness, public launch readiness, Adaptive Learning runtime implementation, and release approval."
+    ],
+    "artifacts": [
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md"
+    ]
+  }
+}

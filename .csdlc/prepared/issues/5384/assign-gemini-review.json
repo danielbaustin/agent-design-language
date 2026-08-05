@@ -1,0 +1,14 @@
+{
+  "issue": 5384,
+  "expected_generation": 10,
+  "expected_digest": "fd83e2f055b90659aa8304b4afde92fad2358e2b39768d3d899b19e547d7d5b2",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "reviewer": "provider:gemini-3.1-pro-preview",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/prepared/issues/5384/dependency-gate.json",
+    ".csdlc/prepared/issues/5384/validate_dependency_gate.rb",
+    ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json",
+    "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
+  ]
+}

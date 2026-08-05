@@ -1,0 +1,1 @@
+{"schema":"adl.wp13.blocked_admission_proof.v1","issue":5347,"status":"pass","blocked_gates":["dependency-terminal-gate","manifest-disjointness","owner-and-consumer-proof","deletion-budgets-and-evidence","post-deletion-exact"]}

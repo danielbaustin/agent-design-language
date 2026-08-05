@@ -1,0 +1,193 @@
+{
+  "issue": 5762,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/designs/5762/design.md",
+  "diagram_path": ".csdlc/designs/5762/diagram.mmd",
+  "design_reviewer": "operator",
+  "design_approved": true,
+  "claim": {
+    "id": "codex-5762-terminal-sor-validation-fixtures",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1785574293,
+    "expires_unix_seconds": 1785660693,
+    "heartbeat_unix_seconds": 1785574293,
+    "branch": "codex/5762-terminal-sor-validation-fixtures",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/store.rs",
+      ".csdlc/designs/5762",
+      ".csdlc/evidence/5762",
+      ".csdlc/issues/5762",
+      ".csdlc/prepared/issues/5762",
+      ".csdlc/requests/5762"
+    ],
+    "purpose": "Fix terminal SOR validation repair tests to use deterministic temporary authority"
+  },
+  "initial": {
+    "title": "[v0.91.8][csdlc-v2][tests] Make terminal repair fixtures independent of live issue claims",
+    "slug": "terminal-sor-validation-fixtures",
+    "version": "v0.91.8",
+    "goal": "Make the C-SDLC v2 terminal SOR validation repair tests independent of mutable tracked issue active-claim state.",
+    "required_outcome": "The three terminal SOR validation repair tests synthesize deterministic issue-local repair authority in their temporary repository and pass when the terminal target is closed_out and claim-free.",
+    "declared_scope": [
+      "csdlc-v2/src/store.rs test fixture construction",
+      "issue-local lifecycle and evidence for #5762"
+    ],
+    "authority_boundary": [
+      "typed C-SDLC v2 binaries own lifecycle state",
+      "no production lifecycle semantic change",
+      "no dependency on /private/tmp",
+      "no dependency on #5613 retaining an active claim"
+    ],
+    "operator_constraints": [
+      "work only in /Volumes/FastWork/adl-wp-5762",
+      "do not write tracked files on primary main",
+      "publish a ready PR with Closes #5762",
+      "do not block on post-merge typed closeout"
+    ],
+    "task_boundary": "Repair only the terminal SOR validation fixture authority setup and any directly necessary issue-local records.",
+    "deliverables": [
+      "deterministic temporary repair authority in store.rs tests",
+      "three focused terminal SOR validation repair tests passing together",
+      "full locked all-target csdlc-v2 tests passing",
+      "strict Clippy and diff hygiene evidence",
+      "ready PR closing #5762"
+    ],
+    "acceptance_criteria": [
+      "AC-1: No terminal SOR validation repair test borrows active-claim truth from #5613 or another mutable tracked issue projection.",
+      "AC-2: The three terminal SOR validation repair tests pass together.",
+      "AC-3: The full locked all-target C-SDLC v2 test suite passes.",
+      "AC-4: Strict Clippy and git diff hygiene pass.",
+      "AC-5: A bounded gpt-5.5 review finds no actionable issue before publication.",
+      "AC-6: The PR body includes Closes #5762."
+    ],
+    "dependencies": [
+      "current origin/main at 57d115741f32b945217ee3cb14188b41ebde9b3f"
+    ],
+    "repo_inputs": [
+      "GitHub issue #5762",
+      "csdlc-v2/src/store.rs"
+    ],
+    "non_goals": [
+      "production lifecycle semantic change",
+      "terminal repair control-plane redesign",
+      "closeout blocking",
+      "work outside the issue worktree"
+    ],
+    "plan_summary": "Bind #5762, repair the store.rs terminal SOR validation fixture authority setup, validate focused and full C-SDLC v2 lanes, run bounded review, publish a ready PR, and shepherd it green.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Initialize and bind #5762 in the issue worktree.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Repair the terminal SOR validation fixture authority setup.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused tests, full locked all-target C-SDLC v2 tests, strict Clippy, and diff hygiene.",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run bounded gpt-5.5 review, fix findings, publish ready PR, and shepherd checks green.",
+        "acceptance_ids": ["AC-5", "AC-6"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Production terminal repair semantics remain unchanged.",
+      "Temporary test authority is deterministic and issue-local.",
+      "Closed_out targets remain claim-free."
+    ],
+    "risks": [
+      "Fixture copied from live tracked records can drift as issues close out.",
+      "A broad repair could accidentally weaken production active-claim authorization."
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "typed lifecycle claim collision",
+      "focused terminal SOR validation tests fail after fixture repair",
+      "full locked all-target C-SDLC v2 tests fail with an in-scope regression",
+      "bounded review finds actionable issues"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "focused-terminal-sor-validation",
+        "proof_role": "Runs the three terminal SOR validation repair tests together.",
+        "acceptance_ids": ["AC-1", "AC-2"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 240,
+        "budget_tokens": 1000,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "csdlc-v2/Cargo.toml",
+          "--test",
+          "store",
+          "terminal_sor_validation_repair"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "csdlc-v2-all-target-tests",
+        "proof_role": "Full locked all-target C-SDLC v2 regression suite.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 1000,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "csdlc-v2/Cargo.toml",
+          "--all-targets"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "strict-clippy",
+        "proof_role": "Strict lint proof for the C-SDLC v2 touched surface.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 1000,
+        "argv": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "csdlc-v2/Cargo.toml",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed, preserve artifacts, and report the typed blocker without widening scope.",
+    "review_prompts": [
+      "Verify the terminal SOR validation repair tests synthesize deterministic authority rather than depending on #5613 active-claim truth.",
+      "Verify production terminal SOR validation repair semantics are unchanged.",
+      "Verify focused/full tests and strict Clippy evidence match the requested scope."
+    ],
+    "review_scope": "csdlc-v2/src/store.rs test fixture repair and #5762 issue-local lifecycle/evidence"
+  }
+}

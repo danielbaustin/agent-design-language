@@ -1,0 +1,405 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5678,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "a8929912340773ff014f08e9b4e54d53b2c977b1ed4edf0a117ef744c9f37f9b",
+  "phase": "closed_out",
+  "generation": 10,
+  "digest": "bd40a70a8c499e5a53903fb1e9673792696b6b6dcedc2dcc39a317e11f04f5aa",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex:final-head-review-5678",
+    "scope": [
+      "docs/tooling/OPUS_REVIEW_RUNBOOK.md",
+      "adl/tools/test_opus_review_runbook.sh"
+    ],
+    "reviewed_revision": "git-blake3:90165c6ee1f4bed18820731efd7326dbab4a6669:9b8933e76f117fbc20c8113a1917315f555287427dd8754621e2c16d91128f9d",
+    "findings": [],
+    "residual_risks": [
+      "The ignored operator-local .adl/docs/TBD mirror remains outside the tracked canonical runbook and is not updated or claimed by this issue closeout."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "policy": "final merged head changed no issue-5678 product-scope files after the stale published revision; fresh exact-head review was still performed and recorded.",
+      "from_revision": "git-blake3:17c5f711caaca2273068317377c67e03d00919a4:14d3a88d5fc05b3a355813e4a598eab23f18bc70340fe2c9bed04071168943f8",
+      "to_revision": "git-blake3:90165c6ee1f4bed18820731efd7326dbab4a6669:9b8933e76f117fbc20c8113a1917315f555287427dd8754621e2c16d91128f9d",
+      "from_commit": "17c5f711caaca2273068317377c67e03d00919a4",
+      "to_commit": "90165c6ee1f4bed18820731efd7326dbab4a6669",
+      "changed_paths": []
+    }
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5678,
+    "pull_request": 5685,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5685",
+    "base": "main",
+    "head": "codex/5678-opus-review-runbook",
+    "revision": "git-blake3:90165c6ee1f4bed18820731efd7326dbab4a6669:9b8933e76f117fbc20c8113a1917315f555287427dd8754621e2c16d91128f9d",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5685,
+    "head_sha": "90165c6ee1f4bed18820731efd7326dbab4a6669",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865563392"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865363721"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337660"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337463"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337313"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337649"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337496"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865312383"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337529"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337596"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337445"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337735"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337311"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337132"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337479"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229384853/job/89865337470"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5685,
+    "disposition": "merged",
+    "observed_sha": "90165c6ee1f4bed18820731efd7326dbab4a6669",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5678.json",
+    "released_branch": "codex/5678-opus-review-runbook",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5678",
+      ".csdlc/prepared/issues/5678",
+      ".csdlc/publication/5678.intent.json"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5678/retained/design.md",
+  "diagram_path": ".csdlc/issues/5678/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5678",
+      "revision": "a495000977ebfb479c685463ea410aca58567690f653a268cc32b43281d91d48"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "5f265cdf4f65a0a5423128a624d42780958043fcb98ea2dddd35d95938889565",
+      "rendered_digest": "faa47f2d0ae17873882a598895a45032c0ea7c7db76c1b9e3411fd64dedb9322",
+      "ast_digest": "915281c92a70e03260aba7d012faf3a263dbba6668d6e2781b4ef1ade5b57141"
+    },
+    "stp": {
+      "values_digest": "b292b5ef679bc4db7ec0f2c615b62a9a2f74f266d1f6b8e871fd45611264790b",
+      "rendered_digest": "b0ac5e917693b4b9262b66c912e5a93edea8edc6863045d8e0d8df3d7f167b23",
+      "ast_digest": "ca444edc344be37a3af5e319f4d19d132b4aee5de753b993902803f2858a9285"
+    },
+    "spp": {
+      "values_digest": "f1954ffe872c9b281a75f9c5477d26e6e3d49060910a575c917f46fbe9bdaed8",
+      "rendered_digest": "480f55d6f9073dd894640b7f36786f7bf5108d51e8c66cc2a35586b47483ca08",
+      "ast_digest": "1fe3cdc361329e072b943ab3dccc79b08be3c04aed45ba8eecf79674b1fcb3f7"
+    },
+    "vpp": {
+      "values_digest": "b9eabd33fe3dd8af84d85cd7aac878c6f255cac815c3f81dfb265c18fa3211d6",
+      "rendered_digest": "975bd900a0507e716800b9465e44bff047605ab6d9be6db1cfd7ee4cf86299cf",
+      "ast_digest": "8f853582b746b1b3a1949468cf122b88fb70464a8bd94cc886b68fa7e4f6cd7e"
+    },
+    "srp": {
+      "values_digest": "7d1843968775f05e7d16de45af4e1f227506fe4ff6fc5b7dc348e6ee9578afa8",
+      "rendered_digest": "de4fe2048c39a471a5ad53d75c541e1869a70749a3d6fe5f536305ff702be6bb",
+      "ast_digest": "cd6a4db091b8ff7954559ce9e08517a95d528019311f9a33db8fa26bf3f6db1b"
+    },
+    "sor": {
+      "values_digest": "e9d76ccb26dd55b85dc6612050fadc300d735c732d390926aaac8148c8610c3c",
+      "rendered_digest": "5d5c730dd9791735e5e98889d60f42e15b9a3e2aeb38f5ee203764ee60a4c9f2",
+      "ast_digest": "52ef2112c0717019ae19eadcd33716b4701fb53ef765c931776351f55fe4b5ee"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "Exact scoped review passed with no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "Recover stale review/publication truth before recording a bounded fresh exact-head review for merged PR #5685 at 90165c6ee1f4bed18820731efd7326dbab4a6669."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "Exact scoped review passed with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:issue-5678-opus-review-runbook",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "subagent:/root/closeout_missing_records",
+      "reason": "Revoke the five-day-stale #5678 execution claim after confirming the owning Codex task is archived, no matching live session-ledger entry exists, no live agent owns it, and the registered issue worktree has had no lifecycle activity since 2026-07-26; terminal closeout remains blocked by independent exact-head findings.",
+      "operation": "{\"claim_id\":\"claim-5678-opus-review-runbook\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5748\",\"previous_owner\":\"codex:issue-5678-opus-review-runbook\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "Reacquire a supported typed v2 closeout claim after operator-confirmed merged PR #5685 and dormant claim release.",
+      "operation": "{\"branch\":\"codex/5678-opus-review-runbook\",\"claim_id\":\"claim-5678-terminal-closeout\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:issue-5678-terminal-closeout\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5678\",\".csdlc/prepared/issues/5678\",\".csdlc/publication/5678.intent.json\"],\"purpose\":\"Record readiness and terminal closeout for merged issue #5678 without pruning.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "Release the temporary closeout claim because typed readiness and merged-publication reconciliation failed closed on stale exact-head review truth.",
+      "operation": "{\"claim_id\":\"claim-5678-terminal-closeout\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-instruction:issue-5678-closeout\",\"previous_owner\":\"codex:issue-5678-terminal-closeout\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 4,
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "Reacquire a supported typed v2 closeout claim after operator-confirmed merged PR #5685 and dormant claim release.",
+      "operation": "{\"branch\":\"codex/5678-opus-review-runbook\",\"claim_id\":\"claim-5678-terminal-closeout\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:issue-5678-terminal-closeout\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5678\",\".csdlc/prepared/issues/5678\",\".csdlc/publication/5678.intent.json\"],\"purpose\":\"Record readiness and terminal closeout for merged issue #5678 without pruning.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 5,
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "Recover stale review/publication truth before recording a bounded fresh exact-head review for merged PR #5685 at 90165c6ee1f4bed18820731efd7326dbab4a6669.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 6,
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 7,
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 8,
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 16,
+      "generation": 9,
+      "actor": "codex:issue-5678-terminal-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the authentic released terminal receipt into the v0.91.8 aggregate inventory.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

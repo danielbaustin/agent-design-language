@@ -1,0 +1,13 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "6dace83331d7c0da700465732ffe05328546b6877995f41d1a1dda3e48f0865c",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Advance #5764 after implementation, pre-PR review fixes, and full Runtime v3 validation passed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

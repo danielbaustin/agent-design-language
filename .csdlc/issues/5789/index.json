@@ -1,0 +1,300 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5789,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "0274649686750df6cdc2aa61accd93b232732ab3ce4adbb5d37248345ada7e7d",
+  "phase": "published",
+  "generation": 14,
+  "digest": "e2cbdf984ae1209f78c5712e74aee0718ae51122074b12bbf8371bf9c7ff3447",
+  "claim": {
+    "id": "claim-5789-observatory-full-functionality",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 14,
+    "acquired_unix_seconds": 1785778104,
+    "expires_unix_seconds": 1786382904,
+    "heartbeat_unix_seconds": 1785778104,
+    "branch": "codex/5789-observatory-full-functionality",
+    "worktree": "/Volumes/FastWork/adl-wp-5789",
+    "protected_paths": [
+      ".csdlc/evidence/5789",
+      ".csdlc/issues/5789",
+      ".csdlc/locks/5789.lock",
+      ".csdlc/prepared/issues/5789",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/openapi_contract.rs",
+      "adl/src/csm_resident_agents.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/csm_shepherd_agent.rs",
+      "adl/tools/demo_runtime_v3_observatory.sh",
+      "adl/tools/test_html_observatory.sh",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "adl/tools/validate_v0917_html_observatory.py",
+      "demos/html-observatory/README.md",
+      "demos/html-observatory/app.js",
+      "demos/html-observatory/index.html",
+      "demos/html-observatory/package.json",
+      "demos/html-observatory/runtime-v3.config.json",
+      "demos/html-observatory/tests",
+      "docs/api/runtime-v3/v1/observatory.openapi.json",
+      "docs/api/runtime-v3/v1/openapi.json",
+      "docs/milestones/v0.91.8/review/observatory_5789"
+    ],
+    "purpose": "Make the HTML Observatory fully functional against Runtime v3, including live feed truth, controls, and governed operator-to-agent communication."
+  },
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:019fc8d7-953f-7ce2-955a-6d37472ba725:Zeno",
+    "scope": [
+      "adl-runtime-kernel/tests/control.rs"
+    ],
+    "reviewed_revision": "git-blake3:2ca94d91435d0a02a2782c730ead577d1ebc21fa:dffa06ba107bc51299842b74c4c8805f899c920b81f866484ed43b4298df3417",
+    "findings": [],
+    "residual_risks": [
+      "Review scope is the post-publication rustfmt repair delta; prior exact-head review by Sartre covered the substantive Runtime v3 Observatory implementation at c060ef20927081c2547f58a845c6b2ba50c66504.",
+      "GitHub run 30839953140 was cancelled after adl-rust-fmt-clippy failed, so stale pending coverage and slow-proof jobs were stopped before the repaired head was published."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5789,
+    "pull_request": 5792,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5792",
+    "base": "main",
+    "head": "codex/5789-observatory-full-functionality",
+    "revision": "git-blake3:3505efe1c5c76ebe85ccbf678c3795b66d418488:fd33b99b853d209f0a387411936a9c10a4d8f964859b165de140961f8af57823",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5789/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5789/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:live-observatory-audit-20260803",
+      "revision": "3d0324231826480c8d72f2a7c03787b7c4746e123f83f559eadc67d21ffb4a91"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "f858b5ea3ed54e532b1d4ababdfc42fa8f98c1533f0f9d1ca8b21bb6c5eeb35c",
+      "rendered_digest": "3c6af59e40d58617dc080a68f10af7b97cd9eaba42cc3e735ae9c255455f1a7e",
+      "ast_digest": "f1c2ad71a3a93304cca97666fd7459576f2d0ad93e13545aa33af55a64db41f0"
+    },
+    "stp": {
+      "values_digest": "eaf38c26438296f280abe7c71e167c3e46be85565cee08aa1f9093a5967db7db",
+      "rendered_digest": "e1e16e3500d5449f64e5bfa9d1c59f1d26063998b59fb556ae06b1b212be7d2c",
+      "ast_digest": "bb3022f749ddd44a47df43f8c6226d414d62b300dda687f4e0974e9ba2a8cb61"
+    },
+    "spp": {
+      "values_digest": "e6e68b4a0103cf68c7b3bf8a0f1fbf230e7e6cd4dba8561dbd82bdb5edd82c29",
+      "rendered_digest": "9e2eac76c47ac9c92dc07664c202946dcfa79b82e083dbe7aaef2a483386d812",
+      "ast_digest": "4448fce4b387310e116c0eb3018543392003147825ebfd15081bed5d3074c5ae"
+    },
+    "vpp": {
+      "values_digest": "ce0b770715d0f607f3cbcb1b5be53af6431322407082d25988cfec2c39135724",
+      "rendered_digest": "d85325f158f6dd3728d71986ecee8ab55216acda124fd0c733a56212d1d26ff7",
+      "ast_digest": "31ae69b7fd4f84cf1622f339ef76b3dbccad35f0717778feb37df3e3ebf8a7dd"
+    },
+    "srp": {
+      "values_digest": "15186975464770ef9b093020fe8717d932fae0bb55dcd8194da88340b03694ed",
+      "rendered_digest": "dd3afd3ebd201258cef969e3d469cbe10b4c6c98073ed45c0a76f264067fbbf0",
+      "ast_digest": "32fd4d5678a3638582a7b2659fe83ec9a303ba596f82411cf5a0bffb81f614c7"
+    },
+    "sor": {
+      "values_digest": "de4733e0b33fb73617b0db370e148703b160a784e98c5f217fd96a57bd46eb5e",
+      "rendered_digest": "11cafb6fd53973c668c934e18294ecc54a839c23bdd6f6dbe54bb3f0ff5d552c",
+      "ast_digest": "40f7b30625b1df7df266ea4eb0a50c4bffa6c87e12d0052c45414ef07390cc0a"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Doctor reports #5789 is structurally ready; enter bound implementation preparation before scoped product edits."
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Bind #5789 implementation work to the existing FastWork worktree and branch before product/runtime edits."
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Runtime v3 HTML Observatory implementation and focused validation are complete; enter exact-head review before publication."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover published review after GitHub adl-rust-fmt-clippy found rustfmt-only formatting drift in adl-runtime-kernel/tests/control.rs."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Doctor reports #5789 is structurally ready; enter bound implementation preparation before scoped product edits.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 2,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Bind #5789 implementation work to the existing FastWork worktree and branch before product/runtime edits.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"bound\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Protect the Runtime v3 control route, focused runtime tests, and API contracts required to make browser operator-to-agent communication actually work from the HTML Observatory.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"docs/api/runtime-v3/v1/openapi.json\",\"docs/api/runtime-v3/v1/observatory.openapi.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Protect the Runtime v3 OpenAPI route-inventory test that must track the new browser CORS preflight on /v1/control.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/openapi_contract.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Protect the existing HTML Observatory integrated-proof validator so it can assert the new Runtime v3 default feed and signed /v1/control browser behavior.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/validate_v0917_html_observatory.py\",\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record the Runtime v3 HTML Observatory implementation before focused validation and exact-head review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Made the HTML Observatory default to the configured Runtime v3 API base, keep retained/loopback CSM fallback truth, render live Runtime v3 GET snapshots when WSS is unavailable, and submit signed operator-to-agent commands through the Runtime v3 /v1/control browser endpoint.\",\"changes\":[\"Added browser CORS preflight and CORS/no-store response headers for Runtime v3 /v1/control.\",\"Documented and route-tested OPTIONS /v1/control in the Runtime v3 OpenAPI contract.\",\"Updated the Observatory browser app/config/UI to use Runtime v3 by default, preserve csmApiBase compatibility, and POST signed adl.runtime.control_command.v1 envelopes to /v1/control.\",\"Updated the Observatory README, integrated validator, and focused JS proof to reflect Runtime v3 default read and signed control behavior.\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/tests/openapi_contract.rs\",\"docs/api/runtime-v3/v1/openapi.json\",\"demos/html-observatory/app.js\",\"demos/html-observatory/index.html\",\"demos/html-observatory/runtime-v3.config.json\",\"demos/html-observatory/README.md\",\"adl/tools/test_html_observatory.sh\",\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\",\"adl/tools/validate_v0917_html_observatory.py\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record the dedicated checked-in HTML Observatory Runtime v3 browser contract proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_html_observatory.sh\"],\"purpose\":\"Prove the checked-in HTML Observatory defaults to Runtime v3, reads the configured https://localhost:20997 base, checks Runtime v3 events through /v1/observatory, posts signed adl.runtime.control_command.v1 envelopes to /v1/control, and rejects credentialed/wrong-schema inputs.\",\"outcome\":\"passed\",\"evidence_ref\":\"commentary: PASS: HTML Observatory Runtime v3 default, event check, and signed command POST contract\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record the existing integrated HTML Observatory proof after it was updated to write #5789-local evidence and prove Runtime v3 default/signed-control truth.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target\",\"bash\",\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\"],\"purpose\":\"Validate checked-in HTML/CSS/JS/README/config, retained Observatory evidence, Runtime v3 browser config, shared localhost certificate proof, Runtime v3 public read freshness, and Observatory WSS public-read/write-login behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5789/shared-localhost-certificate/fingerprints.log\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record focused Runtime v3 Rust proof for browser control CORS and OpenAPI route inventory.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target\",\"cargo test --manifest-path adl-runtime-kernel/Cargo.toml observatory_cors_allows_only_configured_origins_and_reports_canonical_port --test control -- --nocapture\",\"cargo test --manifest-path adl-runtime-kernel/Cargo.toml openapi_paths_match_current_runtime_v3_axum_route_inventory --test openapi_contract -- --nocapture\"],\"purpose\":\"Prove configured-origin CORS and no-store behavior for Runtime v3 browser POST/OPTIONS /v1/control, signed command execution/error surfaces, forbidden-origin rejection, and OpenAPI documentation parity with the production Axum route inventory.\",\"outcome\":\"passed\",\"evidence_ref\":\"commentary: both focused Rust commands passed with CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Runtime v3 HTML Observatory implementation and focused validation are complete; enter exact-head review before publication.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record the fix for the pre-PR review finding that Runtime v3 event checks returned a nested event shape the UI normalizer dropped.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash adl/tools/test_html_observatory.sh\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target bash adl/tools/test_v0917_html_observatory_integrated_proof.sh\"],\"purpose\":\"Prove Runtime v3 event checks now return a UI-normalizable event array, preserve signed /v1/control proof, and keep the integrated Observatory proof passing after the review fix.\",\"outcome\":\"passed\",\"evidence_ref\":\"commentary: both commands passed after flattening Runtime v3 event-check shape\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Recover published review after GitHub adl-rust-fmt-clippy found rustfmt-only formatting drift in adl-runtime-kernel/tests/control.rs.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Record post-publication CI fmt repair validation before exact re-review.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml -- --check\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings\",\"bash adl/tools/test_html_observatory.sh\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target cargo test --manifest-path adl-runtime-kernel/Cargo.toml observatory_cors_allows_only_configured_origins_and_reports_canonical_port --test control -- --nocapture\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target cargo test --manifest-path adl-runtime-kernel/Cargo.toml openapi_paths_match_current_runtime_v3_axum_route_inventory --test openapi_contract -- --nocapture\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target bash adl/tools/test_v0917_html_observatory_integrated_proof.sh\"],\"purpose\":\"Prove the rustfmt-only repair resolves the failed GitHub adl-rust-fmt-clippy lane while preserving Runtime v3 Observatory browser contract, CORS/OpenAPI route parity, and integrated localhost proof.\",\"outcome\":\"passed\",\"evidence_ref\":\"commentary: all six commands passed locally after cargo fmt; generated localhost certificate proof byproducts were restored before review so the branch remained clean aside from intended source/lifecycle changes\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

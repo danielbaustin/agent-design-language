@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5362,
+  "expected_generation": 12,
+  "expected_digest": "768beaf56e944929039d4b4e48a5561734371ee929d097ef559959a9ab18eabf",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:wp21-conductor",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5362-v0918-preparation",
+  "title": "[v0.91.8][WP-21] Align feature list and v0.92 planning truth",
+  "body": "Closes #5362\n\n## Summary\n- reconciles the canonical feature list with the completed WP-21 child tracks\n- aligns v0.91.8 proof coverage, activation mapping, and next-milestone handoff truth\n- preserves explicit non-claims for v0.92 execution, first-birthday readiness, and Adaptive Learning implementation\n\n## Validation\n- typed C-SDLC doctor PASS at implemented generation 10\n- 122-row feature crosswalk PASS\n- v0.91.8 proof matrix, YAML/JSON parsing, changed-doc links, and diff hygiene PASS\n- bounded GPT-5.5 exact-revision review PASS with zero blockers",
+  "draft": false,
+  "token_file": null
+}

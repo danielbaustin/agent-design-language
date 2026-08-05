@@ -1,0 +1,56 @@
+{
+  "issue": 5344,
+  "expected_generation": 9,
+  "expected_digest": "eb317606cf42b6f72ff80cf45a13c196d9efe174be307c0357f9f032b122b7d6",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "evidence": {
+    "reviewer": "subagent:019fac48-c04a-70f1-8a0e-fca1cb4af863",
+    "scope": [
+      ".csdlc/issues/5344",
+      ".csdlc/evidence/5344",
+      ".csdlc/prepared/issues/5344",
+      "adl-runtime",
+      "adl-runtime-kernel",
+      "adl-v2/tools/prove-rollback.sh",
+      "adl-v2/tools/run-soak.sh",
+      "docs/milestones/v0.91.8/evidence/wp12",
+      "infra/horust",
+      "infra/runtime-v3/runtime-init.toml",
+      "infra/rustysd",
+      "infra/systemd"
+    ],
+    "reviewed_revision": "git-blake3:c4e8c18b11934ed4eebc02953772e66a05dc9e1c:b6faaee449d226982a628339826340debb51092214de1b8e9e18eaa089b189d0",
+    "findings": [],
+    "residual_risks": [
+      "The retained 10,000-cycle, 100-by-10-second, and 10-by-600-second platform runs were verified rather than rerun during review.",
+      "Issue #5344 proves selector rollback with a v1 fixture; issue #5343 owns real retained-v1 executable restoration.",
+      "Runtime v1 and Runtime v2 remain installed rollback surfaces, the default remains unchanged, and legacy deletion is not authorized."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "policy": "metadata_only_review_projection",
+      "from_commit": "8831d7bd2844f81457a50d5780e73eb0c0776764",
+      "to_commit": "c4e8c18b11934ed4eebc02953772e66a05dc9e1c",
+      "from_revision": "git-blake3:8831d7bd2844f81457a50d5780e73eb0c0776764:b0303764ad1a0f1fd7f7ecbb6f16bb3bd1b745c6a02330664d291d1a6d463e79",
+      "to_revision": "git-blake3:c4e8c18b11934ed4eebc02953772e66a05dc9e1c:b6faaee449d226982a628339826340debb51092214de1b8e9e18eaa089b189d0",
+      "changed_paths": [
+        ".csdlc/issues/5344/audit.jsonl",
+        ".csdlc/issues/5344/cards/sip.values.json",
+        ".csdlc/issues/5344/cards/sor.md",
+        ".csdlc/issues/5344/cards/sor.values.json",
+        ".csdlc/issues/5344/cards/spp.values.json",
+        ".csdlc/issues/5344/cards/srp.md",
+        ".csdlc/issues/5344/cards/srp.values.json",
+        ".csdlc/issues/5344/cards/stp.values.json",
+        ".csdlc/issues/5344/cards/vpp.values.json",
+        ".csdlc/issues/5344/index.json",
+        ".csdlc/prepared/issues/5344/advance-reviewed-after-final-review.json",
+        ".csdlc/prepared/issues/5344/assign-final-review.json",
+        ".csdlc/prepared/issues/5344/record-final-review.json",
+        ".csdlc/prepared/issues/5344/recover-final-handoff-review.json",
+        "docs/milestones/v0.91.8/evidence/wp12/cutover-handoff-5344.v1.json"
+      ]
+    }
+  }
+}

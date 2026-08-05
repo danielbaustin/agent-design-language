@@ -1,0 +1,19 @@
+{
+  "issue": 5655,
+  "expected_generation": 21,
+  "expected_digest": "ac151b5463aaa4497e88694a897323f0b3b266a4c65acb55b67c55bc7fc7ecdc",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5660,
+  "required_checks": [
+    "adl-ci",
+    "adl-coverage",
+    "adl-coverage-hosted",
+    "adl-path-policy",
+    "adl-tooling-contracts",
+    "csdlc-v2-standalone"
+  ],
+  "require_review": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

@@ -1,0 +1,24 @@
+{
+  "issue": 5355,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "058d8ef87c03ddac2f3a7a35e25a5c38a76897445b552ee36584791002e739a6",
+  "claim_id": "claim-5355-v0918-preparation",
+  "actor": "codex:5355-preparation-owner",
+  "reason": "Record request-driven typed validation result for the #5355 preparation packet.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate",
+        "--root",
+        ".",
+        "--request",
+        ".csdlc/prepared/issues/5355/validate-prep-request.json"
+      ],
+      "purpose": "Request-driven typed PVF validation for #5355 preparation packet.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5355/prep-validation/csdlc-doctor-5355.log"
+    }
+  }
+}

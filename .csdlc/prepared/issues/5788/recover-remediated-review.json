@@ -1,0 +1,8 @@
+{
+  "issue": 5788,
+  "expected_generation": 3,
+  "expected_digest": "db13c95a936627176337b4e5396c4dc0cd33f3b39d3293f77e4efcd56aedd9d0",
+  "claim_id": "claim-5788-lockfile-preservation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover the stale review assignment after all exact-head findings were fixed and committed."
+}

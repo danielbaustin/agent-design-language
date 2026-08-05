@@ -1,0 +1,24 @@
+{
+  "issue": 5360,
+  "card": "stp",
+  "expected_generation": 8,
+  "expected_digest": "8c055f9f9c4539d02df0bb9241486c38ebc9b8701001e12cc21d5e71b02f5b3f",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Replace obsolete terminal-receipt deliverables with the exact merge-and-quality execution gate.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "deliverables",
+    "values": [
+      "all six current-registry issue-specific typed cards",
+      "reviewed documentation alignment design and Mermaid diagram",
+      "exact collision-free documentation claim and audited update inventory",
+      "executable #5351 merge, quality-pass, and ancestry gate",
+      "zero-new-dependency COTS posture, documentation claim taxonomy, and owner-boundary model",
+      "LoC, module, assertion, time, token, and PVF budgets",
+      "one bounded exact-revision pre-PR review with every actionable finding fixed",
+      "exact-revision alignment packet, blocker register, post-merge proof, and merge-gated WP-18 release"
+    ]
+  },
+  "fail_after_backup": false
+}

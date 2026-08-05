@@ -1,0 +1,25 @@
+{
+  "issue": 5357,
+  "claim_id": "claim-5357-v0918-wp19-review-readiness",
+  "expected_generation": 2,
+  "expected_digest": "5acc2a4c297fcbaea8087c24927354b82191444805ad096f2283b673c5a94caf",
+  "now_unix_seconds": 1785810910,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Refresh every non-overlapping canonical v0.91.8 release-review document after WP-18 and residual coding; README.md, the canonical inventory, and the next-milestone handoff remain owned by the active #5791 lane and will be integrated from main after that lane lands.",
+  "add_protected_paths": [
+    "CHANGELOG.md",
+    "docs/README.md",
+    "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
+    "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md",
+    "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_EXECUTION_READINESS_v0.91.8.md",
+    "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/review/README.md",
+    "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_5356.md"
+  ]
+}

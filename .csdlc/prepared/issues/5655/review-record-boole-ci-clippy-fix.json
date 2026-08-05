@@ -1,0 +1,23 @@
+{
+  "issue": 5655,
+  "expected_generation": 18,
+  "expected_digest": "dc7a5e116188d18ceaf9c0311b27872a66ba8fe37cf899034f7ea7562406ea49",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "evidence": {
+    "reviewer": "Boole",
+    "scope": [
+      "csdlc-v2/src/github.rs",
+      ".csdlc/issues/5655/index.json",
+      ".csdlc/issues/5655/cards/sor.md",
+      ".csdlc/issues/5655/cards/srp.md"
+    ],
+    "reviewed_revision": "git-blake3:1eb3e59819222fe59a590abbbc3b18bbe19643d1:3e0ffb11a77571d35b2c1d0a65dde2b0ecba9be381994fcdd52ef0df40434435",
+    "findings": [],
+    "residual_risks": [
+      "Review was read-only and did not rerun tests; validation evidence is the implementation owner strict Clippy, focused gate, and full suite run recorded in SOR."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

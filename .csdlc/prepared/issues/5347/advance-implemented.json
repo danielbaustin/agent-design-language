@@ -1,0 +1,14 @@
+{
+  "issue": 5347,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "24dc38e346c06cfd833e6c13acdfe5c22ab47b1f4dc0d702f9ebe9585444fa1d",
+  "claim_id": "claim-5347-external-band-deletion",
+  "actor": "codex:5347-execution-owner",
+  "reason": "The scoped #5347 external-band deletion is implemented and focused validation is recorded; ready for the single bounded pre-PR review.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

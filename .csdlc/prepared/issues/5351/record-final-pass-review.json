@@ -1,0 +1,23 @@
+{
+  "issue": 5351,
+  "expected_generation": 18,
+  "expected_digest": "7404e9d0ddbdc518b1064953ae549205b96a7f920182fe5fb8557b0e160096fe",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "evidence": {
+    "reviewer": "subagent:Darwin:019fbcd1-dee8-7682-8f2b-9f9261587524",
+    "scope": [
+      ".csdlc/prepared/issues/5351",
+      ".csdlc/evidence/5351",
+      ".csdlc/issues/5351",
+      "docs/milestones/v0.91.8/evidence/wp16"
+    ],
+    "reviewed_revision": "git-blake3:73e9aefe7c53dfad621e112480ee08e6816fd577:36a9fd064b8b8649ccd61a51b6e54da4538242f8c6ac135d1ec05e33a763764e",
+    "findings": [],
+    "residual_risks": [
+      "Typed closeout follows asynchronously after merge and does not block WP-17 activation."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

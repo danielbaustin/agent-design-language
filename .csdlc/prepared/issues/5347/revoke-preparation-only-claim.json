@@ -1,0 +1,11 @@
+{
+  "issue": 5347,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5347-release-only",
+  "expected_generation": 1,
+  "expected_digest": "580aac18edbaba07c154f7f949e390994b4c645a6fdca92a7eb2737da2ce797b",
+  "now_unix_seconds": 1785345900,
+  "actor": "codex:claim-hygiene",
+  "operator_authority": "operator-authorized:preparation-does-not-own-execution-paths",
+  "reason": "Release deferred WP-13 preparation ownership until execution actually starts"
+}

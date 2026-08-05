@@ -1,0 +1,8 @@
+flowchart LR
+  A["Closed v0.91.8 issue inventory"] --> B{"Valid retained receipt?"}
+  B -->|No| X["Explicit blocked inventory"]
+  B -->|Yes| C["Typed reconcile-terminal"]
+  C --> D["Tracked index, six cards, audit, retained artifacts"]
+  D --> E["Receipt equality and csdlc-doctor"]
+  E --> F["Independent aggregate review"]
+  F --> G["PR closing #5746"]

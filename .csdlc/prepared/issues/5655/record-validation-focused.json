@@ -1,0 +1,27 @@
+{
+  "issue": 5655,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "819db8c546864c5617f480a4c429bb54dbf5ea19dc354a33536db9d508aa5f53",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Record focused GitHub action regression proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "--test",
+        "gate_github_actions"
+      ],
+      "purpose": "Prove idempotent operation markers, fail-fast invalid input, and loopback GitHub issue/comment create/readback reconciliation.",
+      "outcome": "passed",
+      "evidence_ref": "6 passed, 0 failed with TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target"
+    }
+  },
+  "fail_after_backup": false
+}

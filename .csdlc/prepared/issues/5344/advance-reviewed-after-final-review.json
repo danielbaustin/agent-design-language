@@ -1,0 +1,13 @@
+{
+  "issue": 5344,
+  "card": "srp",
+  "expected_generation": 7,
+  "expected_digest": "5d9cb24196195f47a636295021778bec65ad7ebe2cc47b7c77e7dbcea42fb4c5",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Advance after the assigned exact review completed with no findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

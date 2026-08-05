@@ -1,0 +1,9 @@
+{
+  "schema": "adl.html_observatory.runtime_v3_config.v1",
+  "api_base": "https://localhost:20997",
+  "observatory_endpoint": "/v1/observatory",
+  "readiness_endpoint": "/v1/ready",
+  "observatory_websocket_endpoint": "/v1/observatory/ws",
+  "signed_command_endpoint": "/v1/control",
+  "observatory_docs_endpoint": "/v1/observatory/docs/"
+}

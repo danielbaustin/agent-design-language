@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5343,
+  "expected_generation": 18,
+  "expected_digest": "df7d9e16d43c2383eef00fb06e3a234f679a230ef005a10000e459749f0c6e57",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5343-v0918-wp12-reversible-default-switch",
+  "title": "[v0.91.8][WP-12][cutover] Execute reviewed reversible ADL default switch",
+  "body": "Closes #5343\n\nExecutes the reviewed reversible ADL v2 default switch after the merged #5344 soak and #5345 selector dependencies. The issue-local proof fresh-installs ADL v2, verifies and executes incumbent v1 0.91.7, exercises seven failure-preservation classes, selects and executes v2, restores the exact prior selector bytes and executes v1, then reselects v2 as the final default.\n\nThe retained rollback window is fourteen days with v1 preserved byte-for-byte, no legacy deletion authority, and no Runtime v2 edits. The complete transaction fault matrix, dependency ancestry, fresh-install identity, rollback, budget, doctor, and diff checks pass. The single bounded exact-revision review fixed both actionable findings and returned PASS with zero blockers.",
+  "draft": true,
+  "token_file": null
+}

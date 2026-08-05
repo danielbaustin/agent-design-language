@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5683,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][demo] Remediate flagship Observatory render artifacts and presentation proof",
+    "slug": "v0918-unity-observatory-visual-remediation",
+    "version": "v0.91.8",
+    "generation": 23
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Remove the visible rendering and composition defects from the flagship Unity Polis Observatory and publish direct visual proof.",
+      "required_outcome": "The intended FastWork Unity project plays the flagship scene without conspicuous cyan or green block artifacts, broken geometry, exposed voids, or uncontrolled exposure, while preserving the fixed truthful runtime shell.",
+      "declared_scope": [
+        "Flagship Observatory presentation camera, lighting, materials, particles, terrain, and architecture",
+        "Repository-owned Unity staging and validation code",
+        "Fixed Observatory operator shell regressions caused by visual remediation",
+        "Direct Unity-MCP Play Mode proof at 1920x1080 and 2560x1440",
+        "Issue-local proof index and anomaly evidence"
+      ],
+      "authority_boundary": [
+        "Issue 5683 owns only its issue-local lifecycle paths and the declared Unity Observatory source and proof paths",
+        "Licensed asset payloads remain operator-provisioned outside Git",
+        "Runtime v3 semantics from #5662 remain fail-closed and may not be widened without direct proof",
+        "Parent WP-15 #5354 consumes this proof but does not authorize unrelated release-tail work"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 lifecycle only",
+        "No tracked edits on main",
+        "Use the bound FastWork worktree and intended operator-provisioned Unity project",
+        "Use Unity-MCP or editor tools for scene mutation and proof",
+        "Use repository-installed binaries only",
+        "Do not build player or replacement owner binaries",
+        "Record every tooling anomaly in this issue or a named follow-up"
+      ]
+    }
+  }
+}

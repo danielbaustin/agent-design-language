@@ -1,0 +1,6 @@
+docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md:5:decision from the merged #4760 proof PR while preserving the bounded proof
+docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md:16:| Memory Palace context handoff architecture | #4760 PR #5740, #5007, WP-21 #5362 | 0058 | accepted from merged #4760 proof PR |
+docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md:23:record. ADR 0058 consumes its Memory Palace obligation using the merged #4760
+docs/adr/README.md:15:ADR 0052 through ADR 0058 record the architecture decisions accepted by the
+docs/adr/README.md:73:- `0058-memory-palace-context-handoff-architecture.md`
+docs/adr/README.md:77:- `0051-chronosense-and-memory-palace-adr-disposition.md` consumed by ADR 0058

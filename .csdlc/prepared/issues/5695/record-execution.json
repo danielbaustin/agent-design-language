@@ -1,0 +1,15 @@
+{
+  "issue": 5695,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "54fa34738664cac8e726737411b9fc1256ab9f9841c80347bdd7124d1a5f604c",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "reason": "Record bounded implementation before review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implement explicit GitHub mergeability-state normalization and preserve fail-closed pending behavior.",
+    "changes": ["Map Behind, Blocked, Clean, Dirty, Draft, HasHooks, Unstable, and Unknown explicitly", "Classify blocked, unstable, draft, and unknown as waiting; behind as stale_base; dirty as conflicted", "Add focused coverage for all supported mergeability variants and classification behavior"],
+    "artifacts": ["csdlc-v2/src/github.rs", ".csdlc/issues/5695/cards/sor.md"]
+  }
+}

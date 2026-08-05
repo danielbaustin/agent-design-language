@@ -1,0 +1,27 @@
+{
+  "issue": 4761,
+  "expected_generation": 0,
+  "expected_digest": "e82d693a4832702b87e1d266f09c8c30299a793a665d986d914a1ff7d3a49464",
+  "now_unix_seconds": 1785529995,
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Reacquire expired preparation claim for operator-authorized end-to-end #4761 capability-envelope execution in the existing /Volumes/FastWork worktree.",
+  "replacement": {
+    "id": "claim-4761-v0918-wp14-capability-envelope-execution",
+    "owner": "codex:gpt-5.5-execution-4761",
+    "generation": 0,
+    "acquired_unix_seconds": 1785529995,
+    "expires_unix_seconds": 1786134795,
+    "heartbeat_unix_seconds": 1785529995,
+    "branch": "codex/4761-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4761",
+      ".csdlc/prepared/issues/4761",
+      ".csdlc/evidence/4761/capability-envelope",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    ],
+    "purpose": "Execute #4761 to a reviewed, validated, published capability-envelope PR without merging."
+  }
+}

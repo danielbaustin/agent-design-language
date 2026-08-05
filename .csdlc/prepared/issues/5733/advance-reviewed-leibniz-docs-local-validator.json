@@ -1,0 +1,13 @@
+{
+  "issue": 5733,
+  "card": "srp",
+  "expected_generation": 9,
+  "expected_digest": "7cd702a425cf34fee2837a108242e8cc51adc51b495da4f16bdb392c0b5ddc63",
+  "claim_id": "claim-5733-demo-matrix-proof-coverage",
+  "actor": "codex:5733-execution",
+  "reason": "The bounded exact-head review confirmed the docs-local validator move keeps #5733 docs-only with no findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

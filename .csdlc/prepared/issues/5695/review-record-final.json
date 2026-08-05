@@ -1,0 +1,16 @@
+{
+  "issue": 5695,
+  "expected_generation": 6,
+  "expected_digest": "1b80f71a189a446a57d2cdade9af6d9afd66155466811c30f215a9918ee7b40e",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "evidence": {
+    "reviewer": "codex-subagent:review-5695",
+    "scope": ["csdlc-v2/src/github.rs", "csdlc-v2/src/merge.rs"],
+    "reviewed_revision": "git-blake3:9325a45f7906d50cf2d280c9211470fa10b69f67:69ac1b5709559a69a6af7acc19651d13e7933f01160cde6a8cdba607a2832b77",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

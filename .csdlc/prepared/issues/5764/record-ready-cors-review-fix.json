@@ -1,0 +1,22 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "964e6d3ac1cb467afa451b7bde28e1ae2ab4d4a659ac9b37ea294f74ee59b992",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record exact-head review fix for browser CORS access to Runtime v3 readiness.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Made /v1/ready browser-consumable from the configured Observatory origin.",
+    "changes": [
+      "Route /v1/ready through the Observatory CORS/preflight policy.",
+      "Reject unauthorized Origin headers for /v1/ready instead of returning an unreadable cross-origin response.",
+      "Add CORS regression coverage proving /v1/ready exposes Access-Control-Allow-Origin to the configured Observatory origin."
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs"
+    ]
+  }
+}

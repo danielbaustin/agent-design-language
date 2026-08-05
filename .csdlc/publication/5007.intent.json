@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5007,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5007-v0918-wp14-preparation",
+  "title": "[v0.91.8][WP-21] Accept Memory Palace ADR after ready proof",
+  "body": "Closes #5007\n\n## Summary\n- Adds ADR 0058 accepting Memory Palace as the deterministic long-running context handoff packet layer.\n- Grounds the decision in #4760's ready PR #5740 proof at head 94156d55d0a1f4bfda7ce32ac136437520325906.\n- Updates the ADR index and v0.91.8 ADR plan to point at ADR 0058 while preserving the earlier deferred ADR 0051 boundary.\n- Records a proof-to-claim table and #5007 lifecycle evidence.\n\n## Proof Boundary\n- #5740 is ready/non-draft evidence for #4760, not a merge or closeout claim.\n- #4760 remains separate runtime proof scope; this PR records the #5007 ADR decision outcome only.\n- This branch does not claim Memory Palace is merged to main.\n\n## Validation\n- `git diff --check` over #5007 C-SDLC, ADR, ADR index, and v0.91.8 ADR plan surfaces: PASS.\n- Source-boundary `rg` checks for #4760/#5740 proof language and non-merge claims: PASS.\n- ADR index/plan consistency `rg` checks: PASS.\n- `csdlc-validate finalize` with repaired v2 binary: PASS.\n- `csdlc-doctor --repo . --issue 5007`: PASS.\n\n## Review\n- Exact-head C-SDLC review recorded by `codex:exact-head-reviewer-5007`: PASS, no findings.\n- Reviewed revision: `git-blake3:a343a68176eac5ae15811c398e468748450acd72:e916963e3d8e29dba0cdb5a8cc6f1e502061fe2254f8c0ccf5f3ce050ae310a6`.\n- Final publication head adds metadata-only lifecycle projection on top of the reviewed revision.",
+  "draft": false,
+  "revision": "git-blake3:5db04855d6b94ecadc7248176ae254385c8091fe:95e75fd52d8528d115bedffd7aa74ea0c64b207dcf752d1178beb75480b0acf9",
+  "commit_sha": "5db04855d6b94ecadc7248176ae254385c8091fe"
+}

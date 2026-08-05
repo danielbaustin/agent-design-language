@@ -1,0 +1,19 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "348e9ea97307fc8dc5f42e9edbfb6d4b865d88f6dcffa0b1fe98ffd610eb859d",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Update SPP invariants for execution truth.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "invariants",
+    "values": [
+      "Capability claims must map to retained evidence in the #4761 source inventory.",
+      "Unsupported claims remain explicit non-claims or blockers.",
+      "The envelope is a pre-v0.92 consumed input and does not claim birthday execution, Memory Palace completion, governance completion, or production authority."
+    ]
+  },
+  "fail_after_backup": false
+}

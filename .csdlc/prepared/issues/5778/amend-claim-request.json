@@ -1,0 +1,13 @@
+{
+  "issue": 5778,
+  "claim_id": "claim-5778-derived-terminal-finish",
+  "expected_generation": 0,
+  "expected_digest": "459e50edf097b53c35fa10aa4cfc1fcb8d5d5c5ad51d8af05152618459ed1543",
+  "now_unix_seconds": 1785697058,
+  "actor": "codex:5778-implementation",
+  "reason": "Include exact-head GitHub review normalization and its focused integration tests in the bounded finish implementation.",
+  "add_protected_paths": [
+    "csdlc-v2/src/github.rs",
+    "csdlc-v2/tests/gate_github_actions.rs"
+  ]
+}

@@ -55,7 +55,7 @@ package_version() {
 help_output="$(run_runtime --help)"
 assert_contains "adl-runtime - ADL runtime compatibility binary" "$help_output" "runtime help title"
 assert_contains "adl-runtime run <adl.yaml>" "$help_output" "runtime run help"
-assert_contains "C-SDLC issue work belongs to adl/tools/pr.sh run <issue>" "$help_output" "csdlc handoff help"
+assert_contains "C-SDLC issue work resolves through csdlc-install and the independent typed v2 binaries" "$help_output" "csdlc handoff help"
 
 run_help_output="$(run_runtime run --help)"
 assert_contains "adl-runtime run <adl.yaml>" "$run_help_output" "runtime run subcommand help"
@@ -77,14 +77,14 @@ issue_output="$(run_runtime run 3598 2>&1)"
 issue_status=$?
 set -e
 assert_status_nonzero "$issue_status" "runtime run issue id"
-assert_contains "C-SDLC issue work belongs to adl/tools/pr.sh run <issue>" "$issue_output" "runtime issue handoff"
+assert_contains "C-SDLC issue work resolves through csdlc-install and the independent typed v2 binaries" "$issue_output" "runtime issue handoff"
 
 set +e
 hash_issue_output="$(run_runtime run '#3598' 2>&1)"
 hash_issue_status=$?
 set -e
 assert_status_nonzero "$hash_issue_status" "runtime run hash-prefixed issue id"
-assert_contains "C-SDLC issue work belongs to adl/tools/pr.sh run <issue>" "$hash_issue_output" "runtime hash issue handoff"
+assert_contains "C-SDLC issue work resolves through csdlc-install and the independent typed v2 binaries" "$hash_issue_output" "runtime hash issue handoff"
 
 set +e
 pr_output="$(run_runtime pr run 3598 2>&1)"

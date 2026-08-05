@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5728,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][architecture][ADR] Record accepted milestone architecture decisions",
+    "slug": "v0-91-8-architecture-adr-record-accepted-milestone-decisions",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Record truthful typed lifecycle and terminal evidence for the already merged v0.91.8 ADR set.",
+      "required_outcome": "The existing merged documentation change is represented by exact validation, review, publication, and terminal evidence without altering its content or claims.",
+      "declared_scope": [
+        "Six accepted architecture decision records and their indexes",
+        "Issue-local C-SDLC v2 lifecycle evidence"
+      ],
+      "authority_boundary": [
+        "GitHub issue #5728",
+        "Merged PR #5729",
+        "Implementation head f62e36f1a70cae3adee71c715a3f5456df08f917"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use typed C-SDLC v2 only",
+        "Do not edit main",
+        "Do not change the merged documentation content",
+        "Do not widen the accepted architecture decisions or claim deferred Memory Palace work"
+      ]
+    }
+  }
+}

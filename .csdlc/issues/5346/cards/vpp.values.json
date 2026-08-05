@@ -1,0 +1,139 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5346,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-13][deletion] Delete final replaced ADL language compiler engine and CLI",
+    "slug": "v0918-wp13-final-adl-deletion",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "preparation-contract",
+          "proof_role": "Prove six cards, design/diagram, dependency/disjointness gates, protected paths, COTS, budgets, PVF, no-deferral, and clean-root boundaries",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-9",
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 3000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5346/validate-preparation.rb"
+          ],
+          "parallel_group": "preparation",
+          "defer_reason": null
+        },
+        {
+          "lane": "terminal-and-manifest-gate",
+          "proof_role": "Fail closed unless all terminal receipts are merged, claim-free, ancestral, rollback-valid, and both deletion manifests are disjoint",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 3000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5346/check-dependencies.rb"
+          ],
+          "parallel_group": "execution-gate",
+          "defer_reason": "Run when deletion execution is requested; it must fail closed while any dependency or manifest is incomplete"
+        },
+        {
+          "lane": "eligibility-before-deletion",
+          "proof_role": "Recompute denominator, execute existing csdlc-eligibility, verify exact path ownership, and fail closed before any deletion unless the decision is eligible",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 300,
+          "budget_tokens": 6000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+            "eligibility-before-deletion"
+          ],
+          "parallel_group": "deletion",
+          "defer_reason": "Mandatory after all gates pass and exact product paths are added to the typed claim"
+        },
+        {
+          "lane": "complete-post-deletion",
+          "proof_role": "Prove workspace, consumers, schemas, fixtures, demos, links, install, selector rollback, Runtime v3/C-SDLC v2 boundaries, LoC, dependencies, tests, and evidence",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-9",
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 1800,
+          "budget_tokens": 10000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+            "complete-post-deletion"
+          ],
+          "parallel_group": "post-deletion",
+          "defer_reason": "Mandatory at the exact deletion revision before publication"
+        },
+        {
+          "lane": "post-merge-exact",
+          "proof_role": "Re-run manifest identity, dependency ancestry, reduction accounting, full validation, serialized-merge state, and exact revision proof before closeout",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8",
+            "AC-9",
+            "AC-10"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 3600,
+          "budget_tokens": 12000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+            "post-merge-exact"
+          ],
+          "parallel_group": "post-merge",
+          "defer_reason": "Mandatory after authorized serialized merge and before typed closeout"
+        }
+      ],
+      "planned_validation_seconds": 21600,
+      "planned_validation_tokens": 100000,
+      "failure_policy": "Fail closed without deletion, publication, merge, or closeout on missing or non-ancestral terminal evidence, active dependency claims, manifest overlap, unowned paths, eligibility rejection, rollback-window violation, denominator drift, deletion below 80 percent, deferred proof, stale review, red CI, or absent post-merge validation.",
+      "design_ref": ".csdlc/issues/5346/retained/design.md",
+      "design_digest": "6e14bf35883a4240d2772360e5ae156ae839dfa6bc31027639008b4abf7026de",
+      "diagram_ref": ".csdlc/issues/5346/retained/diagram.mmd",
+      "diagram_digest": "a925534121f5fb01d22f6c079ad452250ded1ab04cade79b2e80487c4c48527c"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+flowchart LR
+  A["Repository seed and Markdown trees"] --> B["Deterministic mirror plan"]
+  B --> C{"Mode"}
+  C -->|fixture or dry run| D["In-memory transport"]
+  C -->|execute and approved| E["Native Drive transport"]
+  E --> F["Create, update, or unchanged"]
+  F --> G["Read back bytes"]
+  G --> H{"Exact content match"}
+  H -->|yes| I["Verified report"]
+  H -->|no| J["Fail closed and retain task"]
+  I --> K["Archive successful automation task"]

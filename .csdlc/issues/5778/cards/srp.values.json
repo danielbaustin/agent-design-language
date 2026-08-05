@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5778,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Derive terminal truth and finish in one idempotent command",
+    "slug": "derived-terminal-finish",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".",
+      "review_revision": "git-blake3:a13bac366e2e9fe228b13ae058543ca3c3cd61fe:f74554d056eb0dcf1de41c5b3b64ac58b912b6bcee9254f2a97a3159da195dfd",
+      "reviewer": "codex-subagent:review_5778_exact_head",
+      "review_prompts": [
+        "Does finish preserve exact reviewed-head, required-check, publication identity, and expected-SHA merge guarantees?",
+        "Can any interruption or concurrent call create conflicting terminal results or require a second PR?",
+        "Does terminal claim release avoid weakening active nonterminal collision safety?",
+        "Are legacy records readable without becoming competing current authority?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The repaired exact head still requires GitHub Actions integration proof before merge."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

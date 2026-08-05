@@ -1,0 +1,106 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5499,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement issue-graph-to-live-task conductor",
+    "slug": "v0-91-8-wp-10a-issue-graph-live-task-conductor",
+    "version": "v0.91.8",
+    "generation": 21
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "preparation-contract",
+          "proof_role": "Prove six-card, design, diagram, dependency, scope, COTS, budget, and no-product-change preparation truth",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5499/validate-preparation.rb"
+          ],
+          "parallel_group": "local-control",
+          "defer_reason": null
+        },
+        {
+          "lane": "dependency-gate",
+          "proof_role": "Fail closed until #5340, #5341, #5342, and final WP-09 gate #5349 are live-merged and their merged revisions are ancestral to HEAD; typed closeout and receipts are audit-only",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5499/check-dependencies.rb"
+          ],
+          "parallel_group": "local-control",
+          "defer_reason": null
+        },
+        {
+          "lane": "conductor-contract",
+          "proof_role": "Run offline focused all-target conductor tests and strict Clippy from FastWork after the dependency gate opens",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 180,
+          "budget_tokens": 4000,
+          "argv": [
+            "bash",
+            ".csdlc/prepared/issues/5499/validate-conductor.sh"
+          ],
+          "parallel_group": "conductor-local",
+          "defer_reason": "Preparation only: do not select until #5340, #5341, #5342, and final WP-09 gate #5349 are live-merged and ancestral, and the product manifest exists"
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Verify the exact committed issue-branch patch from its recorded base through HEAD",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "bash",
+            ".csdlc/prepared/issues/5499/check-preparation-diff.sh"
+          ],
+          "parallel_group": "local-control",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on missing or stale lifecycle input, unresolved or cyclic dependencies, unknown lanes, WIP overflow, path overlap, ambiguous authority, nondeterministic output, absent retained receipts, or budget breach; never convert blocked preparation into product authority.",
+      "design_ref": ".csdlc/prepared/issues/5499/design.md",
+      "design_digest": "d3f525b932319d7be0ec2b328ebdcc341cff975c2522c06e26233962cd1c3b9a",
+      "diagram_ref": ".csdlc/prepared/issues/5499/diagram.mmd",
+      "diagram_digest": "f8be3217162f6fa0150d77e9be1a6abf7f7af3fedcfd10c5910728672bb086f9"
+    }
+  }
+}

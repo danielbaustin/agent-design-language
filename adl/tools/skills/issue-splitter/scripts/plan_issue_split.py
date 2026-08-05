@@ -176,7 +176,7 @@ def build_report(args: argparse.Namespace) -> dict[str, Any]:
         "proposed_follow_ons": proposed_follow_ons,
         "issue_graph_notes": issue_graph_notes,
         "recommended_handoff": (
-            "workflow-conductor"
+            "normal_issue_execution"
             if classification == "keep_as_is"
             else "operator-review"
             if classification == "blocked"

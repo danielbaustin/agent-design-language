@@ -1,0 +1,23 @@
+{
+  "issue": 5343,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "ec8d97570cb9f0b82ade300c56751fc45e2dbbc58fea1ff4e4e9e66494a953e8",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the complete exact-substantive-head cutover validation result.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5343/run-validation-lane.rb",
+        "transaction-fault-matrix"
+      ],
+      "purpose": "Prove live dependency ancestry, fresh v2 installation and execution, byte-identical v1 retention and post-rollback execution, exact selector restoration, failure preservation, final v2 selection, bounded orchestration, and no legacy deletion.",
+      "outcome": "passed",
+      "evidence_ref": "docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json records status pass at substantive revision 05ac125bc377a09bce4bdbbd571c5572b231805a; fresh-install-override, rollback-window-evidence, cutover-budgets, typed doctor, and git diff --check also passed."
+    }
+  },
+  "fail_after_backup": false
+}

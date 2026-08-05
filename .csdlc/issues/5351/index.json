@@ -1,0 +1,496 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5351,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "185d0c17ef9ef231ae848b0ae2a3f027956bca5a1690d71ae37915a465534bd6",
+  "phase": "closed_out",
+  "generation": 24,
+  "digest": "f6bb6b9323386854b81ec22aef0ad5cbe67a4462e7b6eb6daca315f4f1a0cb3b",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:Darwin:019fbcd1-dee8-7682-8f2b-9f9261587524",
+    "assigned_by": "codex:5351-execution",
+    "revision": "git-blake3:73e9aefe7c53dfad621e112480ee08e6816fd577:36a9fd064b8b8649ccd61a51b6e54da4538242f8c6ac135d1ec05e33a763764e",
+    "scope": [
+      ".csdlc/prepared/issues/5351",
+      ".csdlc/evidence/5351",
+      ".csdlc/issues/5351",
+      "docs/milestones/v0.91.8/evidence/wp16"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:Darwin:019fbcd1-dee8-7682-8f2b-9f9261587524",
+    "scope": [
+      ".csdlc/prepared/issues/5351",
+      ".csdlc/evidence/5351",
+      ".csdlc/issues/5351",
+      "docs/milestones/v0.91.8/evidence/wp16"
+    ],
+    "reviewed_revision": "git-blake3:73e9aefe7c53dfad621e112480ee08e6816fd577:36a9fd064b8b8649ccd61a51b6e54da4538242f8c6ac135d1ec05e33a763764e",
+    "findings": [],
+    "residual_risks": [
+      "Typed closeout follows asynchronously after merge and does not block WP-17 activation."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5351,
+    "pull_request": 5775,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5775",
+    "base": "main",
+    "head": "codex/5351-v0918-preparation",
+    "revision": "git-blake3:50f74e83c758f6442dc0d42f3344996e847660a5:5f17745ae497b1763c2b818ffaa2f3a0cbbe9429bbe7d4ad0ec3d7e521433a3c",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5775,
+    "head_sha": "50f74e83c758f6442dc0d42f3344996e847660a5",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904336"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359929505"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904338"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904355"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904495"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904624"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904663"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359877982"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904522"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904595"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904623"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904407"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904453"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904370"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904365"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30696353848/job/91359904430"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5775,
+    "disposition": "merged",
+    "observed_sha": "50f74e83c758f6442dc0d42f3344996e847660a5",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5351.json",
+    "released_branch": "codex/5351-v0918-preparation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5351",
+      ".csdlc/issues/5351",
+      ".csdlc/locks/5351.lock",
+      ".csdlc/prepared/issues/5351",
+      "docs/milestones/v0.91.8/evidence/wp16"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5351/retained/design.md",
+  "diagram_path": ".csdlc/issues/5351/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5351-final-review-remediation",
+      "revision": "6098b44c1e0f49a955926cfbed1d5f4bd0211573900d4feded1fafcec982909a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "b862f256174c791fe9e093e903bd8b8e67f304bf141622d6b30994506c16b17b",
+      "rendered_digest": "9cb3a1c1f6abafcb1042ddda1590bf20a5d36b60cd65246de671eb12028befba",
+      "ast_digest": "483e75c80aea317493e45d37d8d40f3ed9b103768cc0a86299ba00ec169a3fea"
+    },
+    "stp": {
+      "values_digest": "3d0bee8bb3ef138a75eb0151b310ad764271912f38ca16d0023fefa68e1f84e3",
+      "rendered_digest": "d6dea1bf95085907bc802ad119b0d15f913e8c24f8a7b699ac9a2370b17f7e4b",
+      "ast_digest": "3e4fe821e3ff93f207f83b079c7889c9fe970402530044cc6730a8fdfc55b3e8"
+    },
+    "spp": {
+      "values_digest": "e834d4c5c2af413ac76d1abbddb51506541e1d92bf93e4070791d98a271d65bb",
+      "rendered_digest": "e23b17d10aa80389f9ee7c2f3c5ba5e9669acba8d40fb485ee08fc7a1f07396c",
+      "ast_digest": "1f5f23694e1e2bd21a818b9457c6b1795f121fdb4615083efc4408b1c5490db2"
+    },
+    "vpp": {
+      "values_digest": "52e93611519fbf7afef129e056ce53558ac2f15b172b3c267b7c0251a6247529",
+      "rendered_digest": "ab039c3d1990d3a6d76e33af3696350cda321e39cf87f14d41cb278f0904052a",
+      "ast_digest": "ec08166b965790c2f2cdae57aa1ef5dcf8bb16368c140bd63f52dbcb9f7b1005"
+    },
+    "srp": {
+      "values_digest": "638dd25fca99f721c21290feb9c3cf9c253baeebf3e977faee85e474c9d61a8c",
+      "rendered_digest": "c6ede6cbf4920e30fef339ad35797a2254f54f4ab51ab321d65fe76be2e6b36b",
+      "ast_digest": "dacfb19741fcc32486632643362e73c06996f4ae3ad783d12aa12d9b317d68d0"
+    },
+    "sor": {
+      "values_digest": "6e007c18b5b7180192d952e946f3ea7f337e4af8a06197d06d690865ed7b6eb1",
+      "rendered_digest": "8ce012e7a27a427a4d164d68b6992e27ceff3a3eece3c227ddae0dcc8c4379f1",
+      "ast_digest": "dd1e164b463f398dd7c8baa69578cd39e555fcd30b147571fff7f4c51af06db5"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5351-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5351-preparation-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5351-execution",
+      "reason": "The exact-revision WP-16 focused and integrated quality gate is complete and passing."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5351-execution",
+      "reason": "The assigned exact-revision WP-16 review is complete with no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5351-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5351-post-merge-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5351-post-merge-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5351-post-merge-closeout",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5351-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5351-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "subagent:019f8672-8b41-7220-b383-80c424c84d37",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5351-gap-analysis-refresh",
+      "reason": "Recover expired preparation-only claim to refresh issue-local WP-16 plan and gap-analysis packet without executing the quality gate.",
+      "operation": "{\"previous_owner\":\"codex:5351-preparation-owner\",\"observed_expiry_unix_seconds\":1785270289,\"recovery_actor\":\"codex:5351-gap-analysis-refresh\",\"reason\":\"Recover expired preparation-only claim to refresh issue-local WP-16 plan and gap-analysis packet without executing the quality gate.\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5351-gap-analysis-refresh",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5351-final-plan-refresh",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5351-wp16-execution-owner",
+      "reason": "WP-15 is merged, closed_out, receipt-backed, claim-free, and ancestral; execute the operator-authorized WP-16 integrated quality gate without widening beyond issue-local quality evidence.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.8/evidence/wp16\"],\"expected_owner\":\"codex:5351-preparation-owner\",\"expected_purpose\":\"Prepare and review #5351 WP-16 integrated platform quality-gate contracts only; no execution or product work until WP-15 #5354 is typed closed_out, receipt-backed, claim-free, and ancestral\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare and review #5351 WP-16 integrated platform quality-gate contracts only; no execution or product work until WP-15 #5354 is typed closed_out, receipt-backed, claim-free, and ancestral\",\"purpose\":\"Execute #5351 WP-16 integrated platform quality gate, retain issue-by-issue outcome truth and focused/integrated exact-revision evidence, route genuine blockers, and publish a reviewed issue-local quality packet; no product implementation changes.\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5351-wp16-execution-owner",
+      "reason": "Record the operator-authorized WP-16 execution sequence after WP-15 terminal reconciliation and before final exact-revision validation.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Execute WP-16 #5351 now: audit every v0.91.8 wave issue for working code or a useful durable result; run focused docs, dependency, rollback, deletion, demo, and hygiene checks; run locked all-target ADL v2, Runtime v3, and C-SDLC v2 suites using the shared stable Vector binary; route genuine defects to bounded owner issues; integrate their fixes; retain one exact-revision quality packet; obtain one GPT-5.5 pre-PR review; publish a ready PR with Closes #5351. Later release-tail work and asynchronous typed closeout do not block this execution lane.\",\"operation\":\"replan\",\"previous_value\":\"Render and validate six current-registry cards; freeze exact #5354 terminal gating, issue-local ownership, integrated packet semantics, blocker routing, zero-new-dependency COTS posture, budgets and PVF; obtain bounded review and fix findings; typed bind and doctor; commit and push preparation only.\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5351-execution",
+      "reason": "Record the executed WP-16 issue audit and integrated quality gate.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Audited every v0.91.8 wave issue, routed and merged two genuine cross-cutting repairs, and executed the focused and integrated WP-16 quality gate on their combined exact revision.\",\"changes\":[\".csdlc/prepared/issues/5351/run-validation-lane.rb\",\".csdlc/prepared/issues/5351/check-dependencies.rb\",\"docs/milestones/v0.91.8/evidence/wp16/ISSUE_OUTCOME_AUDIT.md\",\"docs/milestones/v0.91.8/evidence/wp16/QUALITY_GATE.md\",\"docs/milestones/v0.91.8/evidence/wp16/issue-outcome-audit.v1.json\"],\"artifacts\":[\".csdlc/evidence/5351/focused-quality.json\",\".csdlc/evidence/5351/integrated-platform.json\",\".csdlc/evidence/5351/complete.json\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5351-execution",
+      "reason": "Record the focused WP-16 quality lane.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\".csdlc/prepared/issues/5351/run-validation-lane.rb\",\"focused-quality\"],\"purpose\":\"Prove dependency identity, retained platform, convergence, deletion, issue-outcome, feature-crosswalk, planning, link, YAML, and hygiene contracts.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5351/focused-quality.json\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5351-execution",
+      "reason": "Record the integrated WP-16 platform lane.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\".csdlc/prepared/issues/5351/run-validation-lane.rb\",\"integrated-platform\"],\"purpose\":\"Run locked all-target ADL v2, Runtime v3, and C-SDLC v2 suites on one exact integrated revision.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5351/integrated-platform.json\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5351-execution",
+      "reason": "Record the complete same-revision WP-16 quality decision.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\".csdlc/prepared/issues/5351/run-validation-lane.rb\",\"complete\"],\"purpose\":\"Verify focused and integrated packets are both passing and pinned to the same exact execution revision.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5351/complete.json\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5351-execution",
+      "reason": "The exact-revision WP-16 focused and integrated quality gate is complete and passing.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:5351-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:5351-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:5351-execution",
+      "reason": "Align the operative handoff sequence with merge-gated WP-17 release and asynchronous closeout.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Complete six cards, design, diagram, exact issue-local claim, COTS, budgets, PVF, executable gates, bounded review/fixes, typed bind, and doctor\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Verify #5354 is merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral\",\"acceptance_ids\":[\"AC-1\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused and integrated platform quality gates, retain exact evidence, route genuine blockers, merge their fixes, and rerun on the combined exact revision\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Fix exact-review findings, publish through typed v2, shepherd green CI, merge, verify the integrated identity, and release WP-17 immediately; perform typed closeout asynchronously\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:5351-execution",
+      "reason": "Remove the stale closeout gate while retaining exact quality and evidence invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"#5351 owns only its issue-local lifecycle, prepared, evidence, and WP-16 quality-report paths\",\"only pass satisfies a required quality row; missing, blocked, failed, or deferred proof cannot be promoted\",\"the gate composes existing tools and never becomes another product or lifecycle authority\",\"Runtime v2, credentials, host-absolute retained paths, hard-coded addresses, and secret-bearing output are forbidden\",\"focused and integrated packets remain pinned to one exact execution revision\",\"WP-17 is released immediately after #5351 merges with passing exact-head integrated proof\",\"typed closeout is asynchronous bookkeeping and never blocks WP-17\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:5351-execution",
+      "reason": "Align stop conditions with merge-gated WP-17 release and asynchronous closeout.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"accepted platform revisions or stable interfaces cannot be resolved exactly\",\"any required result is failed, missing, stale, deferred, secret-bearing, host-bound, or unsupported\",\"execution requires Runtime v2, AWS, credentials, paid services, hidden network authority, hard-coded addresses, or out-of-claim writes\",\"the quality harness duplicates product or COTS behavior, adds a dependency, exceeds budget without exact review, or collides with another active claim\",\"exact-revision review has an unresolved actionable finding\",\"WP-17 would begin before #5351 merges with passing exact-head integrated proof\"]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:5351-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:5351-execution",
+      "reason": "Align SIP authority with merge-gated WP-17 release and asynchronous closeout.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Preparation protects only #5351 issue-local lifecycle and evidence paths\",\"WP-15 #5354 owns demo convergence and must be terminal before #5351 execution\",\"Each product owner retains repair authority; #5351 observes and routes failures but does not absorb unrelated fixes\",\"WP-17 #5360 is released when #5351 merges with passing exact-head integrated proof; typed closeout is asynchronous and nonblocking\",\"Future non-issue-local paths require a typed reviewed collision-free claim amendment after #5354 terminal\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5351-execution",
+      "reason": "Align AC-8 with merge-gated WP-17 release and asynchronous closeout.",
+      "operation": "{\"operation\":\"replace_acceptance_criteria\",\"values\":[\"AC-1: No quality-gate execution starts until #5354 is merged, typed closed_out, claim-free, backed by a retained merged terminal receipt, and its observed merge SHA is ancestral to the exact #5351 execution revision\",\"AC-2: The future packet binds exact accepted revisions and retained proof for product contracts, platform deployment, rollback, deletion, demo convergence, docs and release-blocker truth\",\"AC-3: Required rows use pass, fail, blocked, not_applicable, or explicit_non_claim; only pass satisfies a required gate and no failure is hidden as prose or deferred evidence\",\"AC-4: The integrated gate uses accepted ADL v2, Runtime v3, and C-SDLC v2 interfaces without Runtime v2 or duplicate product infrastructure\",\"AC-5: Every command, result, duration, artifact, revision, review, and blocker is deterministic where applicable, repository-relative, digest-bound, redaction-safe, and stale-detectable\",\"AC-6: Blockers route to the owning issue before WP-17 begins; #5351 does not silently absorb unrelated remediation\",\"AC-7: No dependency is added; issue-local orchestration and fixtures stay within 1500 nonblank lines, modules below 500 lines, fewer than 150 focused assertions, and 120/600/1800/2280-second lane budgets unless an exact reviewed variance is recorded\",\"AC-8: All applicable focused, integrated, complete, exact-review, CI, authorized serialized merge, and post-merge identity proof completes without deferral before WP-17 is released; typed closeout follows asynchronously and does not block WP-17\"]}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:5351-final-review-remediation",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 23,
+      "generation": 16,
+      "actor": "codex:5351-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:5351-execution",
+      "reason": "Retained logs and evidence now pass diff and host-path hygiene checks.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"F-5351-1\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 18,
+      "actor": "codex:5351-execution",
+      "reason": "SIP, STP, SPP, design, and gap-analysis handoff truth now release WP-17 on merge plus passing exact-head proof while closeout remains asynchronous.",
+      "operation": "{\"operation\":\"dispose_finding\",\"finding_id\":\"F-5351-2\",\"disposition\":\"fixed\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:5351-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:5351-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 20,
+      "actor": "codex:5351-execution",
+      "reason": "The assigned exact-revision WP-16 review is complete with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:5351-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:5351-post-merge-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex:5351-post-merge-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the retained #5351 terminal receipt in the dedicated v0.91.8 aggregate closeout projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "issue": 5764,
+  "base_branch": "main",
+  "branch": "codex/5764-runtime-observatory-readiness",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5764-runtime-observatory-readiness",
+    "owner": "codex:5764-runtime-observatory-readiness",
+    "purpose": "Fix Runtime v3 Observatory overnight readiness probes and weather freshness truth",
+    "branch": "codex/5764-runtime-observatory-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5764",
+      ".csdlc/issues/5764",
+      ".csdlc/locks/5764.lock",
+      ".csdlc/prepared/issues/5764",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "docs/api/runtime-v3/v1/runtime.openapi.json",
+      "docs/api/runtime-v3/v1/observatory.openapi.json",
+      "demos/html-observatory/README.md"
+    ],
+    "acquired_unix_seconds": 1785574230,
+    "heartbeat_unix_seconds": 1785574230,
+    "expires_unix_seconds": 1785660630,
+    "generation": 1
+  }
+}

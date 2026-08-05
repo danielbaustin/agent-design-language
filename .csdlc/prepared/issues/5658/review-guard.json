@@ -1,0 +1,9 @@
+{
+  "scope": [
+    ".csdlc/issues/5658",
+    ".csdlc/prepared/issues/5658",
+    "csdlc-v2/src/lifecycle.rs",
+    "csdlc-v2/tests/gate2.rs",
+    "csdlc-v2/tests/gate7_lifecycle.rs"
+  ]
+}

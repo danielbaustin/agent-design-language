@@ -1,0 +1,21 @@
+{
+  "issue": 5360,
+  "card": "sip",
+  "expected_generation": 1,
+  "expected_digest": "c5b051cfbd2c3f0e0488e0c7add53b91f443088194c2c3ca37bddefda8430efe",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Release WP-17 on the verified WP-16 merge while keeping predecessor closeout asynchronous.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "authority_boundary",
+    "values": [
+      "#5360 owns only its issue-local lifecycle, evidence, and exact audited documentation paths",
+      "WP-16 #5351 merged with passing exact-head integrated proof and releases #5360 execution",
+      "ADL v2, Runtime v3, and C-SDLC v2 retain separate product ownership; #5360 reconciles documentation but cannot manufacture product proof",
+      "WP-18 #5356 begins after #5360 merges; typed closeout is asynchronous and nonblocking",
+      "Any additional shared-document path requires a fresh collision check and typed claim amendment before editing"
+    ]
+  },
+  "fail_after_backup": false
+}

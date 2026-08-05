@@ -324,14 +324,12 @@ Unsafe parallel examples:
 ## Preferred Commands
 
 Canonical machine surface:
-- `adl/tools/pr.sh doctor --json`
+- `csdlc-doctor --repo <repo> --issue <issue>`
 
 Execution surface:
-- `adl/tools/pr.sh run`
+- `csdlc-bind --root <worktree> --request <bind-request.json>`
 
-Compatibility aliases:
-- `adl/tools/pr.sh ready`
-- `adl/tools/pr.sh preflight`
+Removed compatibility aliases are not valid fallbacks.
 
 Use the repo's existing templates, validators, and path logic. Prefer the repository control plane over manual git branching when possible.
 

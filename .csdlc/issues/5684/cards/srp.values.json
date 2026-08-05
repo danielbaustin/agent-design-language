@@ -1,0 +1,60 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5684,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Split GitHub tool surface into smaller owner binaries",
+    "slug": "csdlc-github-tool-split",
+    "version": "v0.91.8",
+    "generation": 38
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/5684/diff-check.log\n.csdlc/evidence/5684/gate10a-install-bootstrap-tests.log\n.csdlc/evidence/5684/github-action-split-tests.log\n.csdlc/evidence/5684/post-create-race-fmt-check.log\n.csdlc/evidence/5684/post-create-race-focused-test.log\n.csdlc/evidence/5684/post-create-race-github-action-tests.log\n.csdlc/evidence/5684/post-create-race-p3-fmt-check.log\n.csdlc/evidence/5684/post-create-race-p3-focused-test.log\n.csdlc/evidence/5684/post-create-race-p3-github-action-tests.log\n.csdlc/evidence/5684/post-create-race-p3b-fmt-check.log\n.csdlc/evidence/5684/post-create-race-p3b-focused-test.log\n.csdlc/evidence/5684/post-create-race-p3b-github-action-tests.log\n.csdlc/evidence/5684/post-opus-csdlc-v2-clippy.log\n.csdlc/evidence/5684/post-opus-csdlc-v2-fmt-check.log\n.csdlc/evidence/5684/post-opus-csdlc-v2-full-tests.log\n.csdlc/evidence/5684/post-opus-gate10a-tests.log\n.csdlc/evidence/5684/post-opus-github-action-tests.log\n.csdlc/evidence/5684/post-opus-resilience-tests.log\n.csdlc/evidence/5684/resilience-tests.log\n.csdlc/evidence/5684/runtime-resilience-check.log\n.csdlc/issues/5684/audit.jsonl\n.csdlc/issues/5684/cards/sip.md\n.csdlc/issues/5684/cards/sip.values.json\n.csdlc/issues/5684/cards/sor.md\n.csdlc/issues/5684/cards/sor.values.json\n.csdlc/issues/5684/cards/spp.md\n.csdlc/issues/5684/cards/spp.values.json\n.csdlc/issues/5684/cards/srp.md\n.csdlc/issues/5684/cards/srp.values.json\n.csdlc/issues/5684/cards/stp.md\n.csdlc/issues/5684/cards/stp.values.json\n.csdlc/issues/5684/cards/vpp.md\n.csdlc/issues/5684/cards/vpp.values.json\n.csdlc/issues/5684/design.md\n.csdlc/issues/5684/diagram.mmd\n.csdlc/issues/5684/index.json\nadl-resilience/Cargo.lock\nadl-resilience/Cargo.toml\nadl-resilience/src/lib.rs\nadl-runtime/Cargo.lock\nadl-runtime/Cargo.toml\nadl-runtime/src/guardian.rs\nadl-runtime/src/lib.rs\nadl-runtime/src/supervision.rs\ncsdlc-v2/AGENTS.md\ncsdlc-v2/Cargo.lock\ncsdlc-v2/Cargo.toml\ncsdlc-v2/operator/coexistence.json\ncsdlc-v2/operator/skills.json\ncsdlc-v2/operator/skills/csdlc-v2-github/SKILL.md\ncsdlc-v2/operator/skills/csdlc-v2-validate/SKILL.md\ncsdlc-v2/src/bin/csdlc-github-issue.rs\ncsdlc-v2/src/bin/csdlc-github-pr.rs\ncsdlc-v2/src/github.rs\ncsdlc-v2/src/operator.rs\ncsdlc-v2/tests/gate10a.rs\ncsdlc-v2/tests/gate_github_actions.rs\ndocs/default_workflow.md\ndocs/templates/prompts/1.0.3/schemas/sip.structure.json\ndocs/templates/prompts/1.0.3/schemas/sor.structure.json\ndocs/templates/prompts/1.0.3/schemas/spp.structure.json\ndocs/templates/prompts/1.0.3/schemas/srp.structure.json\ndocs/templates/prompts/1.0.3/schemas/stp.structure.json\ndocs/templates/prompts/1.0.3/schemas/vpp.structure.json\ndocs/tooling/ADL_CSDLC_GITHUB_CLIENT_BOUNDARY.md\ndocs/tooling/OWNER_BINARY_INSTALLATION.md\ndocs/tooling/README.md\ndocs/tooling/structured-prompt-validator-binary-resolution.md",
+      "review_revision": "git-blake3:2afe605fde2134030c4cc4f5dbec5b19bb174bf8:0cc5a8d6e0dbe6cad80acea7de1541ade5e14173cad91c4018a2ef2ba1d7381c",
+      "reviewer": "subagent:019fa184-d21b-7590-a9c3-4827a36638ce",
+      "review_prompts": [
+        "Review whether split binaries materially reduce the GitHub command surface and whether install/coexistence enforcement covers the new binaries."
+      ],
+      "findings": [
+        {
+          "id": "OHM-5684-01",
+          "severity": "p3",
+          "summary": "Post-create marker confirmation retried multiple distinct exact-marker issues, obscuring terminal ambiguity as generic retry failure.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:2afe605fde2134030c4cc4f5dbec5b19bb174bf8:0cc5a8d6e0dbe6cad80acea7de1541ade5e14173cad91c4018a2ef2ba1d7381c",
+          "route": null
+        },
+        {
+          "id": "OHM-5684-02",
+          "severity": "p3",
+          "summary": "Transient zero marker-search results after successful issue creation were not directly covered by regression proof.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:2afe605fde2134030c4cc4f5dbec5b19bb174bf8:0cc5a8d6e0dbe6cad80acea7de1541ade5e14173cad91c4018a2ef2ba1d7381c",
+          "route": null
+        },
+        {
+          "id": "EPICURUS-5684-01",
+          "severity": "p3",
+          "summary": "The first zero-search regression consumed the empty search before POST, so it did not prove post-create search lag.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:2afe605fde2134030c4cc4f5dbec5b19bb174bf8:0cc5a8d6e0dbe6cad80acea7de1541ade5e14173cad91c4018a2ef2ba1d7381c",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "Kierkegaard read-only exact-head review at 2afe605fde2134030c4cc4f5dbec5b19bb174bf8 returned CLEAN. Validation was run by the implementation owner and recorded in SOR evidence logs."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

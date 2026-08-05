@@ -1,0 +1,217 @@
+{
+  "schema": "adl.wp13.external_band_deletion_manifest.v1",
+  "repository": "danielbaustin/agent-design-language",
+  "issue": 5347,
+  "baseline_revision": "7c1d9aad4ad7ec859071b856190bd1cd9930938e",
+  "merge_order": [
+    5347,
+    5346
+  ],
+  "retained_current_binaries": [
+    "adl/src/bin/demo_adl_gws_context_mirror.rs",
+    "adl/src/bin/demo_adl_gws_native_drive_sync.rs",
+    "adl/src/bin/run_wp08_acip_sns_live_proof.rs"
+  ],
+  "deleted_files": [
+    {
+      "path": "adl/src/bin/demo_v086_candidate_selection.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "d56ef85f28c3b4051f6e32657d8ae08603dc4f51",
+      "measured_lines": 84,
+      "replacement_owner": "retained evidence and ADL v2 canonical planning surfaces",
+      "replacement_proof": "historical v0.86 evidence retained under docs/milestones/v0.86; no current executable owner remains"
+    },
+    {
+      "path": "adl/src/bin/demo_v086_fast_slow.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "12b2e6244909219e16eb94c63dacb93e576288ad",
+      "measured_lines": 16,
+      "replacement_owner": "retained evidence and ADL v2 canonical planning surfaces",
+      "replacement_proof": "historical v0.86 evidence retained under docs/milestones/v0.86; no current executable owner remains"
+    },
+    {
+      "path": "adl/src/bin/demo_v086_freedom_gate.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "ad8d9d317b9be48fc66953145d7dba91e2b6df08",
+      "measured_lines": 16,
+      "replacement_owner": "retained evidence and ADL v2 canonical planning surfaces",
+      "replacement_proof": "historical v0.86 evidence retained under docs/milestones/v0.86; no current executable owner remains"
+    },
+    {
+      "path": "adl/src/bin/demo_v086_review_surface.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "0c01a49ebde3a42dad85c9b1a2b101a7940df313",
+      "measured_lines": 16,
+      "replacement_owner": "retained evidence and ADL v2 canonical planning surfaces",
+      "replacement_proof": "historical v0.86 evidence retained under docs/milestones/v0.86; no current executable owner remains"
+    },
+    {
+      "path": "adl/src/bin/demo_v0905_local_gemma_model_evaluation.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "9ba5e4f3f1a7f31d22dc015e78895186c9dc093c",
+      "measured_lines": 188,
+      "replacement_owner": "retained evidence and model evaluation documentation",
+      "replacement_proof": "historical v0.90.5 review artifacts retained under docs/milestones/v0.90.5"
+    },
+    {
+      "path": "adl/src/bin/demo_v0905_model_proposal_benchmark.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "1b81544ecc2472d66bcb7be10a817bb8b9a09268",
+      "measured_lines": 65,
+      "replacement_owner": "retained evidence and model evaluation documentation",
+      "replacement_proof": "historical v0.90.5 review artifacts retained under docs/milestones/v0.90.5"
+    },
+    {
+      "path": "adl/src/bin/demo_v0911_capability_aptitude_testing.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "d21d6bc76f212d74745489de6b9943c5e5b74ad1",
+      "measured_lines": 114,
+      "replacement_owner": "retained evidence and v0.91.1 feature documentation",
+      "replacement_proof": "historical capability aptitude artifacts retained under docs/milestones/v0.91.1"
+    },
+    {
+      "path": "adl/src/bin/demo_v0912_gws_live_capability_execution_surface.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "301f17861e444ef77e7779c3a043832afbb609e1",
+      "measured_lines": 99,
+      "replacement_owner": "retained evidence and Google Workspace bridge documentation",
+      "replacement_proof": "historical v0.91.2 Google Workspace review artifacts retained under docs/milestones/v0.91.2"
+    },
+    {
+      "path": "adl/src/bin/demo_v0912_gws_live_content_card_roundtrip.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "1f670357793ee93701b98335b72610b023118855",
+      "measured_lines": 98,
+      "replacement_owner": "retained evidence and Google Workspace bridge documentation",
+      "replacement_proof": "historical v0.91.2 Google Workspace review artifacts retained under docs/milestones/v0.91.2"
+    },
+    {
+      "path": "adl/src/bin/demo_v0912_gws_live_safety_package.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "3cd6b9455af7a487d8cc3ae3d98195dea18a4ee4",
+      "measured_lines": 88,
+      "replacement_owner": "retained evidence and Google Workspace bridge documentation",
+      "replacement_proof": "historical v0.91.2 Google Workspace review artifacts retained under docs/milestones/v0.91.2"
+    },
+    {
+      "path": "adl/src/bin/demo_v0912_provider_native_tool_call_comparison.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "fe24093fbc4684e8103ee56d1c3d16a26865a312",
+      "measured_lines": 101,
+      "replacement_owner": "retained evidence and provider adapter documentation",
+      "replacement_proof": "historical v0.91.2 provider comparison artifacts retained under docs/milestones/v0.91.2"
+    },
+    {
+      "path": "adl/src/bin/demo_v0912_rust_native_gws_adapter_boundary.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "614f38c79ccf989776fbe7cf513be837dd7c4e47",
+      "measured_lines": 98,
+      "replacement_owner": "retained evidence and Google Workspace bridge documentation",
+      "replacement_proof": "historical v0.91.2 Google Workspace review artifacts retained under docs/milestones/v0.91.2"
+    },
+    {
+      "path": "adl/src/bin/demo_v0912_speculative_decoding_prototype.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "0878a1e30bc1c56efaeed6a43f8610341bf07ea0",
+      "measured_lines": 98,
+      "replacement_owner": "retained evidence and speculative decoding documentation",
+      "replacement_proof": "historical v0.91.2 speculative decoding packet retained under docs/milestones/v0.91.2"
+    },
+    {
+      "path": "adl/src/bin/demo_v0912_uts_acc_multi_model_benchmark.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "fa8fec8f63598674f3d22b322774d53bc6421e0f",
+      "measured_lines": 263,
+      "replacement_owner": "retained evidence and model benchmark documentation",
+      "replacement_proof": "historical v0.91.2 benchmark artifacts retained under docs/milestones/v0.91.2"
+    },
+    {
+      "path": "adl/src/bin/demo_v0917_dspark_speculative_decoding_evaluation.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "4f331d3e15794d724834982271f2de8a39e259bc",
+      "measured_lines": 63,
+      "replacement_owner": "retained evidence and DSpark review documentation",
+      "replacement_proof": "historical v0.91.7 provider review artifact retained under docs/milestones/v0.91.7"
+    },
+    {
+      "path": "adl/src/bin/run_v0916_acip_aee_memory_integration.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "6c54cc0b99b7d9867c08c68f0902e43bb689b7cc",
+      "measured_lines": 13,
+      "replacement_owner": "Runtime v3 API WSS proof",
+      "replacement_proof": "issue #5665 replaced retired Runtime v2 proof wrappers with real Runtime v3 API WSS proof"
+    },
+    {
+      "path": "adl/src/bin/run_v0916_integrated_runtime_soak.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "e7e5f437e2bb1d2f92f9b0ec629ff9ab3f26f9ff",
+      "measured_lines": 13,
+      "replacement_owner": "Runtime v3 API WSS proof",
+      "replacement_proof": "issue #5665 replaced retired Runtime v2 proof wrappers with real Runtime v3 API WSS proof"
+    },
+    {
+      "path": "adl/src/bin/run_v0916_runtime_failure_injection.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "71359de77d3706c3b222058ba370caffbb265978",
+      "measured_lines": 13,
+      "replacement_owner": "Runtime v3 API WSS proof",
+      "replacement_proof": "issue #5665 replaced retired Runtime v2 proof wrappers with real Runtime v3 API WSS proof"
+    },
+    {
+      "path": "adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "98e2c6d4caa93925a7190f530fe27a2a070708fa",
+      "measured_lines": 13,
+      "replacement_owner": "Runtime v3 API WSS proof",
+      "replacement_proof": "issue #5665 replaced retired Runtime v2 proof wrappers with real Runtime v3 API WSS proof"
+    },
+    {
+      "path": "adl/src/bin/run_wp12_acip_websocket_transport_proof.rs",
+      "file_kind": "regular_file",
+      "generated": false,
+      "disposition": "delete_external",
+      "baseline_object": "d9e27e8d4d8593251318f3125221fc4d42f2e746",
+      "measured_lines": 13,
+      "replacement_owner": "Runtime v3 API WSS proof",
+      "replacement_proof": "issue #5665 replaced duplicate WSS proof wrapper with real Runtime v3 API WSS proof"
+    }
+  ]
+}

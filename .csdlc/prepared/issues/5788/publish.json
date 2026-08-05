@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5788,
+  "expected_generation": 7,
+  "expected_digest": "fa95819ec1b869884a72b3cbd696b9e5171d1eefa79968478d5fcb03450555f7",
+  "claim_id": "claim-5788-lockfile-preservation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5788-lockfile-preservation",
+  "title": "[v0.91.8][tooling][lockfile] Preserve Cargo.lock during validation",
+  "body": "Closes #5788\n\n## Summary\n- routes owner-binary builds through one dependency-stable Cargo validation boundary\n- requires `--locked` unless an explicit dependency-update mode is selected\n- restores validation-created tracked `Cargo.lock` drift to exact pre-invocation bytes while preserving caller-owned dirty bytes\n- limits the default owner-binary inventory to current operational binaries and removes duplicate nested broad validation\n\n## Validation\n- `bash adl/tools/test_owner_binary_install.sh`\n- `bash adl/tools/test_run_cargo_validation.sh`\n- `bash adl/tools/test_owner_validation_lane.sh`\n- shell syntax and `git diff --check`\n- zero tracked `Cargo.lock` changes\n\n## Review\nExact six-script review passed with zero blockers; all five earlier findings are fixed. `REVIEW.md` and the canonical review handoff are intentionally excluded because they belong to WP-19.",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

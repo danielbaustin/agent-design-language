@@ -1,0 +1,498 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4741,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "6da60e6fc4092eeaaef14e46cd5c57a84272538fe5bc92a030061a4160ebb1bf",
+  "phase": "closed_out",
+  "generation": 25,
+  "digest": "8a62d3aa81f52b5ced669f411df68fee5a31aab25133e6ff2f9aab181425b8d1",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f90d6-07c1-7091-b996-73007e6a80fb",
+    "assigned_by": "codex:issue-4741-execution",
+    "revision": "git-blake3:8968219908eb3d2c48dfeba1352b9c8fba8044e6:76290fec2b00ec30d9256d11ce90189117cb9e3392f22065d32a0f2a36fcfbd8",
+    "scope": [
+      ".csdlc/issues/4741",
+      ".csdlc/prepared/issues/4741",
+      ".csdlc/evidence/4741",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "docs/tooling/unity_observatory_editor_batch_proof.md"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f90d6-07c1-7091-b996-73007e6a80fb",
+    "scope": [
+      ".csdlc/issues/4741",
+      ".csdlc/prepared/issues/4741",
+      ".csdlc/evidence/4741",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "docs/tooling/unity_observatory_editor_batch_proof.md"
+    ],
+    "reviewed_revision": "git-blake3:8968219908eb3d2c48dfeba1352b9c8fba8044e6:76290fec2b00ec30d9256d11ce90189117cb9e3392f22065d32a0f2a36fcfbd8",
+    "findings": [],
+    "residual_risks": [
+      "Unity execution and scene validation remain unproved because the repository-installed owner binary provenance does not match the current declared source root.",
+      "The append-only SOR repair is indirect because csdlc-edit has no nonterminal validation replace/remove operation; exact latest-result identity now blocks the stale historical pass."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4741,
+    "pull_request": 5651,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5651",
+    "base": "main",
+    "head": "codex/4741-v0918-wp15-unity-editor-liveness-prep",
+    "revision": "git-blake3:34831bab95f87ab6e2beb729130499850a051a4f:16dbb59fa3a6116fe89ade39ce1e1e8c3f16f1379ab70b6977a71375fc9a79eb",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5651,
+    "head_sha": "34831bab95f87ab6e2beb729130499850a051a4f",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348487729"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348221054"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348190777"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191211"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191233"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191128"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348163239"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191091"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191264"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191172"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191197"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191278"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348190239"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348191427"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30049471472/job/89348190835"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5651,
+    "disposition": "merged",
+    "observed_sha": "34831bab95f87ab6e2beb729130499850a051a4f",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/4741.json",
+    "released_branch": "codex/4741-v0918-wp15-unity-editor-liveness-prep",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/4741",
+      ".csdlc/issues/4741",
+      ".csdlc/locks/4741.lock",
+      ".csdlc/prepared/issues/4741",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+      "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+      "adl/tools/test_v0916_unity_observatory_soak_integration.sh",
+      "adl/tools/test_v0916_unity_observatory_unity65_smoke.sh",
+      "docs/tooling/unity_observatory_editor_batch_proof.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/4741/retained/design.md",
+  "diagram_path": ".csdlc/issues/4741/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:v0918-wp15-unity-specialist-recheck",
+      "revision": "087fb3265f17bc8a69e89b4eca87b7bec0c04c26f7ccc39c3bb348c068497b4c"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "fd279a0feddde7c832822574b1175637fce272fe8708f7c7cdfca72c98005346",
+      "rendered_digest": "20465ed8051ca296e888398621e97ba0038327558f5b412e2565ea50ee3dddd9",
+      "ast_digest": "5f8c10f932a676f52809aa8ad1da360a0197ad7d9736b83ba8c2e6fa566ef483"
+    },
+    "stp": {
+      "values_digest": "9e535284011677512bc6988a377a09442bfb641bc3bf15d872c9e6d07e9e3071",
+      "rendered_digest": "c1c74e60ed6c539cc615eba12aa1f2ed710218c44c4e9018edb478659e4e6080",
+      "ast_digest": "a6d752e92ee16452e02031576d2a0e8752a84f6e9cafcb558680bc75efe815b6"
+    },
+    "spp": {
+      "values_digest": "eee902bebc608c1b104b81892e4b6e761eb161c44c7c40062b8b4d5f96631675",
+      "rendered_digest": "1b84a3f43cb7a1e0e6cae7b34c84a6797d6785b9c3ff75157c2cbd3e3393c6db",
+      "ast_digest": "ea239329ac48643fd1c42a0654afefa8a9b921265be58eee94ead20ab3f6b651"
+    },
+    "vpp": {
+      "values_digest": "3c5ba69b90b82ad33a9d99d4bdef6868d35936bda3a5b427f149ae70b2b23f3e",
+      "rendered_digest": "465ad7cc9a0e58db935d51b1f902e81b73e849d743925debc200ad77467a7317",
+      "ast_digest": "463279ab5db04ee26166b3797610861eba6326445fc50cabe2ee0f1e12928cae"
+    },
+    "srp": {
+      "values_digest": "cb5831acec06a16c21e4bcec30d3d96de5d50327e58fd2f719103a117aac3c32",
+      "rendered_digest": "1624921126f0d44c27cc0f24e0b4f6a3f2192fb3d5bce9693bbcb23855258fff",
+      "ast_digest": "ebef491829a89e7de4b606f94213cc7ab1613ef80c5bd52b30327dad87c36616"
+    },
+    "sor": {
+      "values_digest": "adc08d7a341377bcd3562edf9ebebd777005bf03f137b3f32b9f69f3bc0e9496",
+      "rendered_digest": "7d35eb79c929ad9b6be0bda36cd625f43c1daef1db597b46e1f11525673f3c91",
+      "ast_digest": "bd22cccbb18921b411f05d6bfa05813946782e032e72ce08c2b174282107c865"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-4741-preparation",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-4741-preparation",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-4741-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-4741-execution",
+      "reason": "Advance the assigned exact-revision PASS review to reviewed phase with retained residual risks"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-4741-publication",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:issue-4741-shepherd",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:issue-4741-preparation",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:issue-4741-preparation",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-4741-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-4741-preparation",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "operator:v0918-wp15-unity-specialist-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-4741-preparation",
+      "reason": "Reserve focused validation selector registration required by specialist readiness review",
+      "operation": "{\"add_protected_paths\":[\"adl/config/validation_lane_selector.v0.91.6.json\",\"adl/tools/test_select_validation_lanes.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-4741-preparation",
+      "reason": "Apply specialist review findings for generic classifier handoff and focused selector registration",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: every proof attempt prints open_editor, fresh_batch, or skipped_fail_closed before Unity work begins\",\"AC-2: exact-project liveness uses permission-safe adl process status evidence and never broad ps, pgrep, or lsof output\",\"AC-3: fresh_batch never opens the same project directory already owned by an editor and stages only under /Volumes/FastWork or issue-local .adl storage\",\"AC-4: wrappers use repository-installed owner binaries and the configured Unity editor path without building replacement binaries\",\"AC-5: progress monitoring keys off meaningful import, compile, validation, or terminal markers and does not impose an arbitrary total runtime ceiling\",\"AC-6: crash, licensing, missing project, readonly database without subsequent import progress, idle progress, and a generic external startup-classifier failure each produce a precise bounded outcome\",\"AC-7: readonly-database text is not fatal after verified asset-import progress\",\"AC-8: focused unit tests prove mode selection, progress reset, idle failure, readonly progression, cleanup, and generic external-classifier routing without launching Unity\",\"AC-9: one live or staged proof records editor version, canonical project, mode, progress classifier, log reference, and exact success or blocker truth\",\"AC-10: the final diff excludes #4739 MCP alignment internals, #5332 ILPP signature and threshold logic, Unity scene code, runtime semantics, asset work, and rendering polish\",\"AC-11: validation selector registration maps the issue-owned wrapper paths to one focused Unity liveness lane and its selector test passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Review current wrapper contracts and selectively port mode selection, approved staging, scratch isolation, and progress-watchdog behavior from preserved predecessor work\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-10\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement precise crash, licensing, readonly-progress, idle, and generic external-classifier handoff outcomes without encoding #5332 ILPP signatures or thresholds\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\",\"AC-10\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Expand focused no-Unity unit fixtures for mode selection, semantic progress, generic classifier routing, and cleanup\",\"acceptance_ids\":[\"AC-1\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Register the issue-owned paths in the validation selector and prove focused lane selection\",\"acceptance_ids\":[\"AC-10\",\"AC-11\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Update the bounded operator runbook and run one live or staged proof using the selected safe mode\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-9\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Record bounded review findings and exact proof or blocker truth for WP-15 consumption\",\"acceptance_ids\":[\"AC-9\",\"AC-10\",\"AC-11\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"unity-editor-liveness-unit\",\"proof_role\":\"Prove mode selection, semantic progress, generic classifier routing, and cleanup without launching Unity\",\"acceptance_ids\":[\"AC-1\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh\"],\"parallel_group\":\"unity-liveness-static\",\"defer_reason\":null},{\"lane\":\"unity-editor-liveness-contract\",\"proof_role\":\"Prove Observatory wrapper contract and issue-owned path integration\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-6\",\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_contract.sh\"],\"parallel_group\":\"unity-liveness-static\",\"defer_reason\":null},{\"lane\":\"unity-editor-selector-registration\",\"proof_role\":\"Prove the validation selector chooses the focused Unity liveness lane for issue-owned wrapper paths\",\"acceptance_ids\":[\"AC-10\",\"AC-11\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_select_validation_lanes.sh\"],\"parallel_group\":\"unity-liveness-static\",\"defer_reason\":null},{\"lane\":\"unity-editor-live-or-staged-proof\",\"proof_role\":\"Retain one exact editor-mode or staged-batch outcome with semantic progress evidence\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-9\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":900,\"budget_tokens\":5000,\"argv\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\"],\"parallel_group\":\"unity-liveness-live\",\"defer_reason\":\"Run only after deterministic wrapper and selector lanes pass and the operator-selected project is available; retain an exact fail-closed result when no safe mode exists.\"},{\"lane\":\"unity-editor-diff-hygiene\",\"proof_role\":\"Prove bounded text and shell hygiene\",\"acceptance_ids\":[\"AC-10\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"unity-liveness-static\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "operator:v0918-wp15-unity-specialist-recheck",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "operator:v0918-wp15-unity-specialist-recheck",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Begin bounded #4741 execution after typed doctor pass and explicit operator authorization",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/4741\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Begin bounded #4741 execution after typed doctor pass and explicit operator authorization",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/4741\"],\"expected_owner\":\"codex:issue-4741-preparation\",\"expected_purpose\":\"Prepare #4741 for bounded v0.91.8 WP-15 Unity editor liveness and batch-proof reliability execution\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare #4741 for bounded v0.91.8 WP-15 Unity editor liveness and batch-proof reliability execution\",\"purpose\":\"Execute only #4741 Unity editor liveness, safe proof-mode selection, approved staging, semantic progress classification, focused tests, selector registration, retained live-or-staged proof, review, publication, and closeout; do not absorb #5332 ILPP diagnosis, #4739 MCP alignment, scene work, runtime semantics, assets, or investor rendering\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 5,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Record the bounded Unity editor-liveness implementation and retained staged proof",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented deterministic Unity proof-mode selection, exact PID-metadata liveness checks, approved staging, semantic progress monitoring, contextual blocker classification, focused selector registration, and one retained staged outcome.\",\"changes\":[\"Select and print open_editor, fresh_batch, or skipped_fail_closed before Unity work.\",\"Use repository-installed adl process status against exact PID metadata and fail closed on ambiguous project locks.\",\"Stage only under /Volumes/FastWork or issue-local .adl storage and pass the owner binary a repository-relative packet reference.\",\"Reset liveness only on import, compile, validation, or terminal markers; classify readonly text in temporal context.\",\"Route generic external startup-classifier outcomes without embedding #5332 signatures or thresholds.\",\"Register one focused Unity editor-liveness validation lane and add no-Unity regression coverage plus an operator runbook.\"],\"artifacts\":[\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh\",\"adl/config/validation_lane_selector.v0.91.6.json\",\"adl/tools/test_select_validation_lanes.sh\",\"docs/tooling/unity_observatory_editor_batch_proof.md\",\".csdlc/evidence/4741/live-staged-proof.json\",\".csdlc/evidence/4741/LIVE_STAGED_PROOF.md\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 6,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Record the focused deterministic Unity liveness proof",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh\"],\"purpose\":\"Prove safe mode selection, exact process-status routing, relative packet invocation, semantic progress, contextual readonly handling, idle/crash/licensing/external outcomes, and cleanup without launching Unity; coupled contract, selector, shell syntax, JSON, and diff checks also passed.\",\"outcome\":\"passed\",\"evidence_ref\":\"Local focused proof passed: unit PASS, v0.91.6 contract guardrails PASS, validation selector PASS, four wrapper syntax checks PASS, JSON parsing PASS, and git diff --check PASS.\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Record the exact live-or-staged liveness proof outcome",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\"],\"purpose\":\"Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/4741/live-staged-proof.json records fresh_batch on Unity 6000.5.1f1, readonly followed by import and compilation progress, semantic fingerprint 1:1:1:0, and expected fail-closed exit 124 terminal_outcome=semantic_progress_idle after 300 idle seconds. Unity validation was not reached and is not claimed.\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Correct stale pre-commit live proof with the exact-head fail-closed owner-binary provenance outcome",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\"],\"purpose\":\"Run one exact-head safe-mode Unity attempt after implementation review and retain precise prerequisite or runtime truth.\",\"outcome\":\"blocked\",\"evidence_ref\":\".csdlc/evidence/4741/live-staged-proof.json supersedes the stale pre-commit attempt: reviewed revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a selected skipped_fail_closed and returned owner_binary_provenance_invalid before Unity launch because the installed repository adl source hash does not match the current declared source root. No binary was built or replaced.\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:issue-4741-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Explicitly supersede the stale pre-commit live validation identity with authoritative exact-head blocker truth",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\"],\"purpose\":\"Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.\",\"outcome\":\"blocked\",\"evidence_ref\":\".csdlc/evidence/4741/live-staged-proof.json is the authoritative exact-head result and explicitly supersedes the earlier passed entry with this same command and purpose identity: revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a returned skipped_fail_closed / owner_binary_provenance_invalid before Unity launch.\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Block the exact three-field identity of the stale pre-commit live validation using C-SDLC v2 latest-result semantics",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\"],\"purpose\":\"Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.\",\"outcome\":\"blocked\",\"evidence_ref\":\".csdlc/evidence/4741/live-staged-proof.json records fresh_batch on Unity 6000.5.1f1, readonly followed by import and compilation progress, semantic fingerprint 1:1:1:0, and expected fail-closed exit 124 terminal_outcome=semantic_progress_idle after 300 idle seconds. Unity validation was not reached and is not claimed.\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 11,
+      "actor": "codex:issue-4741-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "subagent:019f90d6-07c1-7091-b996-73007e6a80fb",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "codex:issue-4741-execution",
+      "reason": "Advance the assigned exact-revision PASS review to reviewed phase with retained residual risks",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:issue-4741-publication",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:issue-4741-shepherd",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:issue-4741-shepherd",
+      "reason": "Classify the exact-head fail-closed observation as passing evidence for the wrapper contract without claiming Unity launch or scene validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\"],\"purpose\":\"Run one exact-head safe-mode Unity attempt after implementation review and retain precise prerequisite or runtime truth.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/4741/live-staged-proof.json supersedes the stale pre-commit attempt: reviewed revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a selected skipped_fail_closed and returned owner_binary_provenance_invalid before Unity launch because the installed repository adl source hash does not match the current declared source root. No binary was built or replaced.\"}}"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:issue-4741-shepherd",
+      "reason": "Classify the authoritative fail-closed packet as passing evidence for the declared safe-mode wrapper outcome while retaining the Unity non-claim",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\"],\"purpose\":\"Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/4741/live-staged-proof.json is the authoritative exact-head result and explicitly supersedes the earlier passed entry with this same command and purpose identity: revision 2fb6fa86fee8b96457e0c179646a0c5109861e4a returned skipped_fail_closed / owner_binary_provenance_invalid before Unity launch.\"}}"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "codex:issue-4741-shepherd",
+      "reason": "Retire the stale pre-commit Unity attempt from current exact-head readiness without deleting append-only historical evidence",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\"],\"purpose\":\"Prove one real safe-mode Unity attempt records exact progress and terminal truth without an arbitrary total ceiling.\",\"outcome\":\"skipped_non_goal\",\"evidence_ref\":\".csdlc/evidence/4741/live-staged-proof.json records fresh_batch on Unity 6000.5.1f1, readonly followed by import and compilation progress, semantic fingerprint 1:1:1:0, and expected fail-closed exit 124 terminal_outcome=semantic_progress_idle after 300 idle seconds. Unity validation was not reached and is not claimed.\"}}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:issue-4741-shepherd",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:issue-4741-preparation",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:issue-4741-preparation",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "materialize retained terminal closeout receipt after post-merge sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "adl-post-merge-closeout",
+      "reason": "post-merge terminal reconciliation sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 31,
+      "generation": 25,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

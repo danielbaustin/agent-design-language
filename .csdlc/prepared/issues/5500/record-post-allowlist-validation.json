@@ -1,0 +1,21 @@
+{
+  "issue": 5500,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "544b9012850f66029a912cd7fed17f964491c094175dec19eb54bffed2abd736",
+  "claim_id": "claim-5500-v0918-wp10a-dashboard-preparation",
+  "actor": "codex:issue-5500-implementation",
+  "reason": "Record focused dashboard validation after the Runtime Observatory origin allowlist repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        ".csdlc/prepared/issues/5500/validate-dashboard.sh"
+      ],
+      "purpose": "Prove the #5500 read-only workcell operator view after the Runtime Observatory origin allowlist repair, including schema checks, safe rendering, HTTPS rejection, empty-allowlist rejection, allowlisted read-feed construction, and no implicit fetch.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5500/dashboard-contract.log"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "issue": 5355,
+  "card": "srp",
+  "expected_generation": 1,
+  "expected_digest": "59c92de2b2f7f5f2115c092ac3721d00d20f1bbcb8d59459cb7319a29efc68a0",
+  "claim_id": "claim-5355-v0918-preparation",
+  "actor": "codex:5355-preparation-owner",
+  "reason": "Prepare exact-head review prompts for the later WP-21A execution boundary.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "review_prompts",
+    "values": [
+      "Does the WP-21A closeout-planning packet consume current reviewed WP-21 #5362 truth without treating historical #5489/#5383 packets as live authority?",
+      "Is #5362 proved by live merged PR state and ancestry to refreshed origin/main and the exact #5355 execution base before execution claims are accepted?",
+      "Are version:v0.92 issues, #5357 remediation, PR publication, merge, closeout, AWS, and main-checkout mutations absent from #5355 scope?",
+      "Do focused docs/YAML/link checks, typed C-SDLC validation, and diff hygiene match the actual touched WP-21A surfaces without overclaiming deferred proof?"
+    ]
+  }
+}

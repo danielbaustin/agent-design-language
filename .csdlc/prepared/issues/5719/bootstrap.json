@@ -1,0 +1,155 @@
+{
+  "issue": 5719,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5719/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5719/diagram.mmd",
+  "design_reviewer": "codex:5719-execution",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5719-ci-coverage-page-policy",
+    "owner": "codex:5719-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785363942,
+    "expires_unix_seconds": 1785968742,
+    "heartbeat_unix_seconds": 1785363942,
+    "branch": "codex/5719-ci-coverage-page-policy",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5719",
+      ".csdlc/locks/5719.lock",
+      ".csdlc/prepared/issues/5719",
+      ".github/workflows/ci.yaml",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_validation_manager.sh"
+    ],
+    "purpose": "Fix CI path-policy selection so podcast/demo page-only PRs do not schedule duplicate hosted runtime and workspace coverage while preserving full coverage for Rust/runtime/provider/tooling changes"
+  },
+  "initial": {
+    "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
+    "slug": "v0-91-8-ci-coverage-avoid-duplicate-hosted-coverage-on-podcast-demo-page-prs",
+    "version": "v0.91.8",
+    "goal": "Make podcast/demo page and launch packet UI-only PRs select focused validation rather than full hosted runtime plus workspace coverage.",
+    "required_outcome": "A #5716-like podcast studio/static demo path set no longer sets full_coverage_required=true, while Rust/runtime/provider/tooling changes still select their existing coverage requirements.",
+    "declared_scope": [
+      "CI path-policy classifier",
+      "CI path-policy contract tests",
+      "workflow contract assertions if needed",
+      "issue-local C-SDLC lifecycle evidence"
+    ],
+    "authority_boundary": [
+      "GitHub issue #5719",
+      "Observed PR #5716 hosted coverage selection",
+      "Existing CI path-policy contract tests"
+    ],
+    "operator_constraints": [
+      "Use only FastWork for tracked issue work.",
+      "Do not write tracked changes on main.",
+      "Do not remove the adl-coverage-hosted aggregator.",
+      "Avoid duplicate expensive hosted producer lanes for static podcast/demo page changes.",
+      "Preserve full coverage for Rust/runtime/provider/tooling policy changes."
+    ],
+    "task_boundary": "Fix CI selector policy and focused contract tests only; do not change podcast page content or unrelated CI behavior.",
+    "deliverables": [
+      "path-policy classifier update",
+      "focused tests for podcast/demo static path selection",
+      "regression tests proving Rust/tooling changes still select full or required lanes",
+      "truthful lifecycle and publication evidence"
+    ],
+    "acceptance_criteria": [
+      "AC-1: A #5716-like podcast studio/static demo path set reports full_coverage_required=false.",
+      "AC-2: The same path set does not schedule both hosted runtime and hosted workspace producer coverage.",
+      "AC-3: The stable adl-coverage-hosted aggregator/check remains present and truthful.",
+      "AC-4: Rust/runtime/provider/tooling policy path changes retain their existing full/focused coverage requirements.",
+      "AC-5: Focused CI path-policy and workflow contract tests pass locally."
+    ],
+    "dependencies": [
+      "#5716 observed duplicate hosted producer coverage",
+      "Existing ci_path_policy contract suite"
+    ],
+    "repo_inputs": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_validation_manager.sh"
+    ],
+    "non_goals": [
+      "removing required stable check aggregation",
+      "rewriting the hosted coverage workflow",
+      "changing podcast page content",
+      "weakening Rust/runtime/provider/tooling coverage"
+    ],
+    "plan_summary": "Add a bounded static podcast/demo path classification, prove #5716-like paths avoid full hosted coverage, preserve producer lanes for behavioral changes, review, and publish.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Inspect current path-policy coverage selection and reproduce a #5716-like changed path set.",
+        "acceptance_ids": ["AC-1", "AC-2"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Patch the selector with the smallest static podcast/demo classification.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Add focused tests for static podcast/demo paths and Rust/tooling preservation.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-4", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run path-policy, workflow contract, and validation-manager focused checks.",
+        "acceptance_ids": ["AC-3", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Run bounded review, record lifecycle truth, and publish with Closes #5719.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "The aggregator job remains the stable coverage check.",
+      "Full hosted coverage remains fail-closed for source/runtime/provider/tooling-policy changes.",
+      "Static podcast/demo page changes do not pay for duplicate hosted producer coverage."
+    ],
+    "risks": [
+      "Over-broad static classification could skip coverage for code-bearing demo changes.",
+      "Workflow contract assertions could drift from the selector output.",
+      "Policy tests are large and may hide the focused regression if no specific fixture is added."
+    ],
+    "stop_conditions": [
+      "The selector cannot distinguish static podcast/demo files from code-bearing demo/runtime files.",
+      "A workflow contract proves both hosted producer lanes are still selected after the path-policy change.",
+      "A Rust/runtime/provider fixture regresses to skipped coverage."
+    ],
+    "review_prompts": [
+      "Does the policy narrowly target static podcast/demo page and launch packet UI paths?",
+      "Can a code-bearing Rust/runtime/provider/tooling path still trigger its required coverage lane?",
+      "Does the workflow keep the stable aggregator while avoiding duplicate hosted producers?"
+    ],
+    "review_scope": "CI path-policy classifier, CI path-policy tests, workflow contract assertions, and issue-local lifecycle records",
+    "failure_policy": "Fail closed on any selector ambiguity that could skip full coverage for source/runtime/provider/tooling behavior.",
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "ci_path_policy_contracts",
+        "proof_role": "focused selector and workflow contract validation",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 240,
+        "budget_tokens": 2000,
+        "argv": ["bash", "adl/tools/test_ci_path_policy.sh"],
+        "parallel_group": "focused",
+        "defer_reason": null
+      }
+    ]
+  }
+}

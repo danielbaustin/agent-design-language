@@ -1,0 +1,26 @@
+{
+  "schema": "adl.wp18.validation_lane_result.v1",
+  "issue": 5356,
+  "lane": "complete",
+  "revision": "bceb1c6ce3e91d9f45ced62b6e9d9e1cb14fcb4f",
+  "packet_digest": "fbee38d59574e6c285a6db1517e4abaac4747b4d35d1b6d074c1571be6f471cc",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "status": 0,
+      "success": true,
+      "output": ""
+    }
+  ],
+  "warnings": [
+
+  ],
+  "findings": [
+
+  ],
+  "status": "pass"
+}

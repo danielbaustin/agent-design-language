@@ -1,0 +1,274 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5766,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "15899e8716ca9d8639ebd543cef4be35c93a1e691b03a7bc685f608896a42f33",
+  "phase": "published",
+  "generation": 10,
+  "digest": "7872c26fd0603d4c22d6740846a3f347e1006892c55b32983a6aee393b6703dd",
+  "claim": {
+    "id": "claim-5766-csm-runtime-endpoint-inventory",
+    "owner": "codex:5766-execution",
+    "generation": 10,
+    "acquired_unix_seconds": 1785784392,
+    "expires_unix_seconds": 1786389192,
+    "heartbeat_unix_seconds": 1785784392,
+    "branch": "codex/5766-csm-runtime-endpoint-inventory",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5766",
+      ".csdlc/issues/5766",
+      ".csdlc/locks/5766.lock",
+      ".csdlc/prepared/issues/5766",
+      "adl-runtime/src/runtime_api.rs",
+      "adl/src/csm_api_gateway_bridge.rs",
+      "adl/src/csm_runtime_api.rs",
+      "docs/reviews/v0.91.8/internal-review-5356/FINDINGS_REGISTER.md"
+    ],
+    "purpose": "Reconcile advertised CSM runtime endpoints with actual mounted route truth and focused tests"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019fc960-976d-7500-9492-86cc9b2ca187",
+    "assigned_by": "codex:issue-5766-runtime-endpoint-inventory",
+    "revision": "git-blake3:75a78b883058a7251a1302b43d51cf60ad5ebce3:a7a81cf04e2213d8a4650641bd750effe96675b9432f25f75656d49e93577aef",
+    "scope": [
+      ".csdlc/evidence/5766",
+      ".csdlc/issues/5766",
+      ".csdlc/locks/5766.lock",
+      ".csdlc/prepared/issues/5766",
+      "adl-runtime/src/runtime_api.rs",
+      "adl/src/csm_runtime_api.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019fc960-976d-7500-9492-86cc9b2ca187",
+    "scope": [
+      ".csdlc/evidence/5766",
+      ".csdlc/issues/5766",
+      ".csdlc/locks/5766.lock",
+      ".csdlc/prepared/issues/5766",
+      "adl-runtime/src/runtime_api.rs",
+      "adl/src/csm_runtime_api.rs"
+    ],
+    "reviewed_revision": "git-blake3:75a78b883058a7251a1302b43d51cf60ad5ebce3:a7a81cf04e2213d8a4650641bd750effe96675b9432f25f75656d49e93577aef",
+    "findings": [],
+    "residual_risks": [
+      "The worktree contains unrelated untracked .csdlc/evidence/5344/work/ content, left untouched and outside #5766 scope.",
+      "The new router test constructs the Axum router but does not drive HTTP requests through it; direct handler tests cover health and metrics, while existing WSS tests cover websocket behavior."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5766,
+    "pull_request": 5797,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5797",
+    "base": "main",
+    "head": "codex/5766-csm-runtime-endpoint-inventory",
+    "revision": "git-blake3:75a78b883058a7251a1302b43d51cf60ad5ebce3:a7a81cf04e2213d8a4650641bd750effe96675b9432f25f75656d49e93577aef",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5766/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5766/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5766-design-review",
+      "revision": "bc9d712af5b4017312b9d38543350f90cbe8976dac2e2ab83c7654b9757b656d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "0dfef4a9be67fdd1766769c0e26d06eaffadd33cd3d061846c6929f74fb44fe1",
+      "rendered_digest": "d6984655df306f472e4a05038db0ef23ed37a9f14ac94503b24582bd3bc41b6d",
+      "ast_digest": "d5c9f6f9d6a36e152938cbf0a2bf9fdcd71dbf4e3cc6eb698959749e34da2e20"
+    },
+    "stp": {
+      "values_digest": "9a06c2d6b73f3149201f5372d97c5f43a4492aa2d0a7e920191162d35489de1b",
+      "rendered_digest": "f66fab95c3e02b41a10ebe41c5e4252ae061673a8c3259adcf5b70e4d4b03af7",
+      "ast_digest": "b9e5476e5e84839a0f0b31b1ad6bb7119cb64fec591a441358a9008896542785"
+    },
+    "spp": {
+      "values_digest": "df355a95f9bb7c7d6ac43d02fda09652aba8b93bf9313f12b1e4acaf65097dce",
+      "rendered_digest": "a3f474af7c5a680955c317df6d71671d0e8206e7c05575c077986cf0672057a7",
+      "ast_digest": "e38e1fe2871b7ec081a0e915c778ff5992c5459a915c792bbaca0953cc1d0fd1"
+    },
+    "vpp": {
+      "values_digest": "a9aded116aca600b134db8c372ea28eb5ced0af046ae9dc9e5d8a55c11f87de0",
+      "rendered_digest": "3c536f736df09a85d6b55780a66354e03113fe8fc5cc30138860c8324c8b8b21",
+      "ast_digest": "85075e001dc443145c7fda3aed1faffc4cc2041b769d211aa91f7225c6789eed"
+    },
+    "srp": {
+      "values_digest": "686c1a68fa2c7b7de0e725f7020cf750158a665e8e3cdf6409a124cec0104ca5",
+      "rendered_digest": "b84ab37c93fd3edaefd14ccc80ecb86dbae111e943a8e51ebc1e76112eb838fa",
+      "ast_digest": "6a7072baf265fd06c9d28ca2cf63b614e34028f9e552dd78def772b54e86d4a3"
+    },
+    "sor": {
+      "values_digest": "35ac0b876927b930a9247c855c1de32545fa1353073d92d2e0ac61b0b58e243d",
+      "rendered_digest": "a70cc9d178e196be336a5e54d238cbc3e760f461c185e944af77332fcbf6c0d2",
+      "ast_digest": "a4152f6dd66e189e516a9ead8e41a1a2c7026b5cf9ffaa70865dce1e103d49f1"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5766-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5766-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "subagent:019fc928-dc3a-7b11-a3b3-a9627a93d0b6",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "post-publication coverage-impact repair changed substantive runtime_api.rs tests; recover review before republishing exact head"
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "enter reviewed phase after assigned exact-head clean review for coverage-impact repair"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5766-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5766-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5766-execution",
+      "reason": "Record bounded endpoint inventory reconciliation implementation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Reconciled CSM runtime endpoint inventory truth by making adl-runtime route registration share one mounted-route authority and adding local CSM fallback dispatch proof for every advertised endpoint.\",\"changes\":[\"adl-runtime/src/runtime_api.rs\",\"adl/src/csm_runtime_api.rs\"],\"artifacts\":[\".csdlc/prepared/issues/5766/design.md\",\".csdlc/prepared/issues/5766/diagram.mmd\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5766-execution",
+      "reason": "Record focused adl-runtime route inventory validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5766/target\",\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"runtime_api_contract_advertises_only_served_routes\"],\"purpose\":\"Prove adl-runtime advertised endpoints equal the mounted route authority.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout: 1 passed, 0 failed\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5766-execution",
+      "reason": "Record focused local CSM endpoint dispatch validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5766/target\",\"cargo\",\"test\",\"--offline\",\"--manifest-path\",\"adl/Cargo.toml\",\"runtime_api_advertised_endpoints_resolve_through_local_dispatch\"],\"purpose\":\"Prove every local CSM advertised endpoint resolves through runtime API dispatch and unknown paths return not_found with supported endpoint metadata.\",\"outcome\":\"passed\",\"evidence_ref\":\"local stdout: 1 passed, 0 failed; transient adl/Cargo.lock resolution churn restored before commit\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "Protect the typed finalize evidence directory created for the #5766 implementation validation.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/evidence/5766\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "subagent:019fc928-dc3a-7b11-a3b3-a9627a93d0b6",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "post-publication coverage-impact repair changed substantive runtime_api.rs tests; recover review before republishing exact head",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "subagent:019fc960-976d-7500-9492-86cc9b2ca187",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "enter reviewed phase after assigned exact-head clean review for coverage-impact repair",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:issue-5766-runtime-endpoint-inventory",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

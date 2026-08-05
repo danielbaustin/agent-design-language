@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5363,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-20] Remediate review findings and run release preflight",
+    "slug": "v0918-wp20-remediation-release-preflight",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Fix accepted internal and external findings, rerun focused and integrated checks, and converge checklist truth.",
+      "required_outcome": "Remediation packet, preflight proof, and final checklist truth.",
+      "declared_scope": [
+        "accepted review finding remediation",
+        "release preflight proof",
+        "explicit blocker disposition"
+      ],
+      "authority_boundary": [
+        "typed C-SDLC v2 only",
+        "no execution before live predecessor merge plus ancestry",
+        "receipts audit-only",
+        "no raw gh, AWS, PR, merge, or closeout during preparation"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "preparation only",
+        "no tracked root-main writes",
+        "one issue-bound FastWork branch",
+        "minimal packet: six cards, design, diagram, focused doctor validation"
+      ]
+    }
+  }
+}

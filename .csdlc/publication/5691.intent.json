@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5691,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5691-runtime-v3-vector-otel",
+  "title": "Implement Runtime v3 Vector OTEL master logging (#5691)",
+  "body": "## Summary\n\nImplements #5691 production Runtime v3 tracing through the existing tracing facade into one pinned Vector pipeline, with durable canonical master JSONL output, a deterministic `adl.runtime.master_log_audit.v1` auditor report for WP-12 consumption, startup signal registration before API readiness, fail-closed Vector child liveness supervision, tracing-subscriber span correlation, redaction, bounded buffering/drain behavior, OTLP configuration, and repo-native macOS/Linux/Windows Vector provisioning.\n\nThis does not claim WP-12 10K or soak acceptance; those runs remain gated until this Vector-backed logging path is integrated.\n\n## Validation\n\n- cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir <issue-worktree>/target --test observability: PASS, 9/9\n- cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir <issue-worktree>/target --test configuration: PASS, 15/15\n- cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir <issue-worktree>/target --all-targets -- -D warnings: PASS\n- cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir <issue-worktree>/target --test guardian_soak: PASS, 7 passed / 7 declared ignored\n- cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml -- --check: PASS\n- git diff --check: PASS\n- Claude Opus 5 final confirmation at f8db82cf: final_status=ok, REVIEW_COMPLETE, no actionable P1/P2\n",
+  "draft": false,
+  "revision": "git-blake3:9f77f10ec75842a705b8719db9012019e06e515b:8eb024374d7271ac32de3a551e113672a26dc437dbb81f4472f8790c1a2a101b",
+  "commit_sha": "9f77f10ec75842a705b8719db9012019e06e515b"
+}

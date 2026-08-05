@@ -1,0 +1,14 @@
+{
+  "issue": 5719,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "d016b31c9248d1c0a9ed5cd5916a80185a134264958f546273f9b2096227ecb0",
+  "claim_id": "claim-5719-ci-coverage-page-policy",
+  "actor": "codex:5719-execution",
+  "reason": "Exact bounded review passed with no actionable findings for the podcast CI coverage path-policy fix.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

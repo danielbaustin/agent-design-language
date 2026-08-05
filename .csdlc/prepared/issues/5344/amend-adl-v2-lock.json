@@ -1,0 +1,12 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_generation": 4,
+  "expected_digest": "4aa34d2e1df8bc9746b1979cfef0f72ac8088dd05aeafc5b3634230120710c4e",
+  "now_unix_seconds": 1785120094,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Reconcile the stale adl-v2 lockfile exposed by the unchanged WP-12 locked rollback proof after integrating current main",
+  "add_protected_paths": [
+    "adl-v2/Cargo.lock"
+  ]
+}

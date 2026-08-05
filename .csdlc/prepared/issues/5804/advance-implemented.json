@@ -1,0 +1,13 @@
+{
+  "issue": 5804,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "effd9cf32dae461c25c1d2d1b39e0453264b6342f36caf2a7fc55e5e1ec04c4b",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded repair and all three typed validation lanes are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

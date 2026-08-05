@@ -1,0 +1,7 @@
+{
+  "issue": 5343,
+  "expected_generation": 3,
+  "expected_digest": "8a344f97cf0c0e36594b3f8d4f05ee31fd86ba3e974eb84540f26faa1693e092",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "reviewer": "operator:approved-live-merge-and-nonblocking-closeout"
+}

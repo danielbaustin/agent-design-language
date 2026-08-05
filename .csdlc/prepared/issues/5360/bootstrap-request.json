@@ -1,0 +1,157 @@
+{
+  "issue": 5360,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5360/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5360/diagram.mmd",
+  "design_reviewer": "pending:bounded-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5360-v0918-wp17-documentation-preparation",
+    "owner": "codex:5360-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784667701,
+    "expires_unix_seconds": 1785272501,
+    "heartbeat_unix_seconds": 1784667701,
+    "branch": "codex/5360-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5360",
+      ".csdlc/locks/5360.lock",
+      ".csdlc/prepared/issues/5360",
+      ".csdlc/evidence/5360"
+    ],
+    "purpose": "Prepare and review #5360 WP-17 documentation and release-truth alignment contracts only; no shared-document or product work until WP-16 #5351 is merged, typed closed_out, receipt-backed, claim-free, and ancestral"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-17] Align documentation and release truth before formal review",
+    "slug": "v0918-wp17-documentation-release-truth-alignment",
+    "version": "v0.91.8",
+    "goal": "Align README, feature, milestone, checklist, handoff, issue-wave, deployment, and product-ownership documentation to exact v0.91.8 evidence before formal review.",
+    "required_outcome": "After #5351 is terminal, a reviewed exact-revision documentation alignment packet repairs contradictory planning and release surfaces, preserves unsupported statements as blockers or non-claims, and releases WP-18 only after complete proof.",
+    "declared_scope": [
+      "issue-local typed lifecycle, preparation, validation, review, and evidence records",
+      "future evidence inventory and reconciliation of the exact reviewed README, feature, milestone, checklist, handoff, issue-wave, deployment, and ownership paths",
+      "future claim classification as proven, planned, blocked, deferred, superseded, or explicit_non_claim",
+      "future typed review, publication, serialized merge, post-merge validation, closeout, and WP-18 release"
+    ],
+    "authority_boundary": [
+      "Preparation protects only four exact #5360 issue-local lifecycle and evidence paths",
+      "WP-16 #5351 owns the integrated quality gate and must be terminal before #5360 implementation",
+      "ADL v2, Runtime v3, and C-SDLC v2 retain separate product ownership; #5360 reconciles documentation but cannot manufacture product proof",
+      "WP-18 #5356 remains blocked until #5360 is merged and typed closed_out",
+      "Future shared-document paths require a fresh collision check and typed reviewed claim amendment after #5351 terminal"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and the current registry native six-card projection only",
+      "Keep root main untouched; all tracked preparation stays in the dedicated /Volumes/FastWork #5360 worktree",
+      "Preparation only: no shared-document edit, product change, quality execution, PR, publication, merge, closeout, Runtime v2, AWS, raw gh, credentials, paid service, or hidden network authority",
+      "Do not implement until #5351 is merged, typed closed_out, claim-free, retained-receipt-backed, and its merge SHA is ancestral to the exact #5360 execution revision",
+      "Use structured parsers and existing owner tools for structured formats; retain repository-relative evidence references only",
+      "Use existing repository tools and COTS; add no dependency or duplicate runtime, workflow, release, deployment, telemetry, signing, or evidence system",
+      "Run bounded preparation review, fix every actionable finding, typed design approval, bind, doctor and PVF proof, commit and push, then stop"
+    ],
+    "task_boundary": "Prepare six current-registry cards, reviewed design and diagram, exact preparation and future documentation paths, COTS, budgets, PVF, and a fail-closed #5351 gate; do not edit shared documentation or product code.",
+    "deliverables": [
+      "all six current-registry issue-specific typed cards",
+      "reviewed documentation alignment design and Mermaid diagram",
+      "exact preparation-only protected paths and exact future documentation path manifest",
+      "executable #5351 merge, typed closeout, receipt, claim-release, and ancestry gate",
+      "zero-new-dependency COTS posture, documentation claim taxonomy, and owner-boundary model",
+      "LoC, module, assertion, time, token, and PVF budgets",
+      "bounded preparation review with all actionable findings fixed",
+      "future exact-revision alignment packet, blocker register, post-merge proof, and WP-18 release predicate"
+    ],
+    "acceptance_criteria": [
+      "AC-1: No shared-document or product edit starts until #5351 is merged, typed closed_out, claim-free, backed by a retained merged terminal receipt, and its observed merge SHA is ancestral to the exact #5360 execution revision",
+      "AC-2: Every future changed material claim names its source path, prior and resulting classification, exact evidence reference, owning product, and disposition",
+      "AC-3: Proven, planned, blocked, deferred, superseded, and explicit_non_claim remain distinct; only exact retained evidence supports proven and no unsupported statement is promoted",
+      "AC-4: README, feature, WBS, sprint, checklist, handoff, issue-wave, deployment, release, proof-coverage, and ownership surfaces agree without erasing separate ADL v2, Runtime v3, and C-SDLC v2 authority",
+      "AC-5: Structured YAML and JSON are processed with structured parsers or owner tools; Markdown changes preserve local structure, links, repository-relative evidence, redaction, and exact revision identity",
+      "AC-6: Preparation adds no dependency and changes zero product/shared-document files; future documentation delta stays within 2500 changed lines and preparation stays within 1500 nonblank lines, 500 per module, and fewer than 150 focused assertions unless exactly reviewed",
+      "AC-7: Every required focused, complete, exact-review, CI, authorized serialized merge, post-merge, typed-closeout, and WP-18 release gate passes without hidden deferral",
+      "AC-8: Product defects, missing proof, path collisions, budget variance, and unsupported claims route to their owning issue and never become documentation-only green truth"
+    ],
+    "dependencies": [
+      "WP-16 #5351 merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral to the exact #5360 execution revision"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issues #5360 and #5351",
+      "docs/templates/prompts/current.json",
+      "csdlc-v2/operator/generation-selector.json",
+      "README.md",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/SPRINT_v0.91.8.md",
+      "docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
+      "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md",
+      "docs/milestones/v0.91.8/BASELINE_AND_OWNERSHIP_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/PLATFORM_ACCEPTANCE_AND_DEPLOYMENT_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "future retained #5351 terminal receipt and merged quality-gate evidence"
+    ],
+    "non_goals": [
+      "WP-16 quality-gate execution, WP-18 formal review, product repair, deployment, or release ceremony",
+      "ADL v2, Runtime v3, C-SDLC v2, provider, runtime, infrastructure, test, CI, or application implementation",
+      "new documentation generator, release database, parser framework, workflow engine, deployment manager, signer, telemetry system, or evidence store",
+      "Runtime v2 use or edits, AWS, provider credentials, paid services, raw gh, hidden network authority, hard-coded addresses, or private transcript retention",
+      "shared-document implementation, PR, publication, merge, or closeout during preparation"
+    ],
+    "plan_summary": "Render and validate six current-registry cards; freeze exact #5351 terminal gating, preparation and future path ownership, claim taxonomy, product boundaries, COTS, budgets and PVF; obtain bounded review and fix findings; typed approve, bind and doctor; commit and push preparation only.",
+    "steps": [
+      {"id":"S1","action":"Complete six cards, design, diagram, exact paths, dependency gate, COTS, budgets, PVF, bounded review and fixes, typed approval/bind/doctor, commit, and push preparation","acceptance_ids":["AC-1","AC-3","AC-6","AC-8"],"status":"in_progress"},
+      {"id":"S2","action":"Wait fail-closed until #5351 is merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral","acceptance_ids":["AC-1"],"status":"pending"},
+      {"id":"S3","action":"Amend exact reviewed shared-document paths, inventory evidence, reconcile claims, and run focused and complete alignment validation","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6","AC-8"],"status":"pending"},
+      {"id":"S4","action":"Run exact review, typed publication, green CI, authorized serialized merge, post-merge proof, typed closeout, and release WP-18","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-7","AC-8"],"status":"pending"}
+    ],
+    "invariants": [
+      "preparation owns only four exact #5360 issue-local lifecycle and evidence paths",
+      "no shared-document or broader claim begins before the complete #5351 terminal gate",
+      "unsupported, stale, missing, deferred, or contradictory evidence cannot become a proven release claim",
+      "documentation reconciliation preserves separate product ownership and never becomes runtime, deployment, review, publication, merge, or closeout authority",
+      "Runtime v2, credentials, host-absolute retained paths, hard-coded addresses, product changes, and new dependencies are forbidden during preparation",
+      "all applicable validation, review, CI, merge, post-merge, closeout, and WP-18 release gates complete without deferral"
+    ],
+    "risks": [
+      "aggregate milestone prose could be mistaken for exact product proof",
+      "#5351 or product revisions could drift between quality closeout and documentation execution",
+      "unsupported claims could be softened into optimistic release wording",
+      "broad documentation ownership could collide with active product or milestone work",
+      "alignment tooling could duplicate structured parsers or release databases",
+      "retained evidence could leak host paths, credentials, addresses, stale identities, or private context"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "#5351 lacks actual merge, typed closed_out, claim release, retained merged receipt, or ancestry",
+      "a required statement lacks exact evidence or has contradictory owner truth",
+      "a future documentation path is unreviewed, colliding, generated, or outside typed claim scope",
+      "implementation would change product behavior or require Runtime v2, AWS, credentials, paid services, hidden network authority, hard-coded addresses, or private context",
+      "a new dependency, duplicate authority, unsupported parser, budget breach, failed/deferred gate, or stale review appears",
+      "WP-18 would begin before #5360 merged typed closeout"
+    ],
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Prove current-registry six cards, reviewed design/diagram, exact paths, dependency gate, COTS, budgets, PVF, clean diff, zero product changes, and typed doctor truth","acceptance_ids":["AC-1","AC-3","AC-6","AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3500,"argv":["ruby",".csdlc/prepared/issues/5360/validate-preparation.rb"],"parallel_group":"preparation","defer_reason":null},
+      {"lane":"wp16-terminal-gate","proof_role":"Fail closed until #5351 is merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral","acceptance_ids":["AC-1"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5360/check-dependencies.rb"],"parallel_group":"execution-gate","defer_reason":"Mandatory before implementation; expected to fail while WP-16 remains nonterminal"},
+      {"lane":"focused-doc-alignment","proof_role":"Validate exact claim inventory, structured paths, links, classifications, product ownership, budgets, and blocker routing","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5360/run-validation-lane.rb","focused-doc-alignment"],"parallel_group":"documentation","defer_reason":"Mandatory after #5351 terminal admission and exact protected-path amendment; forbidden during preparation"},
+      {"lane":"complete","proof_role":"Run complete dependency, identity, structured-document, claim, redaction, budget, blocker, and exact-review proof before publication","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":8000,"argv":["ruby",".csdlc/prepared/issues/5360/run-validation-lane.rb","complete"],"parallel_group":"pre-publication","defer_reason":"Mandatory at the exact implementation revision before publication"},
+      {"lane":"post-merge-exact","proof_role":"Re-run dependency ancestry, documentation identities, claim truth, redaction, CI, and WP-18 release predicate after authorized merge","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"large","budget_seconds":900,"budget_tokens":8000,"argv":["ruby",".csdlc/prepared/issues/5360/run-validation-lane.rb","post-merge-exact"],"parallel_group":"post-merge","defer_reason":"Mandatory after authorized serialized merge and before typed closeout"}
+    ],
+    "failure_policy": "Fail closed without shared-document or product edits, public claim, publication, merge, WP-18 release, or closeout on incomplete #5351 terminal truth, claim collision, stale or contradictory identity, unsupported release claim, Runtime v2 use, failed or missing required proof, hidden blocker, secret or host-bound output, hard-coded address, new dependency, budget breach, deferred validation, stale review, red CI, or absent post-merge proof.",
+    "review_prompts": [
+      "Can aggregate prose, a screenshot, old milestone packet, component result, or missing evidence be mistaken for exact proven release truth?",
+      "Is #5351 merge/completion, typed closed_out, claim release, retained receipt, and ancestry gating exact and impossible to bypass?",
+      "Are preparation paths and the future shared-document path manifest exact, collision-aware, and unable to grant product authority?",
+      "Do classification, product ownership, structured parsing, COTS, budgets, PVF, redaction, review, CI, serialized merge, post-merge proof, and WP-18 release contracts cover every required failure mode?",
+      "Does preparation produce exactly zero product and shared-document changes while retaining all future implementation dependencies as fail-closed gates?"
+    ],
+    "review_scope": ".csdlc/issues/5360\n.csdlc/locks/5360.lock\n.csdlc/prepared/issues/5360\n.csdlc/evidence/5360"
+  }
+}

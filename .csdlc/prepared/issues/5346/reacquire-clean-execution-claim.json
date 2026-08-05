@@ -1,0 +1,29 @@
+{
+  "issue": 5346,
+  "expected_generation": 7,
+  "expected_digest": "f636ebc59bc4b4cb8a2d529d586b99ab512ed73090c2784c1ae28cfea4fec2ea",
+  "now_unix_seconds": 1785548770,
+  "actor": "codex:5346-wp13-execution-owner",
+  "reason": "Reacquire a clean #5346 execution claim after removing the unrelated adl/Cargo.lock over-claim.",
+  "replacement": {
+    "id": "claim-5346-v0918-wp13-deletion-preparation-current",
+    "owner": "codex:5346-wp13-execution-owner",
+    "branch": "codex/5346-v0918-wp13-final-adl-deletion",
+    "worktree": ".",
+    "purpose": "Execute #5346 WP-13 final ADL CLI deletion under current operator sequence: upstream #5344/#5343/#5358/#5361/#5384 terminal, #5354/#5352 GitHub merged and closed, #5347 disjoint peer manifest, serialized merge ordering, and no primary-main writes. Delete only exact reviewed #5346 manifest rows; do not touch #5347 external-band paths, Runtime v2, or unrelated lockfiles.",
+    "protected_paths": [
+      ".csdlc/evidence/5346",
+      ".csdlc/issues/5346",
+      ".csdlc/locks/5346.lock",
+      ".csdlc/prepared/issues/5346",
+      "adl/src/cli/tests/pr_cmd_inline",
+      "adl/src/cli/tooling_cmd",
+      "docs/milestones/v0.91.8/evidence/wp13/5346-deletion-eligibility.v1.json",
+      "docs/milestones/v0.91.8/evidence/wp13/5346-post-deletion-validation.v1.json"
+    ],
+    "acquired_unix_seconds": 1785548770,
+    "heartbeat_unix_seconds": 1785548770,
+    "expires_unix_seconds": 1786153570,
+    "generation": 7
+  }
+}

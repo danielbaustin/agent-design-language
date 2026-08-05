@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5352,
+  "expected_generation": 4,
+  "expected_digest": "e51e9b85b9722feb645d3184525c2e8815ca6fbcf2fbc28d60df0c73076b5da3",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "actor": "codex:wp21-final-handoff",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5352-v0918-final-handoff",
+  "title": "[v0.91.8][WP-21] Publish the v0.92 consumption handoff",
+  "body": "Closes #5352\n\n## Summary\n- records the exact v0.91.8 to v0.92 consumption handoff after all eight WP-21 child issues and #5558 merged\n- retains row-bound issue, PR, head, merge, concern, and product identities for the handoff ledger\n- preserves explicit non-claims: this handoff does not execute v0.92 activation or claim the first birthday occurred\n\n## Validation\n- full findings-first WP-21 sprint review completed and all current blockers remediated\n- canonical /v1/acip/ws route and legacy alias focused tests passed\n- final handoff ledger, dependency ancestry, implemented lifecycle packet, typed doctor, and diff hygiene passed\n- typed publication remains gated on one current exact-revision review with no unresolved findings",
+  "draft": false,
+  "token_file": null
+}

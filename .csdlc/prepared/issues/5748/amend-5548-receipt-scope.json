@@ -1,0 +1,12 @@
+{
+  "issue": 5748,
+  "claim_id": "claim-5748-terminal-recovery",
+  "expected_generation": 0,
+  "expected_digest": "e76d09b68904c22b832141e03258480f8d69e0b60dbd50ba564349983d6e8516",
+  "now_unix_seconds": 1785540043,
+  "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+  "reason": "Authorize aggregate materialization for the valid #5548 superseded terminal receipt.",
+  "add_protected_paths": [
+    ".csdlc/issues/5548"
+  ]
+}

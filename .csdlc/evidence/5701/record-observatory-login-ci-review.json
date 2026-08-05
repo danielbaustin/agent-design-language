@@ -1,0 +1,18 @@
+{
+  "issue": 5701,
+  "expected_generation": 23,
+  "expected_digest": "3c1a5f998c4fde7778cac281a5561f5461184b01e8f3d16e9d8066e99a51970f",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "subagent:019fafbd-db23-7681-a979-4cc0bc68585d",
+  "evidence": {
+    "reviewer": "subagent:019fafbd-db23-7681-a979-4cc0bc68585d",
+    "scope": [
+      "adl-runtime-kernel/tests/guardian_soak.rs"
+    ],
+    "reviewed_revision": "git-blake3:a05c942d460ee906766d5e715b02a702425f9547:9d71624962896802462ba0ddb4ec75c7ef538d3924dd17c8f6137ef4ece2eb5c",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

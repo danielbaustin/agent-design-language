@@ -1,0 +1,26 @@
+{
+  "issue": 5344,
+  "base_branch": "main",
+  "branch": "codex/5344-v0918-wp12-soak-rollback",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 1,
+    "acquired_unix_seconds": 1784660034,
+    "expires_unix_seconds": 1785264834,
+    "heartbeat_unix_seconds": 1784660034,
+    "branch": "codex/5344-v0918-wp12-soak-rollback",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5344",
+      ".csdlc/locks/5344.lock",
+      ".csdlc/prepared/issues/5344",
+      ".csdlc/evidence/5344",
+      "adl-v2/tools/run-soak.sh",
+      "adl-v2/tools/prove-rollback.sh",
+      "docs/milestones/v0.91.8/evidence/wp12"
+    ],
+    "purpose": "Prepare and review WP-12 soak and rollback contracts only; execution remains prohibited until #5350 and #5361 are merged, typed closed_out, receipt-backed, and ancestral"
+  }
+}

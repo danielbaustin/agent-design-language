@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5711,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][launch] Ship weekly podcast with audio, RSS, guests, and public route",
+    "slug": "recordless-terminal-recovery-5711",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "terminal-evidence",
+          "proof_role": "Validate observed closure evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 100,
+          "argv": [
+            "csdlc-github-issue",
+            "run",
+            "--request",
+            ".csdlc/prepared/issues/5748/github-read-5711.json"
+          ],
+          "parallel_group": "terminal-recovery",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed without exact, internally consistent terminal evidence.",
+      "design_ref": ".csdlc/issues/5711/retained/design.md",
+      "design_digest": "1c7815354c658a4da1dd8f04c4f77a442f582a861d218ba44d50afeb15b93bef",
+      "diagram_ref": ".csdlc/issues/5711/retained/diagram.mmd",
+      "diagram_digest": "3a88b1b465e1e516dcc6dd62bd9e840b883855d42598857e1140717e6a83e6b2"
+    }
+  }
+}

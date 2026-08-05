@@ -1,0 +1,1 @@
+{"sequence":1,"generation":1,"actor":"codex:5748-terminal-recovery","reason":"Retain exact observed closure after corrective PR #5760 merged with explicit #5722 closing linkage and green required runtime validation; do not reconstruct missing historical lifecycle state.","operation":"recover_recordless_terminal"}

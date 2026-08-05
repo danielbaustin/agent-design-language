@@ -1,0 +1,17 @@
+{
+  "issue": 5360,
+  "card": "stp",
+  "expected_generation": 2,
+  "expected_digest": "2b050ba49c69a38487f32362bdf4f1aa20d49e5cbfac94ea32b294e73c6af9dd",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Record the satisfied WP-16 merge dependency without making asynchronous closeout an execution gate.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "WP-16 #5351 merged as 2e9d2dd7c4260dcf6ec6af954b0eea97554212df with required checks green and is ancestral to the exact #5360 execution revision; typed closeout proceeds asynchronously"
+    ]
+  },
+  "fail_after_backup": false
+}

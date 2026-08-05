@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5558,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Remove sunset pr.sh guidance from owner lane",
+    "slug": "remove-sunset-pr-sh-guidance",
+    "version": "v0.91.8",
+    "generation": 39
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make all live C-SDLC operator guidance and validation resolve exclusively through typed v2 authority.",
+      "required_outcome": "Remove remaining executable and instructional v1 routes and make the owner lane execute Gate 10A final-authority proof.",
+      "declared_scope": [
+        "Live ADL CLI guidance",
+        "editor action adapter and tests",
+        "active operational tooling documentation",
+        "C-SDLC owner validation lane"
+      ],
+      "authority_boundary": [
+        "Typed C-SDLC v2 binaries and skills are sole lifecycle authority",
+        "Historical evidence remains immutable"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "No AWS dependency or validation",
+        "Do not restore removed v1 wrappers",
+        "Do not modify historical evidence"
+      ]
+    }
+  }
+}

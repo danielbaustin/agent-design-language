@@ -7,23 +7,26 @@
     "title": "Update adl_pr_cycle skill for C-SDLC v2",
     "slug": "adl-pr-cycle-v2-skill",
     "version": "v0.91.8",
-    "generation": 2
+    "generation": 10
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "docs/tooling/adl_pr_cycle_skill.md and its design/diagram artifacts at the exact revision",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "docs/tooling/adl_pr_cycle_skill.md\ndocs/architecture/adl_pr_cycle_v2_skill.md\ndocs/architecture/adl_pr_cycle_v2_skill.mmd",
+      "review_revision": "git-blake3:92fde26a2ca073e204459fce1bb5e88d7c895528:083189143f63a3995ea48f55a6c47be22fbcf3770885d27a2a755f714b4db3b0",
+      "reviewer": "codex:issue-5666-closeout-reconcile",
       "review_prompts": [
         "Does the skill route only through v2 typed binaries?",
         "Are review, claims, budgets, and stop boundaries explicit?",
         "Does any instruction accidentally revive a v1 wrapper?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "GitHub issue #5632 is already closed; operator reported there is no usable PR #5634 to close or merge, so terminal disposition is no-PR lifecycle reconciliation.",
+        "Correct the historical no-PR classification: merged PR #5634 exists at exact head 92fde26a2ca073e204459fce1bb5e88d7c895528."
+      ],
+      "review_result": "pass"
     }
   }
 }

@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5500,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent][dashboard] Restore live workcell operator view",
+    "slug": "v0-91-8-wp-10a-read-only-workcell-dashboard",
+    "version": "v0.91.8",
+    "generation": 18
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "docs/tooling/milestone-dashboard\nadl/tools/test_milestone_dashboard.sh",
+      "review_revision": "git-blake3:a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803:e20c0116b8738017024b693a5d3136929d45f2910b53a07a1ada73a7ec3d2e02",
+      "reviewer": "codex:single-pre-pr-review",
+      "review_prompts": [
+        "Does the design extend the existing dashboard and Observatory contracts without creating a second framework or authority?",
+        "Are retained, live, stale, unknown, blocked, and non-authoritative states complete and fail closed?",
+        "Can untrusted snapshot or Runtime values cause XSS, unsafe navigation, credential exposure, unbounded work, or authority confusion?",
+        "Are future paths disjoint from #5502 and every other WP-10A child?",
+        "Are COTS choices, zero-new-dependency posture, budgets, and deterministic fixtures small and executable?",
+        "Does preparation preserve exact #5498 and #5349 terminal gates?"
+      ],
+      "findings": [
+        {
+          "id": "R-1-runtime-origin-allowlist",
+          "severity": "p1",
+          "summary": "The Runtime v3 Observatory adapter must fail closed when the snapshot declares no allowed origins; an empty allowlist must not permit arbitrary HTTPS Runtime API bases.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803:e20c0116b8738017024b693a5d3136929d45f2910b53a07a1ada73a7ec3d2e02",
+          "route": null
+        }
+      ],
+      "residual_risk": [
+        "GPT-5.5-specific reviewer tooling was not callable in this environment after tool discovery; this record preserves the single available typed pre-PR review boundary."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+runtime_v3_loc=pass physical_lines=14802 challenge_target=10000 reviewed_target=12000 pinned_baseline=12209 baseline_delta=2593 target_delta=2802 hard_safety_ceiling=20000 safety_ceiling_authorizes_exception=false test_count=235 test_ceiling_exclusive=1000 disposition=reviewed_exception_required

@@ -21,27 +21,23 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.91.7 closeout-tail review, start with:
+For the active v0.91.8 release-tail review, start with:
 
-- `docs/milestones/v0.91.7/README.md`
-- `docs/milestones/v0.91.7/WBS_v0.91.7.md`
-- `docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md`
-- `docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md`
-- `docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml`
-- `docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md`
-- `docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md`
-- `docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md`
-- `docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md`
-- `docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md`
-- `docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md`
-- `docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md`
-- `docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md`
-- `docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md`
-- `docs/milestones/v0.91.7/review/V0917_ADR_INDEX_4989.md`
-- `docs/milestones/v0.91.7/review/`
-- `docs/milestones/v0.91.7/features/`
-- `docs/milestones/v0.91.6/README.md` and its retained handoff/review packets
-- `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`
+- `docs/milestones/v0.91.8/README.md`
+- `docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml`
+- `docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md`
+- `docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md`
+- `docs/milestones/v0.91.8/evidence/wp16/QUALITY_GATE.md`
+- `docs/milestones/v0.91.8/evidence/wp16/ISSUE_OUTCOME_AUDIT.md`
+- `docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md`
+- `docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md`
+- `docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md`
+- `docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md`
+- `docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md`
+- `docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md`
+- `docs/milestones/v0.91.8/review/`
+- `docs/milestones/v0.91.8/features/`
+- `docs/milestones/v0.92/`
 - `docs/templates/prompts/`
 - `docs/cognitive-sdlc/`
 - `AGENTS.md`
@@ -67,7 +63,7 @@ minimum, inspect and update every applicable item in this checklist:
   remediation queues, internal-review packets, external-review handoff packets,
   and release-tail findings registers
 - all next-milestone planning and handoff docs that the current milestone
-  prepares or gates, including v0.91.7 planning docs and v0.92 bridge ledgers
+  prepares or gates, including v0.91.8 handoff docs and v0.92 bridge ledgers
   when the current milestone claims handoff readiness
 - root `README.md`, `REVIEW.md`, `CHANGELOG.md`, `AGENTS.md`, and
   `docs/README.md`
@@ -82,18 +78,27 @@ minimum, inspect and update every applicable item in this checklist:
 Tail closeout docs review is complete only when this surface has either been
 updated, confirmed current, or explicitly ruled not applicable with evidence.
 
-The current review posture is the v0.91.7 closeout tail. WP-01 through WP-17
-are closed; WP-17 closed through issue #4644 and merged PR #5539. WP-18,
-WP-19, WP-20, and WP-23 remain open; WP-21 and WP-22 are closed retained
-planning/review evidence. Reviewers must use live issue truth together with the
-sprint-review register because closed umbrellas can retain findings, blocked
-rows, or explicit non-claims.
+The current review posture is v0.91.8 WP-19 external-review freeze readiness. WP-16
+merged at `2e9d2dd7c`; its evidence records 67 audited issue outcomes, 0
+unacceptable outcomes, and passing ADL v2, Runtime v3, and C-SDLC v2
+integrated lanes. WP-17 documentation truth alignment is closed. WP-18
+first-pass internal review is closed through PR `#5781`. The final second pass
+closed through PR `#5799`, reviewed head `70f4e765`, and merge commit
+`1b1ba999`. WP-19 issue `#5357` owns the formal external-review handoff. The
+external review has not been dispatched or performed; WP-20 and later
+release-tail remediation, revalidation, handoff, and ceremony gates remain
+downstream.
+
+The canonical packet for WP-19 is
+`docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md`.
+Its Target Revision fields and digest remain intentionally unset until the
+operator freezes the exact send revision. Preparation
+must not be mistaken for an external-review result.
 
 Important active non-claims:
 
-- v0.91.7 does not claim release readiness until WP-18, WP-19, WP-20, and
-  WP-23 settle with current review and closeout truth.
-- Closed v0.91.7 planning, implementation, demo, or remediation issues do not
+- v0.91.8 does not claim release readiness from WP-16 alone.
+- Closed v0.91.8 planning, implementation, demo, or remediation issues do not
   prove broad runtime, provider, security, observability, or v0.92 activation
   readiness beyond their retained packets.
 - Remote-builder and AWS evidence remains bounded by its retained proof and

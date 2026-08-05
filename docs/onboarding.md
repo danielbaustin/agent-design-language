@@ -30,7 +30,7 @@ The browser/editor adapter remains narrower than the full control plane; executi
 The primary checkout should stay clean on `main`. Before starting issue work,
 check `git status --short --branch` and `git worktree list --porcelain`; if a
 feature branch or tracked changes are sitting in the primary checkout, route
-the recovery through `workflow-conductor` / repo-native `pr run` or `pr doctor`
+the recovery through typed v2 `csdlc-doctor` / `csdlc-bind`
 evidence when available. Use only the narrowest manual fallback needed to
 preserve work in an issue worktree and restore root to clean `main`. See
 `docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md` for the

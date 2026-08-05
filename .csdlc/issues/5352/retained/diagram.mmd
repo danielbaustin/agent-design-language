@@ -1,0 +1,16 @@
+flowchart TD
+  Source["origin/main c34f0c9412495039a6374f7ce88fa39e34bb5042"] --> Ledger["#5352 exact-revision handoff"]
+  D5384["#5384 WP-14A PR #5726 merge 72fbf30c"] --> Gate
+  D5358["#5358 C-SDLC v2 PR #5606 merge fc75f4fc"] --> Gate
+  D5361["#5361 Runtime v3 PR #5650 merge f7258b07"] --> Gate
+  WP21["Eight WP-21 children merged, closed, and ancestral"] --> Ledger
+  WP20["#5548 and #5558 / PR #5749 closed"] --> Ledger
+  Claim["Typed final-handoff claim owns handoff path"] --> Ledger
+  Ledger --> Paths["docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md"]
+  Ledger --> Consumers["WP-21/WP-22 and v0.92 consumers"]
+  Receipts["Closeout receipts"] -. "audit only; non-blocking" .-> Ledger
+  Rollback["WP-14A rollback window and deletion_authorized=false"] --> Ledger
+  Ledger -. "non-claim" .-> Birthday["No birthday or Adaptive Learning implementation"]
+  Review["One exact GPT-5.5 pre-PR review"] --> Ledger
+  Sprint["Full WP-21 sprint review"] --> Merge["Green PR merge and issue closure"]
+  Ledger --> Sprint

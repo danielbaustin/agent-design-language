@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5773,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][review] Allow bounded SIP and STP correction during implemented review remediation",
+    "slug": "recordless-terminal-recovery-5773",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "terminal-evidence",
+          "proof_role": "Validate observed closure evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 100,
+          "argv": [
+            "csdlc-closeout",
+            "recover-recordless",
+            "--issue",
+            "5773",
+            "--pr",
+            "5774"
+          ],
+          "parallel_group": "terminal-recovery",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed without exact, internally consistent terminal evidence.",
+      "design_ref": ".csdlc/issues/5773/retained/design.md",
+      "design_digest": "856dd7cf8753d8ea51e63008b70e8b49c25cb01bdb4883dd4a2aedf9edb876b6",
+      "diagram_ref": ".csdlc/issues/5773/retained/diagram.mmd",
+      "diagram_digest": "ba2230afef21812281d54dbf5fba6c9d7c20c88c5113a5f52c19455456c1b891"
+    }
+  }
+}

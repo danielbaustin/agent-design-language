@@ -1,0 +1,24 @@
+{
+  "issue": 5346,
+  "expected_claim_id": "claim-5346-v0918-wp13-deletion-preparation",
+  "expected_generation": 0,
+  "now_unix_seconds": 1785345900,
+  "replacement": {
+    "id": "claim-5346-release-only",
+    "owner": "codex:claim-hygiene",
+    "generation": 0,
+    "acquired_unix_seconds": 1785345900,
+    "expires_unix_seconds": 1785349500,
+    "heartbeat_unix_seconds": 1785345900,
+    "branch": "codex/5346-v0918-wp13-final-adl-deletion",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5346",
+      ".csdlc/locks/5346.lock",
+      ".csdlc/prepared/issues/5346"
+    ],
+    "purpose": "Recover expired preparation claim solely for release while WP-13 is deferred"
+  },
+  "recovery_actor": "codex:claim-hygiene",
+  "reason": "WP-13 is deferred until immediately before internal review #5356"
+}

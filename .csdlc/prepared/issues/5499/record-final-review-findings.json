@@ -1,0 +1,43 @@
+{
+  "issue": 5499,
+  "expected_generation": 13,
+  "expected_digest": "ff24dee76e4b8bd82c5743c369780be9e8a48cd5115102f6bae27e304cd2a533",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "subagent:019f8bf0-a08b-7c92-ac2f-ca70c074bde7",
+  "evidence": {
+    "reviewer": "subagent:019f8bf0-a08b-7c92-ac2f-ca70c074bde7",
+    "scope": [
+      "adl-v2/crates/adl-workcell-conductor",
+      ".csdlc/issues/5499",
+      ".csdlc/prepared/issues/5499"
+    ],
+    "reviewed_revision": "git-blake3:317b87471587319908e0da6312467dcbd3736463:a5993232b5cb79538e96d9e6a30340c0e54d694018084f5392d726bcfc8ecd81",
+    "findings": [
+      {
+        "id": "F-5499-1",
+        "severity": "p1",
+        "summary": "Write paths were not required to be contained by the issue's active protected-path claim.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5499-2",
+        "severity": "p2",
+        "summary": "Two new files contained an extra blank line at EOF and failed exact diff hygiene.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Hosted PR checks and downstream #5498 integration remain pending."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

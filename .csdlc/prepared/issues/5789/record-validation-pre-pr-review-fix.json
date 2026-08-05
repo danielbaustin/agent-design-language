@@ -1,0 +1,21 @@
+{
+  "issue": 5789,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "7c3bd4f0b3fd3691457ab6de8ad5c691ee4be8d00e3cc597ff3f424aaad6175e",
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record the fix for the pre-PR review finding that Runtime v3 event checks returned a nested event shape the UI normalizer dropped.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash adl/tools/test_html_observatory.sh",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target bash adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+      ],
+      "purpose": "Prove Runtime v3 event checks now return a UI-normalizable event array, preserve signed /v1/control proof, and keep the integrated Observatory proof passing after the review fix.",
+      "outcome": "passed",
+      "evidence_ref": "commentary: both commands passed after flattening Runtime v3 event-check shape"
+    }
+  }
+}

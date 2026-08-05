@@ -1,0 +1,1 @@
+feature crosswalk ok rows=122 digest=3bedd1b2f668c1fec899583c723c1514368a400034aeb9131bc2e4e23deb1b53 classes={"adl_v2_signing"=>2, "csdlc_v2_acceptance"=>18, "governed_operations"=>21, "kernel_continuity_ingress"=>18, "provider_and_secure_transport"=>1, "reasoning_adaptive_cognition"=>19, "retained_or_later_milestone"=>28, "secure_access_observatory"=>15}

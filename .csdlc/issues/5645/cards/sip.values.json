@@ -1,0 +1,35 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5645,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Add typed fail-closed csdlc-merge command",
+    "slug": "typed-csdlc-merge-command",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make authorized C-SDLC v2 merges explicit, typed, and effortless without weakening readiness gates.",
+      "required_outcome": "A separate Rust binary validates canonical merge readiness, performs an exact-head GitHub merge, and returns the merge SHA.",
+      "declared_scope": [
+        "csdlc-v2/src",
+        "csdlc-v2/tests",
+        "docs/architecture/csdlc_merge_command_5645.md",
+        "docs/architecture/csdlc_merge_command_5645.mmd"
+      ],
+      "authority_boundary": [
+        "Merge only the bound PR after canonical readiness; never merge arbitrary PRs or replace review/closeout."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "No AWS",
+        "No shell or Python lifecycle path",
+        "Keep csdlc-publish non-merging"
+      ]
+    }
+  }
+}

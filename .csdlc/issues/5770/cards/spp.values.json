@@ -1,0 +1,54 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5770,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][review] Allow bounded SPP correction during implemented review remediation",
+    "slug": "recordless-terminal-recovery-5770",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Validate exact closure evidence and atomically retain terminal authority.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Retain terminal recovery evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "target projection and receipt are absent before recovery",
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ],
+      "risks": [
+        "remote evidence supplied to this deterministic operation must come from the typed GitHub observation surface"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "existing target authority",
+        "stale recovery authority",
+        "inconsistent closure evidence"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5770/retained/design.md",
+      "design_digest": "0f0a85d0b78f95f7af19ff53c4896be514f6c1528de4916ad4ead5707c1577bf",
+      "diagram_ref": ".csdlc/issues/5770/retained/diagram.mmd",
+      "diagram_digest": "046ad1554b3109e751e61c48d3a4e2dd027cbbd0dacb664c2a31dab371a9c322"
+    }
+  }
+}

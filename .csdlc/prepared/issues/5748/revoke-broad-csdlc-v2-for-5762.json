@@ -1,0 +1,11 @@
+{
+  "issue": 5748,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5748-terminal-recovery-v4",
+  "expected_generation": 25,
+  "expected_digest": "65883f928b9f51631a76f28ac3e973ec36903fe907b82bb365eeb8fb0857eb08",
+  "now_unix_seconds": 1785574293,
+  "actor": "codex:019fbc81-e1c6-7820-b023-104472af01d8",
+  "operator_authority": "operator-authorized:issue-5762-must-own-csdlc-v2-src-store-rs",
+  "reason": "Release #5748's stale broad csdlc-v2 claim so targeted issue #5762 can own csdlc-v2/src/store.rs without bypassing typed C-SDLC v2 claim checks."
+}

@@ -1,0 +1,10 @@
+{
+  "issue": 5526,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "dc1dcd7fe1ef6a28b734634b9dff5e9853826a8fc35c412b0a5e03ef9652fd02",
+  "claim_id": "claim-5526-v0918-provider-expansion-preparation",
+  "actor": "codex:5526-execution",
+  "reason": "WP-09 adapter foundation is merged and current-main ancestry is verified; begin bounded provider/model implementation.",
+  "operation": {"operation": "advance_phase", "phase": "implemented"}
+}

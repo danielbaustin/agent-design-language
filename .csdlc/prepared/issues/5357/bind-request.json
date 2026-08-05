@@ -1,0 +1,23 @@
+{
+  "issue": 5357,
+  "base_branch": "main",
+  "branch": "codex/5357-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5357-v0918-wp19-external-review-preparation",
+    "owner": "codex:5357-preparation-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1784669355,
+    "expires_unix_seconds": 1785274155,
+    "heartbeat_unix_seconds": 1784669355,
+    "branch": "codex/5357-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5357",
+      ".csdlc/locks/5357.lock",
+      ".csdlc/prepared/issues/5357",
+      ".csdlc/evidence/5357"
+    ],
+    "purpose": "Prepare and review #5357 WP-19 external-review contracts only; do not dispatch review or modify the canonical handoff; no execution until WP-18 #5356 is merged, typed closed_out, claim-free, receipt-backed, and ancestral"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "issue": 5362,
+  "card": "sip",
+  "expected_generation": 5,
+  "expected_digest": "db0862c4fd4feb7dd06487079b1b0d20528207eb2259cd946ea72341aa48d96f",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:5362-preparation-owner",
+  "reason": "tighten SIP authority boundary for preparation-only current-main evidence consumption",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "authority_boundary",
+    "values": [
+      "typed C-SDLC v2 only",
+      "future execution must refresh origin/main and consume current-main closed_out/merged evidence for #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107",
+      "terminal receipts and dependency evidence are consumption inputs, not automatic readiness or birthday claims",
+      "no work-package execution, PR publication, predecessor issue mutation, version:v0.92 issue mutation, issue #5357/#5804/PR #5805 mutation, or product implementation during preparation"
+    ]
+  }
+}

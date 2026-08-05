@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5735,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs][publication] Reconcile current Medium article launch list",
+    "slug": "v0-91-8-docs-publication-reconcile-current-medium-article-launch-list",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Recover lifecycle truth for the existing two-file documentation merge only.",
+      "deliverables": [
+        "Exact committed-patch validation evidence",
+        "Bounded exact-head review evidence",
+        "Merged PR reconciliation",
+        "Retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "AC-1: The exact implementation head and merged PR are recorded.",
+        "AC-2: The two-file committed patch passes whitespace validation.",
+        "AC-3: A bounded review confirms the preferred ten-item list and non-claims.",
+        "AC-4: Terminal evidence is retained without changing product content."
+      ],
+      "dependencies": [
+        "Closed issue #5735",
+        "Merged PR #5736"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.2/review/publication_program/ARXIV_AND_MEDIUM_PUBLICATION_BACKLOG_v0.91.2.md",
+        "docs/milestones/v0.91.2/review/publication_program/README.md"
+      ],
+      "non_goals": [
+        "Changing documentation content",
+        "Drafting or publishing Medium articles",
+        "Publishing another PR"
+      ]
+    }
+  }
+}

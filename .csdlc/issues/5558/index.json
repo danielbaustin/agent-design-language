@@ -1,0 +1,983 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5558,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "df7510e3fef0f44771d508cbdc73f0e40bc1aa47f581fda99a0ebcbcf6834eaf",
+  "phase": "closed_out",
+  "generation": 39,
+  "digest": "904a4a15f1f09f5bbf1e23ddfbabf71ab0f0653da8d455b49c225b087b47741f",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:review_5558_orphan_fix",
+    "assigned_by": "codex:5558-corrective",
+    "revision": "git-blake3:4c77a1968bf71d310ccf37c6b340ec00eeb69da6:e648a7a553e99f621726d495f44adfd708bd619778b545bb74bc872171a20b36",
+    "scope": [
+      "Exact substantive commit 4c77a1968bf71d310ccf37c6b340ec00eeb69da6",
+      "Final prompt-editor PR-fast route retirement and complete issue 5558 corrective diff"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:review_5558_orphan_fix",
+    "scope": [
+      "Exact substantive commit 4c77a1968bf71d310ccf37c6b340ec00eeb69da6",
+      "Final prompt-editor PR-fast route retirement and complete issue 5558 corrective diff"
+    ],
+    "reviewed_revision": "git-blake3:4c77a1968bf71d310ccf37c6b340ec00eeb69da6:e648a7a553e99f621726d495f44adfd708bd619778b545bb74bc872171a20b36",
+    "findings": [],
+    "residual_risks": [
+      "GitHub CI must confirm the refreshed exact head across required repository gates."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5558,
+    "pull_request": 5769,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5769",
+    "base": "main",
+    "head": "codex/5558-v1-route-corrective",
+    "revision": "git-blake3:6136a1c73f3d1584f6609a19123844345b797fca:11203b0fcfa62b7a31af40813eb92be57e3713cc646fbd04e993c40aec1a3b1b",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5769,
+    "head_sha": "6136a1c73f3d1584f6609a19123844345b797fca",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91427120962"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91429565667"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91428085860"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063025"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063365"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (1/2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063035"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (2/2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063044"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063022"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426045620"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063310"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063015"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426062992"
+      },
+      {
+        "name": "adl-slow-proof (1)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063059"
+      },
+      {
+        "name": "adl-slow-proof (2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063076"
+      },
+      {
+        "name": "adl-slow-proof (3)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063064"
+      },
+      {
+        "name": "adl-slow-proof (4)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063063"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063298"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063009"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426063253"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30721525672/job/91426062988"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5769,
+    "disposition": "merged",
+    "observed_sha": "6136a1c73f3d1584f6609a19123844345b797fca",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5558.json",
+    "released_branch": "codex/5558-v1-route-corrective",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5558",
+      ".csdlc/issues/5558",
+      ".csdlc/locks/5558.lock",
+      ".csdlc/prepared/issues/5558",
+      ".csdlc/publication/5558.intent.json",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "AGENTS.md",
+      "CONTRIBUTING.md",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/src/capability_aptitude_testing.rs",
+      "adl/src/cli/csmctl_cmd.rs",
+      "adl/src/cli/mod.rs",
+      "adl/src/cli/tests/open_usage.rs",
+      "adl/src/cli/usage.rs",
+      "adl/src/cognitive_transition_schema.rs",
+      "adl/src/csdlc_prompt_editor",
+      "adl/src/csdlc_prompt_editor/structure.rs",
+      "adl/src/runtime_v2/cognitive_being_flagship_demo.rs",
+      "adl/tools/README.md",
+      "adl/tools/attach_post_merge_closeout.sh",
+      "adl/tools/batched_checks.sh",
+      "adl/tools/build_v0916_workflow_metric_backfill_inventory.py",
+      "adl/tools/card_prompt.sh",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/check_issue_metadata_parity.sh",
+      "adl/tools/check_milestone_closed_issue_sor_truth.sh",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/closeout_completed_issue_wave.sh",
+      "adl/tools/demo_codex_ollama_operational_skills.sh",
+      "adl/tools/demo_five_command_editing.sh",
+      "adl/tools/demo_five_command_run.sh",
+      "adl/tools/demo_v0871_multi_agent_discussion.sh",
+      "adl/tools/demo_v0871_operator_surface.sh",
+      "adl/tools/demo_v0871_real_multi_agent_discussion.sh",
+      "adl/tools/demo_v0871_runtime_state.sh",
+      "adl/tools/demo_v087_control_plane.sh",
+      "adl/tools/demo_v087_trace_truth.sh",
+      "adl/tools/demo_v088_real_multi_agent_discussion.sh",
+      "adl/tools/demo_v0891_quality_gate.sh",
+      "adl/tools/demo_v089_multi_agent_repo_code_review.sh",
+      "adl/tools/demo_v089_quality_gate.sh",
+      "adl/tools/demo_v0901_quality_gate.sh",
+      "adl/tools/demo_v090_architecture_document_generation.sh",
+      "adl/tools/demo_v090_codebuddy_review_showcase.sh",
+      "adl/tools/editor_action.sh",
+      "adl/tools/fix_git_main_sync_preserve_local_adl.sh",
+      "adl/tools/generate_active_command_reference_scan.py",
+      "adl/tools/generate_tool_surface_registry.py",
+      "adl/tools/lint_prompt_spec.sh",
+      "adl/tools/release_ceremony.sh",
+      "adl/tools/review_card_surface.sh",
+      "adl/tools/run_owner_validation_lane.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/skills",
+      "adl/tools/test_adl_review_compatibility.sh",
+      "adl/tools/test_adl_runtime_compatibility.sh",
+      "adl/tools/test_build_v0916_workflow_metric_backfill_inventory.py",
+      "adl/tools/test_card_editor_repair_examples.sh",
+      "adl/tools/test_card_prompt.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_check_issue_metadata_parity.sh",
+      "adl/tools/test_check_milestone_closed_issue_sor_truth.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_cli_owner_command_guidance.sh",
+      "adl/tools/test_cli_wrapper_migration_contract.sh",
+      "adl/tools/test_closeout_completed_issue_wave.sh",
+      "adl/tools/test_completed_output_validation.sh",
+      "adl/tools/test_csdlc_prompt_editor.sh",
+      "adl/tools/test_demo_codex_ollama_semantic_fallback.sh",
+      "adl/tools/test_demo_five_command_editing.sh",
+      "adl/tools/test_demo_v0871_operator_surface.sh",
+      "adl/tools/test_editor_action.sh",
+      "adl/tools/test_five_command_editor_truth.sh",
+      "adl/tools/test_fix_git_main_sync_preserves_local_adl_cards.sh",
+      "adl/tools/test_generate_active_command_reference_scan.sh",
+      "adl/tools/test_install_adl_operational_skills.sh",
+      "adl/tools/test_install_adl_pr_cycle_skill.sh",
+      "adl/tools/test_issue_folding_skill_contracts.sh",
+      "adl/tools/test_issue_lifecycle_shepherd_contract.sh",
+      "adl/tools/test_issue_splitter_skill_contracts.sh",
+      "adl/tools/test_prompt_spec_lint.sh",
+      "adl/tools/test_release_ceremony.sh",
+      "adl/tools/test_review_card_surface.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "adl/tools/test_select_validation_lanes.sh",
+      "adl/tools/test_structured_prompt_validation.sh",
+      "adl/tools/test_validate_structured_prompt_parallel.sh",
+      "adl/tools/test_validation_manager.sh",
+      "adl/tools/test_workflow_conductor_skill_contracts.sh",
+      "adl/tools/test_workflow_guardrails.sh",
+      "adl/tools/v0871_demo_common.sh",
+      "adl/tools/validate_v0913_quality_gate_review_surfaces.py",
+      "adl/tools/workflow_guardrails.sh",
+      "adl/tools/worktree_prune.sh",
+      "csdlc-v2/src/github.rs",
+      "csdlc-v2/tests/gate10a.rs",
+      "csdlc-v2/tests/gate_github_actions.rs",
+      "docs/default_workflow.md",
+      "docs/milestones/v0.91.5/TOOL_SURFACE_REGISTRY_3734.md",
+      "docs/onboarding.md",
+      "docs/planning/ACCOUNT_SWITCH_HANDOFF_2026-05-22.md",
+      "docs/planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md",
+      "docs/planning/DESIGN_TIME_CARD_COMPLETION_PLAN.md",
+      "docs/planning/PROJECT_PLANNING_TEMPLATE_TRANSITION_PLAN.md",
+      "docs/planning/PR_CONTROL_PLANE_DECRUFT_COMPATIBILITY_CUT_PLAN.md",
+      "docs/templates/CARD_LIFECYCLE_TEMPLATE_TARGETS.md",
+      "docs/tooling",
+      "docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md",
+      "docs/tooling/PREP_SCOUT_NEXT_ISSUE_READINESS_LANE.md",
+      "docs/tooling/README.md",
+      "docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md",
+      "docs/tooling/editor/command_adapter.md",
+      "docs/tooling/editor/five_command_demo.md",
+      "docs/tooling/issue-prompts/issue-prompt-template.md",
+      "docs/tooling/worktree_governance.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5558/retained/design.md",
+  "diagram_path": ".csdlc/issues/5558/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5558-corrective",
+      "revision": "d896cf8aacc8812eca00458a27a92efde8712761eaba7a53ada619cc6dadfe24"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "2569e77aa54370359676717a95cc3fc0a4740e5227f7ef27ca6f3f0f600fc258",
+      "rendered_digest": "3ef258b1c4bb480ab05a5f1842a67fb807068d557612286211389017f956a73d",
+      "ast_digest": "a173adcf99a8c6fc2eee501e4e055b5613e48eaae750d3859ba753b2051b2716"
+    },
+    "stp": {
+      "values_digest": "3020e286c9878c6f7a29f7a63234e1042f56de36efe43a7524a08913682ac0d2",
+      "rendered_digest": "4e813a7bd81e883366df3deeeb1f62e371dbd81f622aec8f105e5233b842d9df",
+      "ast_digest": "ed08ed5118621e4e7978292eb31a6fb1817be62f49cf08a737b4dc9ba94d9b1f"
+    },
+    "spp": {
+      "values_digest": "e4612a84ca7e40b3e207cf959912181349ba5a0c9e2e3725da511ddee1a47568",
+      "rendered_digest": "25879d34e3cf553eddde351a8fcadefd055898a9d0280a8e10ebc5e998410ee8",
+      "ast_digest": "1453d42addf77769af338269da74b0501f8c17bd84d7d493b518c66395fa38ca"
+    },
+    "vpp": {
+      "values_digest": "365a85a8b6f08a6fef8e7ae97a6ab0f6fdd8afa845617cc1178c28ceb4f46252",
+      "rendered_digest": "05e67389a9dd9511f18c9fd7089eaba5dc2df4f40979d42e159403da83ef7537",
+      "ast_digest": "e3591d129dc3ca20c46caed3a7688e0fb9499f25d85bff64e34929b1aa375b8e"
+    },
+    "srp": {
+      "values_digest": "4758c9400f6ddb3fb0e95d1bfbf1f270c03b5ffafa7fe97ef07be8b4b67482d2",
+      "rendered_digest": "64cbe4a0f7aa51f20a65733cc1973fcaaa925dc895525ad83061876534afd52b",
+      "ast_digest": "dbc6010e89a8d3aa0157ea9f695e235b60184bd2588a883dbdb2f669ec76c116"
+    },
+    "sor": {
+      "values_digest": "982b4a3024e890082571f619dea00aeddca6c57ee13d82ab01a320fe7d4a6e5e",
+      "rendered_digest": "5cf8802f824286d073554520e3f5515254566c5a5f72e05ef7161c405ad2db44",
+      "ast_digest": "44a8e8106f3f42bcaaa547dfa413e4f7309367cdba1430ed165fb220e35a0b8b"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5558-corrective",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5558-corrective",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5558-corrective",
+      "reason": "advance completed implementation to exact-head review"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the independently approved exact-head corrective implementation with no actionable review findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5558-corrective",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5558-corrective",
+      "reason": "CI exposed that active non-v1 workflow-metrics and validation-inventory tools lost C-SDLC owner-lane selection; recover stale review and publication truth after restoring those bounded active selectors."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the independently approved typed backfill and selector correction with no actionable findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5558-corrective",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5558-corrective",
+      "reason": "Final-head CI exposed obsolete validation-manager and path-policy fixtures plus incomplete active CSM runtime owner routing; recover stale review and publication truth after the bounded typed-v2 fixture corrections."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the independently approved final CI remediation with no actionable findings."
+    },
+    {
+      "sequence": 11,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5558-corrective",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 12,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5558-corrective",
+      "reason": "Hosted authoritative coverage proved the changed csdlc_prompt_editor structure module lacked an explicit fail-closed coverage-impact mapping; recover review/publication truth for the bounded mapping and regression-test repair."
+    },
+    {
+      "sequence": 13,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the exact reviewed coverage-impact repair with no actionable findings."
+    },
+    {
+      "sequence": 14,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5558-corrective",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 15,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5558-corrective",
+      "reason": "Hosted coverage proved the remaining csdlc_prompt_editor child modules are orphaned sunset-v1 source after Gate 10D2 deleted their parent module; recover review and publication truth for bounded dead-code removal."
+    },
+    {
+      "sequence": 16,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the exact reviewed orphaned prompt-editor deletion with no actionable findings."
+    },
+    {
+      "sequence": 17,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5558-corrective",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 18,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5558-corrective",
+      "reason": "Independent review found the PR-fast selector still routes the retired prompt-editor child directory to a zero-match test filter; recover publication truth for the bounded final retirement fix."
+    },
+    {
+      "sequence": 19,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the independently approved final prompt-editor PR-fast retirement correction with no actionable findings."
+    },
+    {
+      "sequence": 20,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5558-corrective",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 21,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5558-corrective",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 22,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5558-corrective",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 23,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5558-corrective",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5558-corrective",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5558-corrective",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5558-corrective",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5558-corrective",
+      "reason": "record completed corrective implementation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Removed remaining live v1 lifecycle routes and guidance and added real Gate 10A proof to the C-SDLC owner lane.\",\"changes\":[\"Removed editor start execution path and retired the obsolete five-command demo fail-closed\",\"Updated active CLI, tests, and operational docs to typed v2 authority\",\"Expanded guidance guard coverage and added Gate 10A to the owner lane\"],\"artifacts\":[\"adl/tools/run_owner_validation_lane.sh\",\"adl/tools/test_cli_owner_command_guidance.sh\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5558-corrective",
+      "reason": "record full C-SDLC owner-lane validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"csdlc\"],\"purpose\":\"Prove final C-SDLC v2 authority, active guidance, editor adapter, prompt schemas, reference scan, and observability.\",\"outcome\":\"passed\",\"evidence_ref\":\"local: Gate 10A 15/15 and full owner lane PASS\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5558-corrective",
+      "reason": "advance completed implementation to exact-head review",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5558-corrective",
+      "reason": "independent review identified additional active v1 guidance and false-pass guard surfaces",
+      "operation": "{\"add_protected_paths\":[\"CONTRIBUTING.md\",\"adl/src/cli/usage.rs\",\"adl/src/cli/tests/open_usage.rs\",\"adl/src/cli/csmctl_cmd.rs\",\"adl/tools/demo_v0871_operator_surface.sh\",\"adl/tools/test_demo_v0871_operator_surface.sh\",\"adl/tools/generate_tool_surface_registry.py\",\"adl/tools/check_issue_metadata_parity.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5558-corrective",
+      "reason": "record independent review remediation",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Resolved all exact-head review findings without widening beyond issue 5558.\",\"changes\":[\"Replaced CONTRIBUTING and CLI v1 lifecycle guidance\",\"Moved the v0.87.1 operator demo to adl-runtime and proved it end to end\",\"Stopped advertising removed tooling multiplexers\",\"Expanded the guard to discover all tracked CLI modules\"],\"artifacts\":[\"CONTRIBUTING.md\",\"adl/tools/demo_v0871_operator_surface.sh\",\"adl/tools/test_cli_owner_command_guidance.sh\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "record post-review full owner-lane validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"csdlc\"],\"purpose\":\"Re-prove final typed v2 authority after all independent review fixes.\",\"outcome\":\"passed\",\"evidence_ref\":\"local: post-review Gate 10A 15/15 and full owner lane PASS\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "exact rereview requires eliminating all dynamically found active v1 guidance and executable demo routes",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/skills\",\"docs/tooling\",\"adl/tools/demo_five_command_run.sh\",\"adl/tools/demo_v087_control_plane.sh\",\"adl/tools/demo_v087_trace_truth.sh\",\"adl/tools/demo_v0871_multi_agent_discussion.sh\",\"adl/tools/demo_v0871_real_multi_agent_discussion.sh\",\"adl/tools/demo_v0871_runtime_state.sh\",\"adl/tools/demo_v088_real_multi_agent_discussion.sh\",\"adl/tools/demo_v089_quality_gate.sh\",\"adl/tools/demo_v0891_quality_gate.sh\",\"adl/tools/demo_v0901_quality_gate.sh\",\"adl/tools/generate_active_command_reference_scan.py\",\"adl/tools/test_generate_active_command_reference_scan.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "final exact-head review exposed additional guard coverage and workflow-guardrail gaps",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_workflow_guardrails.sh\",\"adl/tools/test_card_prompt.sh\",\"adl/tools/test_prompt_spec_lint.sh\",\"adl/tools/demo_codex_ollama_operational_skills.sh\",\"adl/src/runtime_v2/cognitive_being_flagship_demo.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "final exact-head review exposed additional guard coverage and workflow-guardrail gaps",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_workflow_guardrails.sh\",\"adl/tools/test_card_prompt.sh\",\"adl/tools/test_prompt_spec_lint.sh\",\"adl/tools/demo_codex_ollama_operational_skills.sh\",\"adl/tools/test_demo_codex_ollama_semantic_fallback.sh\",\"adl/src/runtime_v2/cognitive_being_flagship_demo.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "final exact-head review exposed additional guard coverage and workflow-guardrail gaps",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_workflow_guardrails.sh\",\"adl/tools/test_card_prompt.sh\",\"adl/tools/test_prompt_spec_lint.sh\",\"adl/tools/demo_codex_ollama_operational_skills.sh\",\"adl/tools/test_demo_codex_ollama_semantic_fallback.sh\",\"adl/tools/test_structured_prompt_validation.sh\",\"adl/src/runtime_v2/cognitive_being_flagship_demo.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 16,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "Cover every additional active caller, guard, registry, runtime fixture, and policy surface changed while resolving the final exact-head review findings.",
+      "operation": "{\"add_protected_paths\":[\"AGENTS.md\",\"adl/config/validation_lane_selector.v0.91.6.json\",\"adl/src/capability_aptitude_testing.rs\",\"adl/src/cognitive_transition_schema.rs\",\"adl/src/csdlc_prompt_editor/structure.rs\",\"adl/tools/attach_post_merge_closeout.sh\",\"adl/tools/batched_checks.sh\",\"adl/tools/card_prompt.sh\",\"adl/tools/ci_path_policy.sh\",\"adl/tools/closeout_completed_issue_wave.sh\",\"adl/tools/demo_v089_multi_agent_repo_code_review.sh\",\"adl/tools/demo_v090_architecture_document_generation.sh\",\"adl/tools/demo_v090_codebuddy_review_showcase.sh\",\"adl/tools/lint_prompt_spec.sh\",\"adl/tools/review_card_surface.sh\",\"adl/tools/test_card_editor_repair_examples.sh\",\"adl/tools/test_ci_path_policy.sh\",\"adl/tools/test_cli_wrapper_migration_contract.sh\",\"adl/tools/test_completed_output_validation.sh\",\"adl/tools/test_csdlc_prompt_editor.sh\",\"adl/tools/test_five_command_editor_truth.sh\",\"adl/tools/test_install_adl_operational_skills.sh\",\"adl/tools/test_install_adl_pr_cycle_skill.sh\",\"adl/tools/test_issue_folding_skill_contracts.sh\",\"adl/tools/test_issue_lifecycle_shepherd_contract.sh\",\"adl/tools/test_issue_splitter_skill_contracts.sh\",\"adl/tools/test_review_card_surface.sh\",\"adl/tools/test_validate_structured_prompt_parallel.sh\",\"adl/tools/test_workflow_conductor_skill_contracts.sh\",\"adl/tools/v0871_demo_common.sh\",\"adl/tools/validate_v0913_quality_gate_review_surfaces.py\",\"adl/tools/workflow_guardrails.sh\",\"adl/tools/worktree_prune.sh\",\"csdlc-v2/tests/gate10a.rs\",\"docs/default_workflow.md\",\"docs/onboarding.md\",\"docs/planning/ACCOUNT_SWITCH_HANDOFF_2026-05-22.md\",\"docs/planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md\",\"docs/planning/DESIGN_TIME_CARD_COMPLETION_PLAN.md\",\"docs/planning/PROJECT_PLANNING_TEMPLATE_TRANSITION_PLAN.md\",\"docs/planning/PR_CONTROL_PLANE_DECRUFT_COMPATIBILITY_CUT_PLAN.md\",\"docs/templates/CARD_LIFECYCLE_TEMPLATE_TARGETS.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "Cover the final deletion-integrity fixes, typed release gate, main-sync handoff, regression tests, workflow removal, and regenerated registry changed to resolve the exact-head review blockers.",
+      "operation": "{\"add_protected_paths\":[\".github/workflows/v0871_milestone_closeout_gate.yaml\",\"adl/tools/check_milestone_closed_issue_sor_truth.sh\",\"adl/tools/fix_git_main_sync_preserve_local_adl.sh\",\"adl/tools/release_ceremony.sh\",\"adl/tools/test_check_issue_metadata_parity.sh\",\"adl/tools/test_check_milestone_closed_issue_sor_truth.sh\",\"adl/tools/test_closeout_completed_issue_wave.sh\",\"adl/tools/test_fix_git_main_sync_preserves_local_adl_cards.sh\",\"docs/milestones/v0.91.5/TOOL_SURFACE_REGISTRY_3734.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 23,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "Cover behavioral fixtures proving the typed release closeout gate fails closed for non-terminal, missing, failed, and malformed doctor results.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_release_ceremony.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 6,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 7,
+      "actor": "codex:root-independent-final-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 8,
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the independently approved exact-head corrective implementation with no actionable review findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 9,
+      "actor": "codex:5558-corrective",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 28,
+      "generation": 10,
+      "actor": "codex:5558-corrective",
+      "reason": "CI exposed that active non-v1 workflow-metrics and validation-inventory tools lost C-SDLC owner-lane selection; recover stale review and publication truth after restoring those bounded active selectors.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 11,
+      "actor": "codex:5558-corrective",
+      "reason": "Record focused selector and complete owner-lane proof after restoring active non-v1 tooling ownership.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_select_validation_lanes.sh\",\"&&\",\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"csdlc\"],\"purpose\":\"Prove active metrics and validation-inventory tooling selects the C-SDLC owner lane while sunset v1 routes remain removed.\",\"outcome\":\"passed\",\"evidence_ref\":\"local: selector contract PASS; Gate 10A 16/16; complete C-SDLC owner lane PASS\"}}"
+    },
+    {
+      "sequence": 30,
+      "generation": 11,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 31,
+      "generation": 11,
+      "actor": "codex:5558-corrective",
+      "reason": "Cover the CI-discovered selector proof, typed workflow-metric issue-read migration, typed timestamp packet extension, focused regressions, and retained publication intent.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/publication/5558.intent.json\",\"adl/tools/build_v0916_workflow_metric_backfill_inventory.py\",\"adl/tools/test_build_v0916_workflow_metric_backfill_inventory.py\",\"adl/tools/test_select_validation_lanes.sh\",\"csdlc-v2/src/github.rs\",\"csdlc-v2/tests/gate_github_actions.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 32,
+      "generation": 11,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 33,
+      "generation": 12,
+      "actor": "codex:root-independent-typed-backfill-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 34,
+      "generation": 13,
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the independently approved typed backfill and selector correction with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 14,
+      "actor": "codex:5558-corrective",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 36,
+      "generation": 15,
+      "actor": "codex:5558-corrective",
+      "reason": "Final-head CI exposed obsolete validation-manager and path-policy fixtures plus incomplete active CSM runtime owner routing; recover stale review and publication truth after the bounded typed-v2 fixture corrections.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 37,
+      "generation": 15,
+      "actor": "codex:5558-corrective",
+      "reason": "Cover the CI-discovered validation-manager fixture migration required to preserve active typed C-SDLC v2 and Runtime v3 owner-lane routing.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_validation_manager.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 38,
+      "generation": 16,
+      "actor": "codex:5558-corrective",
+      "reason": "Record the exact-content local proofs for the final CI fixture and active runtime-owner corrections before independent rereview.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash adl/tools/test_ci_path_policy.sh\",\"bash adl/tools/test_select_validation_lanes.sh\",\"bash adl/tools/test_validation_manager.sh\",\"bash adl/tools/run_owner_validation_lane.sh csdlc\",\"bash adl/tools/run_owner_validation_lane.sh runtime\",\"git diff --check\"],\"purpose\":\"Prove that typed C-SDLC v2 fixtures, path-policy routing, exact active owner selectors, the complete C-SDLC owner lane, active CSM Runtime v3 ownership, and diff hygiene all pass on the corrected content.\",\"outcome\":\"passed\",\"evidence_ref\":\"local exact-content proof: CI path policy PASS; selector PASS; validation manager PASS; C-SDLC owner lane PASS; Runtime owner lane PASS; diff check PASS\"}}"
+    },
+    {
+      "sequence": 39,
+      "generation": 16,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 40,
+      "generation": 17,
+      "actor": "subagent:/root/issue_5748",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 41,
+      "generation": 18,
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the independently approved final CI remediation with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 19,
+      "actor": "codex:5558-corrective",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 43,
+      "generation": 20,
+      "actor": "codex:5558-corrective",
+      "reason": "Hosted authoritative coverage proved the changed csdlc_prompt_editor structure module lacked an explicit fail-closed coverage-impact mapping; recover review/publication truth for the bounded mapping and regression-test repair.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 44,
+      "generation": 20,
+      "actor": "codex:5558-corrective",
+      "reason": "Cover the exact coverage-impact mapping and regression test required by the hosted authoritative coverage failure for the changed csdlc_prompt_editor structure module.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/check_coverage_impact.sh\",\"adl/tools/test_check_coverage_impact.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 45,
+      "generation": 20,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 46,
+      "generation": 21,
+      "actor": "subagent:019fbf2d-07af-7ee0-a7e1-ca480b4a5d0a",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 47,
+      "generation": 22,
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the exact reviewed coverage-impact repair with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 48,
+      "generation": 23,
+      "actor": "codex:5558-corrective",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 49,
+      "generation": 24,
+      "actor": "codex:5558-corrective",
+      "reason": "Hosted coverage proved the remaining csdlc_prompt_editor child modules are orphaned sunset-v1 source after Gate 10D2 deleted their parent module; recover review and publication truth for bounded dead-code removal.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 50,
+      "generation": 24,
+      "actor": "codex:5558-corrective",
+      "reason": "Own the exact orphaned sunset-v1 prompt-editor child module directory for bounded deletion after hosted coverage proved it is not compiled.",
+      "operation": "{\"add_protected_paths\":[\"adl/src/csdlc_prompt_editor\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 51,
+      "generation": 25,
+      "actor": "codex:5558-corrective",
+      "reason": "Record the bounded deletion of orphaned sunset-v1 prompt-editor Rust modules exposed by hosted coverage.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Removed the final 2,000 lines of orphaned adl/src/csdlc_prompt_editor child modules after Gate 10D2 had already deleted their parent module, and removed the now-invalid child-module coverage mapping.\",\"changes\":[\"Deleted orphaned enums.rs, structure.rs, and values.rs modules that were not reachable from any Cargo target.\",\"Restored the coverage-impact selector to the forbidden historical parent module only, avoiding a fake coverage route for uncompiled child files.\",\"Preserved the typed csdlc-edit prompt-editor retirement contract and active prompt-template schema proof.\"],\"artifacts\":[\"adl/src/csdlc_prompt_editor\",\"adl/tools/check_coverage_impact.sh\",\"adl/tools/test_check_coverage_impact.sh\",\"adl/tools/test_csdlc_prompt_editor.sh\"]}"
+    },
+    {
+      "sequence": 52,
+      "generation": 26,
+      "actor": "codex:5558-corrective",
+      "reason": "Record focused proof that the orphaned sunset-v1 prompt-editor deletion is complete and removes the hosted coverage blocker.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash adl/tools/test_check_coverage_impact.sh\",\"bash adl/tools/test_run_pr_fast_test_lane.sh\",\"bash adl/tools/test_csdlc_prompt_editor.sh\",\"git diff --check\",\"git diff --name-status --diff-filter=ACMR origin/main --\"],\"purpose\":\"Prove the coverage and fast-lane routing contracts remain green, typed csdlc-edit remains the prompt-editor authority, the patch is clean, and the three deleted orphan modules are absent from the coverage-impact ACMR source set.\",\"outcome\":\"passed\",\"evidence_ref\":\"local bounded proof on the #5558 issue worktree: all three focused suites PASS; orphan directory absent; 2,000 dead Rust LoC deleted; no csdlc_prompt_editor Rust file remains in the ACMR coverage-impact set\"}}"
+    },
+    {
+      "sequence": 53,
+      "generation": 26,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 54,
+      "generation": 27,
+      "actor": "subagent:019fbf2d-07af-7ee0-a7e1-ca480b4a5d0a",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 55,
+      "generation": 28,
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the exact reviewed orphaned prompt-editor deletion with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 56,
+      "generation": 29,
+      "actor": "codex:5558-corrective",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 57,
+      "generation": 30,
+      "actor": "codex:5558-corrective",
+      "reason": "Independent review found the PR-fast selector still routes the retired prompt-editor child directory to a zero-match test filter; recover publication truth for the bounded final retirement fix.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 58,
+      "generation": 30,
+      "actor": "codex:5558-corrective",
+      "reason": "independent review identified the stale PR-fast child-module routing and its fixture as part of the orphan prompt-editor retirement",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/run_pr_fast_test_lane.sh\",\"adl/tools/test_run_pr_fast_test_lane.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 59,
+      "generation": 31,
+      "actor": "codex:5558-corrective",
+      "reason": "Record the final PR-fast retirement correction identified by independent review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Removed the retired prompt-editor child-module glob from PR-fast Rust routing and deleted its zero-match regression fixture.\",\"changes\":[\"Kept only the historical parent-file sentinel in PR-fast mapping.\",\"Removed the synthetic child-module fixture that asserted routing to a test filter with no remaining tests.\"],\"artifacts\":[\"adl/tools/run_pr_fast_test_lane.sh\",\"adl/tools/test_run_pr_fast_test_lane.sh\"]}"
+    },
+    {
+      "sequence": 60,
+      "generation": 32,
+      "actor": "codex:5558-corrective",
+      "reason": "Record focused proof for the final PR-fast prompt-editor retirement correction.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash adl/tools/test_run_pr_fast_test_lane.sh\",\"bash adl/tools/test_csdlc_prompt_editor.sh\",\"git diff --check\",\"rg absence check for retired child routing\"],\"purpose\":\"Prove PR-fast routing remains valid, typed csdlc-edit remains authoritative, the patch is clean, and no retired prompt-editor child routing survives.\",\"outcome\":\"passed\",\"evidence_ref\":\"local focused proof on the #5558 issue worktree: both suites PASS; diff check PASS; retired child glob and fixture absent\"}}"
+    },
+    {
+      "sequence": 61,
+      "generation": 32,
+      "actor": "codex:5558-corrective",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 62,
+      "generation": 33,
+      "actor": "subagent:review_5558_orphan_fix",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 63,
+      "generation": 34,
+      "actor": "codex:5558-corrective",
+      "reason": "Advance the independently approved final prompt-editor PR-fast retirement correction with no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 64,
+      "generation": 35,
+      "actor": "codex:5558-corrective",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 65,
+      "generation": 36,
+      "actor": "codex:5558-corrective",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 66,
+      "generation": 37,
+      "actor": "codex:5558-corrective",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 67,
+      "generation": 38,
+      "actor": "codex:5558-corrective",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 68,
+      "generation": 39,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the retained #5558 terminal receipt in the dedicated v0.91.8 aggregate closeout projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

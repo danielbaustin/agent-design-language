@@ -37,8 +37,8 @@ demos/README.md
 adl/Cargo.toml
 adl/tools/pr.sh
 adl/tools/skills/repo-code-review/SKILL.md
-adl/tools/skills/workflow-conductor/scripts/route_workflow.py
-adl/tools/test_workflow_conductor_skill_contracts.sh
+adl/tools/generate_active_command_reference_scan.py
+csdlc-v2/tests/gate10a.rs
 docs/tooling/review-surface-format.md
 EOF
 
@@ -126,10 +126,10 @@ write_code_review() {
 
 ## Findings
 1. [P3] Workflow conductor routing remains concentrated in one large dispatch surface
-Location: adl/tools/skills/workflow-conductor/scripts/route_workflow.py
+Location: adl/tools/generate_active_command_reference_scan.py
 Impact: policy and dispatch changes remain harder to review safely because state collection, blocker classification, dispatch planning, and artifact rendering all move together.
 Trigger: extending the conductor for a new blocker family or lifecycle override path.
-Evidence: the selected packet shows route_workflow.py owning workflow-state inspection, handoff classification, command planning, dispatch execution, and routing-artifact output in one primary script.
+Evidence: the selected packet shows the final-authority scan owning active route classification and blocking proof.
 Fix Direction: split state collection, dispatch planning, and artifact rendering into smaller tracked modules while keeping the conductor thin.
 
 ## System-Level Assessment
@@ -200,14 +200,14 @@ write_test_review() {
 - Output Location: reviewers/test_review.md
 
 ## Scope
-- Reviewed: workflow-conductor contract tests, repo-review skill contract, demo/readme validation surfaces in the packet
+- Reviewed: typed final-authority tests, repo-review skill contract, demo/readme validation surfaces in the packet
 - Not Reviewed: full runtime test inventory outside the selected paths, GitHub Actions history, live provider integration tests
 - Review Mode: mixed
 - Gate: release-tail
 
 ## Findings
 1. [P3] Conductor lifecycle handoff proof still leans heavily on contract-style shell coverage
-Location: adl/tools/test_workflow_conductor_skill_contracts.sh
+Location: csdlc-v2/tests/gate10a.rs
 Impact: routing and override regressions can survive when the contract text still matches but a real handoff path changes subtly.
 Trigger: changing worktree-vs-root dispatch behavior, override placeholder names, or finish/janitor handoff semantics.
 Evidence: the packet's main conductor proof surface is one large shell contract test; recent lifecycle work already depended on careful command_override and bound-worktree behavior.
@@ -317,14 +317,14 @@ Blocking Findings: none.
 
 Lower-Priority Observations:
 1. [P3] Workflow conductor routing remains concentrated in one large dispatch surface
-Location: adl/tools/skills/workflow-conductor/scripts/route_workflow.py
+Location: adl/tools/generate_active_command_reference_scan.py
 Impact: maintainability and safe review cost rise together when routing, dispatch, and artifact behavior change in one place.
 Trigger: adding new conductor blocker families or lifecycle overrides.
 Evidence: code-reviewer identified the conductor script as the central surface for state collection, dispatch planning, and artifact output.
 Fix Direction: split the conductor into smaller tracked modules while preserving the thin-orchestrator model.
 
 2. [P3] Conductor lifecycle handoff proof should include stronger end-to-end coverage
-Location: adl/tools/test_workflow_conductor_skill_contracts.sh
+Location: csdlc-v2/tests/gate10a.rs
 Impact: semantic dispatch regressions can slip past contract-only proof.
 Trigger: changing command overrides, worktree dispatch, or finish/janitor transitions.
 Evidence: test-reviewer found the main proof surface is still heavily contract-oriented.

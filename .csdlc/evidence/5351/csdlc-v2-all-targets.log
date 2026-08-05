@@ -1,0 +1,504 @@
+   Compiling csdlc-v2 v0.1.0 (./csdlc-v2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.52s
+     Running unittests src/lib.rs (wp16-target/csdlc-v2/debug/deps/csdlc_v2-8cac6f4fd368f8a5)
+
+running 45 tests
+test cutover::tests::clocks_and_deletion_authority_are_fixed ... ok
+test cards::tests::latest_pass_supersedes_waiting_for_the_same_validation ... ok
+test cards::tests::latest_failure_supersedes_an_earlier_pass ... ok
+test git::tests::prepared_review_evidence_is_narrowly_metadata_safe ... ok
+test eligibility::tests::schema_bundle_is_versioned ... ok
+test github::tests::classifies_common_tail_states ... ok
+test github::tests::classifies_mergeability_states_without_treating_pending_as_stale ... ok
+test github::tests::newer_check_run_identity_replaces_stale_duplicate_name ... ok
+test github::tests::normalizes_every_supported_mergeability_variant_explicitly ... ok
+test github_token::tests::explicit_file_is_used ... ok
+test merge::tests::accepts_exact_green_remote_gate ... ok
+test merge::tests::accepts_has_hooks_after_github_normalization_to_clean ... ok
+test merge::tests::builds_distinguishable_merge_and_already_merged_results ... ok
+test merge::tests::rejects_head_drift ... ok
+test merge::tests::rejects_incomplete_request_identity ... ok
+test merge::tests::rejects_pending_required_check ... ok
+test merge::tests::serializes_each_supported_merge_method ... ok
+test operator::tests::v1_override_is_rejected_after_sunset ... ok
+test schema::tests::exposes_heartbeat_request_schema ... ok
+test store::edit_authorization_tests::implemented_spp_review_remediation_authorizes_only_bounded_replacements ... ok
+test store::edit_authorization_tests::post_review_spp_replacements_remain_rejected ... ok
+test store::terminal_design_repair_tests::terminal_design_repair_mermaid_guard_is_fail_closed ... ok
+test store::terminal_design_repair_tests::terminal_design_repair_rejects_incomplete_authority_before_io ... ok
+test store::terminal_design_repair_tests::terminal_plan_repair_rejects_incomplete_authority_before_io ... ok
+test store::terminal_design_repair_tests::terminal_plan_repair_requires_exact_target_scope ... ok
+test store::terminal_design_repair_tests::terminal_plan_repair_status_is_forward_only ... ok
+test store::terminal_design_repair_tests::terminal_sor_artifact_repair_rejects_incomplete_authority_before_io ... ok
+test store::terminal_design_repair_tests::terminal_sor_artifact_replacement_is_exact_and_nonduplicating ... ok
+test store::terminal_design_repair_tests::terminal_sor_validation_repair_enforces_portable_replacements ... ok
+test git::tests::shared_request_path_is_one_overwritten_git_common_file_per_issue ... ok
+test eligibility::tests::all_authoritative_inputs_are_approval_bound ... ok
+test eligibility::tests::unknown_or_duplicate_overrides_are_invalid ... ok
+test eligibility::tests::missing_approval_fails_closed ... ok
+test eligibility::tests::mandatory_phase_c_windows_fail_closed ... ok
+test eligibility::tests::malformed_digest_is_rejected ... ok
+test eligibility::tests::default_partition_and_exact_overrides_derive_lines ... ok
+test eligibility::tests::exact_operator_approval_can_accelerate_protection_windows ... ok
+test cutover::tests::failed_smoke_restores_v1 ... ok
+test cutover::tests::changed_path_failure_restores_exact_original_bytes ... ok
+test cutover::tests::successful_transaction_proves_v2_v1_v2_and_keeps_override ... ok
+test store::terminal_design_repair_tests::terminal_sor_validation_repair_rejects_stale_receipt_without_mutation ... ok
+test cutover::tests::every_selector_write_error_restores_exact_original_bytes ... ok
+test cutover::tests::every_failed_smoke_restores_exact_original_selector_bytes ... ok
+test store::terminal_design_repair_tests::terminal_sor_validation_repair_rolls_back_projection_and_receipt ... ok
+test store::terminal_design_repair_tests::terminal_sor_validation_repair_updates_projection_and_receipt_atomically ... ok
+
+test result: ok. 45 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.91s
+
+     Running unittests src/bin/csdlc-bind.rs (wp16-target/csdlc-v2/debug/deps/csdlc_bind-f07c022cb7871c02)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-closeout.rs (wp16-target/csdlc-v2/debug/deps/csdlc_closeout-691645ff8841d68e)
+
+running 2 tests
+test tests::merged_pull_request_is_clean_even_when_github_mergeability_is_unknown ... ok
+test tests::newer_started_pending_rerun_supersedes_old_completed_identity ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-cutover.rs (wp16-target/csdlc-v2/debug/deps/csdlc_cutover-89d746da169023d1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-doctor.rs (wp16-target/csdlc-v2/debug/deps/csdlc_doctor-a2564bb960906cf0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-edit.rs (wp16-target/csdlc-v2/debug/deps/csdlc_edit-f663a12cf6b260c8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-eligibility.rs (wp16-target/csdlc-v2/debug/deps/csdlc_eligibility-fd5eaeb45c5c885c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-github.rs (wp16-target/csdlc-v2/debug/deps/csdlc_github-7c0f9a814588092b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-github-issue.rs (wp16-target/csdlc-v2/debug/deps/csdlc_github_issue-cc477f4a4311481a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-github-pr.rs (wp16-target/csdlc-v2/debug/deps/csdlc_github_pr-2b030fe902f745b4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-init.rs (wp16-target/csdlc-v2/debug/deps/csdlc_init-b8cebcea163efa05)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-install.rs (wp16-target/csdlc-v2/debug/deps/csdlc_install-aaac193811aff735)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-merge.rs (wp16-target/csdlc-v2/debug/deps/csdlc_merge-67bffcc3744f975b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-pr-state.rs (wp16-target/csdlc-v2/debug/deps/csdlc_pr_state-ce6906999ee1765d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-proof.rs (wp16-target/csdlc-v2/debug/deps/csdlc_proof-d5632e8838b9d0ab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-publish.rs (wp16-target/csdlc-v2/debug/deps/csdlc_publish-b35f4b765477e0a7)
+
+running 3 tests
+test tests::ambiguous_create_failure_observes_before_deciding_retry ... ok
+test tests::normalization_rejects_fork_or_missing_repository_identity ... ok
+test tests::remote_url_requires_exact_github_host_and_repository ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-review.rs (wp16-target/csdlc-v2/debug/deps/csdlc_review-571bfd6cc60cda9e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-schedule.rs (wp16-target/csdlc-v2/debug/deps/csdlc_schedule-74592e118ede5bba)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-shadow.rs (wp16-target/csdlc-v2/debug/deps/csdlc_shadow-6f93342740b8ca41)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-shepherd.rs (wp16-target/csdlc-v2/debug/deps/csdlc_shepherd-f803c0d44abb7da0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-soak.rs (wp16-target/csdlc-v2/debug/deps/csdlc_soak-7a604369837b5866)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/csdlc-validate.rs (wp16-target/csdlc-v2/debug/deps/csdlc_validate-355854ce3e9bbbd0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/card_identity.rs (wp16-target/csdlc-v2/debug/deps/card_identity-3ad67a37e67c0cd0)
+
+running 3 tests
+test malformed_identity_update_is_rejected_before_mutation ... ok
+test identity_operation_updates_all_cards_without_content_drift ... ok
+test pre_change_native_1_0_0_fixture_loads_but_legacy_relabel_is_rejected ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/gate10a.rs (wp16-target/csdlc-v2/debug/deps/gate10a-203a7800e5cc7b09)
+
+running 15 tests
+test current_guidance_guard_rejects_exact_former_wrapper_command ... ok
+test ten_skills_are_typed_and_bind_the_generation_selector ... ok
+test coexistence_fails_closed_when_v1_or_v2_is_missing ... ok
+test operator_guidance_is_bound_to_manifest_and_coexistence_contract ... ok
+test external_cargo_target_is_exact_existing_and_outside_checkout ... ok
+test shared_destination_and_non_executable_sources_are_rejected_without_mutation ... ok
+test missing_late_source_leaves_prior_generation_untouched ... ok
+test current_bootstrap_guidance_does_not_call_deleted_prompt_wrapper ... ok
+test current_operator_guidance_has_no_sunset_v1_route ... ok
+test untracked_build_input_is_rejected_before_cargo_runs ... ok
+test dirty_shared_owner_dependency_is_rejected_before_cargo_runs ... ok
+test stale_owner_binary_provenance_fails_closed ... ok
+test freshly_installed_stable_edit_binary_is_executable ... ok
+test symlinked_installed_binaries_fail_coexistence ... ok
+test installer_records_provenance_without_replacing_other_files ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.03s
+
+     Running tests/gate10b.rs (wp16-target/csdlc-v2/debug/deps/gate10b-e0914565fcf7bccf)
+
+running 5 tests
+test explicit_v2_rehearsal_rolls_back_to_unchanged_v1_default ... ok
+test relabeled_arbitrary_commands_are_rejected ... ok
+test manifest_requires_v1_default_opt_in_and_exact_proofs ... ok
+test dirty_tree_is_refused_before_proof_attribution ... ok
+test tracked_post_command_mutation_is_refused ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/gate2.rs (wp16-target/csdlc-v2/debug/deps/gate2-80989e6700539520)
+
+running 58 tests
+test bootstrap_rejects_missing_vpp_command_before_authoring_files ... ok
+test bootstrap_rejects_one_path_for_both_authored_artifact_roles ... ok
+test bootstrap_constructs_all_six_cards_and_ready_doctor ... ok
+test bind_refuses_primary_checkout_and_worktree_mismatch ... ok
+test bind_refuses_overlapping_protected_path_reserved_by_another_issue ... ok
+test bind_refuses_branch_at_a_different_worktree ... ok
+test bind_rejects_standalone_repository_with_matching_worktree_suffix ... ok
+test bind_rejects_reserved_worktree_that_does_not_match_current_checkout ... ok
+test bind_supports_issue_local_state_without_touching_primary_checkout ... ok
+test bind_creates_and_idempotently_reuses_typed_worktree ... ok
+test active_claim_transition_rejects_stale_owner_without_any_write ... ok
+test bind_activates_exact_reserved_claim_from_existing_worktree ... ok
+test claim_revoke_fails_closed_for_stale_digest_and_missing_authority ... ok
+test claim_revoke_requires_unexpired_claim ... ok
+test claim_revoke_clears_unexpired_claim_with_operator_cas_audit ... ok
+test active_claim_transition_atomically_updates_purpose_and_scope ... ok
+test active_claim_transition_guards_cas_expiry_collision_and_real_cli ... ok
+test direct_markdown_drift_is_corruption ... ok
+test doctor_rejects_index_digest_tampering ... ok
+test bound_claim_scope_amendment_is_collision_checked_and_audited ... ok
+test field_ownership_violation_fails_without_generation_change ... ok
+test heartbeat_is_compare_and_swap_and_missed_heartbeat_does_not_enable_recovery ... ok
+test illegal_transition_fails_closed ... ok
+test expired_claim_reacquires_and_preserves_previous_owner_evidence ... ok
+test design_reapproval_rejects_unrelated_card_projection_drift ... ok
+test bound_plan_progress_and_validation_lane_replacement_are_typed ... ok
+test invalid_issue_local_init_fails_before_creating_artifacts ... ok
+test heartbeat_and_expired_recovery_record_positive_evidence ... ok
+test initialized_approved_stale_design_can_be_reapproved_before_readiness ... ok
+test lifecycle_binaries_share_stable_typed_exit_classes ... ok
+test expired_recovery_cannot_bypass_cross_worktree_overlap_authority ... ok
+test native_registry_and_manifest_symlink_escapes_fail_before_authoring ... ok
+test issue_local_design_paths_do_not_look_like_existing_records ... ok
+test native_registry_is_required_and_shape_checked_before_issue_authoring ... ok
+test missing_design_or_diagram_blocks_readiness ... ok
+test concurrent_reacquisition_across_worktrees_allows_only_one_overlapping_writer ... ok
+test public_schema_bundle_covers_requests_state_and_doctor_output ... ok
+test interrupted_commit_keeps_complete_backup_and_next_writer_recovers ... ok
+test closed_issue_claim_release_is_typed_and_compare_and_swap_guarded ... ok
+test implemented_spp_replacements_remain_generation_digest_and_claim_guarded ... ok
+test implemented_spp_review_remediation_rejects_unbounded_collections ... ok
+test retained_bootstrap_without_new_fields_loads_as_explicit_none ... ok
+test bound_replan_is_typed_claimed_and_limited_to_planning_cards ... ok
+test bound_and_implemented_design_reapproval_refreshes_truth_and_reviewed_rejects ... ok
+test reacquire_rejects_direct_rendered_card_drift ... ok
+test planning_replacements_reject_invalid_requests_without_mutation ... ok
+test reacquire_fails_closed_for_stale_binding_and_live_overlap ... ok
+test placeholder_design_is_pending_then_can_be_completed_approved_and_bound ... ok
+test active_nonoverlap_does_not_consult_stale_terminal_identity ... ok
+test stale_generation_and_digest_fail_closed ... ok
+test semantic_edit_updates_one_owned_projection_atomically ... ok
+test ready_transition_requires_current_design_and_automatic_budgets ... ok
+test released_claim_reacquires_without_phase_or_audit_rewind ... ok
+test implemented_spp_review_remediation_allows_guarded_plan_and_stop_condition_corrections ... ok
+test sor_status_cannot_fabricate_terminal_truth ... ok
+test planning_replacements_are_bound_only_and_cannot_smuggle_progress ... ok
+test issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_edits ... ok
+test inactive_stale_projection_with_stale_terminal_identity_does_not_block_authority ... ok
+
+test result: ok. 58 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.26s
+
+     Running tests/gate4.rs (wp16-target/csdlc-v2/debug/deps/gate4-9b4a2258e1baa5a5)
+
+running 17 tests
+test scheduler_and_shepherd_are_read_only_classifiers ... ok
+test selection_is_stable_topological_and_includes_dependencies ... ok
+test invalid_cycle_network_credentials_and_budget_fail_closed ... ok
+test unsafe_lane_ids_are_rejected_before_evidence_paths_exist ... ok
+test cancellation_is_observed_before_process_start ... ok
+test deferred_dependency_blocks_local_dependent_and_non_goal_only_converges ... ok
+test timeout_failure_redaction_and_deferred_ci_are_truthful ... ok
+test validate_cli_redacts_machine_readable_command ... ok
+test shepherd_cli_exposes_schema_and_checked_examples ... ok
+test failed_lane_can_be_repaired_and_retried_to_local_pass ... ok
+test deterministic_budget_packing_accepts_feasible_uneven_wave ... ok
+test high_output_drains_and_failed_peer_cancels_process_group ... ok
+test cancellation_during_execution_terminates_process_group ... ok
+test independent_lanes_run_concurrently_and_converge_with_typed_evidence ... ok
+test routine_lifecycle_contract_measures_four_commands_and_two_artifacts ... ok
+test finalize_is_one_atomic_implemented_transition_and_failure_writes_no_state ... ok
+test deadline_timeout_is_typed_and_fails_aggregate ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.07s
+
+     Running tests/gate5.rs (wp16-target/csdlc-v2/debug/deps/gate5-23ddb415c807926a)
+
+running 14 tests
+test exact_completed_review_with_resolved_findings_is_publishable ... ok
+test missing_incomplete_stale_and_unresolved_review_fail_closed ... ok
+test guard_rejects_malformed_fixed_and_accepted_risk_evidence ... ok
+test out_of_scope_finding_must_remain_visible_and_routed ... ok
+test guard_cli_is_read_only_and_returns_typed_truth ... ok
+test substantive_revision_honors_review_scope_pathspecs ... ok
+test non_substantive_exception_is_narrow_and_machine_proven ... ok
+test typed_publication_metadata_commit_does_not_stale_review_but_source_drift_does ... ok
+test dirty_substantive_tree_is_rejected_before_review_assignment ... ok
+test direct_exact_review_records_and_advances_without_assignment ... ok
+test metadata_only_changes_do_not_stale_a_clean_review ... ok
+test assignment_and_recording_update_index_and_srp_without_publication_side_effect ... ok
+test doctor_accepts_committed_typed_metadata_after_review ... ok
+test reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.89s
+
+     Running tests/gate6.rs (wp16-target/csdlc-v2/debug/deps/gate6-3719c5769d38b15d)
+
+running 8 tests
+test merged_reconciliation_request_is_versioned_and_requires_explicit_pr ... ok
+test base_head_or_repository_mismatch_fails_closed ... ok
+test remote_identity_rejects_body_without_closing_keyword ... ok
+test drifted_mutable_fields_update_same_pr ... ok
+test ambiguous_create_outage_is_reconciled_by_observation_before_retry ... ok
+test merged_reconciliation_requires_exact_final_reviewed_identity ... ok
+test publication_body_requires_github_closing_keyword_for_issue ... ok
+test request_and_result_schemas_are_published ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/gate7.rs (wp16-target/csdlc-v2/debug/deps/gate7-9919531b07c20342)
+
+running 11 tests
+test unknown_conflict_or_review_truth_never_becomes_green ... ok
+test pending_failed_and_unobserved_required_checks_are_distinct ... ok
+test green_required_truth_is_ready_without_promoting_optional_skips ... ok
+test requested_changes_remain_routed_and_block_readiness ... ok
+test no_pr_terminal_requires_explicit_approval ... ok
+test false_terminal_observations_fail_before_store_mutation ... ok
+test closed_unmerged_terminal_requires_exact_head_sha ... ok
+test schemas_cover_readiness_and_terminal_truth ... ok
+test prune_guard_validation_does_not_modify_retained_receipt_bytes ... ok
+test prune_guard_requires_exact_topology_and_clean_worktree ... ok
+test prune_guard_resolves_issue_local_and_repository_relative_topology_exactly ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/gate7_lifecycle.rs (wp16-target/csdlc-v2/debug/deps/gate7_lifecycle-883f9e687b2f8959)
+
+running 37 tests
+test bind_rejects_existing_unregistered_target_directory ... ok
+test bind_rejects_symlinked_lifecycle_state_and_cleans_created_worktree ... ok
+test bind_rejects_stale_existing_target_record_before_materializing_side_state ... ok
+test bind_idempotent_reuse_rejects_target_with_different_lifecycle_identity ... ok
+test bind_rejects_stale_existing_target_side_state_without_mutating_it ... ok
+test bind_idempotent_reuse_rejects_target_with_different_issue_identity ... ok
+test bind_materializes_lifecycle_state_in_new_issue_worktree ... ok
+test bind_copies_prebind_evidence_into_target_worktree ... ok
+test bind_idempotent_reuse_rejects_target_with_different_initialization_digest ... ok
+test merged_publication_reconciliation_projects_truth_before_closeout ... ok
+test ambiguous_post_get_recovers_without_repeating_graphql ... ok
+test invalid_terminal_observation_cannot_mutate_readiness_during_reconciliation ... ok
+test no_pr_closeout_produces_doctor_valid_terminal_state ... ok
+test ready_command_records_only_exact_open_remote_success ... ok
+test post_mutation_cas_failure_recovers_without_repeating_graphql ... ok
+test destructive_prune_archives_evidence_restores_projection_and_removes_only_issue_worktree ... ok
+test prune_command_accepts_issue_local_terminal_without_rewriting_receipt ... ok
+test prune_preparation_classifies_retained_and_generated_state_without_deleting_it ... ok
+test routine_publication_prepares_and_records_ready_pr_directly ... ok
+test ready_command_graphql_and_post_get_failures_leave_zero_local_writes ... ok
+test squash_merge_metadata_revision_reconciles_but_substantive_delta_fails_closed ... ok
+test terminal_reconcile_rejects_misplaced_receipt_for_missing_projection ... ok
+test terminal_reconcile_rejects_missing_index_inside_existing_projection_dir ... ok
+test terminal_reconcile_rejects_partial_projection_loss ... ok
+test later_failure_blocks_merged_and_closed_unmerged_terminal_closeout ... ok
+test terminal_closeout_reconciles_only_forward_metadata_head_drift ... ok
+test typed_ready_reconciliation_records_only_the_exact_open_non_draft_pr ... ok
+test typed_mark_ready_is_cas_guarded_and_records_only_confirmed_remote_success ... ok
+test ready_command_rejects_wrong_identity_closed_and_non_draft_without_writes ... ok
+test terminal_reconcile_materializes_missing_projection_from_retained_receipt ... ok
+test unresolved_post_review_finding_is_not_projected_as_complete ... ok
+test terminal_design_repair_after_journal_interruption_preserves_recoverable_journal ... ok
+test terminal_plan_repair_is_scoped_atomic_and_receipt_bound ... ok
+test terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound ... ok
+test later_pass_supersedes_waiting_validation_through_terminal_closeout ... ok
+test readiness_regression_and_exact_terminal_closeout_are_atomic_and_idempotent ... ok
+test terminal_projection_and_receipt_recover_at_each_durable_boundary ... ok
+
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 56.21s
+
+     Running tests/gate7_terminal_design_repair_5487.rs (wp16-target/csdlc-v2/debug/deps/gate7_terminal_design_repair_5487-b1bd982b86ad7977)
+
+running 1 test
+test repair_request_covers_committed_5467_artifacts_and_mermaid_shape ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/gate7_terminal_sor_validation_repair_5613.rs (wp16-target/csdlc-v2/debug/deps/gate7_terminal_sor_validation_repair_5613-702dec2ed80c9469)
+
+running 1 test
+test public_contract_exposes_terminal_sor_validation_repair_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/gate8.rs (wp16-target/csdlc-v2/debug/deps/gate8-d5cfef3f00fa8aad)
+
+running 8 tests
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpLcJlSa/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpEgApuT/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpyNaWrf/nested-output/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpreokBP/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpCnUzo7/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpQtucDb/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpGDV4FL/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpNSciK1/.git/
+test duplicate_heading_fails_with_report_before_canonical_output_exists ... ok
+test public_schemas_include_import_parity_and_sunset_contracts ... ok
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpqEayj0/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpO7KgBa/.git/
+test overlapping_or_traversing_roots_fail_without_legacy_mutation ... ok
+test unrepresentable_markdown_and_missing_design_return_no_write_reports ... ok
+test one_way_ast_import_retains_every_authored_section_and_generates_view ... ok
+test changed_raw_source_cannot_replace_existing_migration_evidence ... ok
+test shadow_parity_compares_normalized_outcomes_not_markdown_bytes ... ok
+test compatibility_failure_resumes_and_fixed_view_cannot_overwrite_index ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.00s
+
+     Running tests/gate9.rs (wp16-target/csdlc-v2/debug/deps/gate9-54d9ac0d78fb149a)
+
+running 46 tests
+test evidence_input_rejects_wrong_schema_or_non_v1_default ... ok
+test every_retained_behavior_has_current_parity_proof ... ok
+test hard_budget_or_critical_parity_failure_stops_cutover ... ok
+test lifecycle_soak::bind_rejects_symlinked_lifecycle_state_and_cleans_created_worktree ... ok
+test lifecycle_soak::bind_rejects_existing_unregistered_target_directory ... ok
+test lifecycle_soak::bind_materializes_lifecycle_state_in_new_issue_worktree ... ok
+test lifecycle_soak::bind_rejects_stale_existing_target_side_state_without_mutating_it ... ok
+test lifecycle_soak::bind_idempotent_reuse_rejects_target_with_different_initialization_digest ... ok
+test lifecycle_soak::bind_copies_prebind_evidence_into_target_worktree ... ok
+test lifecycle_soak::bind_idempotent_reuse_rejects_target_with_different_lifecycle_identity ... ok
+test lifecycle_soak::bind_rejects_stale_existing_target_record_before_materializing_side_state ... ok
+test lifecycle_soak::bind_idempotent_reuse_rejects_target_with_different_issue_identity ... ok
+test lifecycle_soak::merged_publication_reconciliation_projects_truth_before_closeout ... ok
+test lifecycle_soak::ambiguous_post_get_recovers_without_repeating_graphql ... ok
+test lifecycle_soak::no_pr_closeout_produces_doctor_valid_terminal_state ... ok
+test lifecycle_soak::invalid_terminal_observation_cannot_mutate_readiness_during_reconciliation ... ok
+test lifecycle_soak::ready_command_records_only_exact_open_remote_success ... ok
+test lifecycle_soak::post_mutation_cas_failure_recovers_without_repeating_graphql ... ok
+test lifecycle_soak::destructive_prune_archives_evidence_restores_projection_and_removes_only_issue_worktree ... ok
+test lifecycle_soak::prune_command_accepts_issue_local_terminal_without_rewriting_receipt ... ok
+test lifecycle_soak::prune_preparation_classifies_retained_and_generated_state_without_deleting_it ... ok
+test lifecycle_soak::routine_publication_prepares_and_records_ready_pr_directly ... ok
+test lifecycle_soak::ready_command_graphql_and_post_get_failures_leave_zero_local_writes ... ok
+test lifecycle_soak::squash_merge_metadata_revision_reconciles_but_substantive_delta_fails_closed ... ok
+test lifecycle_soak::terminal_reconcile_rejects_misplaced_receipt_for_missing_projection ... ok
+test lifecycle_soak::terminal_reconcile_rejects_missing_index_inside_existing_projection_dir ... ok
+test lifecycle_soak::terminal_reconcile_rejects_partial_projection_loss ... ok
+test missing_or_waiting_evidence_incubates_but_hard_failure_stops ... ok
+test native_sample_authority_resolves_distinct_native_and_import_families ... ok
+test proceed_requires_every_scenario_hard_budget_and_zero_critical_parity_loss ... ok
+test lifecycle_soak::later_failure_blocks_merged_and_closed_unmerged_terminal_closeout ... ok
+test sample_generation_is_idempotent_and_builds_six_ast_validated_cards_each ... ok
+test selector_requires_opt_in_before_cutover_and_supports_v1_override_after_cutover ... ok
+test lifecycle_soak::terminal_closeout_reconciles_only_forward_metadata_head_drift ... ok
+test lifecycle_soak::typed_ready_reconciliation_records_only_the_exact_open_non_draft_pr ... ok
+test lifecycle_soak::typed_mark_ready_is_cas_guarded_and_records_only_confirmed_remote_success ... ok
+test lifecycle_soak::ready_command_rejects_wrong_identity_closed_and_non_draft_without_writes ... ok
+test lifecycle_soak::terminal_reconcile_materializes_missing_projection_from_retained_receipt ... ok
+test lifecycle_soak::terminal_design_repair_after_journal_interruption_preserves_recoverable_journal ... ok
+test lifecycle_soak::unresolved_post_review_finding_is_not_projected_as_complete ... ok
+test lifecycle_soak::terminal_plan_repair_is_scoped_atomic_and_receipt_bound ... ok
+test lifecycle_soak::terminal_sor_artifact_repair_is_scoped_atomic_and_receipt_bound ... ok
+test lifecycle_soak::later_pass_supersedes_waiting_validation_through_terminal_closeout ... ok
+test lifecycle_soak::readiness_regression_and_exact_terminal_closeout_are_atomic_and_idempotent ... ok
+test lifecycle_soak::terminal_projection_and_receipt_recover_at_each_durable_boundary ... ok
+test representative_samples_reopen_persisted_store_between_lifecycle_phases ... ok
+
+test result: ok. 46 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 65.15s
+
+     Running tests/gate_github_actions.rs (wp16-target/csdlc-v2/debug/deps/gate_github_actions-80f1e6b98d3f1f4c)
+
+running 3 tests
+test operation_marker_is_stable_and_idempotent ... ok
+test split_github_binaries_reject_the_wrong_surface_before_network ... ok
+test issue_create_and_comment_reconcile_by_marker_with_exact_readback ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.25s

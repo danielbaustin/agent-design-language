@@ -1,0 +1,14 @@
+{
+  "issue": 5717,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "cee1b4c93d5fd0e53c23992899eb3297716bac87168ca008ad0b97bfc5083e20",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "reason": "Exact codex subagent review passed with no P0-P3 findings for the b2c7271a launch-prep gates 1-8 packet.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

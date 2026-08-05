@@ -1,0 +1,20 @@
+{
+  "issue": 5354,
+  "claim_id": "claim-5354-v0918-wp15-demo-preparation",
+  "expected_generation": 1,
+  "expected_digest": "76eb1e2c50d80c3f5627c327661085aaed265ebe44241fda6209f4d482962c57",
+  "now_unix_seconds": 1784786233,
+  "actor": "codex:5354-wp14-decomposition",
+  "reason": "Align the canonical v0.91.8 package with the operator-approved decomposition of WP-14A into existing WP-15, WP-20, and WP-21 tracks.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/SPRINT_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/RELEASE_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/MILESTONE_CHECKLIST_v0.91.8.md",
+    "docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+    "docs/milestones/v0.91.8/DECISIONS_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "add_protected_paths": [
+    ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb",
+    "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json"
+  ],
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "expected_digest": "6251b108cfa52ae259b62e3c234c09b68b2223fc40b7a8ac944acacab5975bf3",
+  "expected_generation": 0,
+  "issue": 5804,
+  "now_unix_seconds": 1785862697,
+  "reason": "Refresh the derived feature-row digest detected by the full pre-review documentation gate."
+}

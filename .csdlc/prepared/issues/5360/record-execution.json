@@ -1,0 +1,33 @@
+{
+  "issue": 5360,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "7962f512c20116f7f48f3226ea78c3a8c6c243f7b8c484742652eb562448c679",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Record the exact WP-17 documentation and release-truth alignment implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Aligned 27 exact documentation paths to the merged WP-16 quality gate and issue-outcome audit, preserved explicit release and v0.92 non-claims, and routed two colliding index paths to their existing owners.",
+    "changes": [
+      "Updated repository entrypoints and active milestone framing from stale v0.91.7 and WP-01 language to active v0.91.8 WP-17 truth",
+      "Reconciled Runtime v3 parity, C-SDLC v2 acceptance, platform, deletion, feature, release, and handoff claims to exact landed evidence",
+      "Made WP-17 through WP-23 release-tail sequencing explicit and preserved the completed WP-13 operator-order exception",
+      "Updated v0.92 bridge inputs without claiming activation, birthday launch, or final v0.91.8 release",
+      "Retained a machine-readable alignment ledger and exact collision exclusions for #5356 and #5765"
+    ],
+    "artifacts": [
+      ".csdlc/evidence/5360/documentation-alignment.v1.json",
+      ".csdlc/evidence/5360/documentation-alignment.v1.md",
+      "README.md",
+      "REVIEW.md",
+      "CHANGELOG.md",
+      "docs/README.md",
+      "docs/milestones/v0.91.8",
+      "docs/milestones/v0.92/README.md",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/planning/ADL_FEATURE_LIST.md"
+    ]
+  },
+  "fail_after_backup": false
+}

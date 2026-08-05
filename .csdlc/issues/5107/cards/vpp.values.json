@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5107,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21][planning] Queue Adaptive Learning DAG work after loop runtime and platform deployment",
+    "slug": "v0-91-8-wp21-adaptive-learning-dag-queue",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "preparation-doc-contract",
+          "proof_role": "Prove the #5107 queue cites exact platform inputs, preserves the #5104 historical-input boundary, keeps graph-mutation non-claims, and does not request child implementation issues.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 3000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5107/validate_preparation.rb"
+          ],
+          "parallel_group": "planning-contract",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on stale typed state, overclaims, missing exact input revisions, hidden implementation, child-issue creation, stale review, publication drift, or merge attempts.",
+      "design_ref": ".csdlc/issues/5107/retained/design.md",
+      "design_digest": "50b2da2b406a51324c6d0479de9aabfb456ef5fbb19c222587bdbc9b7cbe6b90",
+      "diagram_ref": ".csdlc/issues/5107/retained/diagram.mmd",
+      "diagram_digest": "76e16a4cafd587ed562c04f9e120849db10367e0aa74c28b28d46fb061cadea9"
+    }
+  }
+}

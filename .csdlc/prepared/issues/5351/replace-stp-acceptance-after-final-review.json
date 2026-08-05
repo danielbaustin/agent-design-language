@@ -1,0 +1,23 @@
+{
+  "issue": 5351,
+  "card": "stp",
+  "expected_generation": 14,
+  "expected_digest": "d907ed9db88bdff0abbc2d1e6c0ecf09a19194a487e71b4dd9f1d2ed814ad176",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Align AC-8 with merge-gated WP-17 release and asynchronous closeout.",
+  "operation": {
+    "operation": "replace_acceptance_criteria",
+    "values": [
+      "AC-1: No quality-gate execution starts until #5354 is merged, typed closed_out, claim-free, backed by a retained merged terminal receipt, and its observed merge SHA is ancestral to the exact #5351 execution revision",
+      "AC-2: The future packet binds exact accepted revisions and retained proof for product contracts, platform deployment, rollback, deletion, demo convergence, docs and release-blocker truth",
+      "AC-3: Required rows use pass, fail, blocked, not_applicable, or explicit_non_claim; only pass satisfies a required gate and no failure is hidden as prose or deferred evidence",
+      "AC-4: The integrated gate uses accepted ADL v2, Runtime v3, and C-SDLC v2 interfaces without Runtime v2 or duplicate product infrastructure",
+      "AC-5: Every command, result, duration, artifact, revision, review, and blocker is deterministic where applicable, repository-relative, digest-bound, redaction-safe, and stale-detectable",
+      "AC-6: Blockers route to the owning issue before WP-17 begins; #5351 does not silently absorb unrelated remediation",
+      "AC-7: No dependency is added; issue-local orchestration and fixtures stay within 1500 nonblank lines, modules below 500 lines, fewer than 150 focused assertions, and 120/600/1800/2280-second lane budgets unless an exact reviewed variance is recorded",
+      "AC-8: All applicable focused, integrated, complete, exact-review, CI, authorized serialized merge, and post-merge identity proof completes without deferral before WP-17 is released; typed closeout follows asynchronously and does not block WP-17"
+    ]
+  },
+  "fail_after_backup": false
+}

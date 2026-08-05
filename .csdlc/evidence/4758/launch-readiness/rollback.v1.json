@@ -1,0 +1,16 @@
+{
+  "schema": "adl.launch_readiness.rollback.v1",
+  "issue": 4758,
+  "trigger": "withdraw launch-readiness package before merge or revert execution commit after merge",
+  "method": "evidence_only_git_revert_or_uncommitted_discard",
+  "before_revision": "17a81add957800de3bbf5350b38d5e02ea01f722",
+  "after_revision": "17a81add957800de3bbf5350b38d5e02ea01f722",
+  "verification_command": [
+    "git",
+    "diff",
+    "--name-only",
+    "origin/main...HEAD"
+  ],
+  "verification_outcome": "only #4758 protected paths are present",
+  "outcome": "passed"
+}

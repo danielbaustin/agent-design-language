@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5548,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][csdlc-v2][tests] Initialize Gate 2 temp roots before terminal recovery",
+    "slug": "gate2-temp-root-init",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare typed issue state and a dedicated FastWork worktree only; do not change product, source, or test behavior in this session.",
+      "deliverables": [
+        "typed C-SDLC v2 issue state for #5548",
+        "dedicated /Volumes/FastWork issue worktree bound to the #5548 branch",
+        "preparation commit and pushed branch"
+      ],
+      "acceptance_criteria": [
+        "AC-1: All Gate 2 tests reach their intended assertions and pass",
+        "AC-2: cargo test --locked passes for csdlc-v2",
+        "AC-3: Terminal receipt recovery still resolves the real repository common directory and remains fail-closed",
+        "AC-4: A regression proves non-Git fixture behavior explicitly",
+        "AC-5: No AWS dependency or validation"
+      ],
+      "dependencies": [
+        "issue #5527 validation discovery",
+        "current origin/main baseline"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5548",
+        "csdlc-v2/tests/gate2.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/lifecycle.rs"
+      ],
+      "non_goals": [
+        "implementation in this preparation session",
+        "broad tests during preparation",
+        "PR publication before review",
+        "AWS",
+        "raw gh",
+        "touching issue #5558"
+      ]
+    }
+  }
+}

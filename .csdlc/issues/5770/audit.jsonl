@@ -1,0 +1,1 @@
+{"sequence":1,"generation":1,"actor":"codex:019fbc07-3030-7150-a235-a6f0a8937350","reason":"Retain exact observed closure for issue #5770 through merged corrective PR #5772 without reconstructing unavailable lifecycle history.","operation":"recover_recordless_terminal"}

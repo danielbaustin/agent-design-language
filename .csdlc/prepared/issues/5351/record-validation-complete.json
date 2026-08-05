@@ -1,0 +1,19 @@
+{
+  "issue": 5351,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "667a8ed905d3564e370e7b80b65cefa566cba31cbbaec206091a393f4c176e02",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Record the complete same-revision WP-16 quality decision.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["ruby", ".csdlc/prepared/issues/5351/run-validation-lane.rb", "complete"],
+      "purpose": "Verify focused and integrated packets are both passing and pinned to the same exact execution revision.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5351/complete.json"
+    }
+  },
+  "fail_after_backup": false
+}

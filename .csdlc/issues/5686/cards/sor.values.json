@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5686,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][records] Publish #5662 terminal projection to main",
+    "slug": "publish-5662-terminal-projection",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Reapplied the two retained #5662 terminal-projection commits on current main and proved exact canonical receipt parity.",
+      "actual_changes": [
+        "Reapplied retained commit 6487f1ef8d97549c5ccf092946d93a7aa67c60de",
+        "Reapplied retained commit d95b4b0c5ebcc4c4fa95d8dccf19558296c53c6c",
+        "Added issue-local structured receipt-parity evidence for #5686"
+      ],
+      "artifacts": [
+        ".csdlc/issues/5662",
+        ".csdlc/publication/5662.intent.json",
+        ".csdlc/evidence/5686"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "node",
+            ".csdlc/evidence/5686/verify_receipt_parity.mjs"
+          ],
+          "purpose": "Verify exact canonical receipt parity and bounded repair scope",
+          "outcome": "passed",
+          "evidence_ref": "terminal-receipt-parity.log"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

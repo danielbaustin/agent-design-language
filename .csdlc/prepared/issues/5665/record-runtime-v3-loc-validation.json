@@ -1,0 +1,24 @@
+{
+  "schema": "csdlc.edit_request.v1",
+  "issue": 5665,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "246c15bf7e4ed60db43d8607adf0bd991389426bedb01a85a72b36f908520cec",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Record physical LoC measurement proving the #5665 implementation is net-negative after retiring obsolete proof wrappers.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git",
+        "diff",
+        "--numstat",
+        "main"
+      ],
+      "purpose": "Measure physical added and deleted lines against main and preserve the net-negative #5665 proof after replacing obsolete wrappers with fail-closed tombstones.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5665/runtime-v3-loc-measurement.md"
+    }
+  }
+}

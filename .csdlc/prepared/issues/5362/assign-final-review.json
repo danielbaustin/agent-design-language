@@ -1,0 +1,21 @@
+{
+  "schema": "csdlc.review_assignment_request.v1",
+  "issue": 5362,
+  "expected_generation": 10,
+  "expected_digest": "6e7bcebdd5f0fe0b96f45f7f0f54dbd05e33dc4464572cb480e34890e2a3db1b",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "reviewer": "subagent:gpt-5.5:Locke",
+  "assigned_by": "codex:wp21-conductor",
+  "scope": [
+    ".csdlc/issues/5362",
+    ".csdlc/evidence/5362",
+    ".csdlc/prepared/issues/5362",
+    "docs/planning/ADL_FEATURE_LIST.md",
+    "docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md",
+    "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md"
+  ]
+}

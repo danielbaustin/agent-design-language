@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5438,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][records] Support typed terminal SOR follow-up reconciliation",
+    "slug": "recordless-terminal-recovery-5438",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Recover terminal authority for closed issue #5438 from exact merged PR #5462 evidence without reconstructing historical implementation, review, publication, readiness, or CI lifecycle.",
+      "actual_changes": [
+        "Typed recordless terminal recovery projection only."
+      ],
+      "artifacts": [
+        ".csdlc/issues/5438/retained/design.md",
+        ".csdlc/issues/5438/retained/diagram.mmd"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "csdlc-github-issue",
+            "run",
+            "--request",
+            ".csdlc/prepared/issues/5748/github-read-5438.json"
+          ],
+          "purpose": "Observe the exact GitHub issue identity, labels, and closed state through the typed v2 GitHub surface; exact PR head and local merge commit identity were separately verified before recovery.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/prepared/issues/5748/github-read-5438.json"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

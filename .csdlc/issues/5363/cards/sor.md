@@ -1,0 +1,73 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5363
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Retained the exact WP-19 external-review PDF, routed all three actionable findings into a findings register, corrected current v0.91.8 review status from unsent to blocked-findings/remediation, replaced the deletion-denominator shorthand with independent eligibility-manifest accounting, and added a bounded boot-path cutover table without claiming release approval or workspace-wide code reduction.
+
+## Artifacts
+
+- docs/milestones/v0.91.8/review/external_review_5357/ADL_v0.91.8_External_Review_Findings.pdf
+- docs/milestones/v0.91.8/review/external_review_5357/README.md
+- docs/milestones/v0.91.8/review/external_review_5357/FINDINGS_REGISTER.md
+- docs/milestones/v0.91.8/review/wp20_remediation_5363/REMEDIATION_REGISTER_5363.md
+- docs/milestones/v0.91.8/README.md
+- docs/milestones/v0.91.8/RELEASE_NOTES_v0.91.8.md
+- docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md
+- docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md
+- docs/milestones/v0.91.8/review/README.md
+- docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md
+
+## Execution
+
+- Stored ADL_v0.91.8_External_Review_Findings.pdf under review/external_review_5357 with the supplied SHA-256 and byte count.
+- Added external_review_5357 and wp20_remediation_5363 registers that disposition V0918-CHAT-01, V0918-CHAT-02, and V0918-CHAT-03.
+- Updated v0.91.8 README, release notes, review index, third-party handoff, and v0.92 handoff feature text to reflect blocked WP-19 findings and WP-20 remediation ownership.
+- Updated deletion/cutover documentation to derive the 46,358-line denominator from the #5346 eligibility manifest and to narrow proof claims to manifest-scoped deletion.
+- Recorded a per-subsystem boot-path ownership table for Chronosense, reasoning graph, governed cognition, skills/constructability, Shepherd/provider/scheduler/private-state, and observatory/telemetry/rollback surfaces.
+
+## Validation
+
+[
+  {
+    "command": [
+      "focused-doc-validation",
+      "pdf-sha256-and-size",
+      "markdown-link-check",
+      "wp13-denominator-json-proof",
+      "yaml-parse",
+      "git-diff-check",
+      "csdlc-doctor-5363"
+    ],
+    "purpose": "Prove the retained external-review artifact identity, linked remediation docs, independent deletion denominator, YAML parseability, diff hygiene, and typed lifecycle state for the docs-only WP-20 remediation.",
+    "outcome": "passed",
+    "evidence_ref": "PDF SHA-256 b1741fb24d0627ccf3d7875168f54cc9b7c558a186efc267800612a6af2748f5 and 10841 bytes; markdown links ok; eligibility denominator paths=58 loc=46358; post-deletion status=pass retained=0 denominator=46358; WP_ISSUE_WAVE YAML ok; git diff --check clean; csdlc-doctor issue 5363 status=pass phase=bound"
+  }
+]
+
+## Integration
+
+pr_open
+
+## Publication
+
+Publication: ready
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

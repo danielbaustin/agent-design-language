@@ -1,0 +1,63 @@
+# Structured Task Prompt
+
+Template: 1.0.0
+
+Issue: 5351
+
+Repository: danielbaustin/agent-design-language
+
+Card: stp
+
+Status: ready
+
+## Task
+
+Prepare six current-registry cards, reviewed design and diagram, exact issue-local ownership, COTS, budgets, PVF, and the fail-closed #5354 gate; do not execute the quality gate.
+
+## Deliverables
+
+- all six current-registry issue-specific typed cards
+- reviewed quality-gate design and Mermaid diagram
+- exact preparation-only protected paths
+- executable #5354 merge, typed closeout, receipt, claim-release, and ancestry gate
+- zero-new-dependency COTS posture and bounded quality-packet architecture
+- LoC, module, assertion, and time budgets with PVF classification
+- bounded preparation review with all findings fixed
+- future exact-revision integrated quality-gate packet and blocker register
+
+## Acceptance
+
+1. AC-1: No quality-gate execution starts until #5354 is merged, typed closed_out, claim-free, backed by a retained merged terminal receipt, and its observed merge SHA is ancestral to the exact #5351 execution revision
+2. AC-2: The future packet binds exact accepted revisions and retained proof for product contracts, platform deployment, rollback, deletion, demo convergence, docs and release-blocker truth
+3. AC-3: Required rows use pass, fail, blocked, not_applicable, or explicit_non_claim; only pass satisfies a required gate and no failure is hidden as prose or deferred evidence
+4. AC-4: The integrated gate uses accepted ADL v2, Runtime v3, and C-SDLC v2 interfaces without Runtime v2 or duplicate product infrastructure
+5. AC-5: Every command, result, duration, artifact, revision, review, and blocker is deterministic where applicable, repository-relative, digest-bound, redaction-safe, and stale-detectable
+6. AC-6: Blockers route to the owning issue before WP-17 begins; #5351 does not silently absorb unrelated remediation
+7. AC-7: No dependency is added; issue-local orchestration and fixtures stay within 1500 nonblank lines, modules below 500 lines, fewer than 150 focused assertions, and 120/600/1800/2280-second lane budgets unless an exact reviewed variance is recorded
+8. AC-8: All applicable focused, integrated, complete, exact-review, CI, authorized serialized merge, and post-merge identity proof completes without deferral before WP-17 is released; typed closeout follows asynchronously and does not block WP-17
+
+## Dependencies
+
+- WP-15 #5354 merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral to the exact #5351 execution revision
+
+## Inputs
+
+- AGENTS.md
+- GitHub issues #5351 and #5354
+- docs/templates/prompts/current.json
+- csdlc-v2/operator/generation-selector.json
+- docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml
+- docs/milestones/v0.91.8/WBS_v0.91.8.md
+- docs/milestones/v0.91.8/SPRINT_v0.91.8.md
+- docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md
+- docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md
+- docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md
+- future retained #5354 terminal receipt and merged demo-convergence evidence
+
+## Non Goals
+
+- WP-15 demo implementation or WP-17 documentation alignment
+- product, runtime, deployment, deletion, review-remediation, or release-ceremony implementation
+- new test runner, workflow engine, signer, telemetry system, deployment manager, or evidence database
+- Runtime v2 use or edits, AWS, provider credentials, paid services, raw gh, hidden network authority, hard-coded addresses, or private transcript retention
+- quality execution, PR, publication, merge, or closeout during preparation

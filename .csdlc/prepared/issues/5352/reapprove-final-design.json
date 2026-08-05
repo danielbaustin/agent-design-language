@@ -1,0 +1,7 @@
+{
+  "issue": 5352,
+  "expected_generation": 1,
+  "expected_digest": "4dcdf77d113e6715fe0d8388948a67fa24daa08a2abff4369996c1bec43c8f58",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "reviewer": "codex:wp21-final-handoff"
+}

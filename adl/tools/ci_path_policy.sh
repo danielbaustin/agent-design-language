@@ -20,6 +20,46 @@ the full gates.
 USAGE
 }
 
+assert_windows_portable_tracked_paths() {
+  local path component remainder stem upper
+  local -a invalid=()
+
+  while IFS= read -r -d '' path; do
+    remainder="$path"
+    while :; do
+      if [[ "$remainder" == */* ]]; then
+        component="${remainder%%/*}"
+        remainder="${remainder#*/}"
+      else
+        component="$remainder"
+        remainder=""
+      fi
+      stem="${component%%.*}"
+      upper="$(printf '%s' "$stem" | tr '[:lower:]' '[:upper:]')"
+      if [[ "$component" == *[\<\>\:\"\|\?\*\\]* ]] ||
+         [[ "$component" == *[\ .] ]] ||
+         [[ "$upper" =~ ^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$ ]]; then
+        invalid+=("$path")
+        break
+      fi
+      [[ -z "$remainder" ]] && break
+    done
+  done < <(
+    if [ "$event_name" = "pull_request" ] && [ -n "${base_sha:-}" ] && [ -n "${head_sha:-}" ]; then
+      git diff --name-only -z --diff-filter=ACMR "$base_sha...$head_sha" 2>/dev/null || \
+        git diff --name-only -z --diff-filter=ACMR "$base_sha" "$head_sha" 2>/dev/null || true
+    else
+      git ls-files -z
+    fi
+  )
+
+  if [[ ${#invalid[@]} -gt 0 ]]; then
+    printf 'ci_path_policy: paths are not portable to Windows:\n' >&2
+    printf '  %s\n' "${invalid[@]}" >&2
+    return 2
+  fi
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --event-name)
@@ -53,6 +93,8 @@ while [ "$#" -gt 0 ]; do
       ;;
   esac
 done
+
+assert_windows_portable_tracked_paths
 
 bool_false=false
 rust_required="$bool_false"
@@ -412,6 +454,26 @@ is_validation_manager_test_deferral_workflow_change() {
   [ "$saw_deferral" = true ]
 }
 
+is_docs_tooling_contract_gate_workflow_change() {
+  local path="$1"
+  [ "$path" = ".github/workflows/ci.yaml" ] || return 1
+  local changed_payload
+  changed_payload="$(git_pr_patch "$path" | awk '/^[+-]/ && $0 !~ /^(---|\+\+\+)/ { print }')"
+  [ "$(printf '%s\n' "$changed_payload" | sed '/^$/d' | wc -l | tr -d ' ')" -eq 2 ] || return 1
+  grep -F -- "-    if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true'" <<<"$changed_payload" >/dev/null || return 1
+  grep -F -- "+    if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && needs.adl_path_policy.outputs.ci_contracts_required == 'true'" <<<"$changed_payload" >/dev/null || return 1
+}
+
+is_docs_tooling_contract_gate_policy_change() {
+  local path="$1"
+  [ "$path" = "adl/tools/ci_path_policy.sh" ] || return 1
+  local changed_payload
+  changed_payload="$(git_pr_patch "$path" | awk '/^[+-]/ && $0 !~ /^(---|\+\+\+)/ { print }')"
+  grep -F -- "+is_docs_tooling_contract_gate_workflow_change()" <<<"$changed_payload" >/dev/null || return 1
+  grep -F -- "+is_docs_tooling_contract_gate_policy_change()" <<<"$changed_payload" >/dev/null || return 1
+  grep -F -- "+            reason=\"docs_tooling_contract_gate_change_skips_authoritative_coverage\"" <<<"$changed_payload" >/dev/null
+}
+
 is_validation_summary_and_reporting_workflow_change() {
   local path="$1"
   [ "$path" = ".github/workflows/ci.yaml" ] || return 1
@@ -633,6 +695,9 @@ changed_files_include_demo_smoke_surface() {
   while IFS= read -r path; do
     [ -n "$path" ] || continue
     case "$path" in
+      demos/podcast/*|demos/_preview/podcast/*)
+        continue
+        ;;
       demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
         return 0
         ;;
@@ -1016,6 +1081,31 @@ manager_profile_is_csdlc_owner_pr_fast_escalation() {
   return 0
 }
 
+manager_profile_has_focused_pr_fast_lane() {
+  [ "$validation_profile_status" = "escalation_required" ] || return 1
+  [ "$validation_profile_escalation_required" = true ] || return 1
+  case ",$validation_profile_escalation_lanes," in
+    *,rust_pr_fast,*) ;;
+    *) return 1 ;;
+  esac
+  validation_profile_includes_lane "aws_remote_validation_tooling" \
+    || validation_profile_includes_lane "ci_path_policy_contracts" \
+    || return 1
+}
+
+mark_validation_manager_focused_pr_fast_validation() {
+  mark_pr_fast_rust_validation
+  if validation_profile_includes_lane "csdlc_v2_standalone"; then
+    csdlc_v2_standalone_required=true
+  fi
+  if validation_profile_includes_lane "ci_path_policy_contracts" \
+    || validation_profile_includes_lane "aws_remote_validation_tooling" \
+    || validation_profile_includes_lane "csdlc_v2_standalone"; then
+    ci_contracts_required=true
+  fi
+  reason="${validation_profile_primary_reason:-validation_manager_focused_pr_fast_escalation_runs_focused_validation}"
+}
+
 is_bounded_runtime_v3_csm_bridge_change() {
   local saw_runtime_v3=false
   local saw_csm=false
@@ -1209,8 +1299,7 @@ is_bounded_rust_dependency_cache_warmup_policy_change() {
         ;;
       AGENTS.md|\
       adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md|\
-      adl/tools/skills/pr-run/SKILL.md|\
-      adl/tools/skills/workflow-conductor/SKILL.md)
+      adl/tools/skills/pr-run/SKILL.md)
         is_warmup_guidance_patch "$path" || return 1
         saw_warmup_surface=true
         ;;
@@ -1305,12 +1394,18 @@ apply_validation_manager_routing() {
         reason="bounded_rust_dependency_cache_warmup_policy_change_runs_python_and_path_policy_checks"
       else
         ci_contracts_required=true
+        if changed_files_include_demo_smoke_surface; then
+          demo_smoke_required=true
+        fi
         reason="${validation_profile_primary_reason:-ci_policy_surface_requires_path_policy_contract_checks}"
       fi
       return 0
       ;;
     ready_to_run:*ci_path_policy_contracts*:false)
       ci_contracts_required=true
+      if changed_files_include_demo_smoke_surface; then
+        demo_smoke_required=true
+      fi
       reason="${validation_profile_primary_reason:-ci_policy_surface_requires_path_policy_contract_checks}"
       return 0
       ;;
@@ -1318,9 +1413,48 @@ apply_validation_manager_routing() {
       reason="${validation_profile_primary_reason:-docs_only_surface_requires_diff_hygiene}"
       return 0
       ;;
+    ready_to_run:podcast_static_demo_surface:false|\
+    ready_to_run:docs_diff_check,podcast_static_demo_surface:false|\
+    ready_to_run:podcast_static_demo_surface,docs_diff_check:false)
+      ci_contracts_required=true
+      demo_smoke_required=false
+      reason="podcast_static_demo_surface_requires_diff_hygiene"
+      return 0
+      ;;
+    ready_to_run:podcast_launch_packet,podcast_static_demo_surface:false|\
+    ready_to_run:podcast_static_demo_surface,podcast_launch_packet:false|\
+    ready_to_run:docs_diff_check,podcast_launch_packet,podcast_static_demo_surface:false|\
+    ready_to_run:docs_diff_check,podcast_static_demo_surface,podcast_launch_packet:false|\
+    ready_to_run:podcast_launch_packet,docs_diff_check,podcast_static_demo_surface:false|\
+    ready_to_run:podcast_launch_packet,podcast_static_demo_surface,docs_diff_check:false|\
+    ready_to_run:podcast_static_demo_surface,docs_diff_check,podcast_launch_packet:false|\
+    ready_to_run:podcast_static_demo_surface,podcast_launch_packet,docs_diff_check:false)
+      ci_contracts_required=true
+      demo_smoke_required=false
+      coverage_required=false
+      full_coverage_required=false
+      coverage_lane="skip"
+      coverage_authority="not_required"
+      coverage_execution_state="skipped_by_path_policy"
+      reason="podcast_launch_surface_requires_audio_rss_and_studio_packet_validation"
+      return 0
+      ;;
     ready_to_run:sprint_conductor_contracts:false|\
     ready_to_run:docs_diff_check,sprint_conductor_contracts:false)
       reason="sprint_conductor_surface_requires_helper_contract_checks"
+      return 0
+      ;;
+    ready_to_run:podcast_launch_packet:false|\
+    ready_to_run:docs_diff_check,podcast_launch_packet:false|\
+    ready_to_run:podcast_launch_packet,docs_diff_check:false)
+      ci_contracts_required=true
+      demo_smoke_required=false
+      coverage_required=false
+      full_coverage_required=false
+      coverage_lane="skip"
+      coverage_authority="not_required"
+      coverage_execution_state="skipped_by_path_policy"
+      reason="podcast_launch_surface_requires_audio_rss_and_studio_packet_validation"
       return 0
       ;;
     ready_to_run:rust_dependency_cache_warmup_contracts:false|\
@@ -1364,6 +1498,10 @@ apply_validation_manager_routing() {
       mark_pr_fast_rust_validation
       demo_smoke_required=false
       reason="validation_manager_csdlc_owner_pr_fast_escalation_runs_focused_validation"
+      return 0
+    fi
+    if manager_profile_has_focused_pr_fast_lane; then
+      mark_validation_manager_focused_pr_fast_validation
       return 0
     fi
     fail_closed=true
@@ -1520,6 +1658,9 @@ EOF
             fi
             mark_pr_fast_rust_validation
             ;;
+          demos/podcast/*|demos/_preview/podcast/*)
+            ci_contracts_required=true
+            ;;
           demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
             ci_contracts_required=true
             demo_smoke_required=true
@@ -1550,6 +1691,10 @@ EOF
           continue
         fi
         if is_full_coverage_policy_surface "$path"; then
+          if is_docs_tooling_contract_gate_workflow_change "$path" || is_docs_tooling_contract_gate_policy_change "$path"; then
+            reason="docs_tooling_contract_gate_change_skips_authoritative_coverage"
+            continue
+          fi
           if is_validation_profile_summary_workflow_change "$path"; then
             reason="validation_profile_summary_workflow_change_skips_authoritative_coverage"
             continue

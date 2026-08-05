@@ -1,0 +1,153 @@
+{
+  "issue": 5363,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5363/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5363/diagram.mmd",
+  "design_reviewer": "operator-policy:release-tail-preparation",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5363-v0918-preparation",
+    "owner": "codex:5363-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784754875,
+    "expires_unix_seconds": 1785359675,
+    "heartbeat_unix_seconds": 1784754875,
+    "branch": "codex/5363-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5363",
+      ".csdlc/locks/5363.lock",
+      ".csdlc/prepared/issues/5363",
+      ".csdlc/evidence/5363"
+    ],
+    "purpose": "Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-20] Remediate review findings and run release preflight",
+    "slug": "v0918-wp20-remediation-release-preflight",
+    "version": "v0.91.8",
+    "goal": "Fix accepted internal and external findings, rerun focused and integrated checks, and converge checklist truth.",
+    "required_outcome": "Remediation packet, preflight proof, and final checklist truth.",
+    "declared_scope": [
+      "accepted review finding remediation",
+      "release preflight proof",
+      "explicit blocker disposition"
+    ],
+    "authority_boundary": [
+      "typed C-SDLC v2 only",
+      "no execution before live predecessor merge plus ancestry",
+      "receipts audit-only",
+      "no raw gh, AWS, PR, merge, or closeout during preparation"
+    ],
+    "operator_constraints": [
+      "preparation only",
+      "no tracked root-main writes",
+      "one issue-bound FastWork branch",
+      "minimal packet: six cards, design, diagram, focused doctor validation"
+    ],
+    "task_boundary": "Prepare lifecycle packet only; remediation is future execution work.",
+    "deliverables": [
+      "generated six-card preparation packet",
+      "concise design and diagram",
+      "focused typed doctor validation"
+    ],
+    "acceptance_criteria": [
+      "AC-1: preparation packet is generated through typed C-SDLC v2",
+      "AC-2: future execution is blocked on #5357 live merge and ancestry",
+      "AC-3: receipts are recorded as audit evidence only",
+      "AC-4: no implementation, PR, AWS, raw gh, or root-main tracked write occurs"
+    ],
+    "dependencies": [
+      "WP-19 #5357 live merged into origin/main",
+      "#5357 observed merge SHA ancestral to exact #5363 execution base"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "issue #5363"
+    ],
+    "non_goals": [
+      "remediation implementation",
+      "review reruns",
+      "PR publication",
+      "receipt-gated execution"
+    ],
+    "plan_summary": "Prepare now; execute only after #5357 is live-merged and ancestral.",
+    "steps": [
+      {"id":"S1","action":"Verify typed preparation packet and #5357 live merge plus ancestry","status":"pending","acceptance_ids":["AC-1","AC-2"]},
+      {"id":"S2","action":"Inventory accepted findings and fix only accepted scope","status":"pending","acceptance_ids":["AC-3"]},
+      {"id":"S3","action":"Run focused and integrated preflight proof","status":"pending","acceptance_ids":["AC-3"]},
+      {"id":"S4","action":"Record exact blockers or release WP-21 without preparation-scope mutations","status":"pending","acceptance_ids":["AC-1","AC-4"]}
+    ],
+    "risks": [
+      "review findings may be stale",
+      "preflight may expose separate owner work",
+      "unsupported release claims could be hidden in checklist prose"
+    ],
+    "invariants": [
+      "live merge plus ancestry is the dependency gate",
+      "receipts audit-only",
+      "no preparation review churn",
+      "no implementation in preparation"
+    ],
+    "stop_conditions": [
+      "#5357 not live-merged",
+      "#5357 merge not ancestral",
+      "accepted finding scope unclear",
+      "preflight would require unrelated product work"
+    ],
+    "review_prompts": [
+      "Did execution fix only accepted findings?",
+      "Did preflight preserve blockers instead of hiding them?"
+    ],
+    "review_scope": "Future review only; preparation performs no review churn.",
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "preparation-doctor",
+        "proof_role": "Validate the generated typed C-SDLC v2 preparation packet",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "release-tail-preparation",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": ["/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor", "--repo", ".", "--issue", "5363"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"]
+      }
+    ],
+    "failure_policy": "Fail closed on missing live predecessor merge, stale ancestry, unclear finding ownership, or unsupported release claims.",
+    "design_status": "approved",
+    "architecture_summary": "Issue-local preparation for the serial WP-20 remediation gate.",
+    "architecture_boundaries": [
+      "issue-local C-SDLC packet only",
+      "no product or release mutation",
+      "no GitHub lifecycle mutation"
+    ],
+    "selected_cots": [
+      "typed C-SDLC v2 binaries",
+      "Git ancestry checks"
+    ],
+    "rejected_alternatives": [
+      "receipt-gated dependency execution",
+      "preparation review churn",
+      "implementation during packet preparation"
+    ],
+    "budget_profile": "Preparation validation under 30 seconds; future execution budget deferred.",
+    "negative_proofs": [
+      "no product paths claimed",
+      "no PR opened",
+      "no raw gh or AWS"
+    ],
+    "rollback": "Delete the issue-local preparation branch before publication; no product state is changed.",
+    "review_focus": [
+      "accepted finding scope",
+      "preflight truth",
+      "blocker preservation"
+    ],
+    "expected_evidence": [
+      "doctor-clean typed packet",
+      "live merge plus ancestry observation at execution time"
+    ]
+  }
+}

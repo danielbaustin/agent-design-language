@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5666,
+  "expected_generation": 4,
+  "expected_digest": "5c052b363c3a9b82df1ab2fe227174a6711a2242ffc3167f8205ceb046be71e0",
+  "claim_id": "claim-5666-throughput-fast-lane",
+  "actor": "codex:issue-5666-slot-1",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5666-throughput-fast-lane",
+  "title": "[v0.91.8][tools][ci] Add proportional fast lane for small fixes",
+  "body": "Closes #5666\n\nAdds a proportional developer throughput fast-lane policy for tiny docs/tooling/test fixes without weakening typed C-SDLC v2, exact-head review, runtime/product proof, or release-gate truth.\n\nChanges:\n- Add docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md with proportional issue classes, FastWork-required mode, changed-state-only PR watching, escalation rules, and non-claims.\n- Link the policy from docs/tooling/VALIDATION_PLATFORM_ROUTING.md.\n- Add adl/tools/test_developer_throughput_fast_lane.sh as a focused contract proof.\n\nValidation:\n- bash adl/tools/test_developer_throughput_fast_lane.sh\n- git diff --check\n- git diff --check origin/main...HEAD\n\nReview:\n- Subagent Sagan clean at scoped revision git-blake3:30e495fda450d10a4e29b0c57195f759224a7214:bf3cbab163693daa1084c8119b458a550c59032eea66798f753f22166e22d3e6 after fixing the initial placeholder design finding.\n- Typed C-SDLC review recorded in .csdlc/issues/5666 generation 4.",
+  "draft": true,
+  "remote": "origin",
+  "token_file": "/Users/daniel/keys/github.token"
+}

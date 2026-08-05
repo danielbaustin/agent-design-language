@@ -1,0 +1,1 @@
+{"sequence":1,"generation":1,"actor":"codex:5748-terminal-recovery","reason":"Record #5335 as superseded by #5383, matching the operator's durable routing comments and observed closed GitHub state; do not reconstruct missing historical lifecycle state.","operation":"recover_recordless_terminal"}

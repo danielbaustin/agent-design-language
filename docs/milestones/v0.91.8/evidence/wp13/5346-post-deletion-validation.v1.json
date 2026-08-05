@@ -1,0 +1,23 @@
+{
+  "schema": "adl.wp13.post_deletion_validation.v1",
+  "issue": 5346,
+  "status": "pass",
+  "deferred": [
+
+  ],
+  "serialized_after_5347": true,
+  "post_merge_revision": "7b1ef84bc8a4966c0c454ae4d87fd973537a856d",
+  "loc_accounting": {
+    "deleted": 46358,
+    "retained": 0,
+    "new": 0,
+    "pinned_denominator": 46358
+  },
+  "git_diff_accounting": {
+    "commit": "e9035ceffac9ea79f914371c33081f07861a2a2c",
+    "additions": 1880,
+    "deletions": 46502,
+    "net": -44622
+  },
+  "reviewed_80_to_89_exception": false
+}

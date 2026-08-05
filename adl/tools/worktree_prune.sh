@@ -81,10 +81,10 @@ load_issue_states() {
   local source_json="" issue_json_tmp issue_json_pid waited timeout_seconds
   if [[ -n "${ADL_WORKTREE_PRUNE_ISSUE_STATES_FILE:-}" ]]; then
     source_json="$(cat "$ADL_WORKTREE_PRUNE_ISSUE_STATES_FILE")"
-  elif [[ -x "$repo/adl/tools/pr.sh" ]]; then
+  elif command -v gh >/dev/null 2>&1; then
     timeout_seconds="${ADL_WORKTREE_PRUNE_ISSUE_LIST_TIMEOUT_SECONDS:-15}"
     issue_json_tmp="$(mktemp)"
-    bash "$repo/adl/tools/pr.sh" issue list --state all --limit 1000 --json >"$issue_json_tmp" 2>/dev/null &
+    (cd "$repo" && gh issue list --state all --limit 1000 --json number,state) >"$issue_json_tmp" 2>/dev/null &
     issue_json_pid="$!"
     waited=0
     while kill -0 "$issue_json_pid" >/dev/null 2>&1; do

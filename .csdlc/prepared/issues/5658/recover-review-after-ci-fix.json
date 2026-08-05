@@ -1,0 +1,8 @@
+{
+  "issue": 5658,
+  "expected_generation": 5,
+  "expected_digest": "56f2010a5502168985ae85f61e113ec68339ca212d247762dc006bde0f392c0a",
+  "claim_id": "claim-5658-bound-worktree-lifecycle",
+  "actor": "codex:5658-execution",
+  "reason": "Recover stale reviewed/published truth after CI standalone gate2 fix changed substantive source and tests."
+}

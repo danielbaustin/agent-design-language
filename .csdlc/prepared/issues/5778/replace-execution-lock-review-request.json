@@ -1,0 +1,41 @@
+{
+  "issue": 5778,
+  "expected_generation": 3,
+  "expected_digest": "81e7f09cc167f3fa23e7555209f15fe04cb296f8cbe3d6fbf6c681331a1ec9ea",
+  "claim_id": "claim-5778-derived-terminal-finish",
+  "actor": "codex:5778-implementation",
+  "reason": "Record exact validation after resolving the final independent-review blockers in finish serialization and review reduction.",
+  "card": "sor",
+  "operation": {
+    "operation": "replace_execution",
+    "summary": "Completed the idempotent C-SDLC v2 finish path with canonical issue-state serialization and exact-head decisive-review reduction.",
+    "changes": [
+      "Held the canonical per-issue lifecycle authority lock across record validation, GitHub reads, merge, post-merge re-observation, and terminal cache retention.",
+      "Removed the separate finish-only lock that could not serialize against lifecycle record mutation.",
+      "Reduced exact-head GitHub review state using only decisive approval, change-request, and dismissal events so later comment-only reviews cannot erase authority.",
+      "Added focused regression tests for canonical lock contention and comment-after-decisive-review behavior."
+    ],
+    "artifacts": [
+      "csdlc-v2/src/bin/csdlc-finish.rs",
+      "csdlc-v2/src/finish.rs",
+      "csdlc-v2/src/github.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate_finish.rs",
+      ".csdlc/evidence/5778/post-finalize-remediation.md"
+    ],
+    "validation": [
+      {
+        "command": ["cargo", "test", "--manifest-path", "csdlc-v2/Cargo.toml", "--locked", "--lib", "--test", "gate_finish", "--test", "gate7_lifecycle", "--test", "gate10a", "--test", "gate10b", "--test", "gate_github_actions"],
+        "purpose": "Prove finish serialization, review reduction, derived terminal behavior, lifecycle compatibility, installation, and GitHub behavior on the exact current worktree.",
+        "outcome": "passed",
+        "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+      },
+      {
+        "command": ["cargo", "clippy", "--manifest-path", "csdlc-v2/Cargo.toml", "--locked", "--all-targets", "--", "-D", "warnings"],
+        "purpose": "Prove warning-free C-SDLC v2 code across all targets after final review remediation.",
+        "outcome": "passed",
+        "evidence_ref": ".csdlc/evidence/5778/post-finalize-remediation.md"
+      }
+    ]
+  }
+}

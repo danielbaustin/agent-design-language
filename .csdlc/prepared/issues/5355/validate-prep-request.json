@@ -1,0 +1,53 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "csdlc-doctor-5355",
+        "proof_role": "Validate the typed C-SDLC v2 issue record, card projections, claim, and design/diagram digests for #5355.",
+        "purpose": "Preparation packet integrity check before later execution.",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 256,
+          "tokens": 1000
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "wp21a-prep-local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 30,
+        "executable": "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+        "argv": [
+          "--repo",
+          ".",
+          "--issue",
+          "5355"
+        ],
+        "evidence": {
+          "max_log_bytes": 12000,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": [
+      "csdlc-doctor-5355"
+    ],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {
+    "max_parallel": 1,
+    "cpu_units": 1,
+    "memory_mib": 256,
+    "tokens": 1000
+  },
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5355/prep-validation",
+  "cancellation_file": null
+}

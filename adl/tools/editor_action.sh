@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CARD_PATHS_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/card_paths.sh"
-# shellcheck disable=SC1090
-source "$CARD_PATHS_LIB"
-
 die() {
   echo "ERROR: $*" >&2
   exit 1
@@ -15,15 +11,13 @@ usage() {
 Usage:
   adl/tools/editor_action.sh contract [--format text|json]
   adl/tools/editor_action.sh prepare --phase init|doctor-ready|run|finish --issue <number> --slug <slug> [--version <vN.N[.P]>] [--title <title>] [--paths <paths>]
-  adl/tools/editor_action.sh start --issue <number> --branch codex/<issue>-<slug> [--slug <slug>] [--dry-run]
 
 Purpose:
   Thin editor-adjacent adapter for bounded control-plane actions.
 
 Current actions:
   contract Print the supported near-term editor adapter surface.
-  prepare  Validate fields and print one current lifecycle command for a human to run from the repo root.
-  start    Legacy compatibility action for the older v0.85 editor demo path.
+  prepare  Validate fields and print one current typed C-SDLC v2 lifecycle command for a human to run from the repo root.
 USAGE
 }
 
@@ -33,7 +27,7 @@ editor_adapter_schema: editor.command_adapter.v2
 supported_actions:
   - action: prepare
     adapter_entry: adl/tools/editor_action.sh prepare --phase init|doctor-ready|run|finish --issue <number> --slug <slug> [--version <vN.N[.P]>] [--title <title>] [--paths <paths>]
-    maps_to: copy-only adl/tools/pr.sh lifecycle command
+    maps_to: copy-only typed C-SDLC v2 lifecycle command
     invocation_mode: browser_prepared_human_run
     browser_direct: false
     status: supported
@@ -42,26 +36,19 @@ supported_actions:
       - doctor-ready
       - run
       - finish
-legacy_compatibility_actions:
-  - action: start
-    adapter_entry: adl/tools/editor_action.sh start --issue <number> --branch codex/<issue>-<slug> [--slug <slug>] [--dry-run]
-    maps_to: adl/tools/pr.sh start
-    invocation_mode: legacy_thin_adapter
-    browser_direct: false
-    status: deprecated_compatibility
 unsupported_browser_direct_actions:
-  - pr create
-  - pr init
-  - pr doctor
-  - pr ready
-  - pr run
-  - pr finish
-  - pr janitor
-  - pr closeout
+  - csdlc-init
+  - csdlc-doctor
+  - csdlc-bind
+  - csdlc-validate
+  - csdlc-review
+  - csdlc-publish
+  - csdlc-shepherd
+  - csdlc-finish
+  - csdlc-clean
 notes:
   - Browser/editor surfaces may prepare or copy lifecycle commands, but must not claim direct browser execution.
-  - The current taught path is pr init, pr doctor/ready, pr run, pr finish, pr janitor, and pr closeout through repo-owned tooling and skills.
-  - The legacy start action remains only so older deterministic demos can keep validating compatibility until they are retired.
+  - The current taught path resolves through csdlc-install and typed csdlc-* binaries under .adl/bin/csdlc-v2.
 language_contract:
   primitives:
     - providers
@@ -87,37 +74,28 @@ emit_contract_json() {
     {
       "action": "prepare",
       "adapter_entry": "adl/tools/editor_action.sh prepare --phase init|doctor-ready|run|finish --issue <number> --slug <slug> [--version <vN.N[.P]>] [--title <title>] [--paths <paths>]",
-      "maps_to": "copy-only adl/tools/pr.sh lifecycle command",
+      "maps_to": "copy-only typed C-SDLC v2 lifecycle command",
       "invocation_mode": "browser_prepared_human_run",
       "browser_direct": false,
       "status": "supported",
       "phases": ["init", "doctor-ready", "run", "finish"]
     }
   ],
-  "legacy_compatibility_actions": [
-    {
-      "action": "start",
-      "adapter_entry": "adl/tools/editor_action.sh start --issue <number> --branch codex/<issue>-<slug> [--slug <slug>] [--dry-run]",
-      "maps_to": "adl/tools/pr.sh start",
-      "invocation_mode": "legacy_thin_adapter",
-      "browser_direct": false,
-      "status": "deprecated_compatibility"
-    }
-  ],
+  "legacy_compatibility_actions": [],
   "unsupported_browser_direct_actions": [
-    "pr create",
-    "pr init",
-    "pr doctor",
-    "pr ready",
-    "pr run",
-    "pr finish",
-    "pr janitor",
-    "pr closeout"
+    "csdlc-init",
+    "csdlc-doctor",
+    "csdlc-bind",
+    "csdlc-validate",
+    "csdlc-review",
+    "csdlc-publish",
+    "csdlc-shepherd",
+    "csdlc-finish",
+    "csdlc-clean"
   ],
   "notes": [
     "Browser/editor surfaces may prepare or copy lifecycle commands, but must not claim direct browser execution.",
-    "The current taught path is pr init, pr doctor/ready, pr run, pr finish, pr janitor, and pr closeout through repo-owned tooling and skills.",
-    "The legacy start action remains only so older deterministic demos can keep validating compatibility until they are retired."
+    "The current taught path resolves through csdlc-install and typed csdlc-* binaries under .adl/bin/csdlc-v2."
   ],
   "language_contract": {
     "primitives": ["providers", "tools", "agents", "tasks", "workflows", "run"],
@@ -131,29 +109,10 @@ emit_contract_json() {
 EOF
 }
 
-repo_root() {
-  git rev-parse --show-toplevel 2>/dev/null || die "Not in a git repo"
-}
-
 normalize_issue_or_die() {
   local raw="$1"
-  local normalized
-  normalized="$(card_issue_normalize "$raw" 2>/dev/null)" || die "invalid issue number: $raw"
-  echo "$normalized"
-}
-
-derive_slug_from_branch() {
-  local issue="$1" branch="$2"
-  [[ "$branch" =~ ^codex/([0-9]+)-([a-z0-9][a-z0-9-]*)$ ]] || die "branch must match codex/<issue>-<slug>"
-  local branch_issue="${BASH_REMATCH[1]}"
-  local slug="${BASH_REMATCH[2]}"
-  [[ "$branch_issue" == "$issue" ]] || die "branch issue prefix ($branch_issue) does not match issue number ($issue)"
-  echo "$slug"
-}
-
-shell_quote() {
-  local value="$1"
-  printf "'%s'" "${value//\'/\'\\\'\'}"
+  [[ "$raw" =~ ^#?[0-9]+$ ]] || die "invalid issue number: $raw"
+  echo "${raw#\#}"
 }
 
 version_or_default() {
@@ -170,22 +129,16 @@ emit_prepare_command() {
   local phase="$1" issue="$2" slug="$3" version="$4" title="$5" paths="$6"
   case "$phase" in
     init)
-      printf './adl/tools/pr.sh init %s --slug %s --version %s\n' "$issue" "$slug" "$version"
+      printf '.adl/bin/csdlc-v2/csdlc-init --root <worktree> --request <bootstrap-request.json>\n'
       ;;
     doctor-ready)
-      printf './adl/tools/pr.sh doctor %s --slug %s --version %s --mode ready\n' "$issue" "$slug" "$version"
+      printf '.adl/bin/csdlc-v2/csdlc-doctor --repo <repo> --issue %s\n' "$issue"
       ;;
     run)
-      printf './adl/tools/pr.sh run %s --slug %s --version %s\n' "$issue" "$slug" "$version"
+      printf '.adl/bin/csdlc-v2/csdlc-bind --root <worktree> --request <bind-request.json>\n'
       ;;
     finish)
-      if [[ -z "$title" ]]; then
-        title="[${version}] Issue ${issue} closeout"
-      fi
-      if [[ -z "$paths" ]]; then
-        paths="<paths>"
-      fi
-      printf './adl/tools/pr.sh finish %s --title %s --paths %s\n' "$issue" "$(shell_quote "$title")" "$(shell_quote "$paths")"
+      printf '.adl/bin/csdlc-v2/csdlc-validate --root <worktree> finalize --request <finalize-request.json>\n'
       ;;
     *) die "--phase must be one of: init, doctor-ready, run, finish" ;;
   esac
@@ -196,15 +149,13 @@ ACTION="${1:-}"
 shift || true
 
 case "$ACTION" in
-  prepare|start|contract) ;;
+  prepare|contract) ;;
   -h|--help) usage; exit 0 ;;
   *) die "unsupported action: $ACTION" ;;
 esac
 
 ISSUE=""
-BRANCH=""
 SLUG=""
-DRY_RUN=false
 FORMAT="text"
 PHASE=""
 VERSION=""
@@ -215,9 +166,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --phase) PHASE="$2"; shift 2 ;;
     --issue) ISSUE="$2"; shift 2 ;;
-    --branch) BRANCH="$2"; shift 2 ;;
     --slug) SLUG="$2"; shift 2 ;;
-    --dry-run) DRY_RUN=true; shift ;;
     --format) FORMAT="$2"; shift 2 ;;
     --version) VERSION="$2"; shift 2 ;;
     --title) TITLE="$2"; shift 2 ;;
@@ -248,24 +197,3 @@ if [[ "$ACTION" == "prepare" ]]; then
   emit_prepare_command "$PHASE" "$ISSUE" "$SLUG" "$VERSION" "$TITLE" "$PATHS_ARG"
   exit 0
 fi
-
-[[ -n "$BRANCH" ]] || die "--branch is required"
-
-if [[ -z "$SLUG" ]]; then
-  SLUG="$(derive_slug_from_branch "$ISSUE" "$BRANCH")"
-else
-  [[ "$SLUG" =~ ^[a-z0-9][a-z0-9-]*$ ]] || die "slug must match [a-z0-9-]+"
-  derive_slug_from_branch "$ISSUE" "$BRANCH" >/dev/null
-fi
-
-ROOT="$(repo_root)"
-cd "$ROOT"
-
-CMD=(./adl/tools/pr.sh start "$ISSUE" --slug "$SLUG")
-
-if [[ "$DRY_RUN" == true ]]; then
-  printf '%s\n' "${CMD[*]}"
-  exit 0
-fi
-
-exec "${CMD[@]}"

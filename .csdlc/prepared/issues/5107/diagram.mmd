@@ -1,0 +1,9 @@
+flowchart TD
+  A["Prompt"] --> B["Bounded Loop"]
+  B --> C["Adaptive Loop With Evaluation Feedback"]
+  C --> D["Reasoning Graph and Replay Object"]
+  D --> E["Adaptive Learning DAG Queue"]
+  E --> F["Future Policy-Governed Graph Change Proof"]
+  G["Historical #5104 Input"] -. "requalify against Runtime v3" .-> B
+  H["Accepted ADL v2 / Runtime v3 / C-SDLC v2"] --> E
+  I["No implementation or child issues in #5107"] --> E

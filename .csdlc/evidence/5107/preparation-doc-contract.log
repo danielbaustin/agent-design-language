@@ -1,0 +1,18 @@
+{
+  "schema": "adl.csdlc.preparation_validation.v1",
+  "issue": 5107,
+  "lane": "preparation-doc-contract",
+  "outcome": "passed",
+  "files": [
+    ".csdlc/prepared/issues/5107/PREPARATION_PACKET.md",
+    ".csdlc/prepared/issues/5107/design.md",
+    ".csdlc/prepared/issues/5107/diagram.mmd",
+    ".csdlc/prepared/issues/5107/bootstrap-request.json",
+    "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+    "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+    "docs/milestones/v0.92/WBS_v0.92.md",
+    "docs/milestones/v0.92/SPRINT_v0.92.md",
+    "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+    "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+  ]
+}

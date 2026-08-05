@@ -20,7 +20,7 @@ Read `AGENTS.md` first.
 
 Then follow these rules without exception:
 
-- Use `workflow-conductor` for every issue and lifecycle stage.
+- Resolve and use the typed v2 binary for every issue and lifecycle stage.
 - Edit cards only with the editor skills: `sip-editor`, `stp-editor`,
   `spp-editor`, `srp-editor`, and `sor-editor`.
 - Do tracked issue work only in a bound worktree on a specific branch.

@@ -1,0 +1,10 @@
+{
+  "issue": 5671,
+  "card": "sip",
+  "expected_generation": 3,
+  "expected_digest": "d08eee22ebc055d51f7c3da3e3530213cde5a78fa54548d70233d82ce9aa0bb8",
+  "claim_id": "claim-5671-anthropic-opus-5",
+  "actor": "codex:5671-execution",
+  "reason": "Advance the exact reviewed implementation into the publication phase",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}

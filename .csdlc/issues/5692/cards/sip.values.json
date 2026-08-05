@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5692,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][publication] Require implementation PR closing keyword",
+    "slug": "pr-closing-linkage-policy",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the repository policy and typed publication path require every implementation PR body to include the correct GitHub closing keyword for its issue, normally Closes #<issue>.",
+      "required_outcome": "A small policy/tooling change that prevents publication of implementation PRs without an actual GitHub closing keyword and documents the rule in AGENTS.md.",
+      "declared_scope": [
+        "Root AGENTS.md implementation PR publication rule",
+        "C-SDLC v2 publication request and remote PR body linkage validation",
+        "Focused publication verifier tests"
+      ],
+      "authority_boundary": [
+        "Use typed C-SDLC v2 lifecycle and repo-native GitHub tooling only",
+        "Do not rewrite the broader workflow or closeout model",
+        "Asynchronous typed closeout remains separate and nonblocking"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Never edit main",
+        "Never use /private/tmp",
+        "Keep artifacts in the issue worktree",
+        "PR body for this issue must include Closes #5692"
+      ]
+    }
+  }
+}

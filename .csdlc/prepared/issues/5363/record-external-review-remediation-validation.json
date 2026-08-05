@@ -1,0 +1,27 @@
+{
+  "issue": 5363,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "7a1c9e3d634578e8ae1fccaa8420a9767f23ff52c0be45e69e36414890c6d96e",
+  "claim_id": "claim-5363-v0918-preparation",
+  "actor": "codex:wp20-5363-remediation-owner",
+  "reason": "Record focused validation for WP-20 external-review remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "focused-doc-validation",
+        "pdf-sha256-and-size",
+        "markdown-link-check",
+        "wp13-denominator-json-proof",
+        "yaml-parse",
+        "git-diff-check",
+        "csdlc-doctor-5363"
+      ],
+      "purpose": "Prove the retained external-review artifact identity, linked remediation docs, independent deletion denominator, YAML parseability, diff hygiene, and typed lifecycle state for the docs-only WP-20 remediation.",
+      "outcome": "passed",
+      "evidence_ref": "PDF SHA-256 b1741fb24d0627ccf3d7875168f54cc9b7c558a186efc267800612a6af2748f5 and 10841 bytes; markdown links ok; eligibility denominator paths=58 loc=46358; post-deletion status=pass retained=0 denominator=46358; WP_ISSUE_WAVE YAML ok; git diff --check clean; csdlc-doctor issue 5363 status=pass phase=bound"
+    }
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,449 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5697,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "3136fba73cac6b4c3b5d21d27082421952f27694f45781bfa414a7b43e35a90b",
+  "phase": "closed_out",
+  "generation": 12,
+  "digest": "2f68d3728f95ac50812d54ea1a7a47fc9f189fac659b788d9f89e27aaadb104d",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019fa4c9-2198-79a0-87a8-4134f7ab8296",
+    "assigned_by": "codex:wp12-conductor",
+    "revision": "git-blake3:5f252d31a51c31fa9a4819843f5cb9026a2b7470:6710f3fe0545359b48c2ef7f01653aa21f8d409c613bb229daf39996cb7c4a4c",
+    "scope": [
+      ".csdlc/evidence/5697",
+      ".csdlc/issues/5697",
+      ".csdlc/prepared/issues/5697",
+      ".github/workflows/ci.yaml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019fa4c9-2198-79a0-87a8-4134f7ab8296",
+    "scope": [
+      ".csdlc/evidence/5697",
+      ".csdlc/issues/5697",
+      ".csdlc/prepared/issues/5697",
+      ".github/workflows/ci.yaml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ],
+    "reviewed_revision": "git-blake3:5f252d31a51c31fa9a4819843f5cb9026a2b7470:6710f3fe0545359b48c2ef7f01653aa21f8d409c613bb229daf39996cb7c4a4c",
+    "findings": [],
+    "residual_risks": [
+      "Hosted CI remains the final integration proof for the exact published head."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5697,
+    "pull_request": 5699,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5699",
+    "base": "main",
+    "head": "codex/5697-chronosense-trusted-time",
+    "revision": "git-blake3:93dc2793cdca052abd58a7e5aaffd6a5f5b1dca1:4f6512cd621bfd7a52b350a4d78aadce7e11a977d39753b387b5bf258bb9fbb4",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5699,
+    "head_sha": "93dc2793cdca052abd58a7e5aaffd6a5f5b1dca1",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071658248"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071163405"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092512"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071093186"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092577"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092634"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092590"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071017741"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092562"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092985"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092687"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092737"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071093176"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071091733"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092714"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30294193972/job/90071092797"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5699,
+    "disposition": "merged",
+    "observed_sha": "93dc2793cdca052abd58a7e5aaffd6a5f5b1dca1",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5697.json",
+    "released_branch": "codex/5697-chronosense-trusted-time",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5697",
+      ".csdlc/issues/5697",
+      ".csdlc/locks/5697.lock",
+      ".csdlc/prepared/issues/5697",
+      ".csdlc/publication/5697.intent.json",
+      ".github/workflows/ci.yaml",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/parity_b_live_kernel.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5697/retained/design.md",
+  "diagram_path": ".csdlc/issues/5697/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5697",
+      "revision": "6798ab94db24ce72d708314bf7922548f26bdc12bbc63822d8d9cbdf1e3088bb"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "e725f6fa60b84bde426665280bdc0dcc87112932b6abacfa62ea4494baaf37fa",
+      "rendered_digest": "32a3aac06fa98f3fd813d88e9b8535d1e0bb5763f4f5737adf1b93806dfd6fe2",
+      "ast_digest": "4099148b24fec409bc2d6a4d5567b3fe116594a6b65647e74b04eee37d1bbbe6"
+    },
+    "stp": {
+      "values_digest": "c0cf4c28259c849e092bab56d9b301dcc8dc32bbebb26739050e33e26f7d286b",
+      "rendered_digest": "10afa87c2801f1a86017049829c540ae662906358ee171ce218e9353984abe7a",
+      "ast_digest": "8fe31204735501c97d2f1cffa83ab74b817b81670a18a37e089f5b6c176b04be"
+    },
+    "spp": {
+      "values_digest": "14ed44f8b76ec62dd5bbcd59672de1a7cbc721a1515b3247ee15b9ccbf764d26",
+      "rendered_digest": "2b54c4d4d1b057827f3588a7bfa363566564fd233b3a151168903b38ff91a1de",
+      "ast_digest": "b67228ba5c7b5cb3eabac7aa75a62562d1cba418fe3211ee3931dd2ba471604e"
+    },
+    "vpp": {
+      "values_digest": "01cdf4221a203c735844740fcc61df487968d5c39e514594e07b806b640f22d8",
+      "rendered_digest": "009445cfd9b6de4cff08f869db30201e9c7371f757503d2d6c5fa17217aa5b01",
+      "ast_digest": "76b2a697c17affc6b5e72c3a1bfdd74350e4c19ac118b8a50144b53fd4441f19"
+    },
+    "srp": {
+      "values_digest": "bc4d6b60d8327dec24f7cb1fb2ee54ac7ad3d50f466f77cdeb1efe25489e6927",
+      "rendered_digest": "e2c4a6ef818fc836c40e9cd25aa4a32770b3a249d32dc3303221a752cefac92b",
+      "ast_digest": "7b5fb1db1cfa40ed193f9b622f61dcbd7d43a09946372aaec5dc9b4c4983cc4d"
+    },
+    "sor": {
+      "values_digest": "5e7b2516f181d3f93b6030b536fa186e7fd6e4a5d834a66a0d9746e8addce36e",
+      "rendered_digest": "0b6334688361ea34e928727550189b10fb53abf373ee264479baaafeddfb865b",
+      "ast_digest": "3ef865235956908fd9aca7b96fa7c9d9bfc85c6ae5bd094e5a68760c29ea0c49"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "PR #5699 CI failed adl-runtime-v3-fast because the earlier all-target Clippy workaround added forbidden repo-local adl-resilience path dependency to adl-runtime-kernel/Cargo.toml. Recover to implemented so the bounded CI repair can be made, revalidated, re-reviewed, and republished truthfully."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:wp12-conductor",
+      "reason": "Advance after the final exact-head review passed with no findings."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:issue-5697-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:issue-5697-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:issue-5697-closeout",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "Strict all-target Clippy for #5697 compiles parity_b_live_kernel, which includes adl-runtime/src/guardian.rs and requires the existing adl-resilience crate as an adl-runtime-kernel test dependency.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/Cargo.toml\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "PR #5699 CI failed adl-runtime-v3-fast because the earlier all-target Clippy workaround added forbidden repo-local adl-resilience path dependency to adl-runtime-kernel/Cargo.toml. Recover to implemented so the bounded CI repair can be made, revalidated, re-reviewed, and republished truthfully.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "CI adl-runtime-v3-fast proved the earlier dev-dependency workaround violates the Runtime v3 manifest contract. Add only the parity test file so the guardian include can compile with a local test shim while preserving the no repo-local path dependency invariant.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/parity_b_live_kernel.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "After fixing the CI-proven manifest contract regression, the same adl-runtime-v3-fast command reaches existing Vector observability tests that require the pinned repo-native Vector component. Add only the CI workflow path to provision that pinned component before the Runtime v3 fast lane.",
+      "operation": "{\"add_protected_paths\":[\".github/workflows/ci.yaml\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 5,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "Supersede the stale execution bullet identified by exact review after the CI repair.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Chronosense now consumes trusted_time at startup; the CI repair preserves the no repo-local path dependency contract.\",\"changes\":[\"Supersedes the earlier adl-resilience dependency bullet: adl-runtime-kernel has no repo-local adl-resilience dependency; the parity guardian include uses a bounded test-only backoff shim, and strict all-target Clippy passes.\"],\"artifacts\":[]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "Exact review found that the compatibility-only one-argument builder creates an unqualified private recorder. Remove that unsafe API, update its sole test caller to supply an explicitly qualified recorder, and remove stale recovered publication intent before fresh review.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/publication/5697.intent.json\",\"adl-runtime-kernel/tests/protocol_adapters.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 5,
+      "actor": "codex:wp12-conductor",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 6,
+      "actor": "subagent:019fa4c9-2198-79a0-87a8-4134f7ab8296",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 7,
+      "actor": "codex:wp12-conductor",
+      "reason": "Advance after the final exact-head review passed with no findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 8,
+      "actor": "codex:issue-5697-chronosense-trusted-time",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 9,
+      "actor": "codex:issue-5697-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "codex:issue-5697-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 18,
+      "generation": 11,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 19,
+      "generation": 12,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

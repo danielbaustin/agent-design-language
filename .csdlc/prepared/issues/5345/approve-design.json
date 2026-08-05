@@ -1,0 +1,7 @@
+{
+  "issue": 5345,
+  "expected_generation": 0,
+  "expected_digest": "1976e2f97b4ebb9b54595feea195425d1d9f91028985dcc37a672a77afeb46c2",
+  "claim_id": "claim-5345-v0918-wp10-preparation",
+  "reviewer": "subagent:019f8611-2d02-7492-9c03-7af0fcf6662e"
+}

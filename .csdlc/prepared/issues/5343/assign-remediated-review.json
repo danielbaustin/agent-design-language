@@ -1,0 +1,16 @@
+{
+  "issue": 5343,
+  "expected_generation": 16,
+  "expected_digest": "a15f860178df6ca6e2187dd27c7af60d1418e62d6c935b2dc44cdf0f530b2aec",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "reviewer": "subagent:gpt-5.5:Anscombe",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5343",
+    ".csdlc/prepared/issues/5343",
+    "docs/milestones/v0.91.8/evidence/wp12/cutover-5343/report.json",
+    "docs/milestones/v0.91.8/evidence/wp12/cutover-handoff-5344.v1.json",
+    "adl-v2/tools/install-adl-v2.sh",
+    "adl-v2/crates/adl-cli/src/main.rs"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "actor": "codex:issue-5683-unity-remediation",
+  "card": "sor",
+  "claim_id": "claim-5683-v0918-unity-observatory-visual-remediation",
+  "expected_digest": "9975919cd2a49d8ae8ab3eca6516fd40227ea8b939f948206138db979bb846f5",
+  "expected_generation": 4,
+  "issue": 5683,
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "unity-mcp-cli",
+        "run-tool",
+        "reflection-method-call",
+        "ValidateFlagshipStageMenu"
+      ],
+      "evidence_ref": ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md",
+      "outcome": "passed",
+      "purpose": "Validate the live flagship scene and visually inspect direct Full HD and QHD Play Mode captures."
+    }
+  },
+  "reason": "Record direct live Unity validation and dual-resolution visual proof"
+}

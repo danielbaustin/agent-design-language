@@ -1,0 +1,20 @@
+flowchart TD
+    S["Generated typed workcell snapshot"] --> N["Schema, provenance, freshness normalization"]
+    G["GitHub PR/check truth links"] --> N
+    O["Authenticated HTTPS Runtime v3 Observatory"] --> L["Bounded live observation adapter"]
+    L --> N
+
+    N --> D["Existing milestone dashboard: read-only projection"]
+    D --> W["Ownership / claims / dependencies / paths"]
+    D --> P["PR / checks / review / outputs / blockers"]
+    D --> T["Runtime agent topology and health"]
+    D --> Q["Live / retained / stale / unknown / blocked / non-authoritative"]
+
+    D -. "never owns" .-> X["Mutation / task control / replan / merge / closeout"]
+    X --> B["Typed owner binaries and adapters"]
+
+    D5498["#5498 live-merged + ancestral"] --> Gate["Execution dependency gate"]
+    D5349["#5349 WP-09 live-merged + ancestral"] --> Gate
+    Gate --> N
+
+    S5502["#5502 convergence and replanning"] -. "disjoint sibling" .-> D

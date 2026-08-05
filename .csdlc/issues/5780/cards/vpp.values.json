@@ -1,0 +1,99 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5780,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Delete terminal reconciliation and receipt-authority machinery",
+    "slug": "delete-terminal-reconciliation",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "csdlc-v2-terminal-authority-deletion",
+          "proof_role": "Prove obsolete terminal mutation authority is absent while legacy data remains readable",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 8000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked",
+            "--test",
+            "gate_terminal_authority_deletion"
+          ],
+          "parallel_group": "csdlc-v2-deletion",
+          "defer_reason": null
+        },
+        {
+          "lane": "csdlc-v2-complete",
+          "proof_role": "Prove the complete independent v2 crate after deletion",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 1800,
+          "budget_tokens": 12000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked"
+          ],
+          "parallel_group": "csdlc-v2-complete",
+          "defer_reason": null
+        },
+        {
+          "lane": "csdlc-v2-strict-clippy",
+          "proof_role": "Prove warning-free code and tests after authority deletion",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 6000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--locked",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "csdlc-v2-deletion",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on stale claim, legacy compatibility drift, surviving mutation authority, failed full tests or Clippy, dirty lockfile, or stale review.",
+      "design_ref": ".csdlc/prepared/issues/5780/design.md",
+      "design_digest": "a97805f1a8bcb6d698c1bf1184efc8a11a503e56c4c89a2cdd90ff8340a2a533",
+      "diagram_ref": ".csdlc/prepared/issues/5780/diagram.mmd",
+      "diagram_digest": "61b9c28713bc386b6396146ff636e91f5f6f815d19e8b19f0bd8047c456f0fee"
+    }
+  }
+}

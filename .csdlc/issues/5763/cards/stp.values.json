@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5763,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs][quality] Reconcile canonical feature crosswalk digest after WP-14 decomposition",
+    "slug": "feature-crosswalk-digest",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Recompute and update only stale digest metadata required to restore feature-crosswalk validation.",
+      "deliverables": [
+        "Updated crosswalk digest metadata",
+        "Issue-local typed lifecycle/evidence records",
+        "Ready PR closing #5763"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Recompute and review the canonical 122-row digest without weakening the guard",
+        "AC-2: ruby .csdlc/prepared/issues/5594/validate_feature_crosswalk.rb passes",
+        "AC-3: Existing structured planning and link validators pass",
+        "AC-4: YAML parse and diff hygiene pass where relevant",
+        "AC-5: One bounded pre-PR GPT-5.5 review is clean",
+        "AC-6: PR includes Closes #5763"
+      ],
+      "dependencies": [
+        "Current origin/main at 57d115741f32b945217ee3cb14188b41ebde9b3f",
+        "Reviewed WP-14 decomposition source-row and matching crosswalk entry already present on main",
+        ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5763",
+        "docs/planning/ADL_FEATURE_LIST.md",
+        "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+        ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb",
+        ".csdlc/prepared/issues/5594/validate_structured_planning.rb",
+        ".csdlc/prepared/issues/5594/validate_links.rb"
+      ],
+      "non_goals": [
+        "No new feature-list rows",
+        "No crosswalk regeneration beyond stale digest metadata",
+        "No validator weakening",
+        "No unrelated docs, planning, GitHub routing, or lifecycle cleanup"
+      ]
+    }
+  }
+}

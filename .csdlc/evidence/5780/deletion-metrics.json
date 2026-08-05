@@ -1,0 +1,50 @@
+{
+  "schema": "csdlc.deletion_metrics.v1",
+  "issue": 5780,
+  "baseline_revision": "a5a16509af05af441369e78eeacfd74017bcf63b",
+  "measurement_revision": "ce0994da07d2cdf349c658b1f8dee235814e5905",
+  "scope": "csdlc-v2",
+  "metrics": {
+    "production_rust_loc": {
+      "before": 28722,
+      "after": 18194,
+      "deleted_net": 10528,
+      "reduction_percent": 36.65
+    },
+    "test_rust_loc": {
+      "before": 15092,
+      "after": 9276,
+      "deleted_net": 5816,
+      "reduction_percent": 38.54
+    },
+    "combined_rust_loc": {
+      "before": 43814,
+      "after": 27470,
+      "deleted_net": 16344,
+      "reduction_percent": 37.30
+    },
+    "source_binaries": {
+      "before": 23,
+      "after": 21,
+      "deleted": 2
+    },
+    "whole_change_lines": {
+      "added": 4675,
+      "deleted": 18751,
+      "net_deleted": 14076
+    }
+  },
+  "terminal_authority": {
+    "legacy_receipt_writer_routes_after": 0,
+    "legacy_receipt_files_retained_in_git_common_storage": 314,
+    "tracked_v0918_terminal_records_read_compatible": 114,
+    "supported_writer": "csdlc-finish derived terminal envelope",
+    "compatibility_boundary": "historical lifecycle phases and terminal receipts deserialize and validate read-only; no supported transition or repair API writes merge_ready, merged, closed_out, or a legacy receipt"
+  },
+  "counting_method": {
+    "production_rust_loc": "find csdlc-v2/src -name '*.rs' -type f -print0 | xargs -0 wc -l",
+    "test_rust_loc": "find csdlc-v2/tests -name '*.rs' -type f -print0 | xargs -0 wc -l",
+    "source_binaries": "find csdlc-v2/src/bin -name '*.rs' -type f | wc -l",
+    "whole_change_lines": "git diff --numstat baseline_revision..measurement_revision"
+  }
+}

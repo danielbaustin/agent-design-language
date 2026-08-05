@@ -1,0 +1,17 @@
+{
+  "issue": 5717,
+  "expected_generation": 13,
+  "expected_digest": "f81b170daa674b2355a3f039702c7154be18c5493a4b7e0bfbcb3c619fef31ea",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "reviewer": "codex-subagent:019fb615-80b0-7bf3-b207-d3fc3499ee18",
+  "assigned_by": "codex:5717-execution",
+  "scope": [
+    ".csdlc/issues/5717",
+    ".csdlc/prepared/issues/5717",
+    "demos/_preview/podcast/index.html",
+    "demos/podcast/LAUNCH_READINESS.md",
+    "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+    "demos/podcast/feed.xml",
+    "demos/podcast/index.html"
+  ]
+}

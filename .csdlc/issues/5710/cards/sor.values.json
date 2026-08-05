@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5710,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery for closed issues",
+    "slug": "csdlc-v2-closeout-safe-prune-recovery",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented fail-closed terminal head reconciliation, safe prune preparation, evidence retention, closed-issue repair classification, and focused lifecycle regression coverage.",
+      "actual_changes": [
+        "csdlc-v2/src/bin/csdlc-closeout.rs",
+        "csdlc-v2/src/lib.rs",
+        "csdlc-v2/src/readiness.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs"
+      ],
+      "artifacts": [
+        ".csdlc/evidence/5710"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate7_lifecycle"
+          ],
+          "purpose": "Prove metadata-only terminal head reconciliation, substantive-drift rejection, safe prune classification, unknown-path rejection, and existing closeout lifecycle behavior.",
+          "outcome": "passed",
+          "evidence_ref": "csdlc-v2-closeout-recovery.log"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

@@ -54,7 +54,7 @@ package_version() {
 help_output="$(run_review --help)"
 assert_contains "adl-review - ADL review tooling compatibility binary" "$help_output" "review help title"
 assert_contains "adl-review code-review --out <dir>" "$help_output" "review code-review help"
-assert_contains "C-SDLC issue work belongs to adl/tools/pr.sh run <issue>" "$help_output" "csdlc handoff help"
+assert_contains "C-SDLC issue work resolves through csdlc-install and the independent typed v2 binaries" "$help_output" "csdlc handoff help"
 
 version_output="$(run_review --version)"
 expected_version="$(package_version)"

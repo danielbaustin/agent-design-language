@@ -74,7 +74,8 @@ cd "$ROOT_DIR"
 
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" \
 ADL_RUNS_ROOT="$RUNS_ROOT" \
-  bash adl/tools/pr.sh run "$GENERATED_EXAMPLE" \
+  adl-runtime run "$GENERATED_EXAMPLE" \
+    --run \
     --trace \
     --allow-unsigned \
     --out "$STEP_OUT" \

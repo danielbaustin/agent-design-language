@@ -1,0 +1,122 @@
+{
+  "issue": 5332,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "c82b7de00d63c27d7ffe9c04ff856bd20cea14ace2a45914efe0cde5e8f7e011",
+  "claim_id": "claim-5332-v0918-wp15-unity-ilpp-exec-prep",
+  "actor": "codex:issue-5332-execution-preparation",
+  "reason": "Apply specialist review finding for focused validation selector registration",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "AC-1: the complete connectivity, gRPC or type-initialization, and GetDomainName -1 signature family is reproducible in one approved staged proof or retained fixture derived from exact evidence",
+      "AC-2: repeated complete signatures without semantic progress classify as ilpp_retry_loop without waiting for an arbitrary total runtime ceiling",
+      "AC-3: import, compile, validator, or terminal progress resets the non-progress classifier and preserves successful batch behavior",
+      "AC-4: readonly-database text remains a separate classifier and is not fatal after verified staged import progress",
+      "AC-5: the controlled matrix distinguishes wrapper staging, mutable HOME TMP XDG isolation, host or domain identity, and Unity version with one variable changed per cell",
+      "AC-6: each matrix cell retains Unity version, canonical staged project, non-secret environment shape, semantic progress markers, signature count, terminal classification, and log reference",
+      "AC-7: the minimal root-cause fix is applied only after the matrix isolates its owner; otherwise the exact current blocker and owner are recorded",
+      "AC-8: focused no-Unity tests cover incomplete signature, complete repeating loop, progress reset, readonly progression, and normal ILPP start",
+      "AC-9: one safe staged regression reaches the existing Observatory validator success marker or records a precise post-ILPP blocker without claiming full demo readiness",
+      "AC-10: the final diff excludes #4739 MCP internals, #4741 general liveness and mode selection, Unity scene code, runtime semantics, asset work, and rendering polish",
+      "AC-11: validation selector registration maps the classifier, wrapper, focused unit, and diagnosis paths to one focused Unity ILPP lane and its selector test passes"
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Extract a focused progress-aware ILPP signature classifier and deterministic fixture harness",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-8", "AC-10"]
+      },
+      {
+        "id": "S2",
+        "action": "Use #4741 safe staging to reproduce the loop and retain exact non-secret baseline evidence",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-6", "AC-9"]
+      },
+      {
+        "id": "S3",
+        "action": "Run the smallest one-variable environment matrix needed to isolate wrapper, mutable state, host or domain identity, or Unity version",
+        "status": "pending",
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7"]
+      },
+      {
+        "id": "S4",
+        "action": "Apply the minimal isolated root-cause fix or record the exact irreducible blocker and owner",
+        "status": "pending",
+        "acceptance_ids": ["AC-7", "AC-10"]
+      },
+      {
+        "id": "S5",
+        "action": "Register all issue-owned paths in the validation selector and prove focused lane selection",
+        "status": "pending",
+        "acceptance_ids": ["AC-10", "AC-11"]
+      },
+      {
+        "id": "S6",
+        "action": "Run focused fixtures and one safe normal-start regression, then record bounded review and WP-15 outcome truth",
+        "status": "pending",
+        "acceptance_ids": ["AC-3", "AC-4", "AC-8", "AC-9", "AC-10", "AC-11"]
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "unity-ilpp-classifier-unit",
+        "proof_role": "Prove complete-signature classification, semantic progress reset, readonly progression, and normal-start behavior without Unity",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-ilpp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 5000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"],
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-8", "AC-10"]
+      },
+      {
+        "lane": "unity-ilpp-selector-registration",
+        "proof_role": "Prove the validation selector chooses the focused Unity ILPP lane for every issue-owned implementation, wrapper, unit, and diagnosis path",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-ilpp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_select_validation_lanes.sh"],
+        "acceptance_ids": ["AC-10", "AC-11"]
+      },
+      {
+        "lane": "unity-ilpp-staged-reproduction",
+        "proof_role": "Reproduce or clear the ILPP loop in one #4741-approved staged batch mode",
+        "deterministic": false,
+        "resource_profile": "large",
+        "parallel_group": "unity-ilpp-live",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-6", "AC-9"],
+        "defer_reason": "Run only after #4741 provides exact safe staged-project ownership and the deterministic classifier and selector lanes pass."
+      },
+      {
+        "lane": "unity-ilpp-diagnostic-matrix",
+        "proof_role": "Retain one-variable environment comparisons that isolate the ILPP failure owner",
+        "deterministic": false,
+        "resource_profile": "large",
+        "parallel_group": "unity-ilpp-live",
+        "budget_seconds": 1800,
+        "budget_tokens": 8000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"],
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7"],
+        "defer_reason": "Execute only the cells still required after the baseline reproduction; do not run redundant Unity comparisons."
+      },
+      {
+        "lane": "unity-ilpp-diff-hygiene",
+        "proof_role": "Prove bounded text and shell hygiene",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-ilpp-static",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-10"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "issue": 5733,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "d2692f8a105663608c8e2832d7cfd130718698deafda691ef7d0a4120b6807e9",
+  "claim_id": "claim-5733-demo-matrix-proof-coverage",
+  "actor": "codex:5733-execution",
+  "reason": "Record bounded matrix and feature-proof reconciliation implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Reconciled the v0.91.8 demo matrix and feature-proof coverage with current owner, evidence, and non-claim truth; added a deterministic validator and reconciliation ledger.",
+    "changes": [
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733/RECONCILIATION_LEDGER_v1.md",
+      "adl/tools/validate_v0918_demo_matrix.py"
+    ],
+    "artifacts": [
+      ".csdlc/evidence/5733/v0918-demo-matrix-validator.log",
+      ".csdlc/evidence/5733/diff-check.log"
+    ]
+  },
+  "fail_after_backup": false
+}

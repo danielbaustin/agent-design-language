@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5670,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][ci][coverage] Parallelize hosted coverage with shard producers and aggregation gate",
+    "slug": "v0-91-8-ci-coverage-hosted-shards",
+    "version": "v0.91.8",
+    "generation": 19
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "coverage-shard-contracts",
+          "proof_role": "Run focused coverage runner and CI topology contracts plus diff hygiene.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 180,
+          "budget_tokens": 1200,
+          "argv": [
+            "bash",
+            "adl/tools/test_run_authoritative_coverage_lane.sh"
+          ],
+          "parallel_group": "coverage-contracts",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on missing shard evidence, stale or duplicate shard IDs, weakened coverage gates, local-disk fallback, failed contracts, or unresolved review findings.",
+      "design_ref": ".csdlc/issues/5670/retained/design.md",
+      "design_digest": "764bab4003984fb00686e5406ca95b56ee787d28cfa247daca83a01675c8fed3",
+      "diagram_ref": ".csdlc/issues/5670/retained/diagram.mmd",
+      "diagram_digest": "e5669ad5aed97dc369bbe6effc648fe333271a8cf1076a975d6de6897313d1a3"
+    }
+  }
+}

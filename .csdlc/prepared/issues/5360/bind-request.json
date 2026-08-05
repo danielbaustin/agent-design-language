@@ -1,0 +1,23 @@
+{
+  "issue": 5360,
+  "base_branch": "main",
+  "branch": "codex/5360-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5360-v0918-wp17-documentation-preparation",
+    "owner": "codex:5360-preparation-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1784667701,
+    "expires_unix_seconds": 1785272501,
+    "heartbeat_unix_seconds": 1784667701,
+    "branch": "codex/5360-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5360",
+      ".csdlc/locks/5360.lock",
+      ".csdlc/prepared/issues/5360",
+      ".csdlc/evidence/5360"
+    ],
+    "purpose": "Prepare and review #5360 WP-17 documentation and release-truth alignment contracts only; no shared-document or product work until WP-16 #5351 is merged, typed closed_out, receipt-backed, claim-free, and ancestral"
+  }
+}

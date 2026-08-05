@@ -1,0 +1,6 @@
+451	45	adl-runtime-kernel/src/assembly.rs
+18	1	adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+9	15	adl-runtime-kernel/src/governed_operations.rs
+100	24	adl-runtime-kernel/src/operations.rs
+342	254	adl-runtime-kernel/tests/assembly.rs
+0	586	adl-runtime-kernel/tests/operations.rs

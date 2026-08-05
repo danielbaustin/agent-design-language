@@ -1,0 +1,22 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "a973b3124226e63a6e2e7c0390d0411eabe83a5ef750f9338e20a1373a7c720a",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record focused validation for the Runtime v3 Observatory WebSocket readiness review fix.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "node --check demos/html-observatory/app.js",
+        "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+        "git diff --check"
+      ],
+      "purpose": "Prove the browser readiness-stream repair parses and preserves formatting/diff hygiene without changing Rust surfaces.",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork terminal output: node --check demos/html-observatory/app.js passed; cargo fmt --check passed; git diff --check passed"
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "adl.launch_readiness.manifest.v1",
+  "issue": 4758,
+  "primary_concern": "launch-readiness",
+  "consumer": "v0.91.8 WP-21 release-review intake",
+  "canonical_manifest_path": ".csdlc/evidence/4758/launch-readiness/launch-readiness.v1.json",
+  "inputs_ref": ".csdlc/evidence/4758/launch-readiness/inputs.v1.json",
+  "readiness_decision": {
+    "platform_deployment_accepted": true,
+    "launch_package_consumable": true,
+    "v0_92_launch_ready": false,
+    "disposition": "blocked_with_evidence",
+    "reason": "The package is consumable by release review, but open WP-20/WP-21 handoff and public-docs inputs remain blockers rather than readiness claims."
+  },
+  "blockers": [
+    {
+      "issue": 5363,
+      "status": "open",
+      "disposition": "blocker_for_v0_92_launch_readiness",
+      "proof_ref": ".csdlc/prepared/issues/4758/dependency-snapshot.v1.json"
+    },
+    {
+      "issue": 5362,
+      "status": "open",
+      "disposition": "blocker_for_v0_92_launch_readiness",
+      "proof_ref": ".csdlc/prepared/issues/4758/dependency-snapshot.v1.json"
+    },
+    {
+      "issue": 5352,
+      "status": "open",
+      "disposition": "blocker_for_v0_92_launch_readiness",
+      "proof_ref": ".csdlc/prepared/issues/4758/dependency-snapshot.v1.json"
+    },
+    {
+      "issue": 4763,
+      "status": "open",
+      "disposition": "blocker_for_v0_92_launch_readiness",
+      "proof_ref": ".csdlc/prepared/issues/4758/dependency-snapshot.v1.json"
+    }
+  ],
+  "non_claims": [
+    "does not write public launch copy",
+    "does not implement v0.92",
+    "does not absorb sibling WP-21 issue scope",
+    "does not convert open dependency issues into readiness"
+  ],
+  "proof_map": [
+    {
+      "claim": "WP-14A accepted baseline remains ancestral on origin/main",
+      "status": "passed",
+      "proof_ref": "git merge-base --is-ancestor 11151e0beab02b1667f6505b7f8992bfd47d2f8f origin/main"
+    },
+    {
+      "claim": "public launch docs are routed to #4758/#4763",
+      "status": "passed",
+      "proof_ref": "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md"
+    },
+    {
+      "claim": "v0.92 release readiness is not claimed while blockers are open",
+      "status": "passed",
+      "proof_ref": ".csdlc/evidence/4758/launch-readiness/launch-readiness.v1.json"
+    }
+  ],
+  "rollback_ref": ".csdlc/evidence/4758/launch-readiness/rollback.v1.json",
+  "validation_ref": ".csdlc/evidence/4758/launch-readiness/validation.v1.log",
+  "review_ref": ".csdlc/evidence/4758/launch-readiness/review.v1.md"
+}

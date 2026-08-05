@@ -1,0 +1,44 @@
+{
+  "issue": 5675,
+  "expected_generation": 8,
+  "expected_digest": "8460f41e2fabdd52f8448d2f3ff25d329d39d3fc6146ec760a0c90bd96818a17",
+  "claim_id": "claim-5675-provider-adapter-routes",
+  "actor": "codex:5675-execution",
+  "evidence": {
+    "reviewer": "codex:5675-opus-review",
+    "scope": ["adl/src/provider_adapter.rs", "adl/src/provider/profiles.rs"],
+    "reviewed_revision": "git-blake3:5866733e820430bb999af71dbbe608770e03a2bc:fe8ed4621a1918f5ebc6f9a9b74deac5cdfa4bd0574f13e2b075d9a67b97d51e",
+    "findings": [],
+    "residual_risks": [
+      "Live Kimi and MiniMax completion success remains unproven because both approved accounts reported insufficient balance; adapter reachability and typed billing failure paths are proven.",
+      "The reviewed source revision is unchanged; the intervening commits contain only typed lifecycle records, evidence, cards, and this Opus runbook."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "policy": "Only lifecycle metadata, evidence, generated cards, design/diagram artifacts, and the bounded Opus review runbook changed after the source review; provider implementation paths are unchanged.",
+      "from_revision": "git-blake3:14bc05cf77eadda51abe680c5d720586847276a6:26da272a5dc135c785709c81e935444ec15b170532dd43b6395df71c59c923c4",
+      "to_revision": "git-blake3:5866733e820430bb999af71dbbe608770e03a2bc:fe8ed4621a1918f5ebc6f9a9b74deac5cdfa4bd0574f13e2b075d9a67b97d51e",
+      "from_commit": "14bc05cf77eadda51abe680c5d720586847276a6",
+      "to_commit": "5866733e820430bb999af71dbbe608770e03a2bc",
+      "changed_paths": [
+        ".adl/TBD/OPUS_REVIEW_RUNBOOK.md",
+        ".adl/live-provider-probe-disposition.md",
+        ".adl/provider-adapter-focused-tests.log",
+        ".csdlc/advance-implemented-5675.json",
+        ".csdlc/advance-reviewed-5675.json",
+        ".csdlc/bind-5675.json",
+        ".csdlc/bootstrap-5675.json",
+        ".csdlc/issues/5675/audit.jsonl",
+        ".csdlc/issues/5675/cards",
+        ".csdlc/issues/5675/index.json",
+        ".csdlc/locks/5675.lock",
+        ".csdlc/prepared/issues/5675",
+        ".csdlc/record-execution-5675.json",
+        ".csdlc/record-validation-5675.json",
+        ".csdlc/review-assign-5675.json",
+        ".csdlc/review-guard-5675.json",
+        ".csdlc/review-record-5675.json"
+      ]
+    }
+  }
+}

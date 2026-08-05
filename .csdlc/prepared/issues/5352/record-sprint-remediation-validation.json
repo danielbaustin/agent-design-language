@@ -1,0 +1,27 @@
+{
+  "issue": 5352,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "5872fd1a4dae602680dd6194d0b80bf377afc7af6d0727fa23f61f796af555d0",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "actor": "codex:wp21-final-handoff",
+  "reason": "Record focused proof for the sprint review's canonical ACIP route remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "adl/Cargo.toml",
+        "csm_runtime_api::tests::runtime_api_surfaces_acip_carrier_component_and_routes",
+        "--",
+        "--exact"
+      ],
+      "purpose": "Prove the canonical /v1/acip/ws route and explicit /acip/ws compatibility alias agree with the Runtime v3 ACIP carrier contract.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5352/acip-route-tests.log"
+    }
+  }
+}

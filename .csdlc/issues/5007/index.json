@@ -1,0 +1,345 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5007,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c789bbcb9f19495094fd9501a0b61a1c79f53d38af4e5b93f463f3d0408a773e",
+  "phase": "closed_out",
+  "generation": 7,
+  "digest": "6079c9cbd0368b95c45444c9d929b4557368cef4522df847c1379cb0e2514088",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "openai:gpt-5.5-via-codex-review",
+    "scope": [
+      "docs/adr/0058-memory-palace-context-handoff-architecture.md",
+      "docs/adr/README.md",
+      "docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md"
+    ],
+    "reviewed_revision": "git-blake3:426d0a53fb2b7b0be571b236ca5d0a248b32e1f8:40938df9ad6bd5e66b3a9b24f939bc7614e90aff5e86084b47696a4207d6c67f",
+    "findings": [
+      {
+        "id": "F-5007-REREVIEW-1",
+        "severity": "p2",
+        "summary": "The refreshed SOR referenced the exact-head rereview artifact before that artifact was retained.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:426d0a53fb2b7b0be571b236ca5d0a248b32e1f8:40938df9ad6bd5e66b3a9b24f939bc7614e90aff5e86084b47696a4207d6c67f",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "#4760 proof is surfaced by merged PR #5740 at final head 9719252262913351144a20adf0affb7ed4b5480d with merge d3dbfb31ba4bd53f4166ee5e09da2a8b9f89968e; ADR 0058 preserves the bounded #4760 proof scope.",
+      "#5007 review covers the ADR decision packet, ADR index, and v0.91.8 ADR plan updates; runtime proof remains #4760 scope and was not rerun for this docs/decision PR."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5007,
+    "pull_request": 5743,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5743",
+    "base": "main",
+    "head": "codex/5007-v0918-wp14-preparation",
+    "revision": "git-blake3:426d0a53fb2b7b0be571b236ca5d0a248b32e1f8:40938df9ad6bd5e66b3a9b24f939bc7614e90aff5e86084b47696a4207d6c67f",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5743,
+    "head_sha": "426d0a53fb2b7b0be571b236ca5d0a248b32e1f8",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302724"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290340865"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302773"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290303228"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290303049"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290303202"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302989"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290274456"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302732"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302965"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302742"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302935"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290303048"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302868"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302713"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30671591808/job/91290302748"
+      }
+    ],
+    "review_state": "pending",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5743,
+    "disposition": "merged",
+    "observed_sha": "426d0a53fb2b7b0be571b236ca5d0a248b32e1f8",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5007.json",
+    "released_branch": "codex/5007-v0918-wp14-preparation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5007",
+      ".csdlc/locks/5007.lock",
+      ".csdlc/prepared/issues/5007",
+      ".csdlc/evidence/5007",
+      "docs/adr/0058-memory-palace-context-handoff-architecture.md",
+      "docs/adr/README.md",
+      "docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5007/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5007/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "gpt-5.5:bounded-preparation-review",
+      "revision": "34b16fad35bd3cc21d9f3274b4e38297c0539e42714d840615fb8f78861dd398"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "01c06386f01fb15729729689e2b6d17b2cab83777d8c91b08353315761da7bb4",
+      "rendered_digest": "b7aa70bbfb4d82a27ae651fc541f1bb212d10ee70b59f1dabcfda940c4521dd2",
+      "ast_digest": "3a96b10330cb5ee77ba7c0b3cabb09ede911477f275c09b339246d36a986b989"
+    },
+    "stp": {
+      "values_digest": "91b9141b36b4aadd749b06db84da5675b0488099774a7cbdde7da01cc81aeb8e",
+      "rendered_digest": "8ec075f0bebf17954e43b5d791df37f90ebe6d1a0d2a9527b7953c92e82650dd",
+      "ast_digest": "f1bc415ad8ac03d786affb699812bebbc371b75f7453b5b4adf9b3db87db0c62"
+    },
+    "spp": {
+      "values_digest": "71e75bb5086e7dbe47a9516c9c8bd0f26ac1b8b0c6f71a43c62148fa8cec2d4c",
+      "rendered_digest": "45177806428d365ff69947fe42e8917a85af783ae30b9ddfcc0c98a2c86fdf37",
+      "ast_digest": "c12b0602ff7d058e73e64440683e0a06f75129339e70179b257b8da4b48daa3d"
+    },
+    "vpp": {
+      "values_digest": "7e4c8640f7f5b3848ba18b4bc7a474b448f0c6052b22ff5370cbfdb8e7bc4190",
+      "rendered_digest": "17952b21ee01486f9d4b8b47ed251e31e1f001f1c389bc6fb62318e364845c8e",
+      "ast_digest": "fed7c29710382db155a29d25c448b256ae7d95d2a40377da6f9efbfcc2c357f8"
+    },
+    "srp": {
+      "values_digest": "c2c11c8bdeddb6315a354863e6a499bae082d070b573fb12694f359dabfe6523",
+      "rendered_digest": "ef24ca0c40a12b8dce83cf34e3d3222b521526c2bbaafe30b9177513d7e8f520",
+      "ast_digest": "89488f6d4a06203ff4e16db491496120541c3d9b443c1feb55a5d92c8bfed6ff"
+    },
+    "sor": {
+      "values_digest": "3fbb117211a899e15e555f8629e27120095e4133ec40f5eb7ee3ae7d398c7f3f",
+      "rendered_digest": "603f6d8a78fd830258f4705031d1c4ba22bd6d3e0f34cb543138757fdabe5fc3",
+      "ast_digest": "2faec91c8afc11485fe76f548f17e54870b8ad4533634aabc67a58f174f7a93d"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5007-execution-2026-07-31",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5007-execution-2026-07-31",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5007-execution-2026-07-31",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:exact-head-reviewer-5007",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5007-execution-2026-07-31",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "reconcile exact historical merged lifecycle evidence"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "reconcile exact historical merged lifecycle evidence"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "reconcile exact historical merged lifecycle evidence"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:prep5007-rehydrate",
+      "reason": "complete issue-specific preparation packet without stale-claim reacquisition",
+      "operation": "manual_preparation_projection_rehydrate"
+    },
+    {
+      "sequence": 3,
+      "generation": 2,
+      "actor": "codex:prep5007-rehydrate",
+      "reason": "complete issue-specific preparation packet without stale-claim reacquisition",
+      "operation": "manual_preparation_projection_rehydrate"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5007-execution-2026-07-31",
+      "reason": "Activate #5007 in-place for Memory Palace ADR execution after #4760 proof handoff via ready PR #5740.",
+      "operation": "{\"branch\":\"codex/5007-v0918-wp14-preparation\",\"claim_id\":\"exec-5007-memory-palace-adr-20260731\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5007-execution-2026-07-31\",\"previous_claim_id\":\"prep-5007-v0918-wp14\",\"previous_owner\":\"codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11\",\"protected_paths\":[\".csdlc/issues/5007\",\".csdlc/locks/5007.lock\",\".csdlc/prepared/issues/5007\",\".csdlc/evidence/5007\",\"docs/adr/0058-memory-palace-context-handoff-architecture.md\",\"docs/adr/README.md\",\"docs/milestones/v0.91.8/ADR_PLAN_v0.91.8.md\"],\"purpose\":\"Execution of #5007 Memory Palace ADR decision outcome using real #4760 proof surfaced by ready PR #5740; no merge or closeout.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5007-execution-2026-07-31",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5007-execution-2026-07-31",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:exact-head-reviewer-5007",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5007-execution-2026-07-31",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Recover #5007 from the last canonical published source, exact typed review, current required CI, and merged GitHub truth; atomically release the authenticated target claim.",
+      "operation": "{\"historical_closing_keyword_present\":true,\"linkage_source\":\"typed_linked_issue_and_closed_issue_evidence\",\"merge_commit\":\"1bd6f73b1c449ffd132ad9a34c739e16c39186c2\",\"merged_head\":\"426d0a53fb2b7b0be571b236ca5d0a248b32e1f8\",\"metadata_direction\":\"reviewed_scope_exact_at_merged_head\",\"metadata_only_paths\":[],\"operation\":\"reconcile_historical_merged\",\"operator_authority\":\"Operator authorized #5748 to recover and terminalize closed merged v0.91.8 issue #5007 using its exact live target claim and registered owner checkout.\",\"released_target_claim\":{\"generation\":5,\"id\":\"exec-5007-memory-palace-adr-20260731\",\"owner\":\"codex:5007-execution-2026-07-31\",\"protected_paths_digest\":\"88d0770063642c086e2376dd581cbae4f2b2e061b4eb5993708bc9c427777947\"},\"reviewed_commit\":\"426d0a53fb2b7b0be571b236ca5d0a248b32e1f8\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authenticated #5007 closed-out receipt over the exact corrupt aggregate projection under the live #5748 same-worktree recovery authority.",
+      "operation": "{\"authority_issue\":5748,\"corrupt_projection_digest\":\"1555bce8b058ef0b1bf131d897c8528fe1df302eed5a981ac62ebc4b575e153e\",\"operation\":\"reconcile_corrupt_terminal_receipt\",\"source_receipt_digest\":\"83a9539680ed730193da404790e6b42ff7b0ee3dc1865c3e831094973d5d380b\"}"
+    }
+  ]
+}

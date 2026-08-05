@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5332,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Classify and fix Unity ILPP GetDomainName loop in observatory batch proof",
+    "slug": "v0918-wp15-unity-ilpp-getdomainname-loop",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/5332\n.csdlc/issues/5332\nadl/config/validation_lane_selector.v0.91.6.json\nadl/tools/lib/unity_observatory_batch_classifiers.sh\nadl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh\nadl/tools/test_select_validation_lanes.sh\nadl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh\nadl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh\nadl/tools/test_v0918_unity_ilpp_diagnostic_matrix.sh\ndocs/tooling/unity_ilpp_getdomainname_diagnosis.md",
+      "review_revision": "git-blake3:ff789a110aaf9072ff66a300ff87a831ec7034c5:2c196c74114b554628bbca6a35543e14709b95005be25f36b32e14a81b078449",
+      "reviewer": "codex-subagent:019f9573-ce90-7512-81f1-f56ff3ceeb1f",
+      "review_prompts": [
+        "Does the classifier require the complete ILPP signature family and reset on real progress?",
+        "Does the matrix vary one cause at a time and retain enough evidence to support attribution?",
+        "Is readonly-database handling independent and progress-aware?",
+        "Does the normal-start regression prove the classifier does not break successful Unity proof?",
+        "Is the final diff limited to #5332 ownership?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Restricted execution lanes that deny getdomainname remain unsuitable for live Unity batch proof and now fail closed before staging.",
+        "The successful staged shell and flagship validator proves scene composition and contract validity, not investor-ready runtime-shell layout or complete demo polish."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

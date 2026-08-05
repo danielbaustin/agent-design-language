@@ -1,0 +1,153 @@
+{
+  "issue": 5362,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5362/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5362/diagram.mmd",
+  "design_reviewer": "operator-policy:release-tail-preparation",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5362-v0918-preparation",
+    "owner": "codex:5362-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784754875,
+    "expires_unix_seconds": 1785359675,
+    "heartbeat_unix_seconds": 1784754875,
+    "branch": "codex/5362-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5362",
+      ".csdlc/locks/5362.lock",
+      ".csdlc/prepared/issues/5362",
+      ".csdlc/evidence/5362"
+    ],
+    "purpose": "Prepare #5362 WP-21 feature-list and v0.92 planning truth only; no execution until WP-20 #5363 is live-merged and ancestral"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-21] Align feature list and v0.92 planning truth",
+    "slug": "v0918-wp21-feature-list-v092-planning-truth",
+    "version": "v0.91.8",
+    "goal": "Prepare v0.92 inputs from reviewed deployed ADL v2, Runtime v3, and C-SDLC v2 truth.",
+    "required_outcome": "v0.92 planning seed, source handoff, and feature-list disposition.",
+    "declared_scope": [
+      "feature-list disposition alignment",
+      "v0.92 planning seed preparation",
+      "source handoff truth"
+    ],
+    "authority_boundary": [
+      "typed C-SDLC v2 only",
+      "no execution before live predecessor merge plus ancestry",
+      "receipts audit-only",
+      "no raw gh, AWS, PR, merge, or closeout during preparation"
+    ],
+    "operator_constraints": [
+      "preparation only",
+      "no tracked root-main writes",
+      "one issue-bound FastWork branch",
+      "minimal packet: six cards, design, diagram, focused doctor validation"
+    ],
+    "task_boundary": "Prepare lifecycle packet only; planning edits are future execution work.",
+    "deliverables": [
+      "generated six-card preparation packet",
+      "concise design and diagram",
+      "focused typed doctor validation"
+    ],
+    "acceptance_criteria": [
+      "AC-1: preparation packet is generated through typed C-SDLC v2",
+      "AC-2: future execution is blocked on #5363 live merge and ancestry",
+      "AC-3: receipts are recorded as audit evidence only",
+      "AC-4: no implementation, PR, AWS, raw gh, or root-main tracked write occurs"
+    ],
+    "dependencies": [
+      "WP-20 #5363 live merged into origin/main",
+      "#5363 observed merge SHA ancestral to exact #5362 execution base"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "issue #5362"
+    ],
+    "non_goals": [
+      "birthday implementation",
+      "feature-list edits during preparation",
+      "PR publication",
+      "receipt-gated execution"
+    ],
+    "plan_summary": "Prepare now; execute only after #5363 is live-merged and ancestral.",
+    "steps": [
+      {"id":"S1","action":"Verify typed preparation packet and #5363 live merge plus ancestry","status":"pending","acceptance_ids":["AC-1","AC-2"]},
+      {"id":"S2","action":"Consume accepted preflight truth","status":"pending","acceptance_ids":["AC-3"]},
+      {"id":"S3","action":"Align feature-list and v0.92 planning inputs","status":"pending","acceptance_ids":["AC-3"]},
+      {"id":"S4","action":"Preserve blockers or release WP-21A without preparation-scope mutations","status":"pending","acceptance_ids":["AC-1","AC-4"]}
+    ],
+    "risks": [
+      "feature-list rows may lack evidence-bound owners",
+      "v0.92 inputs may overclaim birthday readiness",
+      "preflight blockers may be stale"
+    ],
+    "invariants": [
+      "live merge plus ancestry is the dependency gate",
+      "receipts audit-only",
+      "no preparation review churn",
+      "no implementation in preparation"
+    ],
+    "stop_conditions": [
+      "#5363 not live-merged",
+      "#5363 merge not ancestral",
+      "feature disposition lacks evidence",
+      "v0.92 wording would overclaim"
+    ],
+    "review_prompts": [
+      "Are feature dispositions evidence-bound?",
+      "Do v0.92 inputs avoid birthday implementation claims?"
+    ],
+    "review_scope": "Future review only; preparation performs no review churn.",
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "preparation-doctor",
+        "proof_role": "Validate the generated typed C-SDLC v2 preparation packet",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "release-tail-preparation",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": ["/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor", "--repo", ".", "--issue", "5362"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"]
+      }
+    ],
+    "failure_policy": "Fail closed on missing live predecessor merge, stale ancestry, unsupported feature disposition, or v0.92 overclaim.",
+    "design_status": "approved",
+    "architecture_summary": "Issue-local preparation for the serial WP-21 planning truth gate.",
+    "architecture_boundaries": [
+      "issue-local C-SDLC packet only",
+      "no planning mutation in preparation",
+      "no GitHub lifecycle mutation"
+    ],
+    "selected_cots": [
+      "typed C-SDLC v2 binaries",
+      "Git ancestry checks"
+    ],
+    "rejected_alternatives": [
+      "receipt-gated dependency execution",
+      "preparation review churn",
+      "planning edits during packet preparation"
+    ],
+    "budget_profile": "Preparation validation under 30 seconds; future execution budget deferred.",
+    "negative_proofs": [
+      "no planning files claimed",
+      "no PR opened",
+      "no raw gh or AWS"
+    ],
+    "rollback": "Delete the issue-local preparation branch before publication; no planning state is changed.",
+    "review_focus": [
+      "feature-list evidence",
+      "v0.92 handoff truth",
+      "overclaim prevention"
+    ],
+    "expected_evidence": [
+      "doctor-clean typed packet",
+      "live merge plus ancestry observation at execution time"
+    ]
+  }
+}

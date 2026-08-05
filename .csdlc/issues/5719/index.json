@@ -1,0 +1,364 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5719,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "3311f6460b0988706cb978ea2fcf7da322d7af3273fc5c96c2813a6f7a4fc271",
+  "phase": "closed_out",
+  "generation": 8,
+  "digest": "6a4102c7666a69c10a1cc04783cf133cf92215a828d7e611143fdefd6d4205f5",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "Heisenberg",
+    "assigned_by": "codex:5719-execution",
+    "revision": "git-blake3:b0f71eabb06945d5a7ad6147d7178586e3db86da:a6218709a4daeb864cd8deaf812e424aa9342260d5592dd722049a4ef0dd5be0",
+    "scope": [
+      ".csdlc/issues/5719",
+      ".csdlc/evidence/5719",
+      ".csdlc/prepared/issues/5719",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "Heisenberg",
+    "scope": [
+      ".csdlc/issues/5719",
+      ".csdlc/evidence/5719",
+      ".csdlc/prepared/issues/5719",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ],
+    "reviewed_revision": "git-blake3:b0f71eabb06945d5a7ad6147d7178586e3db86da:a6218709a4daeb864cd8deaf812e424aa9342260d5592dd722049a4ef0dd5be0",
+    "findings": [],
+    "residual_risks": [
+      "Review was read-only and confirmed the selector/path-policy contract at exact HEAD b0f71eabb; hosted CI behavior remains deferred to the published PR checks."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5719,
+    "pull_request": 5721,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5721",
+    "base": "main",
+    "head": "codex/5719-ci-coverage-page-policy",
+    "revision": "git-blake3:e37fca96d6e023e53e0af317bfead9654aba8e12:da987e845973ae6669654762c19b10c5f049dfdef334f42cb273a80df4e09850",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5721,
+    "head_sha": "e37fca96d6e023e53e0af317bfead9654aba8e12",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728803376"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728343832"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306074"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306528"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306569"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306563"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306556"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90727932506"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306276"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306611"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306549"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306386"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306227"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728305664"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306642"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30496921934/job/90728306241"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5721,
+    "disposition": "merged",
+    "observed_sha": "e37fca96d6e023e53e0af317bfead9654aba8e12",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5719.json",
+    "released_branch": "codex/5719-ci-coverage-page-policy",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5719",
+      ".csdlc/locks/5719.lock",
+      ".csdlc/prepared/issues/5719",
+      ".github/workflows/ci.yaml",
+      "adl/config/validation_lane_selector.v0.91.6.json",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_validation_manager.sh"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5719/retained/design.md",
+  "diagram_path": ".csdlc/issues/5719/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5719-execution",
+      "revision": "669865d6d9df6873d4b8b4f54a492499d00d3173912437883abddd0bebee5b35"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "21c909810ecfe6527588c63e914dd8dd12dc546a2eed41eac8d86aa7480e6e72",
+      "rendered_digest": "5edc703d78bb5d850b627fa794f4eb45e023a7c3cf86f62a04ec9b1e6fbebef0",
+      "ast_digest": "9798d8fc4365de347cba719ad458e1c5d6f62b23ba9451554a151dc6a99fd129"
+    },
+    "stp": {
+      "values_digest": "64d96ff561005f47a2379bf8bb531bd61eea8a8d60f2440ce789a995c0f5b7a1",
+      "rendered_digest": "3a46127e74167c14f3cf932b65fd169a5f087f132c4f5c0473968f0c7003044c",
+      "ast_digest": "36f64615fce3a1933d837007862c8eee9304620c5b01fbe632a35271b7624868"
+    },
+    "spp": {
+      "values_digest": "6c57b17e9741fbacdfdc9ef01fee6ad2c74c6b0a82b69ac2c4dbd816ae7fcf32",
+      "rendered_digest": "1cae8b24db4df34b7d914fc0901c2029dc205806b1e41e1d39ec26dd867f5c54",
+      "ast_digest": "8d5da4000854284b4d2f5ea497cdab1023452676aa33c0944e2461c91d9e8ef9"
+    },
+    "vpp": {
+      "values_digest": "28d72a80dfa51373436c0acdfe115a2a7c5077939efa3180eaae7c9b637d5059",
+      "rendered_digest": "6f085e2490b448558e02d68b146a66b94a51dffec734d91e3e211e1779cb20de",
+      "ast_digest": "a8ebf5e4bbb230be7171508d98ace0c6d3d3c8e70d3f3dd32aabf8b27d76d98a"
+    },
+    "srp": {
+      "values_digest": "6862172948cb65621875674ba743690a24b52c8f33a0a1cfa187bb7014878c59",
+      "rendered_digest": "bbbbc44baeb15036628f26e442ba10da1d96f49039db00aa77e807c4c06c1254",
+      "ast_digest": "7a74613d539884e54af07bd661578412c4b1fab69823de88709433f6c7f113e5"
+    },
+    "sor": {
+      "values_digest": "df3bad76715285f9e50eb5eefe680b63538551fe3515731cd426e82e1fdcdb2f",
+      "rendered_digest": "36859ecc4c05c072480df596a94121948b03ed21263c54fbd833778bf2a47acc",
+      "ast_digest": "aac98f6ffbd0a68fdddc0cb42e8830385c5fcfd2cff121bb3aaad30d354b3f12"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5719-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5719-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5719-execution",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5719-execution",
+      "reason": "Exact bounded review passed with no actionable findings for the podcast CI coverage path-policy fix."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5719-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5719-execution",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5719-execution",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5719-execution",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5719-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5719-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5719-execution",
+      "reason": "The reproduced #5716-like failure is an unmapped validation-manager surface, so #5719 must update the validation lane selector manifest as part of the CI coverage selection fix.",
+      "operation": "{\"add_protected_paths\":[\"adl/config/validation_lane_selector.v0.91.6.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5719-execution",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5719-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5719-execution",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5719-execution",
+      "reason": "Exact bounded review passed with no actionable findings for the podcast CI coverage path-policy fix.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5719-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5719-execution",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5719-execution",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

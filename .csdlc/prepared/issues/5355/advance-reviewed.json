@@ -1,0 +1,11 @@
+{
+  "issue": 5355,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "d2ffb424ee060a5674e4cadcd908e8b3e55f4c3bb0f459cefbc66b374eb3acb9",
+  "claim_id": "claim-5355-v0918-preparation",
+  "actor": "codex:wp21a-conductor",
+  "reason": "The single bounded GPT-5.5 WP-21A review passed exact revision bd5501be6 with zero blockers after the squash-ancestry wording fix.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"},
+  "fail_after_backup": false
+}

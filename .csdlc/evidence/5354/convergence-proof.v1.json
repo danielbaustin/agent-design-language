@@ -1,0 +1,153 @@
+{
+  "schema": "adl.v0918.wp15.convergence_proof.v1",
+  "issue": 5354,
+  "status": "pass",
+  "revision": "379302441959e0fa73ab5a998d0dfc5e2196fb85",
+  "predecessor": {
+    "issue": 5384,
+    "pull_request": 5726,
+    "merge_revision": "72fbf30c74a5193ea41f042c76c5986a48e59d6c",
+    "closeout_gate": "not_required"
+  },
+  "adl_v2": {
+    "fixture": "adl-characterization/corpus/v1/fixtures/mock-run.adl.yaml",
+    "binary": "external-fastwork-target/debug/adl-v2",
+    "binary_location_policy": "rebuilt under ADL_WP15_TARGET_DIR outside the repository; retained proof uses executable digest, not host path",
+    "binary_sha256": "91fa14358d7c9d2106fa65219e952b55db40ce677cb1909d96bcde3f25cdf066",
+    "source_identity_sha256": "bf63d869276968ad9a50019a2370fb5acc94b3cb15ecd63bbd6f79e328d0f549",
+    "lockfile_sha256": "991bb6238ee07b8adf87cf3d41c57860777dfd25ed18d9fdc5f64fb792bee0b8",
+    "locked_build_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "plan_contract": "adl.execution-plan.v1",
+    "source_digest": "0843fa8fdc608c07c61a5cb83238a735a10cc634779266fd3e505011b8785229",
+    "plan_output_sha256": "3a3c3de63596999456ee435ac50ad4d1b97490cfbc784efc55f3594820e7ed03",
+    "run_contract": "adl.engine.v1",
+    "run_status": "ready",
+    "checkpoint_contract": "adl.engine-checkpoint.v1",
+    "runtime_v2_used": false
+  },
+  "runtime_v3": {
+    "adapter_test": "canonical_ingress_maps_success_and_result_record",
+    "wss_test": "observatory_websocket_allows_public_reads_and_requires_login_for_writes",
+    "live_wss": {
+      "endpoint": "/v1/observatory/ws",
+      "feed_schema": "adl.runtime_v3.observatory_feed.v2",
+      "client_message": "unauthenticated_write_probe",
+      "server_response": "write_authentication_required"
+    },
+    "live_canonical_submit": {
+      "endpoint": "/v1/control",
+      "action": "submit",
+      "work_kind": "agent_runtime",
+      "work_id": "wp15-adl-plan-3a3c3de635969994",
+      "command_id": "wp15-379302441959-20260731190135",
+      "correlation_id": "1383f632b9ddb26511cc1aa2e8c2201c",
+      "principal": "wp15-proof",
+      "signing_key_id": "wp15-proof",
+      "unsigned_command_sha256": "284edf053ad9d67ff82364f53e309e1cd532f1282cb2c73eba6b383f60fcc735",
+      "payload_sha256": "1dff296c34ba17c254f7eb64d23be46804eeb91e963519d9a173560c41908a70",
+      "plan_output_sha256": "3a3c3de63596999456ee435ac50ad4d1b97490cfbc784efc55f3594820e7ed03",
+      "response_sha256": "50704cf9f219922749342d4de9f89920a6099c2ba2536debe8a55953117b675b",
+      "outcome": "submitted",
+      "accepted_sequence": 1,
+      "result_hash": "0a2550f7d19a96256081fc399912beed2cc842c0170f5206bfe13fdae23d20b9"
+    },
+    "live_schema": "adl.runtime_v3.observatory_feed.v2",
+    "runtime_instance_id": "1b4ca167fd794e988541690eff843ecd",
+    "lifecycle": "running",
+    "components_running": 27,
+    "observability_ready": true,
+    "websocket_full_duplex": true,
+    "public_reads": true,
+    "login_required_for_mutation": true,
+    "continuity_generation": null
+  },
+  "csdlc_v2": {
+    "selected_generation": "v2",
+    "phase": "reviewed",
+    "generation": 13,
+    "claim_id": "claim-5354-v0918-wp15-reacquired",
+    "doctor_status": "pass",
+    "closeout_blocks_execution": false
+  },
+  "unity": {
+    "merged_children": [
+      {
+        "issue": 4739,
+        "merge_revision": "e02e138409771c9321341bf599cd1c2cd0ecaef1"
+      },
+      {
+        "issue": 4741,
+        "merge_revision": "491f9570289f3355b86a2ee13736695fd56bd870"
+      },
+      {
+        "issue": 5332,
+        "merge_revision": "89fb6847a2a78effd66b73607681f463077ea018"
+      },
+      {
+        "issue": 5683,
+        "merge_revision": "75246bfd76935f567809fedd52e92b2cd80c679e"
+      }
+    ],
+    "live_proof": ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md",
+    "live_proof_sha256": "b027ba9ce7105b0e25d3cdbfc172dfae89ff8b4d58ffac23033e1f16472d5a32",
+    "image_sha256": {
+      ".csdlc/evidence/5683/final-full-hd-game-view.png": "39b5f32957ba84208e95add17cd4838ebe4542f5ca1f8f6388c73dd788fc5d26",
+      ".csdlc/evidence/5683/final-qhd-game-view.png": "1104beb67ad035961903c9d6a765ca5f79e946437047a577d090f3d4526dd1eb"
+    },
+    "claim": "accepted editor, Play Mode, and presentation proof",
+    "non_claim": "retained images do not prove player-build readiness or live Runtime/cloud authority"
+  },
+  "claim_boundaries": [
+    {
+      "claim": "ADL v2 validates, compiles, and initializes the accepted engine plan",
+      "disposition": "proven"
+    },
+    {
+      "claim": "ADL v2 compiled plan work is submitted to live Runtime v3 canonical ingress and accepted by agent_runtime",
+      "disposition": "proven"
+    },
+    {
+      "claim": "Runtime v3 serves TLS-verified public reads and full-duplex WSS while requiring login for writes",
+      "disposition": "proven"
+    },
+    {
+      "claim": "C-SDLC v2 is the selected typed lifecycle and governs this issue",
+      "disposition": "proven"
+    },
+    {
+      "claim": "Unity editor, Play Mode, and presentation proof is integrated",
+      "disposition": "proven"
+    },
+    {
+      "claim": "Runtime v2 participates in WP-15",
+      "disposition": "explicit_non_claim"
+    },
+    {
+      "claim": "Unity images prove player-build, Runtime, or cloud authority",
+      "disposition": "explicit_non_claim"
+    },
+    {
+      "claim": "WP-15 independently proves every v0.91.8 release feature",
+      "disposition": "explicit_non_claim"
+    }
+  ],
+  "proof_freeze": {
+    "schema": "adl.v0918.wp15.proof_freeze.v1",
+    "packet_fingerprint_sha256": "02cc5ac9832440905e75e6db3d06e40af4fc511b8845ba1cefba3cae13e8ec6b",
+    "frozen_paths_sha256": {
+      ".csdlc/issues/5354/index.json": "94014ff14c6ef0361b831a0df560f24fcec43c7f3be7b67b0f21f3c6b7389ee2",
+      ".csdlc/issues/5354/audit.jsonl": "aef2e64625b4dc7386b8a8603258250d8a1eeefa6c105713ab8c722d886adb09",
+      ".csdlc/prepared/issues/5354/run-validation-lane.rb": "7be353ea9b2bf23726ac3b5645320ae882187e5d03ec629c97f4b8b92d3729fc",
+      ".csdlc/prepared/issues/5354/check-dependencies.rb": "9480f7da49ca6e46de3cf80034f7663aaec19189114c5d8ff68cafbdf36da520",
+      "adl-v2/Cargo.lock": "991bb6238ee07b8adf87cf3d41c57860777dfd25ed18d9fdc5f64fb792bee0b8",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md": "3fd22adfc82734137925f9e83fec6681189f234867def37742ac4bd0fc411a31",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md": "68163e22cde2a34d80caf165adebc4f2042a675f5701e6d09d6511d54088b187"
+    },
+    "result_hashes": {
+      "plan_output_sha256": "3a3c3de63596999456ee435ac50ad4d1b97490cfbc784efc55f3594820e7ed03",
+      "run_output_sha256": "f02858857dd6f73382ba2ea151edb17b4dd19fcbc4ec35fd88712e2f2408e599",
+      "live_control_response_sha256": "50704cf9f219922749342d4de9f89920a6099c2ba2536debe8a55953117b675b",
+      "unsigned_command_sha256": "284edf053ad9d67ff82364f53e309e1cd532f1282cb2c73eba6b383f60fcc735"
+    }
+  }
+}

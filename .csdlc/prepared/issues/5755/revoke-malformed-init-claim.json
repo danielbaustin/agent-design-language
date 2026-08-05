@@ -1,0 +1,11 @@
+{
+  "issue": 5755,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5755-runtime-protocol-security",
+  "expected_generation": 0,
+  "expected_digest": "5977cd628d4ea361b03c0abbb722a971ead7e57f2327de874b150e096078b81f",
+  "now_unix_seconds": 1785566965,
+  "actor": "codex:5755-runtime-protocol-security",
+  "operator_authority": "operator-authorized:5755-root-cleanup-and-fastwork-bind",
+  "reason": "Release malformed root-relative init claim so #5755 can be reacquired as the active FastWork issue worktree."
+}

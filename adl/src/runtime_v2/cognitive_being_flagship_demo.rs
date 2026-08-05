@@ -591,8 +591,7 @@ fn flagship_sections() -> Vec<RuntimeV2CognitiveBeingFlagshipSection> {
                 RUNTIME_V2_COGNITIVE_BEING_SUPPORT_SRP_PATH,
             ],
             vec![
-                "bash adl/tools/validate_structured_prompt.sh --type spp --phase run --input .adl/v0.91/tasks/issue-2751__v0-91-wp-17-demo-cognitive-being-flagship-demo/spp.md",
-                "bash adl/tools/validate_structured_prompt.sh --type srp --phase run --input .adl/v0.91/tasks/issue-2751__v0-91-wp-17-demo-cognitive-being-flagship-demo/srp.md",
+                "cargo test --manifest-path adl/Cargo.toml runtime_v2_cognitive_being_flagship_demo -- --nocapture",
             ],
             "Proves durable planning and review policy surfaces, not that planning or review become automatic or infallible.",
         ),

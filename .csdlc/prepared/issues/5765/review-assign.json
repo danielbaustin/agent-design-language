@@ -1,0 +1,9 @@
+{
+  "issue": 5765,
+  "expected_generation": 7,
+  "expected_digest": "816593c44cede3c0c8e1a409523bbdf16879ad02c5cd6dffa4d47a2bd02fbfea",
+  "claim_id": "claim-5765-v092-account-migration-scheduling",
+  "reviewer": "subagent:review-5765b",
+  "assigned_by": "codex:5765",
+  "scope": ["docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml", ".csdlc/issues/5765", ".csdlc/prepared/issues/5765"]
+}

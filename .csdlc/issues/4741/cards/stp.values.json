@@ -1,0 +1,64 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4741,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][tooling] Make Unity editor liveness and batch proof reliable for deployed observatory",
+    "slug": "v0918-wp15-unity-editor-liveness-batch-proof",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Selectively port and finish only the editor/batch liveness and proof-wrapper surface from preserved predecessor work onto the current v0.91.8 base.",
+      "deliverables": [
+        "Deterministic Unity proof-mode selector",
+        "Approved writable staged-project and scratch isolation",
+        "Semantic progress and blocker classifier",
+        "Focused wrapper unit and contract tests",
+        "Retained proof packet with mode and exact terminal outcome",
+        "Operator editor/batch proof runbook"
+      ],
+      "acceptance_criteria": [
+        "AC-1: every proof attempt prints open_editor, fresh_batch, or skipped_fail_closed before Unity work begins",
+        "AC-2: exact-project liveness uses permission-safe adl process status evidence and never broad ps, pgrep, or lsof output",
+        "AC-3: fresh_batch never opens the same project directory already owned by an editor and stages only under /Volumes/FastWork or issue-local .adl storage",
+        "AC-4: wrappers use repository-installed owner binaries and the configured Unity editor path without building replacement binaries",
+        "AC-5: progress monitoring keys off meaningful import, compile, validation, or terminal markers and does not impose an arbitrary total runtime ceiling",
+        "AC-6: crash, licensing, missing project, readonly database without subsequent import progress, idle progress, and a generic external startup-classifier failure each produce a precise bounded outcome",
+        "AC-7: readonly-database text is not fatal after verified asset-import progress",
+        "AC-8: focused unit tests prove mode selection, progress reset, idle failure, readonly progression, cleanup, and generic external-classifier routing without launching Unity",
+        "AC-9: one live or staged proof records editor version, canonical project, mode, progress classifier, log reference, and exact success or blocker truth",
+        "AC-10: the final diff excludes #4739 MCP alignment internals, #5332 ILPP signature and threshold logic, Unity scene code, runtime semantics, asset work, and rendering polish",
+        "AC-11: validation selector registration maps the issue-owned wrapper paths to one focused Unity liveness lane and its selector test passes"
+      ],
+      "dependencies": [
+        "Repository-installed adl process status binary",
+        "Configured Unity 6000.5 editor path or later issue-approved baseline",
+        "#4739 only when open-editor proof requires MCP project/endpoint identity",
+        "#5332 owns any reproduced ILPP retry-loop diagnosis",
+        "WP-15 #5354 consumes final proof or explicit blocker"
+      ],
+      "repo_inputs": [
+        "GitHub issue #4741",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+        "adl/tools/test_v0916_unity_observatory_soak_integration.sh",
+        "adl/tools/test_v0916_unity_observatory_unity65_smoke.sh",
+        "docs/tooling/PERMISSION_SAFE_PROCESS_STATUS.md",
+        "preserved predecessor #4741 candidate diff"
+      ],
+      "non_goals": [
+        "Do not repair Unity-MCP project or port alignment",
+        "Do not diagnose ILPP GetDomainName root cause",
+        "Do not modify Unity scene builder or validator semantics",
+        "Do not add asset fallback or investor-facing polish",
+        "Do not build owner binaries or use scratch Unity processes outside the declared mode",
+        "Do not use /private/tmp or broad process scans"
+      ]
+    }
+  }
+}

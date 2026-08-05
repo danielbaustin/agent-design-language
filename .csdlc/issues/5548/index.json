@@ -1,0 +1,221 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5548,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "dd8bbd7e72fcac523e678ee42361ce5864464fe5c54829e6fd1030feaadedcce",
+  "phase": "closed_out",
+  "generation": 10,
+  "digest": "943e924e0805cf3f41ad6432e8e4d5ab03c9d03adbfd69649d990f5af5f266b9",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "subagent:/root/review_5727",
+    "scope": [
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "reviewed_revision": "git-blake3:43451b2eaf433f17eb2719f9e75f1a621885d767:45862a2828b4da5afa32c4310da86d54ad05ad38aabd14a8f3412036a31d19d0",
+    "findings": [],
+    "residual_risks": [
+      "No new source commit belongs to #5548: merged PR #5598 commit aac8eaa7d already introduced the temporary-root git initialization helper and is retained on current origin/main."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": {
+    "pull_request": null,
+    "disposition": "closed_no_pr",
+    "observed_sha": null,
+    "observed_state": "closed_no_pr",
+    "receipt_path": "csdlc-v2/closeout/5548.json",
+    "released_branch": "codex/5548-gate2-temp-root-init",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5548",
+      ".csdlc/locks/5548.lock",
+      ".csdlc/prepared/issues/5548",
+      "csdlc-v2/tests/gate2.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/lifecycle.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5548/retained/design.md",
+  "diagram_path": ".csdlc/issues/5548/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:prepare-5548",
+      "revision": "873f98160fa0cde08b69b1506d00363f4d3a88a8c41a0bb691e014bbca0e2b8c"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "a3fd084a68a990607904b75657772c8110f6361f3153f9a5b98ff1de35c45be2",
+      "rendered_digest": "b5762799431c483b9f5c5a640e0b8d8e51380728edbf9955376c1f361adadcf9",
+      "ast_digest": "4aaf77b0e1b82505107d68313a0d34a902fc50d4a9a6cfa412b24fe300a8053b"
+    },
+    "stp": {
+      "values_digest": "f99f5c86dead3da881a1cec82d0f075cf918a9dc0bf8fb607155919f1138f4f9",
+      "rendered_digest": "feaac282b8b5591f2a683f3438b32bc1ab6dcb006ec805fd68f9078e9833579a",
+      "ast_digest": "dc6013aaa2f8847a4fc1101749e988d7dccdabee797b8f892dabe9ff059fc07a"
+    },
+    "spp": {
+      "values_digest": "cdb52adab60351ad1e1c756b8668ca857ccd7e204790a1033d62b8aca6b02885",
+      "rendered_digest": "c9b59228f7d699d92dfc6ac09c08cb1c49dbbce2033f11fc2ad4c9ecef403e50",
+      "ast_digest": "eb1cf72d814609074efe2eba5240b2194762417e41a813b457b76c8c3f8f8a52"
+    },
+    "vpp": {
+      "values_digest": "f7f24bd41b55a89a6cff73673036631677b6c9d4c2ca27b7e9386ab3576bb897",
+      "rendered_digest": "3ec12ab53876d6bfa30235086596fb7cf914f7a9aa6e6b1d2ff5343604f082f9",
+      "ast_digest": "9504385031dd1ad64d227a72ac191857d73733141c90e7c4d999732e6d7f5237"
+    },
+    "srp": {
+      "values_digest": "2a5aabf1fa9e072628947f636c4705ac7cc8d31bfec4954e7a900ecf27fa800e",
+      "rendered_digest": "eaa10b4978bed681965de234d89c25f34caca660087ee447a60d7b5cbca00d1c",
+      "ast_digest": "f1c45ae57d68686f8ba7d8b4e9e63c0c82b36e30857773c19c56c71c15bea450"
+    },
+    "sor": {
+      "values_digest": "eedcf30d6443b1af00d243cb7a31984b4e50fad9b9a8b9b48db2990956cd3a1b",
+      "rendered_digest": "178a642f270943f1565beea4a3f15d6cf6738fed531c117320491b75384fdf2a",
+      "ast_digest": "1e91d42ff288021fb86ae59e4cb9b7d7f6eb6e230191a5cca685b989ab4598f0"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:prepare-5548",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:prepare-5548",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "subagent:/root/review_5727",
+      "reason": "Advance the recorded no-source execution after current main and retained Gate 2/full-suite/Clippy evidence prove #5598 already supplied the requested fixture-root initialization."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "subagent:/root/review_5727",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "closed_out",
+      "actor": "subagent:/root/review_5727",
+      "reason": "observed approved non-merged terminal disposition"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:prepare-5548",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:prepare-5548",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:prepare-5548",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:prepare-5548",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:claim-hygiene",
+      "reason": "Release preparation-only ownership until issue execution actually starts",
+      "operation": "{\"claim_id\":\"claim-5548-gate2-temp-root-init\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:preparation-does-not-own-execution-paths\",\"previous_owner\":\"codex:prepare-5548\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5548-gate2-temp-root-init",
+      "reason": "Reacquire dormant preparation state for authorized #5548 execution in the existing issue worktree after integrating current origin/main.",
+      "operation": "{\"branch\":\"codex/5548-gate2-temp-root-init\",\"claim_id\":\"claim-5548-gate2-temp-root-init-execution\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5548-gate2-temp-root-init\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5548\",\".csdlc/locks/5548.lock\",\".csdlc/prepared/issues/5548\",\"csdlc-v2/tests/gate2.rs\",\"csdlc-v2/src/store.rs\",\"csdlc-v2/src/lifecycle.rs\"],\"purpose\":\"Execute issue #5548 Gate 2 temporary-root initialization repair without weakening real repository Git-common-dir or terminal receipt invariants.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5548-gate2-temp-root-init",
+      "reason": "Record live #5548 execution outcome after typed claim reacquisition.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Retried typed execution claim reacquisition with the stable C-SDLC v2 binary, reproduced current Gate 2 behavior, and found no additional Rust fix required: current source already initializes the Gate 2 temporary roots enough for the suite to reach and pass its intended assertions while retaining real Git common-directory and terminal receipt invariants.\",\"changes\":[\".csdlc/issues/5548\",\".csdlc/prepared/issues/5548\",\".csdlc/evidence/5548\"],\"artifacts\":[\".csdlc/evidence/5548/gate2.log\",\".csdlc/evidence/5548/csdlc-v2-all-tests.log\",\".csdlc/evidence/5548/strict-clippy.log\",\".csdlc/evidence/5548/fmt.log\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5548-gate2-temp-root-init",
+      "reason": "Record focused Gate 2 validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\"],\"purpose\":\"Prove the Gate 2 temporary-root fixture path reaches its intended assertions and preserves claim/common-directory guard behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5548/gate2.log\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5548-gate2-temp-root-init",
+      "reason": "Record full locked C-SDLC v2 test validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\"],\"purpose\":\"Prove the complete C-SDLC v2 test surface remains green after #5548 execution-state reconciliation.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5548/csdlc-v2-all-tests.log\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5548-gate2-temp-root-init",
+      "reason": "Record strict all-target Clippy validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Prove C-SDLC v2 remains warning-free across all targets.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5548/strict-clippy.log\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "subagent:/root/review_5727",
+      "reason": "Advance the recorded no-source execution after current main and retained Gate 2/full-suite/Clippy evidence prove #5598 already supplied the requested fixture-root initialization.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "subagent:/root/review_5727",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "subagent:/root/review_5727",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the valid #5548 closed-no-PR superseded receipt in the dedicated #5748 authority projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

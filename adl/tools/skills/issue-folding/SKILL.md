@@ -119,7 +119,7 @@ Default closeout mapping:
 
 Recommend:
 
-- `workflow-conductor` or normal execution for `actionable`
+- normal issue execution for `actionable`
 - `pr-closeout` for duplicate, superseded, absorbed, already-satisfied, or obsolete outcomes
 - operator review for `blocked`
 

@@ -1,0 +1,15 @@
+{
+  "issue": 4741,
+  "claim_id": "claim-4741-v0918-wp15-unity-editor-liveness-prep",
+  "expected_owner": "codex:issue-4741-preparation",
+  "expected_generation": 4,
+  "expected_digest": "d95fc9c2599750851a596b42fcd15cca2fc5af9879c8a36e4e0cece4be8c3233",
+  "now_unix_seconds": 1784840269,
+  "actor": "codex:issue-4741-execution",
+  "reason": "Begin bounded #4741 execution after typed doctor pass and explicit operator authorization",
+  "expected_purpose": "Prepare #4741 for bounded v0.91.8 WP-15 Unity editor liveness and batch-proof reliability execution",
+  "purpose": "Execute only #4741 Unity editor liveness, safe proof-mode selection, approved staging, semantic progress classification, focused tests, selector registration, retained live-or-staged proof, review, publication, and closeout; do not absorb #5332 ILPP diagnosis, #4739 MCP alignment, scene work, runtime semantics, assets, or investor rendering",
+  "add_protected_paths": [
+    ".csdlc/evidence/4741"
+  ]
+}

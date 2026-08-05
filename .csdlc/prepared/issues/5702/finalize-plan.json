@@ -1,0 +1,140 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5702,
+  "expected_generation": 0,
+  "expected_digest": "796b70615da11eae0e514baa98814f7821b0214a8554b05af89ec80138e27237",
+  "claim_id": "claim-5702-podcast-launch-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "summary": "Prepared the #5702 Podcast Studio next-week launch plan with audio/RSS as hard launch gates, ten-episode prep, guest support, Deepgram investigation, Agent Logic site alignment, and Gemini review incorporation.",
+  "changes": [
+    "Created a reviewable launch plan under .adl/docs/TBD/ for #5702.",
+    "Recorded audio and RSS as required launch gates rather than optional follow-ons.",
+    "Planned ten generated episode specs, DeepSeek/human guest states, Deepgram comparison, RSS validation, audio QA, redaction, and website design alignment.",
+    "Called Gemini and incorporated or dispositioned the launch-critical review suggestions while truthfully retaining failed/truncated earlier attempts as unavailable."
+  ],
+  "artifacts": [
+    ".adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md",
+    ".csdlc/prepared/issues/5702/validate_podcast_launch_plan.py"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "podcast-plan-contract",
+          "proof_role": "Plan content contract and source-boundary validation",
+          "purpose": "Validate required podcast launch plan content, Gemini review result truth, source evidence paths, and removal of stale local website-path claims.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 256,
+            "tokens": 0
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "docs",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 30,
+          "executable": "python3",
+          "argv": [
+            ".csdlc/prepared/issues/5702/validate_podcast_launch_plan.py"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        },
+        {
+          "id": "diff-hygiene",
+          "proof_role": "Patch hygiene",
+          "purpose": "Ensure the documentation and lifecycle patch has no whitespace diff errors.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 128,
+            "tokens": 0
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [
+            "podcast-plan-contract"
+          ],
+          "parallel_group": "hygiene",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 30,
+          "executable": "git",
+          "argv": [
+            "diff",
+            "--check"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        },
+        {
+          "id": "typed-doctor",
+          "proof_role": "C-SDLC lifecycle integrity",
+          "purpose": "Verify typed lifecycle state for #5702 before finalizing implementation evidence.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 256,
+            "tokens": 0
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [
+            "diff-hygiene"
+          ],
+          "parallel_group": "lifecycle",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 30,
+          "executable": "cargo",
+          "argv": [
+            "run",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--bin",
+            "csdlc-doctor",
+            "--",
+            "--repo",
+            ".",
+            "--issue",
+            "5702"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "podcast-plan-contract",
+        "diff-hygiene",
+        "typed-doctor"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 1,
+      "memory_mib": 512,
+      "tokens": 0
+    },
+    "root": ".",
+    "evidence_dir": ".csdlc/evidence/5702",
+    "cancellation_file": null
+  }
+}

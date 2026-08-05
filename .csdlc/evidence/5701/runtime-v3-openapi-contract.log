@@ -1,0 +1,10 @@
+
+running 3 tests
+test observatory_wss_documents_real_bidirectional_frame_boundary ... ok
+test openapi_paths_match_current_runtime_v3_axum_route_inventory ... ok
+test runtime_and_observatory_openapi_contracts_are_valid_and_disjoint ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running tests/openapi_contract.rs (target/debug/deps/openapi_contract-1f90dc3eafd590b4)

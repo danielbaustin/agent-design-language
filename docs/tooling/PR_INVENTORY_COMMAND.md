@@ -5,9 +5,8 @@
 Release-tail review needs a repo-native way to list open pull requests without
 falling back to raw `gh pr list`. The approved command is:
 
-```bash
-bash adl/tools/pr.sh pr-inventory --json
-```
+The former v1 PR-inventory wrapper is retired. Use the typed C-SDLC v2 PR-state
+and GitHub request surfaces after resolving the installed generation.
 
 Use this command when a release, sprint, or review pass needs current PR
 inventory truth before deciding whether an issue, PR, or closeout tail is still
@@ -57,10 +56,9 @@ print token contents or credential material.
 Focused proof for this command should include:
 
 ```bash
-cargo check --manifest-path adl/Cargo.toml --bin adl-pr-inventory
-cargo build --manifest-path adl/Cargo.toml --bin adl-pr-inventory
-bash adl/tools/pr.sh pr-inventory --help
-ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token bash adl/tools/pr.sh pr-inventory --json
+cargo check --manifest-path csdlc-v2/Cargo.toml --bin csdlc-pr-state
+.adl/bin/csdlc-v2/csdlc-install resolve --repo . --issue <issue>
+.adl/bin/csdlc-v2/csdlc-pr-state --help
 ```
 
 If the live inventory currently has no open PRs, the live command is a valid

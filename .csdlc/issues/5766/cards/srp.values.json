@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5766,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime][api] Reconcile CSM runtime advertised endpoints with mounted routes",
+    "slug": "csm-runtime-endpoint-inventory",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/5766\n.csdlc/issues/5766\n.csdlc/locks/5766.lock\n.csdlc/prepared/issues/5766\nadl-runtime/src/runtime_api.rs\nadl/src/csm_runtime_api.rs",
+      "review_revision": "git-blake3:75a78b883058a7251a1302b43d51cf60ad5ebce3:a7a81cf04e2213d8a4650641bd750effe96675b9432f25f75656d49e93577aef",
+      "reviewer": "subagent:019fc960-976d-7500-9492-86cc9b2ca187",
+      "review_prompts": [
+        "Check that advertised availability and mounted routes agree.",
+        "Check that Runtime v3 kernel readiness is not confused with CSM runtime API readiness.",
+        "Check that tests fail on future inventory/router drift."
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The worktree contains unrelated untracked .csdlc/evidence/5344/work/ content, left untouched and outside #5766 scope.",
+        "The new router test constructs the Axum router but does not drive HTTP requests through it; direct handler tests cover health and metrics, while existing WSS tests cover websocket behavior."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

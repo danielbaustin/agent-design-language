@@ -1,0 +1,20 @@
+{
+  "issue": 5713,
+  "expected_generation": 2,
+  "expected_digest": "e6d4f16e5e8859564d8a0975e9be00c2d5d45705d16409caca229751994ffb71",
+  "claim_id": "claim-5713-runtime-v3-rcgen-local-tls",
+  "reviewer": "subagent:gpt-5.5-sartre",
+  "assigned_by": "codex:5713-review-remediation",
+  "scope": [
+    "adl-runtime/Cargo.toml",
+    "adl-runtime/Cargo.lock",
+    "adl-runtime/src/lib.rs",
+    "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
+    "adl-runtime/src/bin/adl-runtime-lifecycle-soak.rs",
+    "adl-runtime/src/local_tls.rs",
+    "adl-runtime/tests/local_tls.rs",
+    "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+    ".csdlc/evidence/5713",
+    ".csdlc/issues/5713"
+  ]
+}

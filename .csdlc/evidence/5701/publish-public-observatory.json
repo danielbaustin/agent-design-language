@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5701,
+  "expected_generation": 20,
+  "expected_digest": "5f7cb0083172dd2e756b31e278394d1e462b4f2efc29b24cc886215b2f215448",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5701-runtime-v3-openapi-contracts",
+  "title": "[v0.91.8][runtime-v3][api] Define Runtime v3 OpenAPI contracts (#5701)",
+  "body": "Closes #5701\n\n## Summary\n\nDefines the complete versioned Runtime v3 Core and Observatory OpenAPI 3.1 contracts and serves them from the guardian-launched Axum/Tokio/Rustls listener. Health, metrics, and Observatory reads are public. Observatory writes require an explicit operator login, and signed control commands remain subject to runtime signature, principal, capability, identity, and command-policy verification. The separate HTML Observatory client now supports public live reads plus login, logout, and signed command submission.\n\n## Validation\n\n- Kernel control routes: 21/21 passed.\n- OpenAPI contract suite: 6/6 passed.\n- Observatory WSS: 6/6 passed, including anonymous feed, real login elevation, pre-login write rejection, post-login signed Snapshot acceptance, invalid-login read continuity, and token-rotation revocation.\n- Strict all-target Clippy passed for adl-runtime-kernel.\n- HTML Observatory integrated proof passed.\n- Live Guardian served anonymous health, metrics, and Observatory data on port 20997; the browser client displayed the live secure stream and enabled writes only after successful login.\n- Exact-head GPT-5.5 review passed with zero findings at c22b25248166c277e7319d5e37f7e873fab560cd.\n\n## Security boundary\n\nReads do not require a session token. Writes require login. The browser does not generate or retain a signing key; it transmits a pre-signed command envelope, and Runtime v3 performs the authoritative cryptographic and policy checks.",
+  "draft": false,
+  "remote": "origin",
+  "token_file": "/Users/daniel/keys/github.token"
+}

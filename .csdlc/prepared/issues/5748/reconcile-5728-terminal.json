@@ -1,0 +1,9 @@
+{
+  "issue": 5728,
+  "expected_initialization_digest": "1f206dffb8c87f6c95e7c98a2838af5de859dc58673f4b6d662a69612ca25910",
+  "expected_branch": "codex/5748-terminal-recovery",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5748",
+  "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+  "reason": "Materialize lane A's valid #5728 terminal receipt in the dedicated #5748 authority projection.",
+  "follow_ups": []
+}

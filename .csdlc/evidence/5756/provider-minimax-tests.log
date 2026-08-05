@@ -1,0 +1,9 @@
+
+running 2 tests
+test provider_adapter::tests::minimax_non_success_status_error_envelope_is_billing_blocked ... ok
+test provider_adapter::tests::minimax_success_status_error_envelope_is_billing_blocked ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 1931 filtered out; finished in 0.19s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running unittests src/lib.rs (adl/target/debug/deps/adl-7ec99f61f648a583)

@@ -50,3 +50,9 @@ WP-02 `#5336` may deliberately revise the pinned baseline and classification
 rules, but that change requires review. Runtime v2 deletion remains forbidden
 until #5591/#5592/#5589/#5590 and #5347 consume the resulting per-row
 dispositions at exact revisions.
+
+WP-21 `#5362` consumes this preservation crosswalk together with the closed
+WP-21 child-track handoff inputs #5352, #4758, #4759, #4760, #4761, #4762,
+#4763, #5007, and #5107. That consumption preserves feature-list disposition
+truth only; it does not start v0.92 implementation or convert retained handoff
+evidence into birthday, launch, or Adaptive Learning runtime claims.

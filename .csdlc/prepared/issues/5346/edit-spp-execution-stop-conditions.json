@@ -1,0 +1,25 @@
+{
+  "issue": 5346,
+  "card": "spp",
+  "expected_generation": 5,
+  "expected_digest": "f2ce33555eeb7720dc2a14d4fa5c6206a673e8b09c58a92dc9ba22cc2c1650f3",
+  "claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "actor": "codex:5346-wp13-execution-owner",
+  "reason": "Replace stale stop conditions with current upstream and peer-disjointness checks.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "Any #5344/#5343/#5358/#5361/#5384 terminal receipt, claim release, merge state, or ancestry predicate is absent or contradictory",
+      "The #5354 or #5352 GitHub closed/completed merge truth or merge-commit ancestry predicate is absent or contradictory",
+      "The #5346 and #5347 manifests overlap or any #5346 path lacks exactly one disposition and owner",
+      "The reviewed #5346 manifest does not match the exact execution revision",
+      "The rollback window or selector cutover evidence is incomplete",
+      "The denominator cannot be reproduced or deleted/retained/new LoC would be mixed",
+      "A retained path lacks an owner/justification or replacement proof is absent for a removed path",
+      "A product path cannot be claimed without collision, requires broad/glob deletion, or belongs to #5347 external bands or Runtime v2",
+      "Any required validation would be deferred, skipped, host-bound, secret-bearing, stale, or replaced by metadata"
+    ]
+  },
+  "fail_after_backup": false
+}

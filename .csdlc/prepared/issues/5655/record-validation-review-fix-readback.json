@@ -1,0 +1,25 @@
+{
+  "issue": 5655,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "cda3628c546f37310b915ae448ed361a45fa9051c58583e9bc6c3588d71f084b",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Record review-fix validation for exact issue update and close readback.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml"
+      ],
+      "purpose": "Prove review fixes for issue_update/issue_close exact readback and expanded focused mutation coverage without regressing C-SDLC v2.",
+      "outcome": "passed",
+      "evidence_ref": "Full suite passed after Boole review fixes, including gate_github_actions 6/6 covering create/comment/update/close/stale-readback and doc-test 1/1; TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp; CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target"
+    }
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 5352,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "434cec46b110878837718d56bbfb783e0898854b1749a22c525b84d4e1da3b56",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "actor": "codex:wp21-final-handoff",
+  "reason": "The exact reviewed head b1ec4f120 passed with zero blockers after all actionable findings were fixed; the sprint-wide review remains an explicit pre-merge gate.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

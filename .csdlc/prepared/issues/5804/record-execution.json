@@ -1,0 +1,28 @@
+{
+  "issue": 5804,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "6dbe1af57e28551346dd126ee532434f2d71d574a42c6d7ff853e7a3d994171c",
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the bounded external-review documentation readiness repair.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Repaired the final v0.91.8 external-review handoff and current milestone truth without performing the review or closing WP-19 #5357.",
+    "changes": [
+      "Replaced placeholder implementation-manifest guidance with concrete source, test, and evidence entrypoints.",
+      "Refreshed open-issue, completed parity, demo-matrix, and v0.92 activation truth.",
+      "Removed machine-local paths from reusable review and podcast commands.",
+      "Refreshed the 122-row feature crosswalk digest, line map, and four canonical fields from the current source authority.",
+      "Added a single issue-local validator for the complete 75-document review corpus."
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.8/review/THIRD_PARTY_REVIEW_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+      ".csdlc/prepared/issues/5804/validate-review-corpus.rb"
+    ]
+  }
+}

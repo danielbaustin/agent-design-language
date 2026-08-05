@@ -1,0 +1,27 @@
+{
+  "issue": 5356,
+  "expected_claim_id": "claim-5356-v0918-wp18-internal-review-plan",
+  "expected_generation": 1,
+  "now_unix_seconds": 1785696556,
+  "replacement": {
+    "id": "claim-5356-v0918-wp18-review-execution-20260802",
+    "owner": "codex:current-session-wp18-review",
+    "generation": 1,
+    "acquired_unix_seconds": 1785696556,
+    "expires_unix_seconds": 1785782956,
+    "heartbeat_unix_seconds": 1785696556,
+    "branch": "codex/5356-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5356",
+      ".csdlc/issues/5356",
+      ".csdlc/locks/5356.lock",
+      ".csdlc/prepared/issues/5356",
+      "docs/milestones/v0.91.8/review/README.md",
+      "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md"
+    ],
+    "purpose": "Prepare the WP-18 #5356 internal review plan only; do not execute the internal review until WP-17 #5360 is merged, typed closed_out, receipt-backed, claim-free, and ancestral"
+  },
+  "recovery_actor": "codex:current-session-wp18-review",
+  "reason": "Operator authorized WP-18 review execution; recover expired preparation claim before typed transition."
+}

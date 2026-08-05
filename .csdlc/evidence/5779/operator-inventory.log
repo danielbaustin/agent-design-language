@@ -1,0 +1,24 @@
+
+running 16 tests
+test current_guidance_guard_rejects_exact_former_wrapper_command ... ok
+test ten_skills_are_typed_and_bind_the_generation_selector ... ok
+test operator_guidance_is_bound_to_manifest_and_coexistence_contract ... ok
+test coexistence_fails_closed_when_v1_or_v2_is_missing ... ok
+test external_cargo_target_is_exact_existing_and_outside_checkout ... ok
+test current_operator_guidance_has_no_sunset_v1_route ... ok
+test current_bootstrap_guidance_does_not_call_deleted_prompt_wrapper ... ok
+test shared_destination_and_non_executable_sources_are_rejected_without_mutation ... ok
+test missing_late_source_leaves_prior_generation_untouched ... ok
+test untracked_build_input_is_rejected_before_cargo_runs ... ok
+test dirty_shared_owner_dependency_is_rejected_before_cargo_runs ... ok
+test stale_owner_binary_provenance_fails_closed ... ok
+test repo_wide_active_command_scan_enforces_final_authority ... ok
+test freshly_installed_stable_edit_binary_is_executable ... ok
+test symlinked_installed_binaries_fail_coexistence ... ok
+test installer_records_provenance_without_replacing_other_files ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.51s
+
+   Compiling csdlc-v2 v0.1.0 (/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5779/csdlc-v2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.38s
+     Running tests/gate10a.rs (csdlc-v2/target/debug/deps/gate10a-6ff876183f5b0bb4)

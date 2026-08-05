@@ -1,0 +1,27 @@
+{
+  "issue": 5719,
+  "base_branch": "main",
+  "branch": "codex/5719-ci-coverage-page-policy",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5719-ci-coverage-page-policy",
+    "owner": "codex:5719-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785363942,
+    "expires_unix_seconds": 1785968742,
+    "heartbeat_unix_seconds": 1785363942,
+    "branch": "codex/5719-ci-coverage-page-policy",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5719",
+      ".csdlc/locks/5719.lock",
+      ".csdlc/prepared/issues/5719",
+      ".github/workflows/ci.yaml",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_validation_manager.sh"
+    ],
+    "purpose": "Fix CI path-policy selection so podcast/demo page-only PRs do not schedule duplicate hosted runtime and workspace coverage while preserving full coverage for Rust/runtime/provider/tooling changes"
+  }
+}

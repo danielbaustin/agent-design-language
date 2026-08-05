@@ -68,7 +68,7 @@ The supported workflow after the cut line should be:
    prompt-template registry.
 2. `pr doctor` validates all five cards and blocks execution until `SIP`,
    `STP`, and `SPP` are design-time ready.
-3. `workflow-conductor` routes lifecycle and card defects to the appropriate
+3. Typed doctor evidence routes lifecycle and card defects to the appropriate
    skill instead of improvising fixes.
 4. `pr run` binds the issue to a dedicated worktree and branch.
 5. `pr finish` validates the intended artifact set and opens or updates the PR.

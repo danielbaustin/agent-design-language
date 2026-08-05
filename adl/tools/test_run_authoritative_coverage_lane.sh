@@ -88,6 +88,34 @@ if ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS=0 "$SCRIPT" --print-plan >/dev/null 2>&
   echo "expected zero coverage build jobs to fail closed" >&2
   exit 1
 fi
+shard_plan="$(ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE=collect ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT=4 ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX=2 "$SCRIPT" --profile workspace --print-plan)"
+for required in \
+  "report_mode=collect" \
+  "shard_count=4" \
+  "shard_index=2"
+do
+  if ! grep -Fx "$required" <<<"$shard_plan" >/dev/null; then
+    echo "expected shard plan token: $required" >&2
+    echo "$shard_plan" >&2
+    exit 1
+  fi
+done
+if ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE=bogus "$SCRIPT" --print-plan >/dev/null 2>&1; then
+  echo "expected invalid coverage report mode to fail closed" >&2
+  exit 1
+fi
+if ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT=0 "$SCRIPT" --print-plan >/dev/null 2>&1; then
+  echo "expected zero coverage shard count to fail closed" >&2
+  exit 1
+fi
+if ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT=2 ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX=3 "$SCRIPT" --print-plan >/dev/null 2>&1; then
+  echo "expected shard index greater than count to fail closed" >&2
+  exit 1
+fi
+if ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE=report "$SCRIPT" --profile all --print-plan >/dev/null 2>&1; then
+  echo "expected report mode with profile=all to fail closed" >&2
+  exit 1
+fi
 if "$SCRIPT" --profile invalid --print-plan >/dev/null 2>&1; then
   echo "expected invalid coverage profile to fail closed" >&2
   exit 1
@@ -130,6 +158,10 @@ for required_fragment in \
   "--test-threads" \
   "ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS" \
   "ADL_AUTHORITATIVE_COVERAGE_PARTITIONS" \
+  "ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE" \
+  "ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT" \
+  "ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX" \
+  "ADL_AUTHORITATIVE_COVERAGE_IMPORT_PROFRAW_DIR" \
   "ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS" \
   "ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN" \
   "ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERNS" \
@@ -146,6 +178,8 @@ for required_fragment in \
   "merge_coverage_summaries.py" \
   'FINAL_SUMMARY_PATH="$COVERAGE_OUTPUT_ROOT/coverage-summary.json"' \
   'cp "$FINAL_SUMMARY_PATH" "$LEGACY_FINAL_SUMMARY_PATH"' \
+  'COVERAGE_REPORT_MODE" = collect' \
+  'COVERAGE_REPORT_MODE" = report' \
   'export ADL_CSM_DISK_FLOOR_BYTES="${ADL_CSM_DISK_FLOOR_BYTES:-0}"'
 do
   case "$script_text" in
@@ -441,6 +475,66 @@ if filenames != expected:
 if summary["totals"]["lines"] != {"count": 10, "covered": 8, "percent": 80.0}:
     raise SystemExit(f"recomputed line totals mismatch: {summary['totals']['lines']!r}")
 PY
+
+collect_log="$temp_root/collect-shard.log"
+PATH="$bin_dir:$PATH" \
+AUTHORITATIVE_CARGO_LOG="$collect_log" \
+ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
+ADL_COVERAGE_RUN_ID="run-collect-shard" \
+ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE=collect \
+ADL_AUTHORITATIVE_COVERAGE_PARTITIONS=4 \
+ADL_AUTHORITATIVE_COVERAGE_SHARD_COUNT=2 \
+ADL_AUTHORITATIVE_COVERAGE_SHARD_INDEX=2 \
+  bash "$SCRIPT" --profile workspace --authority pr_policy_surface_tooling_only --event-name pull_request
+for required in "count:2/4" "count:4/4"; do
+  if ! grep -F -- "$required" "$collect_log" >/dev/null 2>&1; then
+    echo "expected collect shard to run selected partition $required" >&2
+    cat "$collect_log" >&2
+    exit 1
+  fi
+done
+for forbidden in "count:1/4" "count:3/4" "cmd=llvm-cov report --json --summary-only"; do
+  if grep -F -- "$forbidden" "$collect_log" >/dev/null 2>&1; then
+    echo "collect shard must not run unselected partition or report: $forbidden" >&2
+    cat "$collect_log" >&2
+    exit 1
+  fi
+done
+if ! find "$scratch_root/target/llvm-cov-target/run-collect-shard/workspace" -type f -name '*.profraw' -print -quit | grep -q .; then
+  echo "expected collect shard to retain profraw evidence" >&2
+  exit 1
+fi
+
+import_root="$temp_root/import-profraw"
+mkdir -p "$import_root"
+printf 'imported profile\n' > "$import_root/imported.profraw"
+report_log="$temp_root/report-only.log"
+PATH="$bin_dir:$PATH" \
+AUTHORITATIVE_CARGO_LOG="$report_log" \
+ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
+ADL_COVERAGE_RUN_ID="run-report-only" \
+ADL_AUTHORITATIVE_COVERAGE_REPORT_MODE=report \
+ADL_AUTHORITATIVE_COVERAGE_IMPORT_PROFRAW_DIR="$import_root" \
+ADL_FAKE_CARGO_REQUIRE_PROFRAW=1 \
+  bash "$SCRIPT" --profile workspace --authority pr_policy_surface_tooling_only --event-name pull_request
+if grep -F -- "--partition" "$report_log" >/dev/null 2>&1; then
+  echo "report-only mode must not run test partitions" >&2
+  cat "$report_log" >&2
+  exit 1
+fi
+if ! grep -F -- "cmd=llvm-cov report --json --summary-only --output-path $scratch_root/coverage-output/run-report-only/coverage-summary.adl.json" "$report_log" >/dev/null 2>&1; then
+  echo "report-only mode must render the workspace summary from imported profiles" >&2
+  cat "$report_log" >&2
+  exit 1
+fi
+if [ -e "$scratch_root/target/llvm-cov-target/run-report-only/workspace/prebuild-sentinel.profraw" ]; then
+  echo "report-only mode must delete compile-only profiles before importing shard profiles" >&2
+  exit 1
+fi
+if [ ! -s "$scratch_root/coverage-output/run-report-only/coverage-summary.adl.json" ]; then
+  echo "expected report-only workspace summary" >&2
+  exit 1
+fi
 
 for selected_profile in workspace adl-runtime; do
   isolated_log="$temp_root/isolated-$selected_profile.log"

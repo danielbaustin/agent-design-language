@@ -1,0 +1,14 @@
+{
+  "issue": 5748,
+  "claim_id": "claim-5748-terminal-recovery",
+  "expected_generation": 0,
+  "expected_digest": "130075c25c4031c439a06016c52a760cbca493a36a79f3ce36073f9dd1491990",
+  "now_unix_seconds": 1785539848,
+  "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+  "reason": "Authorize aggregate materialization for the new valid #4760 receipt and the #5728/#5735 receipts delivered by lane A.",
+  "add_protected_paths": [
+    ".csdlc/issues/4760",
+    ".csdlc/issues/5728",
+    ".csdlc/issues/5735"
+  ]
+}

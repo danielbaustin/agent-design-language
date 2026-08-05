@@ -1,0 +1,66 @@
+{
+  "issue": 5671,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5671/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5671/diagram.mmd",
+  "design_reviewer": "codex:5671-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5671-anthropic-opus-5",
+    "owner": "codex:5671-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1784851200,
+    "expires_unix_seconds": 1785456000,
+    "heartbeat_unix_seconds": 1784851200,
+    "branch": "codex/5671-anthropic-opus-5",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5671",
+      ".csdlc/locks/5671.lock",
+      ".csdlc/prepared/issues/5671",
+      "adl/src/provider/profiles.rs",
+      "adl/src/provider/mod.rs",
+      "adl/src/cli/provider_cmd.rs"
+    ],
+    "purpose": "Implement and validate the Claude Opus 5 provider profile and setup route"
+  },
+  "initial": {
+    "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+    "slug": "anthropic-claude-opus-5-provider",
+    "version": "v0.91.8",
+    "goal": "Add a first-class Claude Opus 5 provider profile and setup route using the existing Rust-native Anthropic Messages adapter.",
+    "required_outcome": "Profile expansion, setup generation, and focused mocked adapter proof for claude-opus-5.",
+    "declared_scope": ["adl/src/provider/profiles.rs", "adl/src/provider/mod.rs", "adl/src/cli/provider_cmd.rs"],
+    "acceptance_criteria": [
+      "AC-1: claude:claude-opus-5 resolves to the Anthropic provider kind, endpoint, and canonical model id.",
+      "AC-2: Existing Claude profiles remain unchanged and profile expansion preserves vendor identity.",
+      "AC-3: provider setup claude-opus-5 emits the profile and ANTHROPIC_API_KEY route.",
+      "AC-4: Mocked Anthropic adapter proof verifies claude-opus-5 and the canonical version header.",
+      "AC-5: Focused Rust validation and exact-head review pass without a live provider call."
+    ],
+    "authority_boundary": ["The change defines local provider routing only; it does not provision credentials, call Anthropic live, or approve release policy."],
+    "task_boundary": "Implement the Opus 5 profile/setup route and bounded tests in the existing provider modules.",
+    "deliverables": ["provider profile", "setup template", "focused Rust tests", "design and diagram"],
+    "dependencies": ["existing Rust-native Anthropic Messages adapter", "canonical model id claude-opus-5"],
+    "repo_inputs": ["adl/src/provider/profiles.rs", "adl/src/provider/mod.rs", "adl/src/cli/provider_cmd.rs", "adl/src/provider/http_family.rs"],
+    "non_goals": ["new transport", "live API call", "credential provisioning", "pricing or benchmarking"],
+    "operator_constraints": ["never write main", "use typed v2 binaries", "no raw gh", "no AWS", "no direct card/state edits"],
+    "steps": [
+      {"id":"S1","action":"Bind the issue worktree and normalize the six lifecycle cards","acceptance_ids":["AC-1","AC-2","AC-3"],"status":"pending"},
+      {"id":"S2","action":"Implement profile expansion, setup generation, and focused mock proof","acceptance_ids":["AC-1","AC-2","AC-3","AC-4"],"status":"pending"},
+      {"id":"S3","action":"Run focused validation, exact-head review, and publish a draft PR","acceptance_ids":["AC-5"],"status":"pending"}
+    ],
+    "invariants": ["Existing Claude profiles remain compatible", "Anthropic credentials stay on ANTHROPIC_API_KEY", "No live provider call is required", "main remains untouched"],
+    "risks": ["Routing Opus 5 through generic HTTP would lose Anthropic request semantics", "setup family drift", "unsupported model id claims"],
+    "planning_profile": "small",
+    "stop_conditions": ["canonical model id cannot be verified", "existing adapter lacks mock proof surface", "focused validation fails without a bounded repair"],
+    "validation_lanes": [
+      {"lane":"provider-profile-focused","proof_role":"registry, expansion, setup, and mocked Anthropic request proof","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5"],"deterministic":true,"resource_profile":"small","budget_seconds":600,"budget_tokens":4000,"argv":["cargo","test","--manifest-path","adl/Cargo.toml","provider_"],"parallel_group":"local","defer_reason":null},
+      {"lane":"provider-build-focused","proof_role":"compile the touched Rust provider surface","acceptance_ids":["AC-5"],"deterministic":true,"resource_profile":"small","budget_seconds":300,"budget_tokens":2000,"argv":["cargo","check","--manifest-path","adl/Cargo.toml"],"parallel_group":"local","defer_reason":null}
+    ],
+    "failure_policy": "Fail closed on model, endpoint, credential, or proof drift; repair only the bounded provider surface.",
+    "review_prompts": ["Check that Opus 5 uses the Rust Anthropic adapter rather than generic HTTP", "Check compatibility of existing Claude profiles", "Check setup output, credential boundary, and mocked request proof"],
+    "review_scope": "provider profile registry, setup template, and focused tests",
+    "plan_summary": "Add the canonical Claude Opus 5 profile and setup route on the existing Rust Anthropic adapter, prove it with focused mocks, review the exact head, and publish a draft PR."
+  }
+}

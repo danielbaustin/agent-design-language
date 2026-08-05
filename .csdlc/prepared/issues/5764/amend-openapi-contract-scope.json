@@ -1,0 +1,13 @@
+{
+  "issue": 5764,
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "expected_generation": 1,
+  "expected_digest": "27f3a3448e1c0e2b067bc00c326ba81b4b3c9859f1eca0b69e197b005b60d677",
+  "now_unix_seconds": 1785574680,
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Add the actual Runtime v3 OpenAPI file and OpenAPI route contract test before implementing the readiness endpoint repair.",
+  "add_protected_paths": [
+    "docs/api/runtime-v3/v1/openapi.json",
+    "adl-runtime-kernel/tests/openapi_contract.rs"
+  ]
+}

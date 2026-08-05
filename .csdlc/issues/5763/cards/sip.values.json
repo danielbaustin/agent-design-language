@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5763,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs][quality] Reconcile canonical feature crosswalk digest after WP-14 decomposition",
+    "slug": "feature-crosswalk-digest",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Restore deterministic feature-crosswalk validation without weakening the digest guard or widening docs scope.",
+      "required_outcome": "The crosswalk artifact and deterministic validator agree with the current 122-row canonical feature list and retain exact row-by-row parity.",
+      "declared_scope": [
+        "current source-row digest in docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+        "issue-local lifecycle and evidence records for #5763"
+      ],
+      "authority_boundary": [
+        "Do not edit canonical feature-list prose unless validation proves a source artifact mismatch outside the stale digest",
+        "Do not weaken or remove validate_feature_crosswalk.rb digest, row, source-line, owner, classification, or canonical-field checks",
+        "Do not widen documentation scope beyond the stale digest reconciliation"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 lifecycle only",
+        "Use /Volumes/FastWork/adl-wp-5763 as the issue worktree",
+        "Never use /private/tmp",
+        "Never edit root main",
+        "Run one bounded GPT-5.5 review before PR",
+        "PR body must include Closes #5763",
+        "Do not block on post-merge typed closeout"
+      ]
+    }
+  }
+}

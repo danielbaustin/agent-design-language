@@ -1,0 +1,54 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5687,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][review] Complete bounded Opus 5 review of Runtime v3",
+    "slug": "recordless-terminal-recovery-5687",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Validate exact closure evidence and atomically retain terminal authority.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Retain terminal recovery evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "target projection and receipt are absent before recovery",
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ],
+      "risks": [
+        "remote evidence supplied to this deterministic operation must come from the typed GitHub observation surface"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "existing target authority",
+        "stale recovery authority",
+        "inconsistent closure evidence"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5687/retained/design.md",
+      "design_digest": "acf242ca7b24b7e01ac8a4a83bf8f32b6338b4d8b2282d81f6b141c9169fc710",
+      "diagram_ref": ".csdlc/issues/5687/retained/diagram.mmd",
+      "diagram_digest": "de2627101e9f957410bd62c164f8e6781933453e4055198f6d9b023d1d9c4e56"
+    }
+  }
+}

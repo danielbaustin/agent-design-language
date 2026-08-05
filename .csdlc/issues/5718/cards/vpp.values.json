@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5718,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][observatory] Replace stale v0.91.7 product branding",
+    "slug": "recordless-terminal-recovery-5718",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "terminal-evidence",
+          "proof_role": "Validate observed closure evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 100,
+          "argv": [
+            "csdlc-github-issue",
+            "run",
+            "--request",
+            ".csdlc/prepared/issues/5748/github-read-5718.json"
+          ],
+          "parallel_group": "terminal-recovery",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed without exact, internally consistent terminal evidence.",
+      "design_ref": ".csdlc/issues/5718/retained/design.md",
+      "design_digest": "37d1dd915e6f55633c25837c1d659024cf74147f295fb9a73fd6d7667562912f",
+      "diagram_ref": ".csdlc/issues/5718/retained/diagram.mmd",
+      "diagram_digest": "fc3b9bcf52683579264882da57a1459d2fe93b2898c5e5e1e025c882e15d0725"
+    }
+  }
+}

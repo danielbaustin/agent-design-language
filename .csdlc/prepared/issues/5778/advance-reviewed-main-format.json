@@ -1,0 +1,13 @@
+{
+  "issue": 5778,
+  "card": "srp",
+  "expected_generation": 10,
+  "expected_digest": "2f321636ab6179fe6391ff76806035eff0a83e1bf296dc1168c1dbf890dea9a4",
+  "claim_id": "claim-5778-derived-terminal-finish",
+  "actor": "codex:5778-implementation",
+  "reason": "Independent exact-head review passed after current-main alignment and the separately tracked #5783 formatter repair.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

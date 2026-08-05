@@ -1,0 +1,12 @@
+{
+  "issue": 5655,
+  "expected_generation": 6,
+  "expected_digest": "1831bcdc26fb1f7c9d9d91abe7a614f88e8eb08c1afa765b2f4d55ef50ccd01f",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "now_unix_seconds": 1784923947,
+  "reason": "Cover the typed stale-claim release record for #5648 that was required to unblock #5655 implementation scope.",
+  "add_protected_paths": [
+    ".csdlc/issues/5648"
+  ]
+}

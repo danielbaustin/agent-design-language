@@ -1,0 +1,22 @@
+{
+  "issue": 5360,
+  "card": "spp",
+  "expected_generation": 5,
+  "expected_digest": "b3fa2b5e8c0b4dac6fcbe2c6935bbfe3528d949e4216b545a1838990ca6f571b",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "Align stop conditions with merge-gated WP-17 execution and WP-18 handoff.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "#5351 merge or passing exact-head integrated proof cannot be verified as ancestral",
+      "a required statement lacks exact evidence or has contradictory owner truth",
+      "a documentation path is unreviewed, colliding, generated, or outside typed claim scope",
+      "implementation would change product behavior or require Runtime v2, AWS, credentials, paid services, hidden network authority, hard-coded addresses, or private context",
+      "a new dependency, duplicate authority, unsupported parser, budget breach, failed or deferred gate, or stale review appears",
+      "WP-18 would begin before #5360 merges"
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5710,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5710-csdlc-v2-closeout-safe-prune-recovery",
+  "title": "[v0.91.8][csdlc-v2][closeout] Repair terminal closeout and safe-prune recovery",
+  "body": "Closes #5710\n\n## Summary\n\n- reconcile metadata-only terminal publication head drift before typed closeout\n- validate terminal disposition before any readiness mutation\n- classify and retain issue evidence before fail-closed worktree pruning\n- reject staged, unrelated-lock, substantive, and unclassified dirty state\n- classify stranded closed issues with executable recovery actions\n\n## Validation\n\n- `cargo fmt --manifest-path csdlc-v2/Cargo.toml --all --check`\n- `cargo test --manifest-path csdlc-v2/Cargo.toml --test gate7_lifecycle` (`37 passed`)\n- bounded subagent review completed; six findings fixed; final review found no actionable findings\n\n## Boundary\n\nThe post-merge v0.91.8 live recovery sweep remains a closeout-stage proof and is not claimed by this pre-merge PR.",
+  "draft": false,
+  "revision": "git-blake3:7165a067a4f5f4e55231860481dfaa8b9c7ba2aa:e61e744ed75c2904f366c81d1140d0c4120444393cdc4c27b72d37ef45f0a659",
+  "commit_sha": "7165a067a4f5f4e55231860481dfaa8b9c7ba2aa"
+}

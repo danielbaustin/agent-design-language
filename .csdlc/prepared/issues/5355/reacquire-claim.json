@@ -1,0 +1,27 @@
+{
+  "issue": 5355,
+  "expected_claim_id": "claim-5355-v0918-preparation",
+  "expected_generation": 0,
+  "expected_digest": "5d0ad7ec04ebc94902eed72afe624999e9de2d68d91b12a3b19fe4975a5fc3b9",
+  "now_unix_seconds": 1785865720,
+  "replacement": {
+    "id": "claim-5355-v0918-preparation",
+    "owner": "codex:5355-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1785865720,
+    "expires_unix_seconds": 1786470520,
+    "heartbeat_unix_seconds": 1785865720,
+    "branch": "codex/5355-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5355",
+      ".csdlc/locks/5355.lock",
+      ".csdlc/prepared/issues/5355",
+      ".csdlc/evidence/5355"
+    ],
+    "purpose": "Prepare #5355 WP-21A v0.91.8 next-milestone closeout-planning handoff only; no execution until WP-21 #5362 is live-merged and ancestral"
+  },
+  "actor": "codex:5355-preparation-owner",
+  "recovery_actor": "codex:5355-preparation-owner",
+  "reason": "Reacquire expired issue-local preparation claim before typed card preparation."
+}

@@ -1,0 +1,22 @@
+{
+  "issue": 5670,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "f1ec21e04992bb8c130ee4f6ca6e56d1003966da710781b69ae0f84569fafe2e",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:issue-5670-slot-1",
+  "reason": "Record focused validation 4 for hosted coverage sharding.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        "-e",
+        "require 'yaml'; YAML.safe_load(File.read('.github/workflows/ci.yaml'), aliases: true)"
+      ],
+      "purpose": "Verify the updated GitHub Actions workflow parses as YAML.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5670/ci-yaml-parse.log"
+    }
+  }
+}

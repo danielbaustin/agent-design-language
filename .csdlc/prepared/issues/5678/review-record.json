@@ -1,0 +1,16 @@
+{
+  "issue": 5678,
+  "expected_generation": 1,
+  "expected_digest": "f3ffc2124779bd06e9eddba9fb61986051190e4d4f77b542c60a9f295c48e0df",
+  "claim_id": "claim-5678-opus-review-runbook",
+  "actor": "codex:issue-5678-opus-review-runbook",
+  "evidence": {
+    "reviewer": "codex-subagent:review-5678-runbook",
+    "scope": ["docs/tooling/OPUS_REVIEW_RUNBOOK.md", "adl/tools/test_opus_review_runbook.sh"],
+    "reviewed_revision": "git-blake3:df6c1ba075d262917aa71cea2f40ecfe71abced1:150c1020942ff8c3fe690eebbcf51f95dc7e6a65db7dcdc19f86fef79ddcd3b1",
+    "findings": [],
+    "residual_risks": ["The ignored operator-local .adl/docs/TBD mirror remains outside the tracked canonical runbook and must be refreshed separately when an operator needs that local convenience path."],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

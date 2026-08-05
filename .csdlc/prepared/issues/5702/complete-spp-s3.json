@@ -1,0 +1,14 @@
+{
+  "issue": 5702,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "2992ef21876bb9d6bd9df6f7192d01ae59a54bd2c9beca7b0e8352293232d1f7",
+  "claim_id": "claim-5702-podcast-launch-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "record completed Gemini 3.1 Pro review step",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S3",
+    "status": "completed"
+  }
+}

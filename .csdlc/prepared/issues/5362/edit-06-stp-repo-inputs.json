@@ -1,0 +1,25 @@
+{
+  "issue": 5362,
+  "card": "stp",
+  "expected_generation": 6,
+  "expected_digest": "01d3a97123f17f5727f56ec336304d04f689299d19aeecf329bbf8b6ee128971",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:5362-preparation-owner",
+  "reason": "add current-main dependency ledger and release-tail truth sources to STP inputs",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "repo_inputs",
+    "values": [
+      "issue #5362 live body",
+      "origin/main 8621b6f3b1b91d3ea290e16d07f80ec29afd4ece",
+      ".csdlc/evidence/5362/dependency-verification.v1.json",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/SPRINT_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      ".csdlc/issues/5352/index.json and .csdlc/evidence/5352/* on current main",
+      ".csdlc/issues/4758/.csdlc/evidence/4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 current-main records/evidence"
+    ]
+  }
+}

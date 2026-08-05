@@ -1,0 +1,20 @@
+{
+  "issue": 5701,
+  "expected_generation": 9,
+  "expected_digest": "9ddb1d02c264a83825b72258ac34b61312597000ec0bfd2db05f846f4b1ad9ca",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "reviewer": "subagent:019faf8a-5313-7292-8ca5-57feb8f12d7b",
+  "assigned_by": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "scope": [
+    "docs/api/runtime-v3/v1",
+    "adl-runtime-kernel/src/control.rs",
+    "adl-runtime-kernel/tests/control.rs",
+    "adl-runtime-kernel/tests/guardian_soak.rs",
+    "adl-runtime-kernel/tests/observatory.rs",
+    "adl-runtime-kernel/tests/openapi_contract.rs",
+    "adl-runtime/src/acip.rs",
+    "adl-runtime/src/runtime_api.rs",
+    "adl-runtime/tests/runtime_api_wss.rs",
+    "infra/runtime-v3/runtime-api-5665.toml"
+  ]
+}

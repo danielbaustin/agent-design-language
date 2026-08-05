@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5779,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Decouple safe cleanup and migrate legacy terminal receipts",
+    "slug": "standalone-cleanup",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Separate worktree cleanup from terminal delivery truth while preserving dirty work and legacy audit readability.",
+      "required_outcome": "A standalone csdlc-clean removes only clean exactly identified issue worktrees, skips dirty or drifted topology non-destructively, and indexes legacy receipts as compatibility-only inputs.",
+      "declared_scope": [
+        "Standalone cleanup command and typed result schema",
+        "Dynamic branch and worktree discovery independent of receipt topology",
+        "Legacy terminal receipt compatibility index and migration validation",
+        "Deterministic clean, dirty, missing, relocated, and concurrent cleanup proofs"
+      ],
+      "authority_boundary": [
+        "Cleanup never changes terminal or delivery truth",
+        "Dirty, missing, relocated, or ambiguous worktrees are reported and never force-removed",
+        "Legacy receipts remain immutable compatibility evidence and never become current authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 only",
+        "No tracked edits on main",
+        "No AWS or external archive service",
+        "No forced cleanup or deletion of dirty work",
+        "Exact-head independent review before publication"
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "3c55b40f9433c3a978a49e96fad31f4d9e06966010fd8e0ef4b283fe11f7812f",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record Runtime v3 and Observatory readiness implementation plus focused/full validation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented a versioned Runtime v3 readiness endpoint and wired the Observatory browser to consume readiness truth while keeping runtime tests worktree-safe through the configured stable Vector binary path.",
+    "changes": [
+      "Added /v1/ready to Runtime v3 control routes with adl.runtime_v3.readiness.v1 responses and 503 degraded readiness for stale or missing weather freshness.",
+      "Updated Runtime v3 OpenAPI and route-inventory tests so /v1/ready is documented, public-read, and route-bound.",
+      "Updated Observatory docs and browser adapter so Runtime v3 mode fetches /v1/ready and renders ready/degraded state from degraded_reasons instead of deriving readiness only from the observatory snapshot.",
+      "Centralized Runtime v3 test Vector binary resolution through the runtime init test helper so generated init TOML and direct observability tests use the configured stable repo-installed binary, with ADL_RUNTIME_TEST_VECTOR_BINARY override."
+    ],
+    "artifacts": [
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/openapi_contract.rs",
+      "adl-runtime-kernel/tests/support/runtime_init.rs",
+      "adl-runtime-kernel/tests/observability.rs",
+      "demos/html-observatory/README.md",
+      "demos/html-observatory/app.js",
+      "docs/api/runtime-v3/v1/openapi.json"
+    ]
+  }
+}

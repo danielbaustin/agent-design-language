@@ -1,0 +1,16 @@
+flowchart LR
+  D["#5339 language + #5340 engine merged and typed closed_out"] --> R["Versioned bounded record contracts"]
+  R --> C["Canonical domain-separated bytes"]
+  C --> H["SHA-256 payload digest"]
+  C --> S["Ed25519 signer"]
+  H --> E["Signed envelope"]
+  S --> E
+  E --> B["Byte channel / fresh process"]
+  B --> V["Ed25519 verifier"]
+  P["External immutable trust policy"] --> V
+  T["Caller-supplied logical verification time"] --> V
+  V --> G["External ReplayGuard atomic admission"]
+  G --> O{"Verified outcome"}
+  O -->|"valid"| Q["Trusted typed record"]
+  O -->|"tamper / unknown key / expiry / revoke / bounds"| F["Stable fail-closed error"]
+  X["Runtime v2/v3, adapters, persistence, telemetry backends, cloud"] -. "outside WP-07" .-> F

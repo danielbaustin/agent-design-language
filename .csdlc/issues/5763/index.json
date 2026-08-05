@@ -1,0 +1,349 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5763,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "aadd979418b3e57f2825290e8085ba4f9f5d1adc57f4b0c2edf0ad007e67cba3",
+  "phase": "closed_out",
+  "generation": 7,
+  "digest": "2f65f8d0f91c8de7c6c0f984e74f389b4f05409c25faf0b9efae342b2729a074",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "codex:5763-post-merge-independent-review",
+    "assigned_by": "codex:5763-post-merge-closeout",
+    "revision": "git-blake3:9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff:e5b40353924268f542573c31f42d3fe19e151fc61c4db69120ba084d5c313556",
+    "scope": [
+      "Exact branch commit 9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff",
+      "Tree-identical squash merge 76a605966 on origin/main",
+      "Feature crosswalk digest, retained validator, issue-local lifecycle and validation artifacts"
+    ]
+  },
+  "review": {
+    "reviewer": "codex:5763-post-merge-independent-review",
+    "scope": [
+      "Exact branch commit 9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff",
+      "Tree-identical squash merge 76a605966 on origin/main",
+      "Feature crosswalk digest, retained validator, issue-local lifecycle and validation artifacts"
+    ],
+    "reviewed_revision": "git-blake3:9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff:e5b40353924268f542573c31f42d3fe19e151fc61c4db69120ba084d5c313556",
+    "findings": [],
+    "residual_risks": [
+      "GitHub squash merge 76a605966 has the exact reviewed tree but a different commit identity from branch head 9dce9c69c; required hosted checks passed on the reviewed PR head."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5763,
+    "pull_request": 5767,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5767",
+    "base": "main",
+    "head": "codex/5763-feature-crosswalk-digest",
+    "revision": "git-blake3:9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff:e5b40353924268f542573c31f42d3fe19e151fc61c4db69120ba084d5c313556",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5767,
+    "head_sha": "9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131743"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352155066"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131758"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131854"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131855"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131887"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131834"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352107710"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131793"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131850"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352132045"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131866"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131966"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131869"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131785"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30693427137/job/91352131902"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5767,
+    "disposition": "merged",
+    "observed_sha": "9dce9c69c32fc8870f2e3c9b9ab6f8dd1dab38ff",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5763.json",
+    "released_branch": "codex/5763-feature-crosswalk-digest",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5763",
+      ".csdlc/issues/5763",
+      ".csdlc/locks/5763.lock",
+      ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb",
+      ".csdlc/prepared/issues/5763",
+      ".csdlc/publication/5763.intent.json",
+      "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5763/retained/design.md",
+  "diagram_path": ".csdlc/issues/5763/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5763",
+      "revision": "a15bb8517379c5226e034356eacee4ad228b50d23e1e297a1334bd8ca97d81b5"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "70d16916004b6d1d0db06f151d810cbbf7fd9542b6e2baac562244f4d0011e3b",
+      "rendered_digest": "246401e7239a1b7f1ac62474decf5e3e70fa663e55b4570c35d7e8f77577a980",
+      "ast_digest": "2fdbf5a0c25dd69840e19fdb201c77968d2dfa2ef7f4a85f3dc0fd74a962ef51"
+    },
+    "stp": {
+      "values_digest": "201eb9f709ad827bd02c48d9a346b1ad320b65783267e1555d2922800cf0a318",
+      "rendered_digest": "f67618a3dad07a183b466f635847845e6e223fecb78d07362d8d5383ee07d976",
+      "ast_digest": "3be01667386fa803db4fccea9b310e3ecabf6366c856efa71f703c888ab3d203"
+    },
+    "spp": {
+      "values_digest": "fae4a6ce90ac5083d2d32cf321d5e82002f59c0e0799417d8a9698f16814703c",
+      "rendered_digest": "b1a52a251bd5e3cd56fc4615de876f6fe7d442e783af54eefc17fa6ff5c95bff",
+      "ast_digest": "e9f065aa626a4883bfc6df5536d3eca4284dce2e59d4f09c0b309777e3dc867e"
+    },
+    "vpp": {
+      "values_digest": "d4fa910926141d663aace27f3ddea6a0a9b70fab764c5a9bbffce6588b2ed68a",
+      "rendered_digest": "351a9b2af23f2633863cce09f9b8d04557cb4d71e78757ee9ace057906de7b10",
+      "ast_digest": "e2219806fccb093a253dc14beb2e55aa3fc148d0508309e4ca05b35491777b07"
+    },
+    "srp": {
+      "values_digest": "dccdb935f2fe643b03a26e0a9adf50efabd08761bef3dbafa240a08d51802a9c",
+      "rendered_digest": "74b8280af115dcfaa6700166e6636e59255739eefefe37d74717d81b5e41eebb",
+      "ast_digest": "d7c85985d4cab8c4a212d220d0917cdc2f2520d9c96bed4e60dbc9e67be81fc1"
+    },
+    "sor": {
+      "values_digest": "cbec78c9810ea14fd49a3170a439094e8bebfcc254d47b8e695e2cca1bc917a3",
+      "rendered_digest": "3f70026828a08d2a5440151f7acc046ee56feab74bd1ae46171ec60f9c1c46eb",
+      "ast_digest": "abb5927fc64b7305b63a41bfeb9ff90d346a9a2b161310852f2ea81d4311f432"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:issue-5763-feature-crosswalk-digest",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:issue-5763-feature-crosswalk-digest",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:issue-5763-feature-crosswalk-digest",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "Advance after independent exact-head review passed with no findings; PR #5767 squash merge 76a605966 has the exact reviewed tree and all required checks passed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:issue-5763-feature-crosswalk-digest",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:issue-5763-feature-crosswalk-digest",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:issue-5763-feature-crosswalk-digest",
+      "reason": "Include the second stale digest value, the validate_feature_crosswalk.rb expected_digest constant, without weakening the guard or widening docs scope.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:issue-5763-feature-crosswalk-digest",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5763-post-merge-independent-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "Advance after independent exact-head review passed with no findings; PR #5767 squash merge 76a605966 has the exact reviewed tree and all required checks passed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5763-post-merge-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the retained #5763 terminal receipt in the dedicated v0.91.8 aggregate closeout projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "issue": 5346,
+  "card": "spp",
+  "expected_generation": 6,
+  "expected_digest": "d85616a79683a7578f7d172962edea0268beb061044865a23d3264d0454079f9",
+  "claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "actor": "codex:5346-wp13-execution-owner",
+  "reason": "Replace stale preparation-only invariants with current execution invariants.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "invariants",
+    "values": [
+      "Primary main remains untouched; all #5346 tracked work happens in /Volumes/FastWork/adl-wp-5346",
+      "#5351 WP-16 and #5360 WP-17 are downstream release-tail work and never block #5346 execution or publication",
+      "#5354 and #5352 GitHub issue closure on merged PRs is sufficient upstream truth; typed closeout may proceed asynchronously and must not block #5346",
+      "#5346 and #5347 manifests remain disjoint and every path has exactly one owner/disposition",
+      "Only exact reviewed #5346 manifest rows may be deleted; broad glob deletion is forbidden",
+      "Deleted, retained, and new LoC remain separate; below 80 percent deletion is never completion",
+      "Every retained path has a named owner and justification",
+      "Runtime v2 is categorically outside #5346 ownership and may not be edited or deleted by this issue",
+      "Deletion merges and post-merge validation are serialized"
+    ]
+  },
+  "fail_after_backup": false
+}

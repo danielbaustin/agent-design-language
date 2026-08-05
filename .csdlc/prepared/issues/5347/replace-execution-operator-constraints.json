@@ -1,0 +1,23 @@
+{
+  "issue": 5347,
+  "card": "sip",
+  "expected_generation": 7,
+  "expected_digest": "1364eb36a09a80ac2365f408d0826362968284f5f4b4e39d2a8eafcf08a3645c",
+  "claim_id": "claim-5347-current-preparation-refresh",
+  "actor": "codex:5347-execution-owner",
+  "reason": "Repair stale WP-13 planning after operator sequencing correction: #5347 executes now after WP-21, must not require WP-16 #5351 or #5346 terminal closeout, and must preserve #5346 as the later serialized final-core deletion lane.",
+  "operation": {
+    "operation": "replace_operator_constraints",
+    "values": [
+      "Use typed C-SDLC v2 binaries and semantic card operations only; rendered Markdown remains generated projection state",
+      "Keep the primary checkout clean on main and all tracked #5347 work in the dedicated FastWork worktree",
+      "Execution authority is WP-21 complete -> WP-13 now -> WP-16 afterward; do not require WP-16 #5351 terminal state before #5347 execution",
+      "Do not require #5346 terminal closeout before #5347 execution; #5347 deletes only external-owned obsolete demo/proof bands and preserves #5346 as the later serialized final-core deletion lane",
+      "Coordinate the exact #5347 deletion manifest with #5346 by proving zero overlap against #5346 reserved core language/compiler/engine/CLI paths and retaining the safe merge order #5347 before #5346",
+      "Do not touch Runtime v2, Runtime v3, C-SDLC v2, ADL v2 language/compiler/engine/CLI core, selector/cutover state, or historical non-executable evidence",
+      "Use /Volumes/FastWork for generated validation and build output; do not use /private/tmp",
+      "Run focused proving validation, obtain exactly one bounded pre-PR GPT-5.5 review, fix actionable findings, and publish a ready PR whose body includes Closes #5347; do not perform typed closeout in this session"
+    ]
+  },
+  "fail_after_backup": false
+}

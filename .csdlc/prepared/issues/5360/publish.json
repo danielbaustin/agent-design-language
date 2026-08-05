@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5360,
+  "expected_generation": 15,
+  "expected_digest": "85dc877372db29818db2eaaff1c5838f9e47d1440b18fd385859282b807f04c3",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5360-v0918-preparation",
+  "title": "[v0.91.8][WP-17] Align documentation and release truth",
+  "body": "Closes #5360\n\n## Summary\n- aligns 27 repository and milestone documentation paths with the merged WP-16 issue-outcome audit\n- removes stale active-v0.91.7 and WP-01 framing while preserving explicit historical evidence and non-claims\n- makes the WP-17 through WP-23 release-tail sequence and v0.92 handoff boundary explicit\n- delegates two colliding index files to their existing owners instead of widening scope\n\n## Validation\n- ruby .csdlc/prepared/issues/5360/run-validation-lane.rb complete\n- ruby .csdlc/prepared/issues/5594/validate_links.rb\n- git diff --check origin/main...HEAD\n\n## Review\n- bounded gpt-5.5 exact-revision review passed at git-blake3:c1cd0a309c33279dc21c7338668f0e0a836675d5:380c18d6ddba37ddf5101e34fd438f463db047b3d234b3fc656e0335d86d8e50\n- actionable findings fixed; final blocker count: 0\n\nTyped closeout is an asynchronous follow-up and does not block WP-18 after merge.",
+  "draft": false,
+  "token_file": "/Users/daniel/keys/github.token"
+}

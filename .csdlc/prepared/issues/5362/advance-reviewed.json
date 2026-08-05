@@ -1,0 +1,14 @@
+{
+  "issue": 5362,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "7a5a3f52706d4b50cef1ab9cc57ec757de9005e17e908444f774e1ff949ce824",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:wp21-conductor",
+  "reason": "The bounded exact-revision WP-21 documentation review passed bee2a56c4 with zero blockers after both evidence findings were repaired.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

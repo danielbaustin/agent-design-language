@@ -1,0 +1,14 @@
+{
+  "issue": 5717,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "63ce08c9f994d4d27b8aa631654b210b7b2118803f39b81324b52140c678d0b1",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "reason": "Exact Gemini 3.1 Pro review passed with no actionable findings after the podcast studio copy, logo, link, and launch-readiness updates.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

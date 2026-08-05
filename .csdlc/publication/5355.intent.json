@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5355,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5355-v0918-preparation",
+  "title": "[v0.91.8][WP-21A] Prepare next-milestone closeout plan",
+  "body": "Closes #5355\n\n## Summary\n- adds the canonical next-milestone closeout-planning packet\n- links it from the v0.91.8 README, canonical inventory, handoff, and feature handoff\n- records exact WP-21 merge truth while keeping asynchronous closeout bookkeeping non-blocking\n\n## Validation\n- typed doctor and four focused documentation lanes passed\n- exact WP-21 merge ancestry, YAML/order, links, and diff hygiene passed\n- single bounded GPT-5.5 pre-PR review passed with zero blockers after one wording fix\n- no product or v0.92 files changed",
+  "draft": false,
+  "revision": "git-blake3:52765450b5379f545ff95b70de5aceb6eda9b396:081095755a29b5838276925bd69f8b39ec7e948e6a408d3616af6d2ec61991ad",
+  "commit_sha": "52765450b5379f545ff95b70de5aceb6eda9b396"
+}

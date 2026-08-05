@@ -10,3 +10,4 @@
 | D-06 | Route Runtime v3 parity through `#5361`: `#5591` before `#5592`/`#5589`/`#5590`. | planned | Preserves canonical-ingress dependency and prevents fixture-only parity claims. |
 | D-07 | Keep Runtime v3 and C-SDLC v2 externally owned. | planned | Prevents ADL core from reabsorbing runtime/lifecycle surfaces. |
 | D-08 | Require exact-revision acceptance before deletion, deployment, or v0.92 handoff claims. | planned | Keeps planning text from becoming proof. |
+| D-09 | Keep WP-14A as a thin platform-acceptance gate; route Unity to WP-15, C-SDLC tooling defects to WP-20, and Memory Palace plus the handoff family to WP-21. | active | Removes the grab-bag topology and lets independent tracks proceed without blocking platform acceptance. |

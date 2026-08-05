@@ -284,6 +284,65 @@ impl LiveContinuity {
     }
 }
 
+pub async fn verify_live_continuity_lineage(
+    root: &Path,
+    signing_key_id: &str,
+    verifying_key: VerifyingKey,
+    expected_generation: u64,
+) -> Result<(), LiveContinuityError> {
+    if expected_generation == 0 {
+        return Ok(());
+    }
+    let coordinator = CheckpointCoordinator::new(
+        root,
+        CheckpointAuthority::from_bytes("read-only-verifier", &[0_u8; 32]),
+    );
+    let trusted_keys = BTreeMap::from([(signing_key_id.to_owned(), verifying_key)]);
+    let mut previous_integrity = None;
+    for generation in 1..=expected_generation {
+        let manifest_path = root
+            .join(format!("generation-{generation}"))
+            .join("manifest.json");
+        let bytes = tokio::fs::read(&manifest_path)
+            .await
+            .map_err(ContinuityError::from)?;
+        let manifest: CheckpointManifest = serde_json::from_slice(&bytes)
+            .map_err(|error| LiveContinuityError::Encoding(error.to_string()))?;
+        let mut loaded = None;
+        for schema in [LIVE_KERNEL_CHECKPOINT_SCHEMA, LIVE_KERNEL_SNAPSHOT_SCHEMA] {
+            let schemas = BTreeMap::from([("live_kernel".to_owned(), schema.to_owned())]);
+            match coordinator
+                .load(
+                    generation,
+                    &manifest.topology_hash,
+                    &manifest.config_hash,
+                    &schemas,
+                    &trusted_keys,
+                )
+                .await
+            {
+                Ok(checkpoint) => {
+                    loaded = Some(checkpoint.manifest);
+                    break;
+                }
+                Err(ContinuityError::ServiceSchemaMismatch(service))
+                    if service == "live_kernel" => {}
+                Err(error) => return Err(error.into()),
+            }
+        }
+        let manifest = loaded.ok_or_else(|| {
+            LiveContinuityError::Continuity(ContinuityError::ServiceSchemaMismatch(
+                "live_kernel".to_owned(),
+            ))
+        })?;
+        if manifest.previous_integrity != previous_integrity {
+            return Err(LiveContinuityError::Lineage { generation });
+        }
+        previous_integrity = Some(manifest.integrity);
+    }
+    Ok(())
+}
+
 #[derive(Clone)]
 pub struct CheckpointingControl {
     requests: tokio::sync::mpsc::Sender<CheckpointShutdownRequest>,

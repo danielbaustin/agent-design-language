@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5766,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime][api] Reconcile CSM runtime advertised endpoints with mounted routes",
+    "slug": "csm-runtime-endpoint-inventory",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make CSM runtime endpoint inventory agree with actual routed behavior.",
+      "required_outcome": "Every advertised CSM runtime endpoint is either actually routed with truthful bounded semantics or removed/marked planned-only from availability inventory, with focused tests preventing drift.",
+      "declared_scope": [
+        "adl-runtime/src/runtime_api.rs",
+        "adl/src/csm_runtime_api.rs",
+        "adl/src/csm_api_gateway_bridge.rs",
+        "docs/reviews/v0.91.8/internal-review-5356/FINDINGS_REGISTER.md"
+      ],
+      "authority_boundary": [
+        "This issue owns endpoint inventory truth for the CSM runtime API surfaces; it does not implement unrelated planned feature APIs or Runtime v3 kernel readiness semantics."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "never write main for implementation",
+        "use typed v2 binaries",
+        "use FastWork for the worktree and build output",
+        "no AWS",
+        "no broad validation unless required by changed surface"
+      ]
+    }
+  }
+}

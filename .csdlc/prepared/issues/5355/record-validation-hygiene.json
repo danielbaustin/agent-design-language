@@ -1,0 +1,21 @@
+{
+  "issue": 5355,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "b21a331460ecc65c3fbfc9cbc3310a6c586d74564c06c7a5463c7122b16c9933",
+  "claim_id": "claim-5355-v0918-preparation",
+  "actor": "codex:5355-preparation-owner",
+  "reason": "Record focused diff and YAML hygiene for the #5355 preparation packet.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "ruby -e 'require \"yaml\"; YAML.load_file(\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\")'"
+      ],
+      "purpose": "Diff hygiene and v0.91.8 issue-wave YAML parse for the preparation packet.",
+      "outcome": "passed",
+      "evidence_ref": "command output in Codex task: both commands exited 0"
+    }
+  }
+}

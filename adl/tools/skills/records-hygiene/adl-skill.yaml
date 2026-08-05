@@ -89,7 +89,7 @@ execution:
     - "rg -n \"status|run_id|worktree_only|pr_open|issue|pr|integration\" .adl"
     - "python3 adl/tools/skills/records-hygiene/scripts/analyze_records_hygiene.py <target>"
     - "git worktree list"
-    - "adl/tools/pr.sh doctor --json"
+    - "csdlc-doctor --repo <repo> --issue <issue>"
   preferred_path: "target_issue_or_task_first_then_worktree_or_branch_bound_records"
   repair_policy: "apply_only_mechanical_non_ambiguous_fixes_for_bound_target"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"

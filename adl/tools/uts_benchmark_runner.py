@@ -1123,41 +1123,9 @@ def run_governed_lane(entry: dict[str, Any], task_panel_file: Path, raw_path: Pa
         if logger:
             logger.event("lane_result", **provider_event_fields(entry, lane="uts_acc"), status=result["status"], note=result["note"])
         return result
-    raw_path.parent.mkdir(parents=True, exist_ok=True)
-    command = [cargo, "run", "--manifest-path", str(manifest), "--bin", "demo_v0912_uts_acc_multi_model_benchmark", "--", str(raw_path), entry["model_id"], str(task_panel_file)]
-    env = os.environ.copy()
-    timeout = int(os.getenv("ADL_UTS_GOVERNED_MODEL_TIMEOUT_SECONDS", "300"))
-    try:
-        if entry.get("provider_kind") == "hosted":
-            with hosted_ollama_adapter(entry) as host:
-                env["OLLAMA_HOST"] = host
-                completed = subprocess.run(command, env=env, capture_output=True, text=True, timeout=timeout)
-        else:
-            completed = subprocess.run(command, env=env, capture_output=True, text=True, timeout=timeout)
-    except subprocess.TimeoutExpired as exc:
-        note = f"governed subprocess timed out after {timeout}s"
-        if exc.stderr:
-            note += f": {str(exc.stderr)[:300]}"
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_timeout", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": sanitize_artifact_note(note, "governed_runner_timeout"), "raw_artifact": display_path(raw_path)}
-    except Exception as exc:  # noqa: BLE001
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_failed", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": sanitize_artifact_note(str(exc), "governed_runner_failed"), "raw_artifact": display_path(raw_path)}
-    if completed.returncode != 0:
-        note = (completed.stderr or completed.stdout or "governed subprocess failed")[:500].replace("\n", " ")
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_failed", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": sanitize_artifact_note(note, "governed_runner_failed"), "raw_artifact": display_path(raw_path)}
-    try:
-        doc = sanitize_governed_raw_artifact(load_json(raw_path))
-        raw_path.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
-    except Exception as exc:  # noqa: BLE001
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_bad_output", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": sanitize_artifact_note(str(exc), "governed_runner_bad_output"), "raw_artifact": display_path(raw_path)}
-    models = doc.get("models", [])
-    if not models:
-        return {"status": "provider_failed", "provider_failure_kind": "governed_runner_empty", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "governed runner wrote no model results", "raw_artifact": display_path(raw_path)}
-    result = simplify_governed_result(entry, models[0])
-    result.setdefault("started_at", started_at)
-    result.setdefault("completed_at", utc_timestamp())
-    result["raw_artifact"] = display_path(raw_path)
+    result = {"status": "skipped", "started_at": started_at, "completed_at": utc_timestamp(), "passed_count": 0, "total_cases": 0, "full_support": False, "cases": [], "note": "Governed UTS+ACC demo executable was retired by #5347; retained benchmark evidence remains historical and current validation must use supported library/test surfaces."}
     if logger:
-        logger.event("lane_result", **provider_event_fields(entry, lane="uts_acc"), status=result.get("status"), provider_failure_kind=result.get("provider_failure_kind"), passed_count=result.get("passed_count"), total_cases=result.get("total_cases"), raw_artifact=display_path(raw_path))
+        logger.event("lane_result", **provider_event_fields(entry, lane="uts_acc"), status=result["status"], note=result["note"])
     return result
 
 

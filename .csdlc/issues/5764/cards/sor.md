@@ -1,0 +1,176 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5764
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: complete
+
+## Summary
+
+Moved the integrated Observatory proof contract to validate Runtime v3 endpoint truth from the checked-in config file.
+
+## Artifacts
+
+- adl-runtime-kernel/src/control.rs
+- adl-runtime-kernel/tests/control.rs
+- adl-runtime-kernel/tests/openapi_contract.rs
+- adl-runtime-kernel/tests/support/runtime_init.rs
+- adl-runtime-kernel/tests/observability.rs
+- demos/html-observatory/README.md
+- demos/html-observatory/app.js
+- docs/api/runtime-v3/v1/openapi.json
+- demos/html-observatory/app.js
+- adl-runtime-kernel/src/control.rs
+- adl-runtime-kernel/tests/control.rs
+- demos/html-observatory/app.js
+- docs/api/runtime-v3/v1/openapi.json
+- adl-runtime-kernel/tests/openapi_contract.rs
+- demos/html-observatory/runtime-v3.config.json
+- adl-runtime-kernel/src/control.rs
+- adl/tools/validate_v0917_html_observatory.py
+- adl/tools/test_v0917_html_observatory_integrated_proof.sh
+- demos/html-observatory/runtime-v3.config.json
+
+## Execution
+
+- Added /v1/ready to Runtime v3 control routes with adl.runtime_v3.readiness.v1 responses and 503 degraded readiness for stale or missing weather freshness.
+- Updated Runtime v3 OpenAPI and route-inventory tests so /v1/ready is documented, public-read, and route-bound.
+- Updated Observatory docs and browser adapter so Runtime v3 mode fetches /v1/ready and renders ready/degraded state from degraded_reasons instead of deriving readiness only from the observatory snapshot.
+- Centralized Runtime v3 test Vector binary resolution through the runtime init test helper so generated init TOML and direct observability tests use the configured stable repo-installed binary, with ADL_RUNTIME_TEST_VECTOR_BINARY override.
+- Cache Runtime v3 readiness after polling and reuse it when rendering Observatory WebSocket frames.
+- Fetch /v1/ready when directly opening the secure WebSocket stream so auto-connect has readiness truth.
+- Fallback WebSocket frames without a readiness payload now derive only observability readiness instead of claiming weather-degraded readiness.
+- Route /v1/ready through the Observatory CORS/preflight policy.
+- Reject unauthorized Origin headers for /v1/ready instead of returning an unreadable cross-origin response.
+- Add CORS regression coverage proving /v1/ready exposes Access-Control-Allow-Origin to the configured Observatory origin.
+- Make connectLive asynchronous and await Runtime v3 readiness before opening the WSS connection.
+- Preserve degraded or pending readiness cache before the first stream frame can render.
+- Documented OPTIONS /v1/ready in the Runtime v3 OpenAPI contract.
+- Updated the OpenAPI route inventory test to require both GET and OPTIONS for /v1/ready.
+- Recorded demos/html-observatory/runtime-v3.config.json as a durable execution artifact.
+- Replaced Option::map_or(true, |freshness| freshness.stale) with Option::is_none_or(|freshness| freshness.stale) in ControlService::readiness_report.
+- Preserved the fail-closed readiness behavior where missing weather freshness is treated as weather_stale.
+- Added /v1/ready mock data to the HTML Observatory validator so the Runtime v3 WebSocket connection path exercises readiness before stream setup.
+- Updated the validator to accept demos/html-observatory/runtime-v3.config.json and assert /v1/observatory, /v1/ready, and /v1/observatory/ws there instead of requiring a deleted hard-coded JavaScript constant.
+- Updated the integrated proof shell wrapper to include and pass the Runtime v3 config file to the validator.
+
+## Validation
+
+[
+  {
+    "command": [
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control readiness",
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control observatory_https_reads_are_public_and_report_weather_freshness",
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test openapi_contract",
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test observability",
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml",
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+      "node --check demos/html-observatory/app.js",
+      "python3 -m json.tool docs/api/runtime-v3/v1/openapi.json",
+      "git diff --check"
+    ],
+    "purpose": "Prove Runtime v3 /v1/ready semantics, fail-closed missing/stale weather readiness, OpenAPI/route inventory truth, Observatory browser readiness consumption, stable Vector binary test configuration, full runtime-kernel behavior, formatting, JSON, JavaScript syntax, and diff hygiene.",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork terminal output: focused readiness, HTTPS readiness, openapi_contract, observability, and full adl-runtime-kernel passed; full runtime-kernel reported 306 passed and 1 explicit ignored live parity test; rustfmt check, node --check, json.tool, and git diff --check passed"
+  },
+  {
+    "command": [
+      "node --check demos/html-observatory/app.js",
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+      "git diff --check"
+    ],
+    "purpose": "Prove the browser readiness-stream repair parses and preserves formatting/diff hygiene without changing Rust surfaces.",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork terminal output: node --check demos/html-observatory/app.js passed; cargo fmt --check passed; git diff --check passed"
+  },
+  {
+    "command": [
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control observatory_cors_allows_only_configured_origins_and_reports_canonical_port",
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml",
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+      "node --check demos/html-observatory/app.js",
+      "python3 -m json.tool docs/api/runtime-v3/v1/openapi.json",
+      "git diff --check"
+    ],
+    "purpose": "Prove /v1/ready CORS access for the Observatory origin, complete Runtime v3 behavior, formatting, browser syntax, OpenAPI JSON, and diff hygiene after the final review fix.",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork terminal output: readiness CORS regression passed; full adl-runtime-kernel passed with 306 passed and 1 explicit ignored live parity test; rustfmt check, node --check, json.tool, and git diff --check passed"
+  },
+  {
+    "command": [
+      "node --check demos/html-observatory/app.js",
+      "git diff --check"
+    ],
+    "purpose": "Prove the direct secure-stream readiness ordering repair parses and preserves diff hygiene.",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork terminal output: node --check demos/html-observatory/app.js passed; git diff --check passed"
+  },
+  {
+    "command": [
+      "node --check demos/html-observatory/app.js",
+      "python3 -m json.tool demos/html-observatory/runtime-v3.config.json >/dev/null",
+      "git diff --check"
+    ],
+    "purpose": "Prove the HTML Observatory loads Runtime v3 browser endpoint paths from a JSON config file with parseable JavaScript, valid JSON, and clean diff hygiene.",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork terminal output: node --check demos/html-observatory/app.js passed; python3 -m json.tool demos/html-observatory/runtime-v3.config.json passed; git diff --check passed"
+  },
+  {
+    "command": [
+      "env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test openapi_contract openapi_paths_match_current_runtime_v3_axum_route_inventory",
+      "python3 -m json.tool docs/api/runtime-v3/v1/openapi.json >/dev/null",
+      "node --check demos/html-observatory/app.js",
+      "git diff --check origin/main...HEAD"
+    ],
+    "purpose": "Prove the Runtime v3 /v1/ready preflight route is documented in the OpenAPI inventory, OpenAPI JSON remains parseable, Observatory JavaScript remains parseable, and the exact diff has no whitespace errors.",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork terminal output: openapi route inventory regression passed; python3 json.tool, node --check, and git diff --check passed"
+  },
+  {
+    "command": [
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control readiness",
+      "node --check demos/html-observatory/app.js",
+      "git diff --check origin/main...HEAD"
+    ],
+    "purpose": "Prove the CI clippy failure is fixed while preserving Runtime v3 readiness behavior and adjacent browser/diff hygiene.",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork terminal output: clippy passed; readiness tests passed with 2 passed; node --check passed; git diff --check origin/main...HEAD passed"
+  },
+  {
+    "command": [
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "node --check demos/html-observatory/app.js",
+      "python3 -m json.tool demos/html-observatory/runtime-v3.config.json",
+      "python3 -m py_compile adl/tools/validate_v0917_html_observatory.py",
+      "git diff --check origin/main...HEAD",
+      "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings"
+    ],
+    "purpose": "Prove the hosted HTML Observatory integrated proof validates the config-owned Runtime v3 readiness and observatory endpoints, while preserving JavaScript syntax, config JSON validity, Python validator syntax, diff hygiene, and the runtime clippy lane.",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork terminal output: integrated proof passed; node --check passed; json.tool passed; py_compile passed; git diff --check origin/main...HEAD passed; cargo clippy passed"
+  }
+]
+
+## Integration
+
+merged
+
+## Publication
+
+Publication: closed
+
+Merge: merged
+
+## Closeout
+
+complete
+
+## Follow Ups
+
+- none

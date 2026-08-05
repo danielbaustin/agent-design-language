@@ -1,0 +1,19 @@
+{
+  "issue": 5737,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "8ce9b898d27f5de0fd85fd2a6c9844e0136e490c8bc6bac5e466ef49be2c795f",
+  "claim_id": "claim-5737-csdlc-authority-recovery",
+  "actor": "codex:5737-execution",
+  "reason": "Record complete Gate 2 validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "--test", "gate2"],
+      "purpose": "Prove active claim collision safety, stale projection filtering, and authority reacquisition.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5737/gate2.log"
+    }
+  },
+  "fail_after_backup": false
+}

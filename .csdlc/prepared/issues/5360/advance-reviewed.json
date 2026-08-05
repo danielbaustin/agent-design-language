@@ -1,0 +1,14 @@
+{
+  "issue": 5360,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "0e95a1a12122bdb47ba5ea09174c5485a62a208b5e0fdd13f7995141e7d0e25c",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "codex:5360-execution",
+  "reason": "The bounded exact-revision review passed with zero blockers after all documentation truth findings were fixed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

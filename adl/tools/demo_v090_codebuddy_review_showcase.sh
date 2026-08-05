@@ -98,7 +98,7 @@ cat >"$packet_dir/repo_scope.md" <<'EOF_MD'
   - adl/tools/skills/repo-packet-builder/SKILL.md
   - adl/tools/skills/redaction-and-evidence-auditor/SKILL.md
   - adl/tools/skills/product-report-writer/SKILL.md
-  - adl/tools/skills/workflow-conductor/SKILL.md
+  - csdlc-v2/tests/gate10a.rs
 - Excluded paths:
   - private customer repositories
   - live provider credentials

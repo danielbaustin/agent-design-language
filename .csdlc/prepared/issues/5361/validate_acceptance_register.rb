@@ -42,7 +42,7 @@ end
 
 exact_revision!(accepted_revision, "acceptance")
 
-required = [5336, 5591, 5592, 5589, 5590, 5341, 5349, 5501]
+required = [5336, 5591, 5592, 5589, 5590, 5341, 5349, 5350, 5501]
 proofs = Array(data["dependency_proofs"])
 by_issue = proofs.to_h { |proof| [proof["issue"], proof] }
 if %w[all dependencies].include?(SECTION)
@@ -66,7 +66,7 @@ end
 surface_groups = {
   "access" => %w[secure_local_https secure_remote_https observatory telemetry address_configuration],
   "operations" => %w[canonical_ingress checkpoint_replay_resume pressure_shutdown guardian rollback recovery],
-  "quality" => %w[reasoning_graphs loops affect_control adaptive_learning governed_operations runtime_v2_independence strict_lint test_count ci]
+  "quality" => %w[reasoning_graphs loops affect_control adaptive_learning governed_operations runtime_v2_independence strict_lint line_count module_growth dependency_audit test_count local_pre_pr_validation exact_revision_review]
 }
 operational_proofs = Array(data["proofs"])
 selected_surfaces = SECTION == "all" ? surface_groups.values.flatten : Array(surface_groups[SECTION])

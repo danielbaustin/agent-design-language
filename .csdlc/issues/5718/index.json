@@ -1,0 +1,83 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5718,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "4b7d7a92cde2685f7016e2fa7c0d229a99c4cbb707ca61f7dc18e9833207f44b",
+  "phase": "closed_out",
+  "generation": 1,
+  "digest": "1c4e287c0be5e4f746950fb46039bf8c848fb2d65a99be3456006ef510141676",
+  "claim": null,
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": {
+    "pull_request": 5705,
+    "disposition": "merged",
+    "observed_sha": "db41b249277a91140d4fd67bfc5bf898f4565774",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5718.json",
+    "released_branch": "",
+    "released_worktree": "",
+    "released_protected_paths": []
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5718/retained/design.md",
+  "diagram_path": ".csdlc/issues/5718/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5748-terminal-recovery",
+      "revision": "37d1dd915e6f55633c25837c1d659024cf74147f295fb9a73fd6d7667562912f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "81da1b7df3171b5676a05bb3133baf722bbad14f2f8255b6c1a3cfc08290f4f6",
+      "rendered_digest": "9283ffed323e6c79f39ecc188c55e183997006ec949f26fd242541cee4d15c44",
+      "ast_digest": "f9c22576fee3a5b5a2b8c0ccc3dfed7144cf2ceac647d8a5bb7e6b383405fafc"
+    },
+    "stp": {
+      "values_digest": "3d0d7bfb9a56dda90a45873c241e4fcb3f44003e949e2af6ba84fdcfc95a89f7",
+      "rendered_digest": "2a2e932abb5349e5b56c3233a40e52ddcc606c0571448e9d6024c59be6c630ad",
+      "ast_digest": "0a49049d9a087a33cf53623c782d0c5484aa586c203971b225b7c0185dc09073"
+    },
+    "spp": {
+      "values_digest": "af8004c73f3da44064284d8b518b70e87dc268e769575ce1e7eb1d6d86c88a09",
+      "rendered_digest": "64065b8074c5c77f163fa66b1bec7871e9c91044a667cd9bae6b3c3d321d0fd3",
+      "ast_digest": "3b10bb5eee558bb40b617ce69c44ca60d06c653cba4259e996edfad76598ce02"
+    },
+    "vpp": {
+      "values_digest": "279df1086fd1cb4dfecb18509c385da936251f675ce9547faa9c5be57b3e0db4",
+      "rendered_digest": "8108b6dc0fed4a0497331b408274bbba6e676ede1d6d743736e8aad629a8489e",
+      "ast_digest": "cf9d63fa50586319c76e4f7ec654ede00113c9b00c8b79cf176ecf7bdbda2fe8"
+    },
+    "srp": {
+      "values_digest": "c5c2902d073fe6f6c6075fa3c067248d9d4c513c2b419cd41f42376ef2205ca4",
+      "rendered_digest": "f00bb069a4038514b7bbd26c20ff532bcfa042c161ccb0157e48c324f06aca68",
+      "ast_digest": "f224311c7219b5cacff0682dc4b04be9f0ebc2d90dc71cb4cd9f0f4faddac8f7"
+    },
+    "sor": {
+      "values_digest": "029b269823d0cf89f6764162f238e17e3ceddf4f9e0f9fadcd306150aa0e48c2",
+      "rendered_digest": "568927e5880810f4e587d4a8750da23c2bb6b99024fa606feb0713bbd83fd0d6",
+      "ast_digest": "7e916cc04df5af4b5d68a220cef479cc237da015edd8b74f04db26c40e2d6af3"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "closed_out",
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Recover terminal authority for closed issue #5718 from PR #5705, whose exact merged head contains the Observatory Runtime v3 branding and control surface, without reconstructing unavailable historical lifecycle facts."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 1,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Recover terminal authority for closed issue #5718 from PR #5705, whose exact merged head contains the Observatory Runtime v3 branding and control surface, without reconstructing unavailable historical lifecycle facts.",
+      "operation": "recover_recordless_terminal"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5658,
+  "expected_generation": 0,
+  "expected_digest": "b26839c10caa4e7e901641f5e794691910cc5d6dda27ac6078661d44b399c941",
+  "claim_id": "claim-5658-bound-worktree-lifecycle",
+  "actor": "codex:5658-execution",
+  "summary": "Implemented bound-worktree lifecycle materialization for typed C-SDLC v2 bind and added a regression proving the primary checkout does not advance to bound.",
+  "changes": [
+    "Added lifecycle materialization helpers that copy issue records, cards, prepared artifacts, and evidence roots into the target worktree before committing a non-local bind transition.",
+    "Changed bind commit routing so issue-local binds still commit in place, while non-local binds commit through a Store rooted at the declared worktree.",
+    "Added a gate7 regression that bootstraps on primary main, binds a new issue worktree with absent ignored .csdlc state, and verifies the target worktree owns the bound record while primary remains initialized."
+  ],
+  "artifacts": [
+    "csdlc-v2/src/lifecycle.rs",
+    "csdlc-v2/tests/gate7_lifecycle.rs"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "csdlc-lifecycle-focused",
+          "proof_role": "focused lifecycle regression",
+          "purpose": "Prove bound-worktree lifecycle materialization and fail-closed primary-main behavior.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 1024,
+            "tokens": 3000
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "csdlc-v2",
+          "release_gate": "optional",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "cargo",
+          "argv": [
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate7_lifecycle"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        },
+        {
+          "id": "diff-hygiene",
+          "proof_role": "diff hygiene",
+          "purpose": "Verify changed files have no whitespace or patch hygiene errors.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 128,
+            "tokens": 500
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "hygiene",
+          "release_gate": "optional",
+          "execution": "local",
+          "timeout_seconds": 60,
+          "executable": "git",
+          "argv": [
+            "diff",
+            "--check"
+          ],
+          "evidence": {
+            "max_log_bytes": 20000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "csdlc-lifecycle-focused",
+        "diff-hygiene"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 2,
+      "cpu_units": 3,
+      "memory_mib": 1152,
+      "tokens": 3500
+    },
+    "root": "/Volumes/FastWork/adl-wp-5658",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-5658/.csdlc/evidence/5658",
+    "cancellation_file": null
+  }
+}

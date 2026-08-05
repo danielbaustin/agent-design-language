@@ -1,0 +1,21 @@
+{
+  "issue": 5502,
+  "expected_generation": 13,
+  "expected_digest": "e7146ad4df5ce06697cf52d6a8086364615c28500461f7f0420f290be6737dde",
+  "claim_id": "claim-5502-v0918-output-convergence-preparation",
+  "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+  "evidence": {
+    "reviewer": "gpt-5.5:codex-exec-review:019f8c5a-2717-7bc0-b649-33f7843dcd72",
+    "scope": [
+      "adl-v2/Cargo.toml",
+      "adl-v2/Cargo.lock",
+      "adl-v2/crates/adl-workcell-convergence",
+      ".csdlc/prepared/issues/5502/run-validation-lane.rb"
+    ],
+    "reviewed_revision": "git-blake3:9f89413d33327b8a523af20057c0fa0a5f0f4f60:e0442c8b5a955e39ceffb266340b623d8f33393e4377557137bf34e4a7463afc",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

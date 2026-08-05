@@ -1,0 +1,15 @@
+{
+  "schema": "csdlc.doctor.report.v1",
+  "issue": 4762,
+  "status": "block",
+  "phase": "initialized",
+  "generation": 0,
+  "ready": false,
+  "findings": [
+    {
+      "code": "claim_not_live",
+      "message": "claim has expired"
+    }
+  ],
+  "next_operation": "reacquire_claim"
+}

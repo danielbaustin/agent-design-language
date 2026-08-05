@@ -1,0 +1,13 @@
+{
+  "issue": 5755,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "79f280fb0933f637f1d9cdc97cfa90c76c075d9de6beb6dd58e01544deb80899",
+  "claim_id": "claim-5755-runtime-protocol-security",
+  "actor": "codex:5755-runtime-protocol-security",
+  "reason": "Focused implementation and local validation are complete for #5755.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

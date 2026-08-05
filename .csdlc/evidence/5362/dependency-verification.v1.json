@@ -1,0 +1,197 @@
+{
+  "schema": "adl.wp21.dependency_verification.v1",
+  "issue": 5362,
+  "repository": "danielbaustin/agent-design-language",
+  "observed_date": "2026-08-04",
+  "origin_main_sha": "8621b6f3b1b91d3ea290e16d07f80ec29afd4ece",
+  "issue_body_observation": {
+    "issue": 5362,
+    "state": "OPEN",
+    "title": "[v0.91.8][WP-21] Align feature list and v0.92 planning truth",
+    "url": "https://github.com/danielbaustin/agent-design-language/issues/5362",
+    "updated_at": "2026-07-23T06:06:39Z",
+    "summary": "Prepare v0.92 inputs from reviewed deployed ADL v2, Runtime v3, and C-SDLC v2 truth.",
+    "required_outcome": "v0.92 planning seed, source handoff, and feature-list disposition."
+  },
+  "release_tail_source": {
+    "path": "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+    "origin_main_sha": "8621b6f3b1b91d3ea290e16d07f80ec29afd4ece",
+    "sequence": [
+      {"wp": "WP-20", "issue": 5363},
+      {"wp": "WP-21", "issue": 5362},
+      {"wp": "WP-21A", "issue": 5355}
+    ],
+    "wp21_sidecar_dependencies": [
+      5352,
+      4758,
+      4759,
+      4760,
+      4761,
+      4762,
+      4763,
+      5007,
+      5107
+    ]
+  },
+  "dependencies": [
+    {
+      "issue": 5352,
+      "live_state": "CLOSED",
+      "closed_at": "2026-08-01T01:19:57Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5751,
+      "terminal_observed_sha": "6105fc7377aede7d1d2d98ee03d6a9cfdb975048",
+      "terminal_receipt_path": "csdlc-v2/closeout/5352.json",
+      "evidence_paths": [
+        ".csdlc/evidence/5352/dependency-ancestry.log",
+        ".csdlc/evidence/5352/handoff-document-contract.log",
+        ".csdlc/evidence/5352/implemented-packet.log",
+        ".csdlc/evidence/5352/typed-doctor.json"
+      ],
+      "consumption_role": "Exact-revision v0.92 consumption handoff and source-handoff contract."
+    },
+    {
+      "issue": 4758,
+      "live_state": "CLOSED",
+      "closed_at": "2026-07-31T21:42:46Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5739,
+      "terminal_observed_sha": "c9b5c625ccfb17b1a75fd3a1a93f4810baf4a3e2",
+      "terminal_receipt_path": "csdlc-v2/closeout/4758.json",
+      "evidence_paths": [
+        ".csdlc/evidence/4758/launch-readiness/consumption.v1.json",
+        ".csdlc/evidence/4758/launch-readiness/launch-readiness.v1.md",
+        ".csdlc/evidence/4758/launch-readiness/review.v1.md",
+        ".csdlc/evidence/4758/wp21-launch-readiness.log"
+      ],
+      "consumption_role": "Launch readiness package after platform deployment."
+    },
+    {
+      "issue": 4759,
+      "live_state": "CLOSED",
+      "closed_at": "2026-07-31T21:42:35Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5738,
+      "terminal_observed_sha": "32957a21a3fc3fc8a8efb3c3c6ad198db9b0ddd7",
+      "terminal_receipt_path": "csdlc-v2/closeout/4759.json",
+      "evidence_paths": [
+        ".csdlc/evidence/4759/activation-bridge-docs.log"
+      ],
+      "consumption_role": "v0.92 activation map from accepted deployed products."
+    },
+    {
+      "issue": 4760,
+      "live_state": "CLOSED",
+      "closed_at": "2026-07-31T22:45:58Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5740,
+      "terminal_observed_sha": "9719252262913351144a20adf0affb7ed4b5480d",
+      "terminal_receipt_path": "csdlc-v2/closeout/4760.json",
+      "evidence_paths": [
+        ".csdlc/evidence/4760/diff-hygiene.log",
+        ".csdlc/evidence/4760/memory-palace-focused-runtime.log"
+      ],
+      "consumption_role": "Memory Palace context handoff."
+    },
+    {
+      "issue": 4761,
+      "live_state": "CLOSED",
+      "closed_at": "2026-07-31T21:43:44Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5741,
+      "terminal_observed_sha": "8c3ef0336570238d26eab0fd49a9a2ff9c1a0c09",
+      "terminal_receipt_path": "csdlc-v2/closeout/4761.json",
+      "evidence_paths": [
+        ".csdlc/evidence/4761/capability-envelope/envelope.v1.json",
+        ".csdlc/evidence/4761/capability-envelope/non-claims.v1.md",
+        ".csdlc/evidence/4761/capability-envelope/validation.v1.log"
+      ],
+      "consumption_role": "v0.92 capability envelope and explicit non-claim boundary."
+    },
+    {
+      "issue": 4762,
+      "live_state": "CLOSED",
+      "closed_at": "2026-07-31T21:53:33Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5744,
+      "terminal_observed_sha": "d736baca1c82c6ca9b770678ff2c04ce44458fc9",
+      "terminal_receipt_path": "csdlc-v2/closeout/4762.json",
+      "evidence_paths": [
+        ".csdlc/evidence/4762/exact-head-review/review-result.md",
+        ".csdlc/evidence/4762/implementation-validation/birth-witness-receipt-validator.log",
+        ".csdlc/evidence/4762/implementation-validation/claim-boundary-scan.log",
+        ".csdlc/evidence/4762/implementation-validation/csdlc-doctor-bound.json"
+      ],
+      "consumption_role": "Birth witnesses and claim-bounded receipt package."
+    },
+    {
+      "issue": 4763,
+      "live_state": "CLOSED",
+      "closed_at": "2026-07-31T22:08:19Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5734,
+      "terminal_observed_sha": "313268e09b8d9906f61b0e12ac05cce4deea1e3c",
+      "terminal_receipt_path": "csdlc-v2/closeout/4763.json",
+      "evidence_paths": [
+        ".csdlc/evidence/4763/docs-diff-check.log",
+        ".csdlc/evidence/4763/launch-surface-tracked-paths.log",
+        ".csdlc/evidence/4763/typed-doctor.log"
+      ],
+      "consumption_role": "First-birthday docs and external launch surfaces."
+    },
+    {
+      "issue": 5007,
+      "live_state": "CLOSED",
+      "closed_at": "2026-07-31T22:59:58Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5743,
+      "terminal_observed_sha": "426d0a53fb2b7b0be571b236ca5d0a248b32e1f8",
+      "terminal_receipt_path": "csdlc-v2/closeout/5007.json",
+      "evidence_paths": [
+        ".csdlc/evidence/5007/exact-head-gpt55-rereview.md",
+        ".csdlc/evidence/5007/memory-palace-adr-diff-hygiene.log",
+        ".csdlc/evidence/5007/proof-to-claim-table.md"
+      ],
+      "consumption_role": "Memory Palace ADR acceptance after complete platform proof."
+    },
+    {
+      "issue": 5107,
+      "live_state": "CLOSED",
+      "closed_at": "2026-07-31T21:49:26Z",
+      "current_main_phase": "closed_out",
+      "publication_state": "merged",
+      "pull_request": 5742,
+      "terminal_observed_sha": "8bf36c9d214a54212e7c483fb29872e9be9e92b3",
+      "terminal_receipt_path": "csdlc-v2/closeout/5107.json",
+      "evidence_paths": [
+        ".csdlc/evidence/5107/preparation-doc-contract.log",
+        ".csdlc/issues/5107/index.json",
+        ".csdlc/prepared/issues/5107/PREPARATION_PACKET.md"
+      ],
+      "consumption_role": "Adaptive Learning DAG downstream queue; implementation and v0.92 issue mutation remain out of scope."
+    }
+  ],
+  "non_claim_checks": [
+    "This execution does not mutate #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, #5107, #5357, #5804, PR #5805, or any version:v0.92 issue.",
+    "This execution edits only the declared v0.91.8 feature-list, proof-coverage, activation-map, and next-milestone handoff documents plus issue-local lifecycle evidence; it does not edit product implementation.",
+    "Predecessor PR-head ancestry is not claimed because several terminal observed PR heads are not ancestors of current origin/main after squash-style merge; current-main lifecycle records and terminal receipts are the consumption authority.",
+    "The closed/completed dependency set does not itself prove v0.92 birthday readiness, adaptive-learning implementation, or feature-list row disposition."
+  ],
+  "execution_gate": {
+    "required_refresh": "Before #5362 execution, refresh origin/main and re-read this dependency set from current main.",
+    "required_checks": [
+      "Each dependency remains live CLOSED or has an explicit owner-approved replacement.",
+      "Each current-main .csdlc/issues/<issue>/index.json remains phase closed_out with publication observed_state merged.",
+      "Each terminal receipt path is present at the execution base.",
+      "Feature-list dispositions cite exact evidence paths and unsupported claims are blockers or non-claims."
+    ]
+  }
+}

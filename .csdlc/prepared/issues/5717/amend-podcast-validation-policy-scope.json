@@ -1,0 +1,16 @@
+{
+  "actor": "codex:5717-execution",
+  "add_protected_paths": [
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/ci_path_policy.sh",
+    "adl/tools/test_ci_path_policy.sh",
+    "adl/tools/test_select_validation_lanes.sh",
+    "adl/tools/test_validation_manager.sh"
+  ],
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "d66d5d71f23bc9409858e5d916d99407c48596b28b9de0054f78753e45cf69c2",
+  "expected_generation": 17,
+  "issue": 5717,
+  "now_unix_seconds": 1785521144,
+  "reason": "Extend #5717 protected scope to include the narrow validation selector and path-policy repair required to prevent static podcast demo/page changes from escalating to hosted coverage while preserving demo smoke."
+}

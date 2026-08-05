@@ -1,0 +1,30 @@
+{
+  "issue": 5755,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "fa5f7fc336e53e36c9d623970114774a0c3f69129f0886a477927a32117fee7e",
+  "claim_id": "claim-5755-runtime-protocol-security",
+  "actor": "codex:5755-runtime-protocol-security",
+  "reason": "Record focused Runtime v3 security validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "env",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "adl-runtime-kernel/Cargo.toml",
+        "--test",
+        "control",
+        "--test",
+        "protocol_adapters"
+      ],
+      "purpose": "Prove /v1/control body limit, protocol adapter no-client-auth rejection, and mTLS client identity positive path.",
+      "outcome": "passed",
+      "evidence_ref": "local terminal output: control 22 passed; protocol_adapters 11 passed"
+    }
+  }
+}

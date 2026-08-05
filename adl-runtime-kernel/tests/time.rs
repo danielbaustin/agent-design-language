@@ -2,8 +2,8 @@ use std::{future::pending, time::Duration};
 
 use adl_runtime_kernel::{
     initial_clock_authority, qualify_time, BlockingTimeSampleSource, ClockAuthority,
-    RecorderTrustedTime, RuntimeRecorder, TimeQualificationBounds, TimeSample, TimeSampleError,
-    TimeSampleSource, TrustedTime,
+    RecorderTrustedTime, RuntimeRecorder, SystemTimeSampleSource, TimeQualificationBounds,
+    TimeSample, TimeSampleError, TimeSampleSource, TrustedTime,
 };
 use async_trait::async_trait;
 use tokio_util::sync::CancellationToken;
@@ -12,6 +12,8 @@ const BOUNDS: TimeQualificationBounds = TimeQualificationBounds {
     timeout: Duration::from_millis(10),
     max_offset: Duration::from_millis(100),
     max_round_trip: Duration::from_millis(50),
+    retry_delay: Duration::from_millis(1),
+    refresh_interval: Duration::from_secs(60),
 };
 
 enum TestSource {
@@ -55,6 +57,20 @@ fn clock_authority_is_initially_degraded() {
             reason: "time qualification pending".to_owned(),
         }
     );
+}
+
+#[tokio::test]
+async fn host_system_clock_is_an_immediately_qualified_portable_source() {
+    let sample = SystemTimeSampleSource.sample().await.unwrap();
+
+    assert_eq!(sample.source, "host_system_clock");
+    assert!(sample.unix_millis > 1_700_000_000_000);
+    assert_eq!(sample.offset_millis, 0);
+    assert_eq!(sample.round_trip, Duration::ZERO);
+    assert!(matches!(
+        qualify_time(&SystemTimeSampleSource, BOUNDS, &CancellationToken::new()).await,
+        ClockAuthority::Authoritative { source, .. } if source == "host_system_clock"
+    ));
 }
 
 #[tokio::test]

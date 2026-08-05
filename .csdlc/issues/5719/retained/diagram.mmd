@@ -1,0 +1,10 @@
+flowchart LR
+    A["Changed PR paths"] --> B["ci_path_policy.sh"]
+    B --> C{"Rust/runtime/provider/tooling?"}
+    C -- yes --> D["full hosted coverage producers"]
+    C -- no --> E{"podcast/demo static surface?"}
+    E -- yes --> F["focused static/demo validation, no full hosted coverage"]
+    E -- no --> G["existing docs/tooling policy"]
+    D --> H["adl-coverage-hosted aggregator"]
+    F --> H
+    G --> H

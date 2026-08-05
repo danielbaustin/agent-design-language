@@ -1,0 +1,13 @@
+{
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "add_protected_paths": [
+    ".csdlc/issues/5357"
+  ],
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "expected_digest": "c7cd0fa6754fa078723a25ddad2f79caec3cfa96968ce953f1b409554994db3e",
+  "expected_generation": 4,
+  "issue": 5804,
+  "now_unix_seconds": 1785863379,
+  "reason": "Declare the typed #5357 claim-release projection required to leave WP-19 open and unblock its separate documentation repair.",
+  "remove_protected_paths": []
+}

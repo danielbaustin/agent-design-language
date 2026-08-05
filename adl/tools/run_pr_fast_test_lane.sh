@@ -318,7 +318,7 @@ filter_token_for_path() {
       printf 'runtime_v2_cmd'
       return 0
       ;;
-    adl/src/csdlc_prompt_editor.rs|adl/src/csdlc_prompt_editor/*.rs)
+    adl/src/csdlc_prompt_editor.rs)
       printf 'csdlc_prompt_editor'
       return 0
       ;;
@@ -364,14 +364,6 @@ filter_token_for_path() {
       ;;
     adl/src/cli/tests/open_usage.rs)
       printf 'scheduler_cli'
-      return 0
-      ;;
-    adl/src/bin/run_v0916_integrated_runtime_soak.rs)
-      printf 'run_v0916_integrated_runtime_soak'
-      return 0
-      ;;
-    adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs)
-      printf 'run_v0917_integrated_resilience_failure_injection'
       return 0
       ;;
     adl/src/chronosense.rs|adl/src/chronosense/*.rs)
@@ -558,8 +550,6 @@ TOKEN_MAP = {
     "scheduler_economics": 'test(/^scheduler::tests::/) or test(/^provider::tests::provider_mod_/) or binary_id(adl::provider_tests) and test(/^profiles::/)',
     "demo_adl_gws_context_mirror": 'binary_id(adl::bin/adl-gws-context-mirror) and test(/^tests::/)',
     "demo_adl_gws_native_drive_sync": 'binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)',
-    "run_v0916_integrated_runtime_soak": 'binary_id(adl::bin/run_v0916_integrated_runtime_soak) and test(/^tests::/)',
-    "run_v0917_integrated_resilience_failure_injection": 'binary_id(adl::bin/run_v0917_integrated_resilience_failure_injection) and test(/^tests::/)',
     "runtime_v2_cmd": 'test(/^cli::runtime_v2_cmd::/)',
     "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
     "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
@@ -655,8 +645,7 @@ while IFS= read -r path; do
       saw_process_status_related_surface=true
       ;;
     adl/src/cli/scheduler_cmd.rs|\
-    adl/src/cli/tests/open_usage.rs|\
-    adl/src/bin/run_v0916_integrated_runtime_soak.rs)
+    adl/src/cli/tests/open_usage.rs)
       saw_scheduler_related_surface=true
       ;;
     adl/src/bin/csdlc.rs|\

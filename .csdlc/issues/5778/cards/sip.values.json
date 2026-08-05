@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5778,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Derive terminal truth and finish in one idempotent command",
+    "slug": "derived-terminal-finish",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Replace the post-merge closeout transaction with derived terminal truth and one retry-safe typed finish command.",
+      "required_outcome": "An exact reviewed and green issue converges through merge and terminal confirmation without tracked post-merge mutation, a terminal receipt projection, or a second PR.",
+      "declared_scope": [
+        "C-SDLC v2 terminal resolution and finish command",
+        "Exact-head review and merge convergence",
+        "Logical terminal claim release",
+        "Legacy terminal read compatibility",
+        "Focused lifecycle tests and operator contracts"
+      ],
+      "authority_boundary": [
+        "Typed C-SDLC v2 Rust binaries only",
+        "GitHub mutation limited to expected-head merge and governed terminal observation",
+        "No raw lifecycle state or card edits",
+        "No cleanup or deletion authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Do not use AWS or Spot",
+        "Do not write tracked files on main",
+        "Use the dedicated #5778 worktree",
+        "Keep implementation within the declared protected paths",
+        "Run a bounded subagent review before publication"
+      ]
+    }
+  }
+}

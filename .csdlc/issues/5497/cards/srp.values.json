@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5497,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement end-to-end distributed C-SDLC workcell",
+    "slug": "v0-91-8-wp-10a-distributed-workcell-umbrella",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/evidence/5497\n.csdlc/issues/5497\n.csdlc/prepared/issues/5497",
+      "review_revision": "git-blake3:3b4f0e86ab226be9ab3550d55c0c20c0410511bd:166a4f316ffa2b58e6be048f222f775a980b33a91ad22deb61ef70b1cc6d3be6",
+      "reviewer": "codex:wp10a-umbrella-closeout",
+      "review_prompts": [
+        "Does the umbrella avoid duplicating child product ownership?",
+        "Is ordering based on interface readiness and live merge ancestry rather than receipts?",
+        "Can dashboard and convergence execute safely in parallel?",
+        "Does the final proof use real tasks and preserve explicit authority?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pass"
+    }
+  }
+}

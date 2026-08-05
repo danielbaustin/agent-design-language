@@ -1,0 +1,35 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5765,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][planning][github] Schedule Agent Logic account repository migration",
+    "slug": "v0-92-planning-github-agent-logic-account-repository-migration",
+    "version": "v0.92",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the planning-only Agent Logic account repository migration visible in the canonical v0.92 issue-wave authority.",
+      "required_outcome": "The v0.92 planning authority contains one source-grounded reference to the migration plan and preserves all Gate 0 prerequisites and non-claims.",
+      "declared_scope": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
+      ],
+      "authority_boundary": [
+        "Issue 5765 owns scheduling only",
+        "The TBD migration plan remains the planning source",
+        "No GitHub or repository mutation is authorized"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Keep main untouched",
+        "Do not use AWS",
+        "Retain danielbaustin/asksifu personally",
+        "Do not claim the sixth migration candidate is known"
+      ]
+    }
+  }
+}

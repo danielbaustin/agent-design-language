@@ -143,7 +143,7 @@ impl CsmAcipCarrierStatus {
             readiness: "ready".to_string(),
             process_model: "embedded_csm_runtime_component".to_string(),
             runtime_api_path: "/acip".to_string(),
-            websocket_path: "/acip/ws".to_string(),
+            websocket_path: "/v1/acip/ws".to_string(),
             channels: CsmAcipCarrierChannels::new(),
             governance_hooks: CsmAcipGovernanceHooks::required(),
             projection_profile: CsmAcipProjectionProfile::runtime_default(),
@@ -161,7 +161,7 @@ impl CsmAcipCarrierStatus {
             "process_model",
         )?;
         require_exact(&self.runtime_api_path, "/acip", "runtime_api_path")?;
-        require_exact(&self.websocket_path, "/acip/ws", "websocket_path")?;
+        require_exact(&self.websocket_path, "/v1/acip/ws", "websocket_path")?;
         require_exact(
             &self.channels.schema,
             CSM_ACIP_CHANNELS_SCHEMA,
@@ -212,7 +212,7 @@ pub fn runtime_capability() -> Value {
         "component_class": "embedded_csm_runtime_component",
         "process_model": "in_process_no_sidecar_no_separate_binary",
         "runtime_api_path": "/acip",
-        "websocket_path": "/acip/ws",
+        "websocket_path": "/v1/acip/ws",
         "protobuf_crate": "prost",
         "channels": CsmAcipCarrierChannels::new(),
         "governance_hooks": CsmAcipGovernanceHooks::required(),

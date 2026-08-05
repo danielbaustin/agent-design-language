@@ -1,0 +1,8 @@
+{
+  "issue": 5695,
+  "expected_generation": 8,
+  "expected_digest": "f65d08744c1cefe8fd485fcc876688eb9e1ed3d47cec7b0686c59bd7c219823d",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "reason": "Rebase changed the substantive revision; recover stale publication and review truth before recording the new exact-head review."
+}

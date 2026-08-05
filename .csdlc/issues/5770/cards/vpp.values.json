@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5770,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][review] Allow bounded SPP correction during implemented review remediation",
+    "slug": "recordless-terminal-recovery-5770",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "terminal-evidence",
+          "proof_role": "Validate observed closure evidence",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 100,
+          "argv": [
+            "csdlc-closeout",
+            "recover-recordless",
+            "--issue",
+            "5770",
+            "--pr",
+            "5772"
+          ],
+          "parallel_group": "terminal-recovery",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed without exact, internally consistent terminal evidence.",
+      "design_ref": ".csdlc/issues/5770/retained/design.md",
+      "design_digest": "0f0a85d0b78f95f7af19ff53c4896be514f6c1528de4916ad4ead5707c1577bf",
+      "diagram_ref": ".csdlc/issues/5770/retained/diagram.mmd",
+      "diagram_digest": "046ad1554b3109e751e61c48d3a4e2dd027cbbd0dacb664c2a31dab371a9c322"
+    }
+  }
+}

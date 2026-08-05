@@ -1,0 +1,60 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5789,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime][observatory] Make the HTML Observatory fully functional",
+    "slug": "runtime-v3-html-observatory-full-functionality",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Fix the existing Runtime v3 HTML Observatory and the minimal runtime/control-plane paths required by its documented controls; do not broaden into unrelated runtime redesign.",
+      "deliverables": [
+        "Default live Runtime v3 Observatory wiring",
+        "Truthful live/read/stream/fallback state model",
+        "Working or fail-closed operator-to-agent messaging controls",
+        "Resolved links/export/events/control behavior",
+        "Focused tests and browser proof artifacts",
+        "Ready PR with Closes #5789"
+      ],
+      "acceptance_criteria": [
+        "AC-1: The default https://localhost:8765/demos/html-observatory/ route uses the active Runtime v3 API when available and does not leave live-ready fields pending.",
+        "AC-2: The explicit Runtime v3 query route and the default route agree on live feed identity, agent count, event count, process ids, and freshness.",
+        "AC-3: WebSocket connect/live mode works for public read or reports a precise actionable failure while live GET feed remains visibly authoritative.",
+        "AC-4: Runtime process id, vector process id, and port liveness shown in the UI match repo-native adl process status probes.",
+        "AC-5: Packet, Proof Report, Runtime, Agents, Events, Evidence, Export, and mode controls resolve to correct live or retained surfaces with no stale hidden v2 assumptions.",
+        "AC-6: Operator-to-agent messaging supports target selection, compose, authenticated submit, delivery/receipt display, event-tail visibility, and fail-closed diagnostics for missing auth, bad envelope, stale agent, unavailable write channel, or denied policy.",
+        "AC-7: Unauthenticated writes cannot silently send messages, and retained AWS/CloudWatch evidence is never presented as live proof.",
+        "AC-8: Browser-level and CLI validation exercise the checked-in page/routes and negative/offline cases, not only generated fixtures."
+      ],
+      "dependencies": [
+        "Current Runtime v3 service running locally on https://localhost:20997",
+        "Current Observatory static server on https://localhost:8765",
+        "Existing runtime process-status helper"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5789",
+        "demos/html-observatory/index.html",
+        "demos/html-observatory/app.js",
+        "demos/html-observatory/runtime-v3.config.json",
+        "demos/html-observatory/README.md",
+        "adl/src/csm_runtime_api.rs",
+        "adl/src/csm_shepherd_agent.rs",
+        "adl/src/csm_resident_agents.rs",
+        "docs/tooling/PERMISSION_SAFE_PROCESS_STATUS.md"
+      ],
+      "non_goals": [
+        "AWS or CloudWatch live operations",
+        "mock-only demo replacement",
+        "unrelated Runtime v3 redesign",
+        "production deployment claims",
+        "tracked edits on main"
+      ]
+    }
+  }
+}

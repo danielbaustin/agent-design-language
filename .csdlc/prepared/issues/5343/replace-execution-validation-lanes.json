@@ -1,0 +1,99 @@
+{
+  "issue": 5343,
+  "card": "vpp",
+  "expected_generation": 11,
+  "expected_digest": "d63045c5c92014878581e04a0565d79af4546d9059dd872ef51213d0581b5a12",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Align validation with the executed live-merge gate and one-pass cutover proof; retain only the post-merge lane as future work.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "preparation-contract",
+        "proof_role": "Prove six typed cards, design, protected paths, transaction and rollback invariants, COTS, budgets, and root safety",
+        "acceptance_ids": ["AC-1", "AC-8", "AC-9"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5343/validate-preparation.rb"],
+        "parallel_group": "preparation",
+        "defer_reason": null
+      },
+      {
+        "lane": "dependency-merge-gate",
+        "proof_role": "Prove #5344 and #5345 live merged landing commits are ancestral to the exact execution revision and the exact #5344 handoff is accepted; receipts are audit-only",
+        "acceptance_ids": ["AC-1", "AC-2"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5343/check-dependencies.rb"],
+        "parallel_group": "execution-gate",
+        "defer_reason": null
+      },
+      {
+        "lane": "transaction-fault-matrix",
+        "proof_role": "Execute one fresh-install cutover proof covering identity, compare-and-swap, exact rollback, v1 and v2 execution, and every failure-preservation class",
+        "acceptance_ids": ["AC-3", "AC-4", "AC-5"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 300,
+        "budget_tokens": 6000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5343/run-validation-lane.rb", "transaction-fault-matrix"],
+        "parallel_group": "transaction",
+        "defer_reason": null
+      },
+      {
+        "lane": "fresh-install-override",
+        "proof_role": "Validate the retained report proves fresh v2 installation, final v2 selection, and retained v1",
+        "acceptance_ids": ["AC-3", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5343/run-validation-lane.rb", "fresh-install-override"],
+        "parallel_group": "report-validation",
+        "defer_reason": null
+      },
+      {
+        "lane": "rollback-window-evidence",
+        "proof_role": "Validate exact prior-byte restoration, post-rollback v1 execution, fourteen-day retention, and no deletion authority",
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5343/run-validation-lane.rb", "rollback-window-evidence"],
+        "parallel_group": "report-validation",
+        "defer_reason": null
+      },
+      {
+        "lane": "cutover-budgets",
+        "proof_role": "Enforce bounded orchestration, no Runtime v2 edits, no product implementation duplication, and no legacy deletion",
+        "acceptance_ids": ["AC-7", "AC-8", "AC-9"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5343/run-validation-lane.rb", "cutover-budgets"],
+        "parallel_group": "budgets",
+        "defer_reason": null
+      },
+      {
+        "lane": "post-merge-exact",
+        "proof_role": "Verify merged ancestry and rerun exact report, dependency, identity, rollback-window, budget, and no-deletion checks before WP-12 completion",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8", "AC-9"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 5000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5343/run-validation-lane.rb", "post-merge-exact"],
+        "parallel_group": "post-merge",
+        "defer_reason": "Run immediately after authorized merge; it does not block PR publication"
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5691,
+  "claim_id": "claim-5691-runtime-v3-vector-otel",
+  "expected_generation": 0,
+  "expected_digest": "301f1912a854072c9aebf15d8d7e3bda842201b298ab2a8650290e39c11b3cad",
+  "now_unix_seconds": 1785122490,
+  "actor": "codex:5691-runtime-v3-vector-otel",
+  "reason": "Add repo-native macOS/Linux/Windows pinned Vector provisioning paths required by #5691 Runtime v3 master-log acceptance without touching Runtime code outside the existing issue scope.",
+  "add_protected_paths": [
+    "adl/tools/install_vector_component.sh",
+    "adl/tools/install_vector_component.ps1"
+  ]
+}

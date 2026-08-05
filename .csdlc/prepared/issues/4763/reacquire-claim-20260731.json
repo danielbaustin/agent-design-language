@@ -1,0 +1,24 @@
+{
+  "issue": 4763,
+  "expected_generation": 0,
+  "expected_digest": "b6b9dc79956c8c37b6b05eeeee33629a9fe5e5a52fad3d3853a2ed325000ca51",
+  "now_unix_seconds": 1785525138,
+  "actor": "codex:019f9ad4-4763-preparation-refresh",
+  "reason": "Reacquire expired preparation claim for operator-requested issue #4763 card/design refresh only; no implementation, PR, publication, merge, or closeout.",
+  "replacement": {
+    "id": "prep-4763-v0918-wp14-refresh-20260731",
+    "owner": "codex:019f9ad4-4763-preparation-refresh",
+    "generation": 0,
+    "acquired_unix_seconds": 1785525138,
+    "expires_unix_seconds": 1786129938,
+    "heartbeat_unix_seconds": 1785525138,
+    "branch": "codex/4763-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4763",
+      ".csdlc/locks/4763.lock",
+      ".csdlc/prepared/issues/4763"
+    ],
+    "purpose": "Preparation-only refresh for #4763 first-birthday docs and external launch surfaces planning; no implementation, PR, publication, merge, or closeout."
+  }
+}

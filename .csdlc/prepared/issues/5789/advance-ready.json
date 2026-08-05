@@ -1,0 +1,14 @@
+{
+  "issue": 5789,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "7da01c27c7b8e0360a606b1c042df0bcea2f0f8c7e4d9f1e8ca9a5aa7c886a94",
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Doctor reports #5789 is structurally ready; enter bound implementation preparation before scoped product edits.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "ready"
+  },
+  "fail_after_backup": false
+}

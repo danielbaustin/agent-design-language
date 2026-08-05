@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5355,
+  "expected_generation": 9,
+  "expected_digest": "359544bb303b1e98df720120bab32f124893767ee6c9efb43087bf583dcc6a71",
+  "claim_id": "claim-5355-v0918-preparation",
+  "actor": "codex:wp21a-conductor",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5355-v0918-preparation",
+  "title": "[v0.91.8][WP-21A] Prepare next-milestone closeout plan",
+  "body": "Closes #5355\n\n## Summary\n- adds the canonical next-milestone closeout-planning packet\n- links it from the v0.91.8 README, canonical inventory, handoff, and feature handoff\n- records exact WP-21 merge truth while keeping asynchronous closeout bookkeeping non-blocking\n\n## Validation\n- typed doctor and four focused documentation lanes passed\n- exact WP-21 merge ancestry, YAML/order, links, and diff hygiene passed\n- single bounded GPT-5.5 pre-PR review passed with zero blockers after one wording fix\n- no product or v0.92 files changed",
+  "draft": false,
+  "token_file": null
+}

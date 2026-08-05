@@ -1,0 +1,22 @@
+{
+  "actor": "codex:issue-5683-unity-remediation",
+  "card": "sor",
+  "claim_id": "claim-5683-v0918-unity-observatory-visual-remediation",
+  "expected_digest": "93ed6e917a95b7cf1e9344d90ccabc73478b6cba3d261275dc13ba644bb28d0b",
+  "expected_generation": 5,
+  "issue": 5683,
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "evidence_ref": ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md",
+      "outcome": "passed",
+      "purpose": "Verify whitespace and patch hygiene for the bounded issue diff."
+    }
+  },
+  "reason": "Record focused diff hygiene validation"
+}

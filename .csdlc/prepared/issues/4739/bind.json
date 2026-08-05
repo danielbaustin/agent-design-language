@@ -1,0 +1,26 @@
+{
+  "issue": 4739,
+  "base_branch": "main",
+  "branch": "codex/4739-v0918-wp15-unity-mcp-alignment-prep",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-4739-v0918-wp15-unity-mcp-alignment-prep",
+    "owner": "codex:issue-4739-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1784834939,
+    "expires_unix_seconds": 1785439739,
+    "heartbeat_unix_seconds": 1784834939,
+    "branch": "codex/4739-v0918-wp15-unity-mcp-alignment-prep",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4739",
+      ".csdlc/locks/4739.lock",
+      ".csdlc/prepared/issues/4739",
+      "adl/tools/probe_unity_mcp_observatory_alignment.sh",
+      "adl/tools/test_v0916_unity_mcp_alignment_unit.sh",
+      "adl/tools/test_v0916_unity_observatory_contract.sh",
+      "docs/tooling/unity_mcp_observatory_alignment.md"
+    ],
+    "purpose": "Prepare #4739 for bounded v0.91.8 WP-15 Unity-MCP project and endpoint alignment execution"
+  }
+}

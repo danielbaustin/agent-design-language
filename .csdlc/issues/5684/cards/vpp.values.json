@@ -1,0 +1,116 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5684,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Split GitHub tool surface into smaller owner binaries",
+    "slug": "csdlc-github-tool-split",
+    "version": "v0.91.8",
+    "generation": 38
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "shared-resilience",
+          "proof_role": "shared retry/backoff crate compiles and behaves deterministically",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "adl-resilience/Cargo.toml"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "github-split",
+          "proof_role": "split binaries reject wrong surfaces and issue marker readback is exact",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 1500,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate_github_actions"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "install-coexistence",
+          "proof_role": "Gate 10A and stable install verify every required owner binary",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 300,
+          "budget_tokens": 2000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate10a"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "docs-guidance",
+          "proof_role": "Current operator docs and skills route split GitHub surfaces and forbid deleted prompt-wrapper invocation",
+          "acceptance_ids": [
+            "AC-8",
+            "AC-9"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate10a",
+            "current_bootstrap_guidance_does_not_call_deleted_prompt_wrapper"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed; do not publish if install/coexistence or split-routing proof is missing.",
+      "design_ref": ".csdlc/issues/5684/design.md",
+      "design_digest": "71c69c042f97526ace7f3ad9dc7c42d109e1b04d274e8afdf59893176c698eb8",
+      "diagram_ref": ".csdlc/issues/5684/diagram.mmd",
+      "diagram_digest": "c25ed1b99d9a34cbda12b144c73bd082ce22349de612069c8ec588c9c122f0a6"
+    }
+  }
+}

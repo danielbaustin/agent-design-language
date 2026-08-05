@@ -251,7 +251,7 @@ readiness_sweep:
       status: ready | needs_editor_repair | blocked
       bundle_path: <path or null>
       next_skills:
-        - pr-init | workflow-conductor | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor
+        - pr-init | pr-ready | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor
       rationale: <bounded text>
   notes:
     - <bounded text>
@@ -266,7 +266,7 @@ truth_check:
   notes:
     - <bounded text>
 current_state:
-  selected_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
+  selected_skill: pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
   current_phase: intake | issue_loop | review | closeout | waiting | watching | blocked
   blocker_reason: none | child_issue_blocked | malformed_cards | review_findings_blocking | missing_metrics | operator_scope_decision | missing_sprint_issue | unknown
 review:
@@ -324,7 +324,7 @@ next_handoff:
   status: continue | wait_and_recheck | ask_operator | stop
   target_issue_number: <u32 or null>
   target_pr_url: <url or null>
-  next_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
+  next_skill: pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
   child_session_goal:
     required: true | false
     create_after_bind: true | false

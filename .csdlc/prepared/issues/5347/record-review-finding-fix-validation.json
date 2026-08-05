@@ -1,0 +1,23 @@
+{
+  "issue": 5347,
+  "card": "sor",
+  "expected_generation": 15,
+  "expected_digest": "f7804580a03cbb30397fe262b9e258bfe3640ac1e63a80d60aeb1b8fc2632239",
+  "claim_id": "claim-5347-external-band-deletion",
+  "actor": "codex:5347-replacement-sole-writer",
+  "reason": "Record final lock-preserving focused validation for direct GPT-5.5 review-finding fixes before exact-head rereview.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5347/run-validation-lane.rb",
+        "execution"
+      ],
+      "purpose": "Prove #5347 review-finding fixes removed obsolete Rust test references, repaired shell/tool stale references, strengthened the recurrence guard, preserved #5346 disjointness, and compiled surviving integration tests.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5347/execution-validation/review-finding-fix-validation.json"
+    }
+  },
+  "fail_after_backup": false
+}

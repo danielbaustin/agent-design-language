@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5653,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs] Refresh README status, release, CI, and homepage links",
+    "slug": "readme-status-release-homepage-refresh",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "README.md\ndocs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md\n.csdlc/issues/5653",
+      "review_revision": "git-blake3:5e7edfb35d16c2c6da9201654a911c5157430ca6:29e1ef67c402c766516a2ed0fae5adfad89f8e02a13b9504b4bcfd6963c84ce7",
+      "reviewer": "bounded-subagent-review-5653",
+      "review_prompts": [
+        "Check README status against current release evidence",
+        "Check homepage and badge links",
+        "Check for stale or unsupported release claims"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The main ci badge reflects the independent latest main workflow; this documentation change does not alter CI behavior."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

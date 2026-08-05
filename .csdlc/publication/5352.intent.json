@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5352,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5352-v0918-final-handoff",
+  "title": "[v0.91.8][WP-21] Publish the v0.92 consumption handoff",
+  "body": "Closes #5352\n\n## Summary\n- records the exact v0.91.8 to v0.92 consumption handoff after all eight WP-21 child issues and #5558 merged\n- retains row-bound issue, PR, head, merge, concern, and product identities for the handoff ledger\n- preserves explicit non-claims: this handoff does not execute v0.92 activation or claim the first birthday occurred\n\n## Validation\n- final handoff ledger validation passed\n- dependency and exact-baseline ancestry validation passed\n- implemented lifecycle packet validation passed\n- git diff hygiene passed\n- one exact pre-PR review at b1ec4f120fa1fd7091525631813b2066bdb5d788 passed with zero blockers after all findings were fixed\n\nThe full findings-first WP-21 sprint review remains a required pre-merge gate and will be completed before this PR is merged.",
+  "draft": false,
+  "revision": "git-blake3:88edbfa7d06cd63bc96fc88e6ff28421972146c0:50c55f0c0baab15de19cc8ca977ac48f2f6db98836221e38632451498e5fc4a5",
+  "commit_sha": "88edbfa7d06cd63bc96fc88e6ff28421972146c0"
+}

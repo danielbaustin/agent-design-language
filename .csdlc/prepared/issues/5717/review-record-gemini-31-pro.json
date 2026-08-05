@@ -1,0 +1,30 @@
+{
+  "issue": 5717,
+  "expected_generation": 1,
+  "expected_digest": "a5a6c0b085f39866a647d1db9896e2fd77eac33a5afcd9b039f9a4bcfc74ca18",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "actor": "codex:5717-execution",
+  "evidence": {
+    "reviewer": "gemini-3.1-pro-preview",
+    "scope": [
+      ".csdlc/issues/5715",
+      ".csdlc/issues/5717",
+      ".csdlc/prepared/issues/5717",
+      ".csdlc/evidence/5717",
+      "demos/podcast/studio-reference/REFERENCE_DIGESTS.txt",
+      "demos/podcast/studio-reference/podcast-studio.html",
+      "demos/podcast/studio-reference/uploads/agent-logic-logo.svg",
+      "demos/podcast/studio/REFERENCE_DIGESTS.txt",
+      "demos/podcast/studio/podcast-studio.html",
+      "demos/podcast/studio/reference.sha256",
+      "demos/podcast/studio/uploads/agent-logic-logo.svg"
+    ],
+    "reviewed_revision": "git-blake3:64b747a9cd9601e2c6444930c38a5dc32f99397b:fe8ae0a0e65d286ccbee0e218380af44e4c43aae0caaeca0f374967c2e05f730",
+    "findings": [],
+    "residual_risks": [
+      "The generated page intentionally uses relative feed and audio links; deployment must preserve the current demos/podcast/studio parent-child layout where ../feed.xml and ../audio/meet-the-ai-coworkers.wav resolve."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

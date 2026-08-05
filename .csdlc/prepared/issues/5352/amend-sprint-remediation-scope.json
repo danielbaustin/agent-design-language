@@ -1,0 +1,12 @@
+{
+  "issue": 5352,
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "expected_generation": 6,
+  "expected_digest": "a4becc752110bdd1d3d287adda33c925a22a0f4907dde7d306bf360c0b85e9e0",
+  "now_unix_seconds": 1785544921,
+  "actor": "codex:wp21-final-handoff",
+  "reason": "Repair the sprint review's ACIP canonical-route mismatch without widening into unrelated runtime work.",
+  "add_protected_paths": [
+    "adl/src/csm_runtime_api.rs"
+  ]
+}

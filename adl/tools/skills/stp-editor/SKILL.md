@@ -23,14 +23,11 @@ prompt-template values renderer and structure/schema validators before using
 Markdown as lifecycle state:
 
 ```sh
-adl-csdlc tooling prompt-template validate-values --kind stp --values <path>
-adl-csdlc tooling prompt-template edit-values --kind stp --values <path> --set <field=value> --out <path>
-adl-csdlc tooling prompt-template render --kind stp --values <path> --out <path>
-adl-csdlc tooling prompt-template validate-structure --kind stp --input <path>
+csdlc-edit --root <worktree> apply --request <edit-request.json>
+csdlc-validate --root <worktree> finalize --request <validation-request.json>
 ```
 
-If `adl-csdlc` is not already on `PATH`, run the same commands from a fresh
-checkout through `cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- ...`.
+Resolve both binaries through `csdlc-install resolve` before use.
 
 Use this skill for STP truth repairs: task intent, required outcome,
 acceptance criteria, bounded scope, validation plan, and placeholder cleanup. Do

@@ -149,7 +149,7 @@ sprint:
         status: ready | needs_editor_repair | blocked
         bundle_path: /absolute/or/repo-relative/path | null
         next_skills:
-          - pr-init | workflow-conductor | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor
+          - pr-init | pr-ready | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor
         rationale: <bounded text>
   issue_closed: true | false
 policy:

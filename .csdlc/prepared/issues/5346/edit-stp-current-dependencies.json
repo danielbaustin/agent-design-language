@@ -1,0 +1,25 @@
+{
+  "issue": 5346,
+  "card": "stp",
+  "expected_generation": 1,
+  "expected_digest": "b0a10d75f0f3094b7ac28cb872d3b97b72bac1349762466c681f93d4fa995e57",
+  "claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "actor": "codex:5346-preparation-refresh",
+  "reason": "Refresh #5346 preparation dependencies to the current WP-13 execution gate including #5347 and WP-14A through WP-17 without deletion.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "#5344 WP-12 soak and rollback merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "#5343 WP-12 reviewed selector switch merged, typed closed_out, claim released, retained merged receipt present, rollback-window gate satisfied, and merge SHA ancestral",
+      "#5358 current C-SDLC v2 acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "#5361 current Runtime v3 acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "#5347 peer external-band deletion eligibility manifest available at an exact reviewed revision and proven disjoint; #5347 is not absorbed by #5346 and deletion merges remain serialized",
+      "WP-14A #5384 integrated platform acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "WP-15 #5354 demo convergence merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "WP-16 #5351 integrated platform quality gate merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "WP-17 #5360 documentation and release truth alignment merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral"
+    ]
+  },
+  "fail_after_backup": false
+}

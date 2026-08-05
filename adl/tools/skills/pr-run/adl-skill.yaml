@@ -89,11 +89,9 @@ execution:
     - "merge"
     - "closeout"
   preferred_commands:
-    - "adl/tools/pr.sh doctor --json"
-    - "adl/tools/pr.sh run"
-    - "adl/tools/pr.sh ready"
-    - "adl/tools/pr.sh preflight"
-  preferred_path: "consume_doctor_json_first_then_run_with_compatibility_fallbacks"
+    - "csdlc-doctor --repo <repo> --issue <issue>"
+    - "csdlc-bind --root <worktree> --request <bind-request.json>"
+  preferred_path: "consume_typed_doctor_then_bind"
   repair_policy: "doctor_checks_must_precede_execution_and_issue_scope_must_remain_bounded"
   invocation_guidance: "prefer_validated_structured_input_over_freeform_prose"
 boundaries:

@@ -69,13 +69,13 @@ Revision 1
 
 ## Design
 
-docs/architecture/adl_pr_cycle_v2_skill.md
+.csdlc/issues/5632/retained/design.md
 
 Digest: fed7a7b36183bd305af4e66d0f093808967dea7082f5b872cf7969ee3c9cbc1c
 
 ## Diagram
 
-docs/architecture/adl_pr_cycle_v2_skill.mmd
+.csdlc/issues/5632/retained/diagram.mmd
 
 Digest: 91cddb3902e14c12f23b125a2fbb01e2d2077e04713733e004772750894cba82
 

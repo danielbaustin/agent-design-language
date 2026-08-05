@@ -1,0 +1,58 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5717,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][ui] Update podcast studio copy from integrated design",
+    "slug": "v0-91-8-podcast-ui-update-podcast-studio-copy-from-integrated-design",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Apply the operator-requested studio copy/logo/layout fixes without redesigning the page or modifying podcast generator behavior.",
+      "deliverables": [
+        "updated studio reference HTML",
+        "updated generated served studio HTML",
+        "updated studio reference/generated digest files",
+        "copied Agent Logic logo asset in the studio bundle",
+        "focused validation evidence for studio route, digest, audio, and RSS",
+        "truthful issue-local lifecycle record"
+      ],
+      "acceptance_criteria": [
+        "AC-1: The studio page uses the Agent Logic logo asset rather than the placeholder/export logo.",
+        "AC-2: The visible show name is Synthetic Minds Podcast.",
+        "AC-3: The hero copy says 'Special guests join us occasionally.'",
+        "AC-4: Episodes are proposed launch topics numbered from 1, with fake historical numbers removed.",
+        "AC-5: The gap below the Listen now button is reduced without disrupting the design.",
+        "AC-6: The contact link uses podcast@agent-logic.ai.",
+        "AC-7: The FAQ answer says there is no video.",
+        "AC-8: FAQ remains capitalized.",
+        "AC-9: The footer puts the copyright line and disclaimer on separate lines.",
+        "AC-10: Existing studio assets load, and audio/RSS validation still passes."
+      ],
+      "dependencies": [
+        "#5715 integrated studio route foundation",
+        "#5711 audio/RSS launch foundation"
+      ],
+      "repo_inputs": [
+        "demos/podcast/studio-reference/podcast-studio.html",
+        "demos/podcast/studio-reference/REFERENCE_DIGESTS.txt",
+        "demos/podcast/studio/podcast-studio.html",
+        "demos/podcast/studio/REFERENCE_DIGESTS.txt",
+        "demos/podcast/studio/reference.sha256",
+        "docs/milestones/v0.91.8/review/podcast_launch_5711/episodes.json"
+      ],
+      "non_goals": [
+        "production deployment",
+        "redesigning the studio page beyond the requested copy/logo/spacing fixes",
+        "changing podcast generator code",
+        "changing audio or RSS implementation",
+        "claiming that proposed episode topics are recorded episodes"
+      ]
+    }
+  }
+}

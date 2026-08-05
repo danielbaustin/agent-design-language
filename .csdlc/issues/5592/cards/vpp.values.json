@@ -7,7 +7,7 @@
     "title": "[v0.91.8][WP-14][runtime-v3][parity-b] Make reasoning, adaptive learning, and governed cognition live",
     "slug": "v0-91-8-runtime-v3-parity-b-governed-cognition",
     "version": "v0.91.8",
-    "generation": 17
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -235,9 +235,9 @@
       "planned_validation_seconds": 7200,
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on missing or unreviewed #5591 contract truth, protected-path collision, non-live evidence, unbounded or replay-unsafe loops, invalid or reusable mutation authority, adversarial signal steering, subjective affect overclaim, authority widening, missing feature disposition, Runtime v2 coupling, premature deletion, AWS, publication, budget breach, actionable review findings, or any non-green exact-revision lane.",
-      "design_ref": ".csdlc/prepared/issues/5592/design.md",
+      "design_ref": ".csdlc/issues/5592/retained/design.md",
       "design_digest": "4fe10bb664da859777129704939d5eef22ec52996d5f951911c0149574be658a",
-      "diagram_ref": ".csdlc/prepared/issues/5592/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5592/retained/diagram.mmd",
       "diagram_digest": "2f4f8ba283edb88b9b24cd3c68ffcd2ce2832fb749663a81e4d27c71022e8a40"
     }
   }

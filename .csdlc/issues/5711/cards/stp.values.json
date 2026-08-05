@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5711,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][launch] Ship weekly podcast with audio, RSS, guests, and public route",
+    "slug": "recordless-terminal-recovery-5711",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Record observed closure without reconstructing unavailable lifecycle history.",
+      "deliverables": [
+        "terminal projection",
+        "retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "issue is observed closed",
+        "terminal evidence is internally consistent"
+      ],
+      "dependencies": [
+        "exact merged PR evidence"
+      ],
+      "repo_inputs": [
+        "github-issue:5711",
+        "pull_request:5714 head:854b7829e89c0e6bd8eada8d28cd62ecbf057648 merge:5499055f1a6ec51716cda51469275f4a6dcfd7cd",
+        "github-body-blake3:fefca51040cfd62a836788f9011d626c56f2b5d93baef8faaeaea071c06213bc"
+      ],
+      "non_goals": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ]
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5345,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10] Implement thin ADL CLI and authoritative selector",
+    "slug": "v0918-wp10-thin-adl-cli-authoritative-selector",
+    "version": "v0.91.8",
+    "generation": 23
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Implement a small ADL v2 owner CLI that delegates validate, schema, plan, run, inspect, sign, and verify to reviewed WP-04 through WP-09 libraries, plus an authoritative atomic generation selector and stable installer with explicit verified rollback.",
+      "required_outcome": "The independent adl-cli crate and installer provide deterministic JSON command envelopes, stable exit behavior, exact-digest installation and explicit compare-and-swap generation selection and rollback without duplicating language, compiler, engine, records, Runtime, provider, governed-tool, or lifecycle authority.",
+      "declared_scope": [
+        "adl-v2/crates/adl-cli typed command tree and thin upstream adapters",
+        "generation selector record, lock, compare-and-swap transaction, deterministic receipt, inspect, select, and explicit rollback primitives",
+        "adl-v2/tools/install-adl-v2.sh stable exact-digest installation and receipt contract",
+        "machine-readable stdout and diagnostic/observability stderr separation",
+        "offline command, selector, installer, interruption, concurrency, rollback, dependency, budget, and stable-install proof",
+        "issue-local lifecycle, design, diagram, validation, review, and evidence records"
+      ],
+      "authority_boundary": [
+        "Issue #5345 owns only adl-v2/crates/adl-cli, adl-v2/tools/install-adl-v2.sh, and issue-local C-SDLC records",
+        "WP-04 through WP-09 public APIs, schemas, execution plans, effects, records, and adapters are read-only dependencies and are not reimplemented",
+        "The CLI selects no generation implicitly, performs no undeclared network or credential access, and owns no runtime administration or C-SDLC command",
+        "The selector verifies exact installed executable and receipt identity before one atomic compare-and-swap mutation; rollback is an explicit transaction, never silent fallback",
+        "Issue #5343 owns default cutover and issue #5344 owns soak and rollback acceptance; WP-10 supplies primitives but grants no cutover authority",
+        "Runtime v2 and incumbent ADL are behavioral evidence only and must not be imported, copied, linked, or modified"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use installed typed C-SDLC v2 binaries and semantic card operations only",
+        "Keep the primary checkout clean on main; all tracked #5345 work stays in the dedicated issue worktree",
+        "Do not use raw gh, AWS, credentials, live providers, Runtime v2, or product implementation during preparation",
+        "Do not implement until #5339, #5338, #5340, #5342, #5341, and #5349 are each GitHub merged, typed closed_out, receipt-backed, and ancestral to the implementation revision",
+        "Use /Volumes/FastWork for every Cargo artifact, cache, and temporary build surface",
+        "Install accepted operational binaries outside Cargo target directories",
+        "Run bounded preparation review now and mandatory exact-revision code review before publication",
+        "Preparation may be committed and pushed, but no PR may be opened and no publication may occur in this preparation-only task"
+      ]
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5788,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tooling][lockfile] Prevent validation and binary installation from rewriting tracked Cargo.lock files",
+    "slug": "lockfile-preservation",
+    "version": "v0.91.8",
+    "generation": 8
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Current-target owner builds now delegate through one --locked Cargo validation boundary that restores invocation-created tracked lockfile drift to exact pre-invocation bytes.",
+      "actual_changes": [
+        "Removed sunset v1 binaries from the default owner inventory.",
+        "Delegated owner validation builds to the hardened installer.",
+        "Added exact-byte lockfile capture, drift reporting, and restoration.",
+        "Removed a nested broad C-SDLC execution from the focused plan contract."
+      ],
+      "artifacts": [
+        "adl/tools/install_owner_binaries.sh",
+        "adl/tools/run_cargo_validation.sh",
+        "adl/tools/run_owner_validation_lane.sh",
+        "adl/tools/test_owner_binary_install.sh",
+        "adl/tools/test_owner_validation_lane.sh",
+        "adl/tools/test_run_cargo_validation.sh"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_owner_binary_install.sh",
+            "&&",
+            "bash",
+            "adl/tools/test_run_cargo_validation.sh",
+            "&&",
+            "bash",
+            "adl/tools/test_owner_validation_lane.sh"
+          ],
+          "purpose": "Prove exact lock restoration, current inventory, --locked enforcement, and focused validation delegation.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5788/focused-tooling-contracts"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "ready",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

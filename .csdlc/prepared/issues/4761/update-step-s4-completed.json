@@ -1,0 +1,15 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 13,
+  "expected_digest": "72b896780c4d9c0a223b885da1d4989dc8bd21e189834ab23cd827001368d17c",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Mark focused validation step complete.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S4",
+    "status": "completed"
+  },
+  "fail_after_backup": false
+}

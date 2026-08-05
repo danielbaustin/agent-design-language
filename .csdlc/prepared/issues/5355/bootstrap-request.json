@@ -1,0 +1,153 @@
+{
+  "issue": 5355,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5355/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5355/diagram.mmd",
+  "design_reviewer": "operator-policy:release-tail-preparation",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5355-v0918-preparation",
+    "owner": "codex:5355-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784754875,
+    "expires_unix_seconds": 1785359675,
+    "heartbeat_unix_seconds": 1784754875,
+    "branch": "codex/5355-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5355",
+      ".csdlc/locks/5355.lock",
+      ".csdlc/prepared/issues/5355",
+      ".csdlc/evidence/5355"
+    ],
+    "purpose": "Prepare #5355 WP-21A next-milestone closeout planning only; no execution until WP-21 #5362 is live-merged and ancestral"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-21A] Prepare next-milestone closeout plan",
+    "slug": "v0918-wp21a-next-milestone-closeout-plan",
+    "version": "v0.91.8",
+    "goal": "Create the canonical next-milestone closeout-planning packet after WP-21 alignment.",
+    "required_outcome": "v0.92 closeout-planning packet and review-ready handoff.",
+    "declared_scope": [
+      "next-milestone closeout-planning packet",
+      "canonical document readiness",
+      "review-ready handoff truth"
+    ],
+    "authority_boundary": [
+      "typed C-SDLC v2 only",
+      "no execution before live predecessor merge plus ancestry",
+      "receipts audit-only",
+      "no raw gh, AWS, PR, merge, or closeout during preparation"
+    ],
+    "operator_constraints": [
+      "preparation only",
+      "no tracked root-main writes",
+      "one issue-bound FastWork branch",
+      "minimal packet: six cards, design, diagram, focused doctor validation"
+    ],
+    "task_boundary": "Prepare lifecycle packet only; closeout-plan authoring is future execution work.",
+    "deliverables": [
+      "generated six-card preparation packet",
+      "concise design and diagram",
+      "focused typed doctor validation"
+    ],
+    "acceptance_criteria": [
+      "AC-1: preparation packet is generated through typed C-SDLC v2",
+      "AC-2: future execution is blocked on #5362 live merge and ancestry",
+      "AC-3: receipts are recorded as audit evidence only",
+      "AC-4: no implementation, PR, AWS, raw gh, or root-main tracked write occurs"
+    ],
+    "dependencies": [
+      "WP-21 #5362 live merged into origin/main",
+      "#5362 observed merge SHA ancestral to exact #5355 execution base"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "issue #5355"
+    ],
+    "non_goals": [
+      "closeout-plan authoring during preparation",
+      "birthday implementation",
+      "PR publication",
+      "receipt-gated execution"
+    ],
+    "plan_summary": "Prepare now; execute only after #5362 is live-merged and ancestral.",
+    "steps": [
+      {"id":"S1","action":"Verify typed preparation packet and #5362 live merge plus ancestry","status":"pending","acceptance_ids":["AC-1","AC-2"]},
+      {"id":"S2","action":"Consume accepted WP-21 feature-list and v0.92 truth","status":"pending","acceptance_ids":["AC-3"]},
+      {"id":"S3","action":"Prepare closeout-planning packet and canonical doc checks","status":"pending","acceptance_ids":["AC-3"]},
+      {"id":"S4","action":"Preserve blockers or release WP-22 without preparation-scope mutations","status":"pending","acceptance_ids":["AC-1","AC-4"]}
+    ],
+    "risks": [
+      "historical preparation evidence could be mistaken for current truth",
+      "canonical document inventory may be incomplete",
+      "handoff language may overclaim v0.92 readiness"
+    ],
+    "invariants": [
+      "live merge plus ancestry is the dependency gate",
+      "receipts audit-only",
+      "no preparation review churn",
+      "no implementation in preparation"
+    ],
+    "stop_conditions": [
+      "#5362 not live-merged",
+      "#5362 merge not ancestral",
+      "canonical document missing",
+      "handoff would overclaim"
+    ],
+    "review_prompts": [
+      "Does the closeout plan consume current WP-21 truth?",
+      "Are historical packets treated as evidence inputs only?"
+    ],
+    "review_scope": "Future review only; preparation performs no review churn.",
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "preparation-doctor",
+        "proof_role": "Validate the generated typed C-SDLC v2 preparation packet",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "release-tail-preparation",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": ["/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor", "--repo", ".", "--issue", "5355"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"]
+      }
+    ],
+    "failure_policy": "Fail closed on missing live predecessor merge, stale ancestry, missing canonical docs, or unsupported handoff claims.",
+    "design_status": "approved",
+    "architecture_summary": "Issue-local preparation for the serial WP-21A closeout-planning gate.",
+    "architecture_boundaries": [
+      "issue-local C-SDLC packet only",
+      "no planning mutation in preparation",
+      "no GitHub lifecycle mutation"
+    ],
+    "selected_cots": [
+      "typed C-SDLC v2 binaries",
+      "Git ancestry checks"
+    ],
+    "rejected_alternatives": [
+      "receipt-gated dependency execution",
+      "preparation review churn",
+      "authoring the closeout plan during preparation"
+    ],
+    "budget_profile": "Preparation validation under 30 seconds; future execution budget deferred.",
+    "negative_proofs": [
+      "no planning files claimed",
+      "no PR opened",
+      "no raw gh or AWS"
+    ],
+    "rollback": "Delete the issue-local preparation branch before publication; no planning state is changed.",
+    "review_focus": [
+      "canonical document coverage",
+      "handoff truth",
+      "historical evidence boundaries"
+    ],
+    "expected_evidence": [
+      "doctor-clean typed packet",
+      "live merge plus ancestry observation at execution time"
+    ]
+  }
+}

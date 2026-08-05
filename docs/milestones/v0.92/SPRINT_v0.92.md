@@ -34,17 +34,17 @@ issue wave.
 ## Sprint Goals
 
 - Preserve first-birthday scope without absorbing v0.93 governance.
-- Keep identity, continuity, memory, capability, ACP, ACIP, witness, and demo
-  proof surfaces reviewable.
+- Keep identity, continuity, memory, capability, ACP, Adaptive Learning DAG,
+  ACIP, witness, and demo proof surfaces reviewable.
 - Maintain the normal release-tail gates.
 
 ## Sprint Goal
 
 Build the first true Gödel-agent birthday: stable identity, name, continuity,
-memory grounding, capability envelope, ACP/cognitive profile, ACIP binary
-schema and public schema-catalog transport readiness, witnesses, receipt,
-review packet, and negative proofs that ordinary lifecycle events are not
-birth.
+memory grounding, capability envelope, ACP/cognitive profile, Adaptive Learning
+DAG planning bounded by verified loop-runtime evidence, ACIP binary schema and
+public schema-catalog transport readiness, witnesses, receipt, review packet,
+and negative proofs that ordinary lifecycle events are not birth.
 
 ## Planned Scope
 
@@ -56,8 +56,8 @@ full constitutional governance, and production ACIP transport security.
 
 1. Promote and correct planning docs.
 2. Seed the final issue wave and cards.
-3. Execute birthday, identity, continuity, memory, capability, ACP, ACIP,
-   witness, demo, and handoff work in order.
+3. Execute birthday, identity, continuity, memory, capability, ACP,
+   adaptive-learning queue, ACIP, witness, demo, and handoff work in order.
 4. Run review, remediation, next-milestone planning, next-milestone review,
    and release ceremony.
 
@@ -80,9 +80,9 @@ and validation tight rather than one oversized single-threaded queue.
 | 2 | Birthday contract | Definition of birth and negative cases. |
 | 3 | Identity and continuity | Stable name, identity root, continuity record, and cycle evidence. |
 | 4 | Memory, capability, and cognitive profile | Memory grounding, capability envelope, ACP/cognitive profile, and redacted review boundaries. |
-| 5 | ACIP transport readiness | Binary/protobuf ACIP schema, public schema catalog, JSON projection, governed-message access rule, and mock WebSocket carrier proof. |
+| 5 | Adaptive learning and ACIP transport readiness | Adaptive Learning DAG queue grounded in verified loop-runtime evidence, plus binary/protobuf ACIP schema, public schema catalog, JSON projection, governed-message access rule, and mock WebSocket carrier proof. |
 | 6 | Witness and receipt | Birth witness set, receipt, and reviewer packet. |
-| 7 | Demo and review tail | First-birthday demo, ACIP transport-readiness proof, negative suite, governance handoff, review, and release ceremony. |
+| 7 | Demo and review tail | First-birthday demo, adaptive-learning boundary proof, ACIP transport-readiness proof, negative suite, governance handoff, review, and release ceremony. |
 
 ## Dependencies To Check Before WP-01
 
@@ -96,6 +96,9 @@ and validation tight rather than one oversized single-threaded queue.
 - v0.91.1 runtime/polis, memory/identity, ToM, intelligence metric, governed
   learning, and capability/aptitude outputs are stable enough to feed ACP
   profile evidence.
+- v0.91.7 `#5104` loop-runtime evidence is merged and reviewed before v0.92
+  treats loops as validated, replayable runtime objects for adaptive-learning
+  planning.
 - v0.93 governance remains downstream and is not absorbed by birthday work.
 - Memory palace and learning-model sources are used as context, not broad
   implementation commitments.
@@ -110,6 +113,9 @@ and validation tight rather than one oversized single-threaded queue.
 - ACIP transport readiness must remain schema/catalog/carrier proof, not a
   production networking claim.
 - ACP profiles must remain evidence-grounded and privacy-bounded.
+- Adaptive-learning work must not claim learning-driven graph mutation until
+  evaluation bindings, stateful adaptation, policy decisions, graph deltas, and
+  replay-safe negative tests exist.
 
 ## Demo / Review Plan
 
@@ -128,6 +134,8 @@ Secondary demos should prove:
   citizenship, or personhood claims
 - ACIP binary messages remain decodeable through public schema catalogs and
   deterministic JSON projection for authorized readers
+- adaptive-learning demos distinguish bounded loop runtime from policy-governed
+  graph mutation and reject forged or discontinuous replay histories
 - WebSocket is only a carrier proof, not an authority source
 - governance handoff is downstream
 

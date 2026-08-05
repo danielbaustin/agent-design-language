@@ -1,0 +1,10 @@
+
+running 3 tests
+test local_production_adapters_execute_real_bounded_behavior ... ok
+test canonical_ingress_dispatches_real_agent_work ... ok
+test agent_scheduler_checkpoint_cancellation_and_storage_are_real ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests/assembly.rs (/Volumes/FastWork/adl-wp-5663/target/debug/deps/assembly-3b6b49ade7fcff40)

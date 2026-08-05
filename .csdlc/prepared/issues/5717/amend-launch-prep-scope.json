@@ -1,0 +1,16 @@
+{
+  "actor": "codex:5717-execution",
+  "add_protected_paths": [
+    "demos/_preview/podcast/index.html",
+    "demos/podcast/LAUNCH_READINESS.md",
+    "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+    "demos/podcast/feed.xml",
+    "demos/podcast/index.html"
+  ],
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "f2f71b49b85329973ae8987e961515bf1010f79ce9d29802a25df003e9fe754a",
+  "expected_generation": 5,
+  "issue": 5717,
+  "now_unix_seconds": 1785465190,
+  "reason": "Extend #5717 from studio-copy polish into the operator-approved podcast launch-prep gates for hidden preview, production /podcast/ entrypoint, RSS/feed metadata, first episode page naming, and launch readiness truth."
+}

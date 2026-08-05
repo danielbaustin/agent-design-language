@@ -1,0 +1,13 @@
+flowchart LR
+  P["Intended Unity project"] --> L["Permission-safe liveness check"]
+  L --> M{"Safe proof mode"}
+  M -- "open editor" --> O["Editor-mediated proof"]
+  M -- "no conflict" --> B["Fresh staged batch proof"]
+  M -- "unsafe or ambiguous" --> F["SKIPPED_FAIL_CLOSED"]
+  O --> W["Semantic progress watcher"]
+  B --> W
+  W --> R{"Classifier"}
+  R -- "progress and success" --> E["Retained proof"]
+  R -- "ILPP signature" --> I["Route to #5332"]
+  R -- "MCP identity issue" --> A["Route to #4739"]
+  R -- "crash, idle, licensing, readonly" --> X["Exact blocker"]

@@ -1,0 +1,14 @@
+{
+  "issue": 5789,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "91d5f597ab8f323404d7d6773b619c98b6352f30299b04b4742e054db7604363",
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Bind #5789 implementation work to the existing FastWork worktree and branch before product/runtime edits.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "bound"
+  },
+  "fail_after_backup": false
+}

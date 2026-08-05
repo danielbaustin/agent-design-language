@@ -1,0 +1,23 @@
+{
+  "issue": 5360,
+  "expected_generation": 13,
+  "expected_digest": "e1190b9a53d75e7c74668dd2482030073eefa438d2c3bf061885a19273ddc884",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "actor": "subagent:godel-019fbd06",
+  "evidence": {
+    "reviewer": "subagent:godel-019fbd06",
+    "scope": [
+      "CHANGELOG.md",
+      "README.md",
+      "REVIEW.md",
+      "docs"
+    ],
+    "reviewed_revision": "git-blake3:c1cd0a309c33279dc21c7338668f0e0a836675d5:380c18d6ddba37ddf5101e34fd438f463db047b3d234b3fc656e0335d86d8e50",
+    "findings": [],
+    "residual_risks": [
+      "The WP-18 review README and v0.92 issue-wave YAML remain delegated to their existing owners and were intentionally excluded from this issue."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

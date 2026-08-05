@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5357,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-19] Run independent external milestone review",
+    "slug": "v0918-wp19-independent-external-review",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5357\n.csdlc/locks/5357.lock\n.csdlc/prepared/issues/5357\n.csdlc/evidence/5357",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can the reviewer, model, prompt, provider, or dispatch process be described as independent more strongly than the retained control evidence supports?",
+        "Can any corpus, digest, receipt, or result be changed, substituted, self-included, or detached from the exact target revision without rejection?",
+        "Does every finding distinguish observed evidence from inference and open author decision, with exact severity, impact, remediation, and residual risk?",
+        "Can secrets, private prompts, credentials, host paths, raw provider data, or personal data enter retained or publishable evidence?",
+        "Are COTS, budgets, PVF, no-deferral, rollback, typed synthesis, serialized integration, post-merge proof, and WP-20 release complete and fail-closed?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

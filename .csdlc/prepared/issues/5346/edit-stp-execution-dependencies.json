@@ -1,0 +1,24 @@
+{
+  "issue": 5346,
+  "card": "stp",
+  "expected_generation": 2,
+  "expected_digest": "78796e0c9f1bae297220f031f4433d3e2ec4b8b2b4e7e2952d086fdd1307e9b2",
+  "claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "actor": "codex:5346-wp13-execution-owner",
+  "reason": "Repair stale WP-13 dependency truth: WP-16 #5351 and WP-17 #5360 are downstream release-tail work, while WP-21 #5352 is now an upstream completed gate.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "#5344 WP-12 soak and rollback merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "#5343 WP-12 reviewed selector switch merged, typed closed_out, claim released, retained merged receipt present, rollback-window gate satisfied, and merge SHA ancestral",
+      "#5358 current C-SDLC v2 acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "#5361 current Runtime v3 acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "WP-14A #5384 integrated platform acceptance merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "WP-15 #5354 convergence GitHub closed/completed via merged PR #5731 at merge commit 97427f324c87d97cb1b36c7804c50bf80c9389d8, with that merge SHA ancestral to current origin/main; typed closeout may proceed asynchronously and must not block #5346",
+      "WP-21 #5352 v0.92 consumption handoff GitHub closed/completed via merged PR #5751 at merge commit 64632f8812dcf4a861902b97b981a72291d81beb, with that merge SHA ancestral to current origin/main; typed closeout may proceed asynchronously and must not block #5346",
+      "#5347 peer external-band deletion manifest remains disjoint from #5346; #5347 is not absorbed by #5346 and deletion merges remain serialized"
+    ]
+  },
+  "fail_after_backup": false
+}

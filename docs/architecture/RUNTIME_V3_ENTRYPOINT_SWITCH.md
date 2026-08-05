@@ -51,6 +51,39 @@ private key is checked into the repository. The ready event and Observatory
 feed report the port actually bound by the listener rather than assuming
 `20997`.
 
+## Local Development TLS Bootstrap
+
+Runtime v3 local development may use the repo-native Rust bootstrap command to
+create one durable self-signed localhost server certificate under an explicit
+absolute state root:
+
+```text
+adl-runtime-local-tls-bootstrap --config runtime-local-tls.toml
+```
+
+The bootstrap config must explicitly set `mode = "local_self_signed"` or
+`mode = "managed_external"`. Missing mode fails closed. Production and
+enterprise deployments should use `managed_external` and continue to provide
+operator-managed PEM certificate and private-key paths; the bootstrap validates
+those paths through rustls and does not mutate them.
+
+Local self-signed mode requires an absolute `state_root`, a relative `tls_dir`,
+relative certificate/key paths beneath that TLS directory, configured DNS/IP
+SANs, and a separate public certificate path. The command creates the private
+key with restrictive permissions on Unix, writes the public certificate as a
+separate PEM file for trust import, validates the pair with rustls, and reuses
+the same certificate on ordinary restarts. Replacement requires
+`replace = true`; after replacement the operator must trust the new public
+certificate again. Local certificates use a browser-compatible 397-day
+validity period. Before expiry, the operator explicitly replaces the local
+certificate and trusts the new public copy; ordinary restarts never rotate it.
+
+The runtime does not edit the macOS, Windows, or Linux trust store. Operators
+trust the generated public certificate once using the platform-native trust UI
+or command approved for their machine. The private key remains under the
+configured state root and must not be copied into evidence, committed, or
+printed.
+
 ## Non-Covered Surfaces
 
 This issue does not:

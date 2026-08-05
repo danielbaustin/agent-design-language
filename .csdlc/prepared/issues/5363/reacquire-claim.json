@@ -1,0 +1,25 @@
+{
+  "issue": 5363,
+  "expected_claim_id": "claim-5363-v0918-preparation",
+  "expected_generation": 0,
+  "now_unix_seconds": 1785865288,
+  "replacement": {
+    "id": "claim-5363-v0918-preparation",
+    "owner": "codex:5363-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1785865288,
+    "expires_unix_seconds": 1786470088,
+    "heartbeat_unix_seconds": 1785865288,
+    "branch": "codex/5363-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5363",
+      ".csdlc/locks/5363.lock",
+      ".csdlc/prepared/issues/5363",
+      ".csdlc/evidence/5363"
+    ],
+    "purpose": "Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral; verify #5548/#5558 merged evidence instead of treating them as open work"
+  },
+  "recovery_actor": "codex:5363-preparation-owner",
+  "reason": "Reacquire expired issue-local preparation claim before typed card preparation."
+}

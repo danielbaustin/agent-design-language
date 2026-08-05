@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5701,
+  "expected_generation": 16,
+  "expected_digest": "cf9da295fa3a1f3c74cfc8bebb7f9a3376dfd218a2fb2ca75b57d0d654efffd0",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5701-runtime-v3-openapi-contracts",
+  "title": "[v0.91.8][runtime-v3][api] Define Runtime v3 OpenAPI contracts (#5701)",
+  "body": "Closes #5701\n\n## Summary\n\nDefines the complete versioned Runtime v3 Core and Observatory OpenAPI 3.1 contracts and serves them from the real guardian-launched Axum/Tokio/Rustls listener. The runtime now exposes embedded raw contracts and Swagger UI, authenticated health and metrics, signed control, Observatory HTTP/WSS, and full-duplex ACIP WSS with bounded Protobuf frames and canonical ingress dispatch. The guardian kernel is the sole production API documentation authority.\n\n## Validation\n\n- Kernel control routes: 21/21 passed.\n- Guardian soak: 7/7 passed.\n- OpenAPI contract suite: 6/6 passed.\n- Real Observatory WSS: 6/6 passed.\n- adl-runtime library: 134/134 passed.\n- Runtime API WSS: 2/2 passed.\n- Strict all-target Clippy passed for both Runtime crates; git diff --check passed.\n- Live HTTPS proof on port 20997 returned both Swagger UIs, authenticated health, and authenticated metrics with HTTP 200.\n- Gemini 3.1 Pro API review passed after remediation.\n- Final integrated-head GPT-5.5 review passed with zero findings at f6c9d63ecd62a837a951e4106f964f215e7b64e6.\n\n## Notes\n\nThe HTML Observatory remains a separate client. Documentation assets are embedded in the Rust runtime binary and require no Python process, sidecar server, or runtime CDN. Observatory snapshot HTTP authentication, first-frame WSS authentication, signed text control, and authenticated ACIP binary ingress are documented as distinct security boundaries.",
+  "draft": false,
+  "remote": "origin",
+  "token_file": "/Users/daniel/keys/github.token"
+}

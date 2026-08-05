@@ -91,16 +91,12 @@ Lifecycle note:
 The skill should treat `ready` and `preflight` as compatibility inputs to the doctor/readiness result, not as the final automation model.
 
 When helpful:
-- use `adl/tools/pr.sh doctor --json` first for the canonical machine-readable diagnostic result
-- use `adl/tools/pr.sh ready` first for worktree/execution-readiness when the shell surface exists
-- use `adl/tools/pr.sh preflight` for milestone/open-PR blocking state
+- use `csdlc-doctor --repo <repo> --issue <issue>` for the canonical machine-readable diagnostic result
 - combine them into one structured ready result
 
 Fallback order:
-1. `adl/tools/pr.sh doctor --json`
-2. `adl/tools/pr.sh ready`
-3. `adl/tools/pr.sh preflight`
-4. direct inspection only if the repo-native surfaces are unavailable or unusable
+1. `csdlc-doctor --repo <repo> --issue <issue>`
+2. direct inspection only if the typed surface is unavailable or unusable
 
 When `ready` and `preflight` disagree:
 - keep the main status tied to execution readiness

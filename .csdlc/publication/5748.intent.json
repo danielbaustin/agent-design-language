@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5748,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5748-terminal-recovery",
+  "title": "[v0.91.8][csdlc-v2][closeout] Recover remaining closed-issue terminal truth",
+  "body": "Closes #5748\n\n## Summary\n- reconcile every live GitHub-closed v0.91.8 issue to authenticated typed C-SDLC v2 terminal truth\n- retain claim-free closed_out projections and complete receipts for all 114 issues in the pre-publication universe\n- add typed receipt transport, recordless and corrupt historical recovery, authenticated issue-to-PR linkage, and non-destructive prune classification\n- harden terminal storage and audit generation against stale authority, unsafe paths, symlinks, partial writes, missing review, and failed required checks\n- make the historical recovery fixture derive its repository default branch so the standalone lane is portable across clean GitHub runners\n\n## Validation\n- complete C-SDLC v2 test suite, strict all-target Clippy, formatting, and diff hygiene: PASS at Rust source f6d0cbab2\n- exact executable audit scripts at 05209b1a0: 114 live issues, 111 issue-specific packets, 108 unique PRs, path-guard PASS, zero exceptions\n- clean-runner branch portability: focused recovery regression PASS with default branches master and trunk at d991d620a\n- full C-SDLC v2 library suite: 89/89 PASS at d991d620a with blank global Git config\n- installed v2 provenance, coexistence, #5748 doctor, live-universe parity, and terminal inventory: PASS at publication head\n\n## Review\n- independent exact-head review at cd10882d8 returned PASS with no actionable findings\n- review confirmed the production unsafe-checkout guard remains unchanged and the fixture is portable across runner branch defaults\n- the publication metadata descendant is accepted by the typed automatic metadata-only review guard\n\nNo worktree was pruned, no dirty evidence was deleted, and no AWS or Spot activity was used. Typed closeout remains a separate post-merge operation.",
+  "draft": false,
+  "revision": "git-blake3:a486ebb25e95c5d4df51d933f7f21b1baef7b265:e118ea1b99a69ee198346a9ab3086ed4259ae9e71368abd34bf9ef0a2342d1d8",
+  "commit_sha": "a486ebb25e95c5d4df51d933f7f21b1baef7b265"
+}

@@ -1,0 +1,24 @@
+{
+  "issue": 5357,
+  "card": "stp",
+  "expected_generation": 5,
+  "expected_digest": "7bf60c22777a7ef0a85fa1f70c06ebcd9dd4d285de09b9cc7106d7f160dc48f3",
+  "claim_id": "claim-5357-v0918-wp19-review-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the complete canonical-document review-readiness outcome instead of the old issue-local preparation-only packet.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "deliverables",
+    "values": [
+      "current six-card typed WP-19 contract with #5791 final-second-pass dependency",
+      "complete canonical v0.91.8 documentation inventory with every review-required path updated, verified, or explicitly historical",
+      "current REVIEW.md, release-tail plans, issue wave, feature handoff, review index, first-pass record, and undispatched third-party handoff",
+      "immutable exact-revision corpus-manifest and dispatch-receipt templates with fail-closed validators",
+      "reviewer identity, independence, authority, conflict disclosure, findings-first output, and typed synthesis contracts",
+      "focused docs/YAML/JSON/link/stale-truth/redaction/diff validation with repository-relative retained evidence",
+      "one bounded exact-revision GPT-5.5 documentation review with every actionable finding fixed",
+      "pushed #5357 branch ready to integrate merged #5791 and freeze without dispatching external review"
+    ]
+  },
+  "fail_after_backup": false
+}

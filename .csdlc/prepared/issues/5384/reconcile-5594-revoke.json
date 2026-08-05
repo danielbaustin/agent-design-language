@@ -1,0 +1,11 @@
+{
+  "issue": 5594,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5594-wp14a-reconciliation-release-only",
+  "expected_generation": 36,
+  "expected_digest": "067f967214cbb2643c9770feb6af029da62c224e871fac50f862cbc3543e9041",
+  "now_unix_seconds": 1785346023,
+  "actor": "codex:wp14a-preparation",
+  "operator_authority": "operator-authorized:closed-issues-own-no-active-paths",
+  "reason": "Release stale closed WP-01 planning ownership from the WP-14A projection"
+}

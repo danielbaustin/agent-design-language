@@ -1,0 +1,15 @@
+{
+  "schema": "csdlc.review_assignment_request.v1",
+  "issue": 5352,
+  "expected_generation": 2,
+  "expected_digest": "f293338f1445dc6595e9686575704eee2659a810ffa56f84e981046561b35322",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "reviewer": "Wegener",
+  "assigned_by": "codex:wp21-final-handoff",
+  "scope": [
+    ".csdlc/issues/5352",
+    ".csdlc/evidence/5352",
+    ".csdlc/prepared/issues/5352",
+    "docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md"
+  ]
+}

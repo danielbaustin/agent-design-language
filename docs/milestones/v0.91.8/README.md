@@ -4,12 +4,13 @@
 
 - Milestone: `v0.91.8`
 - Version: `v0.91.8`
-- Status: active readiness; implementation not started
-- Active WP-01 readiness issue: `#5594`
+- Status: active release tail; WP-16 quality gate and WP-17 documentation
+  alignment passed, and the first WP-18 review is closed
+- Active release-tail issue: WP-20 external-review remediation `#5363`
 - Milestone sprint umbrella: `#5595`
 - Historical planning sources: `#5335` and `#5383`
 - Restored source issue: `#4641` remains `v0.91.7` WP-14
-- New v0.91.8 platform handoff parent: `#5384` / WP-14A
+- v0.91.8 platform acceptance parent: `#5384` / WP-14A
 - Downstream milestone: `v0.92`
 
 ## Purpose
@@ -21,8 +22,10 @@ accepted at exact revisions, installed on stable operational paths, exercised
 through declared lifecycle contracts, and handed off to `v0.92` without
 overstating birthday readiness.
 
-The milestone is planned from live issues that already exist. This package is
-the missing local source of truth for those issues.
+The milestone is sourced from live issues and retained evidence. WP-16
+established that every completed predecessor produced working code or a useful
+durable result, except the explicitly partial/ambiguous rows retained in the
+audit. That quality gate is not release approval by itself.
 
 ## Current Routing Truth
 
@@ -33,15 +36,28 @@ the missing local source of truth for those issues.
   closed; do not describe setup as currently in progress.
 - `#5335` is retained as historical setup context and no longer carries active
   WP-01 ownership.
-- `#5594` is the active WP-01 readiness and canonical reconciliation gate.
+- `#5594` completed the opening readiness/canonical reconciliation gate.
 - `#5595` is the single milestone sprint umbrella. Nested umbrellas `#5497`,
   `#5361`, and `#5384` own bounded multi-agent, Runtime v3, and integrated
   acceptance child sets without duplicating implementation ownership.
+- WP-14A accepts only the platform revisions. Unity proof is owned by WP-15.
+  Both WP-18 reviews `#5356` and `#5791` are closed. WP-19 `#5357` returned
+  blocked external-review findings on 2026-08-04. WP-20 `#5363` owns
+  remediation and current release-tail review truth, and the exact-revision
+  handoff, Memory Palace, launch/identity, and Adaptive Learning inputs are
+  owned by WP-21.
 
 ## Status
 
-The milestone is not release-approved. Planning text in this directory does not
-prove implementation, parity, deployment, deletion, or `v0.92` readiness.
+The milestone is not release-approved. WP-16 passed the integrated quality gate
+at `2e9d2dd7c`, with 67 audited issue outcomes, 0 unacceptable outcomes, and
+passing ADL v2, Runtime v3, and C-SDLC v2 validation lanes. WP-17 `#5360`
+closed the documentation-alignment gate. WP-18 `#5356` and `#5791` closed both
+internal review passes. WP-19 external review returned blocked findings; WP-20
+must land remediation and a refreshed exact-revision review packet before any
+release approval can be claimed. Remaining release-tail work must still
+complete review/remediation, finalize v0.92 handoff truth, and run
+ceremony/closeout.
 
 Every work package must exit as one of:
 
@@ -59,6 +75,8 @@ Every work package must exit as one of:
 - Sprint plan: [SPRINT_PLAN_v0.91.8.md](SPRINT_PLAN_v0.91.8.md)
 - Parallel execution plan: [PARALLEL_EXECUTION_PLAN_v0.91.8.md](PARALLEL_EXECUTION_PLAN_v0.91.8.md)
 - WP-01 readiness report: [review/V0918_WP01_EXECUTION_READINESS_5594.md](review/V0918_WP01_EXECUTION_READINESS_5594.md)
+- WP-16 quality evidence: [evidence/wp16/QUALITY_GATE.md](evidence/wp16/QUALITY_GATE.md)
+- WP-16 issue outcome audit: [evidence/wp16/ISSUE_OUTCOME_AUDIT.md](evidence/wp16/ISSUE_OUTCOME_AUDIT.md)
 - Issue wave: [WP_ISSUE_WAVE_v0.91.8.yaml](WP_ISSUE_WAVE_v0.91.8.yaml)
 - Canonical document inventory: [CANONICAL_DOC_INVENTORY_v0.91.8.md](CANONICAL_DOC_INVENTORY_v0.91.8.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.8.md](DEMO_MATRIX_v0.91.8.md)
@@ -71,6 +89,7 @@ Every work package must exit as one of:
 - Execution readiness: [WP_EXECUTION_READINESS_v0.91.8.md](WP_EXECUTION_READINESS_v0.91.8.md)
 - ADR plan: [ADR_PLAN_v0.91.8.md](ADR_PLAN_v0.91.8.md)
 - v0.92 handoff: [NEXT_MILESTONE_HANDOFF_v0.91.8.md](NEXT_MILESTONE_HANDOFF_v0.91.8.md)
+- v0.92 closeout planning packet: [NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md](NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md)
 - v0.92 activation test map: [V092_ACTIVATION_TEST_MAP_v0.91.8.md](V092_ACTIVATION_TEST_MAP_v0.91.8.md)
 - Feature index: [features/README.md](features/README.md)
 - Review index: [review/README.md](review/README.md)
@@ -85,9 +104,22 @@ Every work package must exit as one of:
 
 ## Documentation Responsibility
 
-WP-01 `#5594` owns the present readiness reconciliation. Closed v0.91.7 WP-21A
-`#5489` is historical preparation evidence. Future v0.91.8 WP-21A `#5355`
-revalidates the canonical packet at the release tail and fails closed if any
-surface named in [CANONICAL_DOC_INVENTORY_v0.91.8.md](CANONICAL_DOC_INVENTORY_v0.91.8.md)
-is missing, contradictory, stale against live issue truth, or presents planned
+WP-17 `#5360` closed the documentation truth alignment against WP-16 merged
+evidence. WP-18 `#5356` and `#5791` closed both internal review passes. WP-19
+`#5357` returned blocked findings retained under
+[review/external_review_5357/](review/external_review_5357/), and WP-20
+`#5363` owns remediation before any refreshed approval review or release
+closeout.
+Closed v0.91.7 WP-21A
+`#5489` is historical preparation evidence. Current v0.91.8 WP-21A `#5355`
+prepares
+[NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md](NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md)
+for WP-22 review. WP-21 `#5362` closed after PR #5807 merged exact head
+`f1ddeacf5e91a1c8da690b2940e4125937aa57a3` as squash merge
+`eaa62d3d2c0241bc07ce827fedef0e42389d0491`; WP-21A consumers must still verify
+that merge commit is contained in current `origin/main`. Later v0.91.8 release-tail
+documentation/review gates revalidate the canonical packet and fail closed if
+any surface named in
+[CANONICAL_DOC_INVENTORY_v0.91.8.md](CANONICAL_DOC_INVENTORY_v0.91.8.md) is
+missing, contradictory, stale against live issue truth, or presents planned
 work as proven.

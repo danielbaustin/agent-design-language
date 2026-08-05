@@ -1,0 +1,9 @@
+flowchart TD
+    A["WP-21 #5362 live merged on refreshed origin/main"] --> B{"Merge SHA ancestral to #5355 exact execution base?"}
+    B -- "No" --> X["Block execution"]
+    B -- "Yes" --> C["Consume feature-list and v0.92 truth"]
+    C --> D["Prepare closeout-planning packet without version:v0.92 issue mutation"]
+    D --> E["Check canonical docs, YAML, links, and handoff claims"]
+    E --> F["Exact revision review before any PR"]
+    F --> G["Hand WP-22 forward"]
+    X --> H["Preserve blocker; do not touch #5357 or #5348"]

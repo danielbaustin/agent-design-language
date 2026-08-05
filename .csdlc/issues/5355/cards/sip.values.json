@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5355,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21A] Prepare next-milestone closeout plan",
+    "slug": "v0918-wp21a-next-milestone-closeout-plan",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Create the canonical next-milestone closeout-planning packet after WP-21 alignment.",
+      "required_outcome": "v0.92 closeout-planning packet and review-ready handoff.",
+      "declared_scope": [
+        "next-milestone closeout-planning packet",
+        "canonical document readiness",
+        "review-ready handoff truth"
+      ],
+      "authority_boundary": [
+        "typed C-SDLC v2 only",
+        "no execution before live predecessor merge plus ancestry",
+        "receipts audit-only",
+        "no raw gh, AWS, PR, merge, or closeout during preparation"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "preparation only",
+        "no tracked root-main writes",
+        "one issue-bound FastWork branch",
+        "minimal packet: six cards, design, diagram, focused doctor validation"
+      ]
+    }
+  }
+}

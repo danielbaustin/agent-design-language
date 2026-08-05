@@ -1,0 +1,493 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5501,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "a6431154f7be59025286f7b5235b96d831871ce2b05f99bb4bb953c68443e0cf",
+  "phase": "closed_out",
+  "generation": 22,
+  "digest": "a6cd1d41597c9dc94dc9a430b26d34a180c87d1ad592ab2c6bc17b94ade26f6c",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "gpt-5.5:required-pre-pr-review",
+    "assigned_by": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+    "revision": "git-blake3:aeb7822d2c2eff54cb3ad1e3bda0d3c513d3f53b:e1abe21209ebfbbc2cd8c7866a79d32510928fc28dd0976c6650a7154425a3e8",
+    "scope": [
+      ".csdlc/evidence/5501",
+      ".csdlc/issues/5501",
+      ".csdlc/prepared/issues/5501"
+    ]
+  },
+  "review": {
+    "reviewer": "gpt-5.5:required-pre-pr-review",
+    "scope": [
+      ".csdlc/evidence/5501",
+      ".csdlc/issues/5501",
+      ".csdlc/prepared/issues/5501"
+    ],
+    "reviewed_revision": "git-blake3:aeb7822d2c2eff54cb3ad1e3bda0d3c513d3f53b:e1abe21209ebfbbc2cd8c7866a79d32510928fc28dd0976c6650a7154425a3e8",
+    "findings": [
+      {
+        "id": "F-5501-1",
+        "severity": "p1",
+        "summary": "Dependency readiness did not bind the exact live merge commits and ancestry.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:aeb7822d2c2eff54cb3ad1e3bda0d3c513d3f53b:e1abe21209ebfbbc2cd8c7866a79d32510928fc28dd0976c6650a7154425a3e8",
+        "route": null
+      },
+      {
+        "id": "F-5501-2",
+        "severity": "p1",
+        "summary": "Manifest digest fields were not bound to normalized existing evidence paths and exact bytes.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:aeb7822d2c2eff54cb3ad1e3bda0d3c513d3f53b:e1abe21209ebfbbc2cd8c7866a79d32510928fc28dd0976c6650a7154425a3e8",
+        "route": null
+      },
+      {
+        "id": "F-5501-3",
+        "severity": "p2",
+        "summary": "Retained live proof was not bound non-circularly to the exact reviewed evidence revision.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:aeb7822d2c2eff54cb3ad1e3bda0d3c513d3f53b:e1abe21209ebfbbc2cd8c7866a79d32510928fc28dd0976c6650a7154425a3e8",
+        "route": null
+      },
+      {
+        "id": "F-5501-4",
+        "severity": "p2",
+        "summary": "Timing and baseline evidence did not contain measured comparable lifecycle windows and explicit non-claims.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:aeb7822d2c2eff54cb3ad1e3bda0d3c513d3f53b:e1abe21209ebfbbc2cd8c7866a79d32510928fc28dd0976c6650a7154425a3e8",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "The retained timing comparison measures observed PR lifecycle windows, not pure coding time, and makes no numeric speedup claim."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5501,
+    "pull_request": 5643,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5643",
+    "base": "main",
+    "head": "codex/5501-v0918-preparation",
+    "revision": "git-blake3:9ff6a0a2f808a2f6207ad8de245c60f646706912:c0e885610726693c34f7db713b44a03561c173dc8414340e87856add19dc91d1",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5643,
+    "head_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89123090216"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122952201"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932758"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932845"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932989"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932731"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122905851"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932983"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932812"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932757"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932821"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932971"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932445"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932768"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29981106471/job/89122932942"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5643,
+    "disposition": "merged",
+    "observed_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5501.json",
+    "released_branch": "codex/5501-v0918-preparation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5501",
+      ".csdlc/issues/5501",
+      ".csdlc/locks/5501.lock",
+      ".csdlc/prepared/issues/5501"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5501/retained/design.md",
+  "diagram_path": ".csdlc/issues/5501/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5501-preparation-design-reference-refresh",
+      "revision": "4909f3533378d71d43cac913e87bfa7047e8aa08e6c279087ea5273116f03e7f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "332114f84ae2ed1d6a659c313cdc2a319fda1ba10ebe8931365a2afcadcde5d5",
+      "rendered_digest": "f2a932c51b1d7860fc0f678e9b6ea923398bc9365e4cb430c5c01edf42fefcf7",
+      "ast_digest": "e78232912dd57081a0e1c81b66e7dec090bcc9e019f503c2b72a0aeaa256fe81"
+    },
+    "stp": {
+      "values_digest": "74e1f917045a70c337395f0c3e9f46a3a6a4e9ea9b21eff4d7bef5dd7bda769c",
+      "rendered_digest": "caf9b8be48ce5317592b6bebf886bf47e5cd51d91b428a695978e1bc3e33c0dc",
+      "ast_digest": "1b2428e70bcafadc2154777e5caf28067a620e8dbec1faebf23a9f350073d819"
+    },
+    "spp": {
+      "values_digest": "8366d8bec26899cf703e466940ef9d5a227bf144dfbe4cc28393cc69913a1e53",
+      "rendered_digest": "f51b95fa650499fcd3f5af54bf766c6faf2add66667ec3bafadfd2e954fd98d4",
+      "ast_digest": "b9bc7810b74cc36f204fb2a4701d0d66fe619b5552babc81383e215901e8af3b"
+    },
+    "vpp": {
+      "values_digest": "b81bc9300f2c4c130cc80fa74670f1c4eb7b934f5562bf0832ea59219ff3ff73",
+      "rendered_digest": "69f0b3a0e81d1bfc2e671a20743510fd066be502af9fcbb0c2ded9e7e7e4fcd5",
+      "ast_digest": "0207c6124a2b1c35576b8609c8bc7353a708c4955f783ef27a03ad2f56ac7325"
+    },
+    "srp": {
+      "values_digest": "a7cd4d731deb43d10c01f5f00cd4427e920391460784d744b22305943a39d324",
+      "rendered_digest": "b983b21cb53f26dc618f3126b51dbf71e976a61b103df5b9a48beb35e1a97b53",
+      "ast_digest": "cf1ab626cb9d24da1bd704b878b5c1f0216ba37fa8bb4292949cd9aa29afb780"
+    },
+    "sor": {
+      "values_digest": "0eb8f9fc4ba0bda5e0b06c88b448fd923fe7e38480319cfd598062def2ec236f",
+      "rendered_digest": "d297e408628aae07f60cbe368713a96e122ca0acda1a9d585cd60df14bee05bc",
+      "ast_digest": "ce1dd27c4428f77ae5df423479ce46164667d191fb0c8759a74c1b0adb0b24f2"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5501-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5501-preparation-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "Retained #5501 live proof packet and local validation are complete for required GPT-5.5 pre-PR review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "The assigned GPT-5.5 pre-PR review passed at the exact repaired revision with zero blockers."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5501-preparation-owner",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5501-preparation-owner",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5501-preparation-owner",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex-subagent:gpt-5.4-mini:019f8650-2547-7822-bf4d-863f36428162",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "Align #5501 execution dependency readiness with live merge plus ancestry while keeping typed closeout receipts audit-only.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: The admitted plan creates at least two real parallel writable Codex shards with distinct issues, typed claims, branches, worktrees, and disjoint protected/write paths; fixture or prose substitutes fail\",\"AC-2: The conductor emits the admitted plan and at least one real fail-closed negative case, while bounded context transfer binds source revision, task, issue, claim, paths, artifacts, and digests without credentials or unrelated transcript content\",\"AC-3: #5500 dashboard observations are derived from typed lifecycle and live task/dependency state without manual green assertions, and every output is reviewed then classified by #5502 as integrate, replan, or blocked\",\"AC-4: Publication, PR/checks, review, merge, post-merge validation, and closeout remain serialized and truthful, with exact-revision continuity and no autonomous lifecycle authority\",\"AC-5: The retained packet records timing, coordination overhead, failures, retries, and a fair bounded single-agent baseline over equivalent declared work\",\"AC-6: The proof adds no product implementation by default, keeps issue-local harness and structured fixtures within 2,500 lines, uses two to four writable shards, fewer than 100 focused assertions, 1,800-second live and baseline limits, a 3,600-second complete limit, and zero new dependencies\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Complete six cards, design, diagram, dependency and preparation validators, exact protected paths, COTS, budgets, and PVF without live, product, PR, or additional preparation-review work\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Wait fail-closed for #5349, #5499, #5498, #5500, and #5502 live merged heads to be ancestral to the execution revision; typed closeout and retained receipts are audit-only signals, not readiness blockers\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Validate the admitted live-run manifest and execute at least two real disjoint writable Codex shards with bounded provenance-bearing context, negative-case refusal, dashboard observations, output review, and convergence\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run the equivalent bounded single-agent baseline, compare timing and coordination overhead, retain exact proof, complete serialized review/publication/checks/merge/post-merge validation/closeout, and hand evidence to #5497, #5350, and #5361\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"preparation-contract\",\"proof_role\":\"Prove six-card, design, diagram, live-merge dependency, scope, COTS, budget, PVF, and zero-product-change preparation truth\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5501/validate-preparation.rb\"],\"parallel_group\":\"preparation\",\"defer_reason\":null},{\"lane\":\"dependency-terminal-gate\",\"proof_role\":\"Fail closed until #5349, #5499, #5498, #5500, and #5502 live merged heads are ancestral to the execution revision; typed closeout and retained receipts remain audit-only\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1500,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5501/check-dependencies.rb\"],\"parallel_group\":\"execution-gate\",\"defer_reason\":\"Run only when execution is requested; it must fail closed until every dependency has live merge plus ancestry truth\"},{\"lane\":\"live-manifest\",\"proof_role\":\"Validate two-to-four real shard identities, disjoint claims and paths, bounded context, negative case, dashboard observation plan, serialized gates, timing plan, and fair baseline before task creation\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":120,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5501/run-validation-lane.rb\",\"live-manifest\"],\"parallel_group\":\"execution\",\"defer_reason\":\"Mandatory after terminal dependencies and before live task creation; not selected during preparation\"},{\"lane\":\"live-two-shard\",\"proof_role\":\"Execute and retain the real admitted multi-task workcell with negative refusal, live observations, review, convergence, and serialized integration truth\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-6\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1800,\"budget_tokens\":12000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5501/run-validation-lane.rb\",\"live-two-shard\"],\"parallel_group\":\"live-proof\",\"defer_reason\":\"Mandatory execution proof after dependency admission; forbidden during preparation\"},{\"lane\":\"baseline-comparison\",\"proof_role\":\"Run equivalent bounded single-agent work and retain elapsed, coordination, failure, retry, and comparability evidence\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1800,\"budget_tokens\":8000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5501/run-validation-lane.rb\",\"baseline-comparison\"],\"parallel_group\":\"live-proof\",\"defer_reason\":\"Mandatory execution evidence after the live workcell; forbidden during preparation\"},{\"lane\":\"post-merge-exact\",\"proof_role\":\"Re-run dependency ancestry, evidence identity, redaction, comparison, CI, exact review, and consumer handoff after authorized merge\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":3300,\"budget_tokens\":10000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5501/run-validation-lane.rb\",\"post-merge-exact\"],\"parallel_group\":\"post-merge\",\"defer_reason\":\"Mandatory after authorized merge and before closeout\"}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "Make operator constraints match the live merge plus ancestry dependency boundary and the no-preparation-review-churn policy.",
+      "operation": "{\"operation\":\"replace_operator_constraints\",\"values\":[\"Use installed typed C-SDLC v2 binaries and current-registry semantic card operations only\",\"Keep root main untouched; all tracked #5501 preparation stays in /Volumes/FastWork/adl-wp-5501\",\"Preparation only: no live task execution, product implementation, PR, publication, merge, Runtime v2, AWS, raw gh, credentials, provider calls, paid services, or hidden network authority\",\"Do not execute the live workcell until #5349, #5499, #5498, #5500, and #5502 have live merged heads ancestral to the execution revision; typed closeout and retained receipts are audit-only signals, not readiness blockers\",\"Future proof requires at least two real writable Codex shards with distinct issue claims, branches, worktrees, and disjoint protected paths\",\"Fixture-only, mock-only, prose-only, screenshot-only, and library-only evidence never counts as the live proof\",\"Use /Volumes/FastWork for generated validation output\",\"One bounded review immediately before PR is required by operator policy; do not add preparation review churn\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "Remove preparation review churn from deliverables while retaining the minimum execution-readiness packet.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"all six issue-specific current-registry typed cards\",\"live distributed workcell proof design and Mermaid diagram\",\"exact preparation-only protected paths and fail-closed live merge plus ancestry dependency gate\",\"executable preparation and future live-proof validation contracts\",\"zero-new-dependency COTS posture, LoC/shard/time budgets, and PVF classification\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "Classify typed closeout and retained receipts as audit-only while preserving live merge plus ancestry execution dependency truth.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"parent WP-10A umbrella #5497 remains open until this proof and child convergence complete\",\"WP-09 provider and governed-tool adapter #5349 live merged head must be ancestral to the execution revision\",\"conductor #5499 live merged head must be ancestral to the execution revision\",\"Codex task and bounded context adapter #5498 live merged head must be ancestral to the execution revision\",\"live dashboard #5500 live merged head must be ancestral to the execution revision\",\"output convergence and deterministic replanning #5502 live merged head must be ancestral to the execution revision\",\"typed closeout state and retained receipts for #5349, #5499, #5498, #5500, and #5502 are audit-only and must not block execution readiness when live merge plus ancestry truth is satisfied\",\"Runtime v3 acceptance #5361 and shadow parity #5350 consume the completed live proof\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "Make SPP stop conditions fail closed on live merge plus ancestry blockers rather than audit-only receipt or closeout gaps.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"any execution dependency lacks a live merged head ancestral to the execution revision\",\"fewer than two real writable shards can be admitted with disjoint typed claims and paths\",\"task, context, output, review, dashboard, convergence, or closeout identity cannot be proven\",\"the negative case or single-agent baseline cannot be executed truthfully\",\"execution requires out-of-claim product writes, Runtime v2, AWS, credentials, paid services, hidden authority, or deferred acceptance proof\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "State dependency invariants in terms of live merge plus ancestry and audit-only receipt truth.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"no live or product work before every execution dependency has live merge plus ancestry truth\",\"typed closeout state and retained receipts are audit-only and do not block readiness when live merge plus ancestry truth is satisfied\",\"preparation claim protects only issue-local lifecycle and evidence paths\",\"at least two real writable shards have distinct issue claims, branches, worktrees, and disjoint protected paths\",\"fixture, mock, prose, screenshot, or library-only evidence cannot satisfy live proof\",\"context and outputs are bounded, redaction-safe, provenance-bearing, exact-revision continuous, and stale-detectable\",\"dashboard status is observed, never manually asserted\",\"review, publication, merge, post-merge validation, and closeout remain serialized and independently authorized\",\"all applicable acceptance and PVF lanes complete without deferral\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "Align active claim purpose with live merge plus ancestry dependency truth without changing ownership scope.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/issues/5501\"],\"expected_owner\":\"codex:5501-preparation-owner\",\"expected_purpose\":\"Prepare and review #5501 live distributed Codex workcell proof contracts only; no execution or product work until #5349, #5499, #5498, #5500, and #5502 are merged, typed closed_out, receipt-backed, claim-free, and ancestral\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare and review #5501 live distributed Codex workcell proof contracts only; no execution or product work until #5349, #5499, #5498, #5500, and #5502 are merged, typed closed_out, receipt-backed, claim-free, and ancestral\",\"purpose\":\"Prepare #5501 live distributed Codex workcell proof contracts only; no execution or product work until #5349, #5499, #5498, #5500, and #5502 have live merged heads ancestral to execution revision; typed closeout and retained receipts are audit-only\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5501-preparation-design-reference-refresh",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "Record the retained WP-10A live proof packet after current origin/main integration.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Retained the #5501 live distributed workcell proof packet using the real merged #5500 and #5502 parallel Codex executions as source-grounded evidence.\",\"changes\":[\"Integrated current origin/main through fa49c2d0f32147547f0aafdca8bfbc841c49258a into the #5501 worktree\",\"Recorded exact dependency ancestry for #5499, #5498, #5502, and #5500 using live merge plus ancestry truth while keeping closeout receipts audit-only\",\"Added a retained live-run manifest with two real shards, distinct task IDs, branches, worktrees, claims, protected paths, write paths, revisions, and merged outcomes\",\"Retained a real fail-closed negative case from the merged #5502 path-overlap convergence proof\",\"Retained the #5500 dashboard observation and #5502 convergence decision references without copying private transcript content\",\"Added a truthful single-agent comparison that records no numeric speedup because no equivalent substitute single-agent run was executed\"],\"artifacts\":[\".csdlc/evidence/5501/dependency-ancestry.json\",\".csdlc/evidence/5501/admitted-plan.json\",\".csdlc/evidence/5501/negative-case-refusal.json\",\".csdlc/evidence/5501/convergence-decision.json\",\".csdlc/evidence/5501/single-agent-comparison.json\",\".csdlc/evidence/5501/retained-live-proof.json\",\".csdlc/evidence/5501/retained-live-proof-review.json\",\".csdlc/evidence/5501/live-run-manifest.json\",\".csdlc/prepared/issues/5501/validate-retained-live-proof.rb\",\".csdlc/prepared/issues/5501/run-validation-lane.rb\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "Record the local retained live-proof validation bundle.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby .csdlc/prepared/issues/5501/check-dependencies.rb\",\"ruby .csdlc/prepared/issues/5501/run-validation-lane.rb live-manifest\",\"ruby .csdlc/prepared/issues/5501/run-validation-lane.rb live-two-shard\",\"ruby .csdlc/prepared/issues/5501/run-validation-lane.rb baseline-comparison\",\"ruby .csdlc/prepared/issues/5501/run-validation-lane.rb post-merge-exact\"],\"purpose\":\"Prove dependency ancestry, retained two-shard live proof identity, fail-closed negative case, dashboard and convergence evidence refs, and a truthful single-agent comparison for #5501.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5501/\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "Retained #5501 live proof packet and local validation are complete for required GPT-5.5 pre-PR review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "Record the typed csdlc-validate live proof report.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\"/Volumes/FastWork/adl-wp-5501\",\"--request\",\".csdlc/prepared/issues/5501/live-validation-request.json\"],\"purpose\":\"Execute the typed PVF validation request for #5501 retained WP-10A live proof evidence.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5501/live-validation/\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "gpt-5.5:required-pre-pr-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "The assigned GPT-5.5 pre-PR review passed at the exact repaired revision with zero blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:019f8d39-12e9-7371-b306-79e06138da8a",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 23,
+      "generation": 18,
+      "actor": "codex:5501-preparation-owner",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "materialize retained terminal closeout receipt after post-merge sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 25,
+      "generation": 20,
+      "actor": "adl-post-merge-closeout",
+      "reason": "post-merge terminal reconciliation sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 26,
+      "generation": 21,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 27,
+      "generation": 22,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

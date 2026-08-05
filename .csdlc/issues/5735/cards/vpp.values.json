@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5735,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][docs][publication] Reconcile current Medium article launch list",
+    "slug": "v0-91-8-docs-publication-reconcile-current-medium-article-launch-list",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "merged_docs_patch",
+          "proof_role": "Exact committed-patch and bounded recovery validation",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 200,
+          "argv": [
+            "git",
+            "diff",
+            "--check",
+            "305269157b0c1a7d18e8f6948e67f5bd1c17ec89^",
+            "305269157b0c1a7d18e8f6948e67f5bd1c17ec89"
+          ],
+          "parallel_group": "focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on any identity, review, publication, or terminal-evidence mismatch.",
+      "design_ref": ".csdlc/issues/5735/retained/design.md",
+      "design_digest": "d28eb00a9799085a11f9278dea60b7268b8700a30dc1e699ee052a666978b16a",
+      "diagram_ref": ".csdlc/issues/5735/retained/diagram.mmd",
+      "diagram_digest": "e4f8fb9e4bdcf12c4fce13fe8dea9acecca12662a3b54e33ee973e94c7cad3c0"
+    }
+  }
+}

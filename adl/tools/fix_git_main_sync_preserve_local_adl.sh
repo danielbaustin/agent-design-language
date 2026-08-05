@@ -65,15 +65,6 @@ restore_missing_local_adl_cards() {
   done <"$preserve_list"
 }
 
-local_adl_versions() {
-  local version_root="$repo_root/.adl"
-  [[ -d "$version_root" ]] || return 0
-  find "$version_root" -mindepth 1 -maxdepth 1 -type d -name 'v*' -exec basename {} \; | \
-    while IFS= read -r version; do
-      [[ -d "$version_root/$version/tasks" ]] && printf '%s\n' "$version"
-    done | sort -V
-}
-
 ensure_local_main_branch() {
   if git -C "$repo_root" show-ref --verify --quiet refs/heads/main; then
     return 0
@@ -87,35 +78,6 @@ create_temp_main_worktree() {
   rm -rf "$temp_main_worktree"
   git -C "$repo_root" worktree add "$temp_main_worktree" main >/dev/null
   printf '%s\n' "$temp_main_worktree"
-}
-
-run_closeout_catchup() {
-  [[ "${ADL_MAIN_SYNC_CLOSEOUT_DISABLE:-0}" == "1" ]] && return 0
-  command -v gh >/dev/null 2>&1 || {
-    echo "fix-git: gh not found; skipping closeout catch-up" >&2
-    return 0
-  }
-
-  local versions_csv="${ADL_MAIN_SYNC_CLOSEOUT_VERSIONS:-}"
-  local closeout_repo="${ADL_MAIN_SYNC_CLOSEOUT_REPO:-}"
-  if [[ -z "$versions_csv" ]]; then
-    versions_csv="$(local_adl_versions | paste -sd, - || true)"
-  fi
-  [[ -n "$versions_csv" ]] || return 0
-
-  local version
-  OLDIFS="$IFS"
-  IFS=','
-  for version in $versions_csv; do
-    version="$(echo "$version" | xargs)"
-    [[ -n "$version" ]] || continue
-    if [[ -n "$closeout_repo" ]]; then
-      bash "$repo_root/adl/tools/closeout_completed_issue_wave.sh" --version "$version" --repo "$closeout_repo"
-    else
-      bash "$repo_root/adl/tools/closeout_completed_issue_wave.sh" --version "$version"
-    fi
-  done
-  IFS="$OLDIFS"
 }
 
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" ||
@@ -153,4 +115,4 @@ capture_local_adl_cards
 git -C "$repo_root" fetch origin main
 git -C "$repo_root" merge --ff-only origin/main
 restore_missing_local_adl_cards
-run_closeout_catchup
+echo "fix-git: main sync complete; run explicit typed csdlc-finish and csdlc-clean cleanup requests for terminal issue closeout" >&2

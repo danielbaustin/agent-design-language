@@ -1,0 +1,51 @@
+{
+  "issue": 4759,
+  "card": "spp",
+  "expected_generation": 5,
+  "expected_digest": "6ec4b3e1537aec028f86502890304f8aad1aedc0f24f92a7234d87485607fbbe",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Replace stale future preparation steps with the current activation bridge execution plan.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Confirm live #5384 closure and consume the accepted WP-14A platform ledger as the execution evidence basis",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement the v0.91.8 activation bridge inside the protected activation map and handoff docs",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Update lifecycle cards with execution truth through typed C-SDLC v2 requests",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run focused docs/card validation, obtain exact-head pre-PR review, publish a ready PR, and stop before merge or closeout",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      }
+    ]
+  }
+}

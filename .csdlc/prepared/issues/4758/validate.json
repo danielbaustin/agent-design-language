@@ -1,0 +1,29 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "wp21-launch-readiness-prep",
+        "proof_role": "preparation-contract-boundary",
+        "purpose": "Validate #4758 six-card preparation contract, deferred execution claim, budgets, and fail-closed proof gates without launch implementation",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "wp21-preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 30,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/4758/validate_preparation.rb"],
+        "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["wp21-launch-readiness-prep"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 1, "cpu_units": 1, "memory_mib": 128, "tokens": 1000},
+  "root": "/Volumes/FastWork/adl-wp-4758",
+  "evidence_dir": "/Volumes/FastWork/adl-wp-4758/.csdlc/evidence/4758/preparation-validation",
+  "cancellation_file": null
+}

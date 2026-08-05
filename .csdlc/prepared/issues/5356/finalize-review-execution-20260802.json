@@ -1,0 +1,76 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5356,
+  "expected_generation": 1,
+  "expected_digest": "3b19d01f76d5d28161692546555c76c5c7ae20c3b890c450f48e76990c98582d",
+  "claim_id": "claim-5356-v0918-wp18-review-execution-20260802",
+  "actor": "codex:current-session-wp18-review",
+  "summary": "Executed the v0.91.8 WP-18 internal milestone review, retained the review packet, resolved all in-scope findings, and validated the exact-head review/fix set.",
+  "changes": [
+    "Retained the WP-18 internal review packet and findings register under docs/reviews/v0.91.8/internal-review-5356.",
+    "Repaired the WP-18 dependency gate so #5360 squash-merge terminal truth is accepted only with retained closed_out evidence and same-tree landed main ancestry.",
+    "Replaced the WP-18 validation-lane stub with structured local lane execution and exact-revision result JSON.",
+    "Aligned current v0.91.8 release-tail docs so WP-18 is the active review gate after closed WP-17.",
+    "Corrected the runtime API advertised endpoint list to match served routes and added focused contract proof."
+  ],
+  "artifacts": [
+    "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_5356.md",
+    "docs/reviews/v0.91.8/internal-review-5356/README.md",
+    "docs/reviews/v0.91.8/internal-review-5356/FINDINGS_REGISTER.md",
+    "docs/reviews/v0.91.8/internal-review-5356/VALIDATION.md",
+    ".csdlc/prepared/issues/5356/run-validation-lane.rb",
+    ".csdlc/prepared/issues/5356/check-dependencies.rb",
+    "adl-runtime/src/runtime_api.rs"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "wp18-complete",
+          "proof_role": "terminal_local_validation",
+          "purpose": "Run the complete WP-18 local validation lane after retained review findings were fixed.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 512,
+            "tokens": 0
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp18",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "ruby",
+          "argv": [
+            ".csdlc/prepared/issues/5356/run-validation-lane.rb",
+            "complete"
+          ],
+          "evidence": {
+            "max_log_bytes": 200000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "wp18-complete"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 1,
+      "memory_mib": 512,
+      "tokens": 0
+    },
+    "root": "/Volumes/FastWork/adl-wp-5356",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-5356/.csdlc/evidence/5356",
+    "cancellation_file": null
+  }
+}

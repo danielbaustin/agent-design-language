@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5762,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tests] Make terminal repair fixtures independent of live issue claims",
+    "slug": "terminal-sor-validation-fixtures",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair only the terminal SOR validation fixture authority setup and any directly necessary issue-local records.",
+      "deliverables": [
+        "deterministic temporary repair authority in store.rs tests",
+        "three focused terminal SOR validation repair tests passing together",
+        "full locked all-target csdlc-v2 tests passing",
+        "strict Clippy and diff hygiene evidence",
+        "ready PR closing #5762"
+      ],
+      "acceptance_criteria": [
+        "AC-1: No terminal SOR validation repair test borrows active-claim truth from #5613 or another mutable tracked issue projection.",
+        "AC-2: The three terminal SOR validation repair tests pass together.",
+        "AC-3: The full locked all-target C-SDLC v2 test suite passes.",
+        "AC-4: Strict Clippy and git diff hygiene pass.",
+        "AC-5: A bounded gpt-5.5 review finds no actionable issue before publication.",
+        "AC-6: The PR body includes Closes #5762."
+      ],
+      "dependencies": [
+        "current origin/main at 57d115741f32b945217ee3cb14188b41ebde9b3f"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5762",
+        "csdlc-v2/src/store.rs"
+      ],
+      "non_goals": [
+        "production lifecycle semantic change",
+        "terminal repair control-plane redesign",
+        "closeout blocking",
+        "work outside the issue worktree"
+      ]
+    }
+  }
+}

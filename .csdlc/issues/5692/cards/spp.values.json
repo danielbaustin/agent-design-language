@@ -1,0 +1,86 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5692,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][publication] Require implementation PR closing keyword",
+    "slug": "pr-closing-linkage-policy",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Add a small reusable closing-keyword predicate in csdlc-v2 publication validation, replace raw issue mention checks with it, document the policy in AGENTS.md, and prove it with focused gate6 tests.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Inspect current publication and GitHub support surfaces",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Implement policy and verifier guard",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused proof and bounded review",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Publish ready PR with Closes #5692 and shepherd checks",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Primary checkout remains clean on main",
+        "Implementation edits happen only in the #5692 worktree",
+        "Publication must fail closed if the governed PR body lacks the issue closing keyword",
+        "Post-merge typed closeout is truthful but nonblocking"
+      ],
+      "risks": [
+        "Over-broad body parsing could reject valid GitHub close keywords",
+        "Under-broad parsing could allow non-closing issue mentions"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Protected path collision",
+        "Focused publication verifier tests fail",
+        "Bounded review finds actionable policy/tooling defects"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5692/design.md",
+      "design_digest": "3cca33ade693a39c39e24c7316370f9c2350a844aebd089abd7e1f481a746260",
+      "diagram_ref": ".csdlc/prepared/issues/5692/diagram.mmd",
+      "diagram_digest": "4b70df8eeefd31cfd5c704217c1b1e81ee5d4297bda32805a7f81903f77e6a50"
+    }
+  }
+}

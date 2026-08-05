@@ -1,0 +1,16 @@
+{
+  "issue": 5344,
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+  "expected_owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "expected_generation": 2,
+  "expected_digest": "e05ecfe260e4bb2fb838735f54d0262447b8a593ed6be2e9f3368e1aa3367e19",
+  "expected_purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "now_unix_seconds": 1784837700,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Complete the native Windows process-0 and strict TLS proof exposed by the #5344 cross-platform validation",
+  "purpose": "Execute #5344 Runtime v3 opt-in soak and rollback proof, repair Guardian process-0 child ownership so a dead Guardian cannot leave an orphan Runtime, validate on macOS, Linux, and native Windows, and retain truthful evidence without weakening TLS or deleting Runtime v1",
+  "add_protected_paths": [
+    "adl-runtime-kernel/src/governed_operations.rs",
+    "adl-runtime-kernel/tests/governed_operations.rs"
+  ]
+}

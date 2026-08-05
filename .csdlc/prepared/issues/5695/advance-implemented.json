@@ -1,0 +1,10 @@
+{
+  "issue": 5695,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "72e8a2170b425fcc5b6d54eb6b1139641648310b9a6b534013d6143fdc0743e7",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "reason": "Bounded implementation and focused validation passed; advance to reviewable implementation phase.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

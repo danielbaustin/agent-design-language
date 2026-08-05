@@ -1,0 +1,14 @@
+{
+  "issue": 5351,
+  "expected_generation": 18,
+  "expected_digest": "ec698650400dc9bc1a5a7bd2607f98ab5421ad826a81f9bec06b1b2a707c0d51",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "reviewer": "subagent:Darwin:019fbcd1-dee8-7682-8f2b-9f9261587524",
+  "assigned_by": "codex:5351-execution",
+  "scope": [
+    ".csdlc/prepared/issues/5351",
+    ".csdlc/evidence/5351",
+    ".csdlc/issues/5351",
+    "docs/milestones/v0.91.8/evidence/wp16"
+  ]
+}

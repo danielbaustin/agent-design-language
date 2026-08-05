@@ -1,0 +1,492 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5675,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c600ad81a92f3c87eb5098faa2237f85713be1650bf3c1d713c0206a4ef263b9",
+  "phase": "closed_out",
+  "generation": 21,
+  "digest": "deb9f29b120039dfac97394e512f7e8b230a3ab58b32f8bcbe4ff03b419c292d",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex:5675-5759-corrective-review",
+    "scope": [
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider/profiles.rs"
+    ],
+    "reviewed_revision": "git-blake3:92fed26e1ff2031a57d80a014fbef77542da55d8:ec2eef569becd5f45193c2450055559f61aff9585114fd2aaeb989728357f85b",
+    "findings": [],
+    "residual_risks": [
+      "PR #5759 is the governed corrective evidence for the MiniMax billing-classification scope repair that also closes #5675.",
+      "The fresh review scope is limited to the original #5675 provider adapter/profile surface at the exact PR #5759 head."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5675,
+    "pull_request": 5759,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5759",
+    "base": "main",
+    "head": "codex/5756-minimax-billing-classification",
+    "revision": "git-blake3:92fed26e1ff2031a57d80a014fbef77542da55d8:ec2eef569becd5f45193c2450055559f61aff9585114fd2aaeb989728357f85b",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5759,
+    "head_sha": "92fed26e1ff2031a57d80a014fbef77542da55d8",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91343423753"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342428042"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413160"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413429"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413392"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413490"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342412979"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342383525"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413345"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342412976"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413006"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413528"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413420"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342412972"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413330"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413233"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5759,
+    "disposition": "merged",
+    "observed_sha": "92fed26e1ff2031a57d80a014fbef77542da55d8",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5675.json",
+    "released_branch": "codex/5675-provider-adapter-routes-publish",
+    "released_worktree": ".worktrees/adl-wp-5675",
+    "released_protected_paths": [
+      ".csdlc/issues/5675",
+      ".csdlc/locks/5675.lock",
+      ".csdlc/prepared/issues/5675",
+      "adl/src/provider_adapter.rs",
+      "adl/src/provider/profiles.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5675/retained/design.md",
+  "diagram_path": ".csdlc/issues/5675/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5675-opus-review",
+      "revision": "ae491c4e197cfed06f0d51a0ff65dbcbb1fe0dd458a805c29c0c78659b4dd39f"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "dcef65d36853b8d171b26c6d47d39dd6325d556fa04377a10cfd01a809675004",
+      "rendered_digest": "2dc56e72c830eeb26afa62a9aabea5c3cb9cbf81b6eb0d6187be628e4bf8ef39",
+      "ast_digest": "fa7619680715cdb8942ef43186a5af1d6d843567ee56dfb71aafbce1f79567d5"
+    },
+    "stp": {
+      "values_digest": "d3da5ae6d2a676a51b59df52eefb419b9df1d302e5cd70c71c5077a2a3175e5a",
+      "rendered_digest": "da91288730d18893c5e48dfa033e63c91e686996426f678d466ac51cf3ce6851",
+      "ast_digest": "ebeb2107e5c5a6401657727ddf62783563f6cb4e4a683e681aac4b67b60d80d4"
+    },
+    "spp": {
+      "values_digest": "5ff6175714b2388adbb73abb1216469e24072dda5a8411eaaa4fd9d3f9ff7577",
+      "rendered_digest": "eb70e90d214490aa9142f1d85e888116bf7af74b5d9a7e2d621dc8683b5b091a",
+      "ast_digest": "4ebec0b5fa85f5e70a1a07223f1cc05a4e3bae2327df67835639a04ef2922081"
+    },
+    "vpp": {
+      "values_digest": "6401fec18b554fb32ff2863c79e63c4820ba9e20f2b0fd5e73fda02dc994defe",
+      "rendered_digest": "7650a673487a0f8b58e6493f2b3cc1ba4fa58626a9854dbd42476b28a63096c2",
+      "ast_digest": "3985af668ee021a9044c888f8e4c9f4ad29e074d6d3229125af69d0f74104198"
+    },
+    "srp": {
+      "values_digest": "d4f2743fbcad6933cd7b9584921167cdb97f1c3c0653ee5cc04a161599301cbe",
+      "rendered_digest": "92665461cd85971581417fc83a0186487b3dced22bb79de92dd8a13ee94dc489",
+      "ast_digest": "082d6060c450e390fbd8c144e3efbedd4a8048567e6d63f283b67862c9da160d"
+    },
+    "sor": {
+      "values_digest": "0863a59808b063d1573f3b3b9c2dd253a83cff7a9684d2b5e0f4558d2e776b05",
+      "rendered_digest": "2037bf1e22c8eac15f89487091900bc2cae31486c2c5ab30c1c5bd33d05917ef",
+      "ast_digest": "19e18eb5af6009978085c15d5ff6bfe52a4db13b4eba66cefeec0eef5e9b205b"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5675-execution",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5675-execution",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Implementation and focused validation are complete"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication."
+    },
+    {
+      "sequence": 8,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-execution",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 9,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5675-execution",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 10,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "PR #5759 merged a corrective MiniMax billing-classification fix that also closes #5675; recover #5675 review truth to the current exact main head before merged-publication reconciliation and terminal closeout."
+    },
+    {
+      "sequence": 11,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-5759-corrective-review",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 12,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "Move #5675 review truth from current main back to the exact PR #5759 head branch required by merged-publication reconciliation."
+    },
+    {
+      "sequence": 13,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5675-5759-corrective-review",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 14,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 15,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 16,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 17,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5675-execution",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5675-execution",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5675-execution",
+      "reason": "Record bounded Kimi and MiniMax adapter implementation and live probe evidence",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented typed Kimi/Moonshot and MiniMax hosted routes with bounded budgets, current MiniMax endpoint, billing envelope classification, and redacted shared extraction.\",\"changes\":[\"adl/src/provider_adapter.rs\",\"adl/src/provider/profiles.rs\"],\"artifacts\":[\".csdlc/prepared/issues/5675/design.md\",\".csdlc/prepared/issues/5675/diagram.mmd\",\".adl/provider-adapter-focused-tests.log\",\".adl/live-provider-probe-disposition.md\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:5675-execution",
+      "reason": "Record focused Rust tests, exact-head review, and live provider dispositions",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests\",\"--lib\"],\"purpose\":\"Focused adapter routing, budget, envelope, and redaction proof\",\"outcome\":\"passed\",\"evidence_ref\":\".adl/provider-adapter-focused-tests.log\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:5675-execution",
+      "reason": "Implementation and focused validation are complete",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5675-execution",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5675-opus-review",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5675-execution",
+      "reason": "Opus exact-head review completed; all actionable findings fixed and re-reviewed clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5675-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5675-execution",
+      "reason": "Lifecycle documentation commit changed HEAD after the source review; re-record metadata-only proof before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5675-execution",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5675-execution",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "PR #5759 merged a corrective MiniMax billing-classification fix that also closes #5675; recover #5675 review truth to the current exact main head before merged-publication reconciliation and terminal closeout.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:5675-5759-corrective-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "Move #5675 review truth from current main back to the exact PR #5759 head branch required by merged-publication reconciliation.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex:5675-5759-corrective-review",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 19,
+      "generation": 16,
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 20,
+      "generation": 17,
+      "actor": "codex:5675-5759-corrective-reconcile",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 21,
+      "generation": 18,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the authentic corrective PR #5759 terminal receipt into the v0.91.8 aggregate inventory.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 22,
+      "generation": 19,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Converge the pushed corrective source projection with the newer shared aggregate receipt before pruning the source topology.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 23,
+      "generation": 20,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Converge the canonical issue-bound source projection with the pushed corrective receipt before pruning its released topology.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 24,
+      "generation": 21,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the final pushed and pruned #5675 source receipt into the v0.91.8 aggregate inventory.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

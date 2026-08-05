@@ -1,0 +1,13 @@
+{
+  "issue": 5347,
+  "claim_id": "claim-5347-external-band-deletion",
+  "expected_generation": 14,
+  "expected_digest": "f36716ef6856120ac2db92fe47ebcd9cb99ab343345eafb7282691a34e1f113a",
+  "now_unix_seconds": 1785551400,
+  "actor": "codex:5347-replacement-sole-writer",
+  "reason": "The #5347 live-reference sweep found retained library modules that still publish validation commands for deleted external demo binaries. Amend scope narrowly to rewrite those commands to retained library/test contracts.",
+  "add_protected_paths": [
+    "adl/src/capability_aptitude_testing.rs",
+    "adl/src/dspark_speculative_decoding_evaluation.rs"
+  ]
+}

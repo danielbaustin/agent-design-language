@@ -1,0 +1,1 @@
+{"status":"pass","issue":5351,"phase":"bound","cards":6,"product_changes":0,"typed_doctor":"pass","lines":{"design.md":78,"diagram.mmd":14,"bootstrap-request.json":147,"bind-request.json":23,"check-dependencies.rb":69,"validate-preparation.rb":154,"run-validation-lane.rb":7,"validation-request.json":50,"preparation-review.md":64}}

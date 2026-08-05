@@ -1,0 +1,12 @@
+{
+  "issue": 5698,
+  "claim_id": "claim-5698-runtime-v3-redb-state",
+  "expected_generation": 6,
+  "expected_digest": "354b17d0dd343bdde56a5841498591fe7e1ecaea67bb06d37ccc981195083ff0",
+  "now_unix_seconds": 1785347106,
+  "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+  "reason": "Exact-head CI exposed that adding the redb dependency changed the workspace resolution used by the locked ADL v2 standalone lane; include only the lockfile needed to restore locked CI determinism.",
+  "add_protected_paths": [
+    "adl-v2/Cargo.lock"
+  ]
+}

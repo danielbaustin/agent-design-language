@@ -1,0 +1,24 @@
+{
+  "issue": 5498,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "be655f3f8c15fc65c45fe17169af506ba370e7c4efff60f607de7021d72c481f",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the final bounded implementation and validation truth after resolving every finding in the single required review cycle.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented the bounded async workcell task adapter and resolved all review findings with task-level serialization, terminal cancel replay, sanitized bounded evidence references, and terminal observation caching.",
+    "changes": [
+      "Added typed create, attach, message, handoff, inspect, cancel, and escalate request and receipt contracts",
+      "Bound dispatch to verified live authority, normalized claim-contained paths, context digests, deadlines, and idempotency keys",
+      "Serialized operations per task so cancellation and terminal observation cannot race later messages or handoffs",
+      "Replayed repeated terminal cancellation without transport redispatch and rejected unsafe evidence references"
+    ],
+    "artifacts": [
+      "adl-v2/crates/adl-workcell-task-adapter",
+      "adl-v2/Cargo.toml",
+      "adl-v2/Cargo.lock"
+    ]
+  }
+}

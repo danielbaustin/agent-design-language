@@ -1,0 +1,18 @@
+{
+  "issue": 5695,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "aae3fb9c8a2c1a4b563fed1910f579b4fc37018f1b442bbf4e17a71d3a6bd2e2",
+  "claim_id": "claim-5695-pr-state-mergeability",
+  "actor": "codex:issue-5695-pr-state-mergeability",
+  "reason": "Record strict lint validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "clippy", "-p", "csdlc-v2", "--lib", "--", "-D", "warnings"],
+      "purpose": "Verify strict lint for the touched Rust library.",
+      "outcome": "passed",
+      "evidence_ref": "local:cargo-clippy-csdlc-v2-lib:passed"
+    }
+  }
+}

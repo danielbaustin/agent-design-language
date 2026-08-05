@@ -1,0 +1,58 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5715,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][ui] Update podcast studio from operator-provided page design",
+    "slug": "v0-91-8-podcast-ui-update-podcast-studio-from-operator-provided-page-design",
+    "version": "v0.91.8",
+    "generation": 9
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Integrate the attached studio page export into the generated podcast demo route while preserving the export bytes and #5711 audio/RSS behavior.",
+      "deliverables": [
+        "updated podcast generator studio-copy path",
+        "generated demos/podcast/studio route",
+        "committed studio reference bundle with clean podcast-studio.html filename",
+        "validated RSS/feed output",
+        "focused validation updates for source/copy digest, route wiring, audio, and RSS",
+        "truthful issue-local lifecycle record"
+      ],
+      "acceptance_criteria": [
+        "AC-1: The exported studio HTML content is preserved byte-for-byte from the operator zip in both the reference copy and served studio copy.",
+        "AC-2: The integrated studio HTML uses clean podcast-studio.html filenames only, with no .dc suffix and no filenames with spaces.",
+        "AC-3: demos/podcast/index.html links to the studio route.",
+        "AC-4: The studio route opens the exported HTML and preserves its referenced image/script assets.",
+        "AC-5: The audio player and generated/local audio artifact remain valid.",
+        "AC-6: demos/podcast/feed.xml remains well-formed RSS with a valid audio enclosure.",
+        "AC-7: Validation covers generation, route wiring, source/copy digest identity, RSS, and audio artifact existence."
+      ],
+      "dependencies": [
+        "#5711 merged audio/RSS launch foundation",
+        "operator-provided Podcast studio page design zip"
+      ],
+      "repo_inputs": [
+        "demos/podcast/index.html",
+        "demos/podcast/feed.xml",
+        "demos/podcast/episodes/meet-the-ai-coworkers/index.html",
+        "demos/podcast/studio-reference/podcast-studio.html",
+        "demos/podcast/studio/podcast-studio.html",
+        "adl/tools/generate_podcast_launch_packet.py",
+        "adl/tools/validate_podcast_launch_packet.py",
+        "adl/tools/test_podcast_launch_packet.sh",
+        "docs/milestones/v0.91.8/review/podcast_launch_5711/episodes.json"
+      ],
+      "non_goals": [
+        "production deployment",
+        "editing the exported reference HTML content",
+        "rewriting the exported text or images",
+        "committing the operator zip without explicit approval",
+        "replacing working audio/RSS with a visual-only mock"
+      ]
+    }
+  }
+}

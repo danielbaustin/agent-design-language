@@ -1,0 +1,25 @@
+{
+  "issue": 5360,
+  "expected_generation": 1,
+  "expected_digest": "c292a04f4010e3ff2f5d65ac351f1744a41f5b2d55d6f94a4c09b1b3fe00d03f",
+  "now_unix_seconds": 1785543202,
+  "actor": "codex:5360-preparation-owner",
+  "reason": "reacquire expired preparation-only claim for later WP-17 execution readiness without executing content updates",
+  "replacement": {
+    "id": "claim-5360-v0918-wp17-documentation-preparation",
+    "owner": "codex:5360-preparation-owner",
+    "generation": 1,
+    "acquired_unix_seconds": 1785543202,
+    "expires_unix_seconds": 1786148002,
+    "heartbeat_unix_seconds": 1785543202,
+    "branch": "codex/5360-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5360",
+      ".csdlc/locks/5360.lock",
+      ".csdlc/prepared/issues/5360",
+      ".csdlc/evidence/5360"
+    ],
+    "purpose": "Prepare and review #5360 WP-17 documentation and release-truth alignment contracts only; no shared-document or product work until WP-16 #5351 is merged, typed closed_out, receipt-backed, claim-free, and ancestral"
+  }
+}

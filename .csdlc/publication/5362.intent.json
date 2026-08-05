@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5362,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5362-v0918-preparation",
+  "title": "[v0.91.8][WP-21] Align feature list and v0.92 planning truth",
+  "body": "Closes #5362\n\n## Summary\n- reconciles the canonical feature list with the completed WP-21 child tracks\n- aligns v0.91.8 proof coverage, activation mapping, and next-milestone handoff truth\n- preserves explicit non-claims for v0.92 execution, first-birthday readiness, and Adaptive Learning implementation\n\n## Validation\n- typed C-SDLC doctor PASS at implemented generation 10\n- 122-row feature crosswalk PASS\n- v0.91.8 proof matrix, YAML/JSON parsing, changed-doc links, and diff hygiene PASS\n- bounded GPT-5.5 exact-revision review PASS with zero blockers",
+  "draft": false,
+  "revision": "git-blake3:7a639a3e988cdf58d2f3abfb390044a4cb094ecd:8547ac0e537b29945ecc67c5a45a57781e90dab2f344d734e28275e4af58c782",
+  "commit_sha": "7a639a3e988cdf58d2f3abfb390044a4cb094ecd"
+}

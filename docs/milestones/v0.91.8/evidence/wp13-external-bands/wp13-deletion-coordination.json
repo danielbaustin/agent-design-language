@@ -1,0 +1,35 @@
+{
+  "schema": "adl.wp13.deletion_coordination.v1",
+  "issue": 5347,
+  "safe_serialized_merge_order": [
+    5347,
+    5346
+  ],
+  "reserved_for_5346": [
+    {
+      "path_prefix": "adl/src/adl",
+      "purpose": "final ADL language/compiler/engine core deletion"
+    },
+    {
+      "path_prefix": "adl/src/cli",
+      "purpose": "final ADL CLI deletion"
+    },
+    {
+      "path_prefix": "adl/src/runtime_v2",
+      "purpose": "runtime-v2 compatibility/core deletion, if still present"
+    },
+    {
+      "path_prefix": "adl/src/main.rs",
+      "purpose": "final ADL executable core deletion"
+    },
+    {
+      "path_prefix": "adl/src/lib.rs",
+      "purpose": "final ADL library core deletion"
+    }
+  ],
+  "coordination_notes": [
+    "#5347 removes only obsolete standalone demo/proof bin entrypoints and one matching Cargo bin declaration.",
+    "#5346 remains responsible for final core language/compiler/engine/CLI deletion.",
+    "WP-16 #5351 is not an execution dependency for #5347."
+  ]
+}

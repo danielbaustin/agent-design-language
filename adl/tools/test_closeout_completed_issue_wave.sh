@@ -2,65 +2,21 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
 
-REPO="$TMP/repo"
-mkdir -p "$REPO/adl/tools"
-mkdir -p "$REPO/.git"
+[[ ! -e "$ROOT/adl/tools/closeout_completed_issue_wave.sh" ]] || {
+  echo "retired wave-closeout helper unexpectedly exists" >&2
+  exit 1
+}
 
-mkdir -p "$REPO/.adl/v0.88/tasks/issue-100__demo"
-cat >"$REPO/.adl/v0.88/tasks/issue-100__demo/sor.md" <<'EOF'
-Status: DONE
-- Integration state: pr_open
-- Verification scope: pr_branch
-- Worktree-only paths remaining: worktree/path
-EOF
-
-cat >"$REPO/.git/config" <<'EOF'
-[remote "origin"]
-	url = git@github.com:danielbaustin/agent-design-language.git
-EOF
-
-cp "$ROOT/adl/tools/closeout_completed_issue_wave.sh" "$REPO/adl/tools/closeout_completed_issue_wave.sh"
-chmod +x "$REPO/adl/tools/closeout_completed_issue_wave.sh"
-
-CLOSEOUT_LOG="$TMP/closeout.log"
-cat >"$REPO/adl/tools/pr.sh" <<EOF
-#!/usr/bin/env bash
-set -euo pipefail
-printf '%s\n' "\$*" >>"$CLOSEOUT_LOG"
-exit 0
-EOF
-chmod +x "$REPO/adl/tools/pr.sh"
-
-BIN="$TMP/bin"
-mkdir -p "$BIN"
-cat >"$BIN/gh" <<'EOF'
-#!/usr/bin/env bash
-set -euo pipefail
-if [[ "$1 $2" == "issue list" ]]; then
-  printf '[{"number":100,"stateReason":"COMPLETED"},{"number":101,"stateReason":"COMPLETED"}]\n'
-  exit 0
+grep -Fq 'csdlc-finish' "$ROOT/adl/tools/fix_git_main_sync_preserve_local_adl.sh"
+grep -Fq 'csdlc-clean cleanup' "$ROOT/adl/tools/fix_git_main_sync_preserve_local_adl.sh"
+if grep -Fq 'csdlc-closeout' "$ROOT/adl/tools/fix_git_main_sync_preserve_local_adl.sh"; then
+  echo "main-sync helper still references deleted csdlc-closeout" >&2
+  exit 1
 fi
-exit 1
-EOF
-chmod +x "$BIN/gh"
-
-REPORT="$TMP/report.md"
-DRY_REPORT="$TMP/dry-report.md"
-(cd "$REPO" && PATH="$BIN:$PATH" bash ./adl/tools/closeout_completed_issue_wave.sh --version v0.88 --repo danielbaustin/agent-design-language --report "$DRY_REPORT" --report-only)
-
-grep -Fq 'candidate_issues: 1' "$DRY_REPORT"
-grep -Fq 'normalized_issues: 0' "$DRY_REPORT"
-grep -Fq 'candidates:' "$DRY_REPORT"
-grep -Fq '  - 100' "$DRY_REPORT"
-
-(cd "$REPO" && PATH="$BIN:$PATH" bash ./adl/tools/closeout_completed_issue_wave.sh --version v0.88 --repo danielbaustin/agent-design-language --report "$REPORT")
-
-grep -Fq 'closeout 100 --version v0.88 --no-fetch-issue' "$CLOSEOUT_LOG"
-grep -Fq 'candidate_issues: 1' "$REPORT"
-grep -Fq 'normalized_issues: 1' "$REPORT"
-grep -Fq 'failed_issues: 0' "$REPORT"
+if grep -Fq 'closeout_completed_issue_wave.sh' "$ROOT/adl/tools/fix_git_main_sync_preserve_local_adl.sh"; then
+  echo "main-sync helper still delegates closeout to the retired wave helper" >&2
+  exit 1
+fi
 
 echo "PASS test_closeout_completed_issue_wave"

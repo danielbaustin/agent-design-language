@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5645,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Add typed fail-closed csdlc-merge command",
+    "slug": "typed-csdlc-merge-command",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/src/merge.rs\ncsdlc-v2/src/bin/csdlc-merge.rs\ncsdlc-v2/src/schema.rs\ncsdlc-v2/Cargo.toml",
+      "review_revision": "git-blake3:dd1972aa2c544a3f8ad51dde2e7611fcc0c5fc26:eb9f2645132e816e0aa8d051667cf87826d3b15dbe215881fcfbe3e0def27125",
+      "reviewer": "subagent:review-5632",
+      "review_prompts": [
+        "Check exact-head and readiness enforcement",
+        "Check no token leakage",
+        "Check publish/merge separation"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Canonical gate matrix and mocked Octocrab request tests remain future hardening; the exact-head merge gate and focused contract proofs are present."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

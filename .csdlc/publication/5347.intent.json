@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5347,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5347-v0918-wp13-external-band-deletion",
+  "title": "[v0.91.8][WP-13] Delete obsolete external ADL demo bands (#5347)",
+  "body": "Closes #5347\n\n## Summary\n- Deletes obsolete externally-owned standalone ADL demo/proof entrypoints from the incumbent bin surface.\n- Removes the retired WP-12 Cargo bin declaration while preserving current operational binaries and Runtime v2/v3/C-SDLC/ADL v2 core boundaries.\n- Keeps #5346 as the later serialized final-core deletion lane and proves zero overlap with its reserved language/compiler/engine/CLI scope.\n- Records exact #5347 deletion manifests, coordination evidence, and net-negative line accounting.\n- Repairs exact-head CI parity after publication by replacing stale historical-artifact assertions and adding a focused v086 review-surface coverage mapping.\n\n## Validation\n- `ruby .csdlc/prepared/issues/5347/run-validation-lane.rb execution` passed after the review-finding fixes.\n- `cargo test --offline --manifest-path adl/Cargo.toml capability_aptitude_testing --target-dir /Volumes/FastWork/adl-wp-5347/target` passed.\n- `cargo test --offline --manifest-path adl/Cargo.toml speculative_decoding_prototype --target-dir /Volumes/FastWork/adl-wp-5347/target` passed.\n- `cargo test --offline --manifest-path adl/Cargo.toml demo::tests::v086_review_surface_demo_marks_retired_external_entries --target-dir /Volumes/FastWork/adl-wp-5347/target` passed.\n- `bash adl/tools/check_coverage_impact.sh --changed-files .adl/tmp/5347-v086-review-surface.changed --print-risk-nextest-expression` selected the exact focused v086 review-surface test.\n- `cargo fmt --manifest-path adl/Cargo.toml --check` passed.\n- `git diff --check` passed.\n\n## Review\n- Direct GPT-5.5 exact-head review passed with zero blockers at `4570c10bc79bca0a59841ff85cf97f4028579ff0`.\n- Typed reviewed revision: `git-blake3:4570c10bc79bca0a59841ff85cf97f4028579ff0:e33da934c5d27ad8c2971e5cb74cdf1d1e31bc5d881220baf1f209f238b76c00`.\n\n## Boundary\n- No broad retest was rerun for publication; focused parity repairs, exact review, and GitHub CI establish the current head.\n- No root-main edits, `/private/tmp`, closeout, or #5346 merge work are included.\n",
+  "draft": false,
+  "revision": "git-blake3:4570c10bc79bca0a59841ff85cf97f4028579ff0:e33da934c5d27ad8c2971e5cb74cdf1d1e31bc5d881220baf1f209f238b76c00",
+  "commit_sha": "4570c10bc79bca0a59841ff85cf97f4028579ff0"
+}

@@ -1,0 +1,29 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "wp13-5346-preparation-contract",
+        "proof_role": "Authenticate all six cards and the reviewed preparation-only dependency, disjointness, budget, COTS, PVF, and protected-path contract",
+        "purpose": "Prove #5346 is prepared and bound without product changes while deletion remains fail-closed",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 3000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "/usr/bin/ruby",
+        "argv": [".csdlc/prepared/issues/5346/validate-preparation.rb"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["wp13-5346-preparation-contract"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 1, "cpu_units": 1, "memory_mib": 256, "tokens": 3000},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5346",
+  "cancellation_file": null
+}

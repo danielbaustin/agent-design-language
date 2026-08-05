@@ -1,0 +1,28 @@
+{
+  "issue": 5655,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "65704493521aaaed2a6e14d0de6ceae65724c310c415f20d04c4e773e280f163",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Record implemented Rust GitHub action surface and operator guidance.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented a repo-native Rust csdlc-github command for idempotent issue create/update/comment/close/read and PR state observation, backed by typed schemas, shared token resolution, exact marker reconciliation, operator guidance, and focused tests.",
+    "changes": [
+      "Added csdlc-github binary with typed run/schema commands.",
+      "Added GithubAction request/result/issue schemas and library execution entrypoint.",
+      "Added idempotent issue marker reconciliation with post-mutation readback for issue creation and comments.",
+      "Exposed PR state observation through the same request/result surface while preserving existing Rust v2 publish/ready/merge/closeout commands for terminal lifecycle actions.",
+      "Added operator skill guidance prohibiting connector/raw gh/legacy wrapper/AWS routing.",
+      "Added focused fail-fast and loopback mock tests for marker stability, invalid input, and idempotent issue/comment readback."
+    ],
+    "artifacts": [
+      "csdlc-v2/src/bin/csdlc-github.rs",
+      "csdlc-v2/src/github.rs",
+      "csdlc-v2/tests/gate_github_actions.rs",
+      "csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md"
+    ]
+  },
+  "fail_after_backup": false
+}

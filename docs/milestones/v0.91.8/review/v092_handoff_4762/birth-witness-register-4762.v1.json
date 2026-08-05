@@ -1,0 +1,82 @@
+{
+  "schema": "adl.birth_witness_register.v1",
+  "issue": 4762,
+  "package_status": "implemented",
+  "birth_event_status": "not_claimed",
+  "source_evidence": [
+    {
+      "id": "activation-map-row",
+      "path": "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "evidence": "The v0.91.8 activation map names #4762 as the source for Birth witnesses/receipt with required evidence of an auditable receipt package."
+    },
+    {
+      "id": "handoff-owner-row",
+      "path": "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "evidence": "#4762 remains one of the identity and birthday documentation owners consumed by WP-21 #5362."
+    },
+    {
+      "id": "birthday-claim-boundary",
+      "path": "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md",
+      "evidence": "The launch packet requires witness set and citizen-facing receipt, while explicitly denying that planning surfaces prove the birthday happened."
+    },
+    {
+      "id": "memory-capability-witness-contract",
+      "path": "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+      "evidence": "The feature contract requires memory grounding, capability envelope, witness set, and receipt surfaces without exposing raw private state."
+    },
+    {
+      "id": "birthday-negative-contract",
+      "path": "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",
+      "evidence": "The birthday feature requires deterministic rejection of startup, wake, snapshot, admission, copied state, and missing evidence cases."
+    }
+  ],
+  "witnesses": [
+    {
+      "id": "identity-continuity-source-witness",
+      "role": "source_boundary",
+      "attestation": "The package can witness identity and continuity only by reference to retained source evidence; it does not create an identity root or continuity head.",
+      "evidence_refs": [
+        "docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md",
+        "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+      ],
+      "redaction": "source_paths_only"
+    },
+    {
+      "id": "memory-capability-source-witness",
+      "role": "memory_capability_boundary",
+      "attestation": "Memory grounding and capability evidence must be redaction-safe references plus provider, model, tool, skill, authority, and limit context.",
+      "evidence_refs": [
+        "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
+        "docs/milestones/v0.92/DESIGN_v0.92.md"
+      ],
+      "redaction": "no_raw_private_state"
+    },
+    {
+      "id": "negative-case-boundary-witness",
+      "role": "negative_case_guard",
+      "attestation": "The retained negative-case register rejects lifecycle events and missing evidence as birth, instead of treating them as deferred success.",
+      "evidence_refs": [
+        ".csdlc/prepared/issues/4762/birth-witness-receipt-negative-cases.v1.json",
+        "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+      ],
+      "redaction": "public_case_ids_only"
+    },
+    {
+      "id": "handoff-consumption-witness",
+      "role": "handoff_consumer",
+      "attestation": "The v0.91.8 handoff and activation surfaces can cite this package by exact path for WP-21 #5362 and v0.92 WP-09 consumption.",
+      "evidence_refs": [
+        "docs/milestones/v0.91.8/review/v092_handoff_4762/README.md",
+        "docs/milestones/v0.91.8/review/v092_handoff_4762/BIRTH_WITNESSES_AND_RECEIPT_PACKAGE_4762.md"
+      ],
+      "redaction": "reviewer_facing"
+    }
+  ],
+  "redaction_policy": {
+    "raw_private_state": "forbidden",
+    "allowed_memory_surface": "redaction-safe references and witnessed projections only",
+    "allowed_capability_surface": "declared provider, model, tool, skill, authority, and limit context",
+    "reviewer_packet": "public paths, non-secret evidence summaries, and explicit blockers"
+  },
+  "negative_case_ref": ".csdlc/prepared/issues/4762/birth-witness-receipt-negative-cases.v1.json"
+}

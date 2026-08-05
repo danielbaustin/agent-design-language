@@ -1,0 +1,14 @@
+{
+  "issue": 5344,
+  "card": "srp",
+  "expected_generation": 27,
+  "expected_digest": "4cb00c49c89defbabe76d512bb0a32688dc79fdf7abe9f7350e4f56420274051",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Remove the final deleted guardian CLI test assertion and prove the live mapper inventory contract passes.",
+  "operation": {
+    "operation": "dispose_finding",
+    "finding_id": "F-5344-CI-FOLLOWUP-1",
+    "disposition": "fixed"
+  }
+}

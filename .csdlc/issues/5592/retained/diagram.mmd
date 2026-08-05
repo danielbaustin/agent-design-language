@@ -1,0 +1,30 @@
+flowchart TD
+    A["Hard gate: clean reviewed #5591 Parity-A contract"] --> B["Typed canonical ingress"]
+    B --> C["Graph and authority validation"]
+    C --> D["Deterministic bounded scheduler"]
+    D --> E["Production reasoning components"]
+    E --> F{"Loop terminal condition"}
+    F -->|"continue within every bound"| D
+    F -->|"complete, deny, cancel, or exhaust"| G["Authenticated checkpoint and evidence"]
+
+    T["Untrusted task content"] --> P["Signal policy firewall"]
+    AF["Affect-like advisory signals"] --> P
+    CU["Curiosity and ToM-labelled evidence"] --> P
+    P --> D
+
+    FG["Freedom Gate"] --> H["Monotonic authority intersection"]
+    SD["Shutdown and cancellation"] --> H
+    RV["Review authority"] --> H
+    CG["Constructability gate"] --> H
+    H --> D
+    H --> M["Signed one-shot mutation permit"]
+    M --> E
+
+    G --> R["Deterministic replay and resume"]
+    R --> D
+    G --> RB["Reviewed rollback target"]
+
+    X["Runtime v2 implementation"] -. "no reuse or parity credit" .-> Z["Boundary only"]
+    Y["#5591 broad product claim"] -. "blocks product-path amendment" .-> A
+    Q["Preparation-only #5592 claim"] --> Q1[".csdlc/issues/5592"]
+    Q --> Q2[".csdlc/prepared/issues/5592"]

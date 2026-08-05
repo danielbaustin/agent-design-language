@@ -1,0 +1,18 @@
+{
+  "issue": 5756,
+  "expected_generation": 3,
+  "expected_digest": "11d1b09b507793fb4c3a032e7a6da4bacd566ff284303193b0ed1ba30cb3928e",
+  "claim_id": "codex-5756-20260801",
+  "actor": "codex",
+  "evidence": {
+    "reviewer": "codex-bounded-review",
+    "scope": [
+      "adl/src/provider_adapter.rs"
+    ],
+    "reviewed_revision": "git-blake3:55580056a83ff422cdb6f075e02f4a63fe4d460a:a607e7a620bf1ac17c8ce188b7bddd3e597b632eaa2cee493d565756268097e7",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

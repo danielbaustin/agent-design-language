@@ -1,0 +1,89 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5497,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-10A][multi-agent] Implement end-to-end distributed C-SDLC workcell",
+    "slug": "v0-91-8-wp-10a-distributed-workcell-umbrella",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Prepare every child now, execute #5499 then #5498, run #5500/#5502 in parallel, run #5501 live proof, then reconcile #5497.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Verify child scopes, dependencies, claims, and preparation readiness",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Execute #5499 then #5498 and freeze their interfaces",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Execute #5500 and #5502 in parallel on disjoint paths",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Run #5501 live proof and reconcile umbrella truth",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-6"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "no product paths in umbrella claim",
+        "no tracked work on main",
+        "no receipt blocking",
+        "no raw gh or AWS",
+        "one review before PR"
+      ],
+      "risks": [
+        "umbrella scope could duplicate child implementation",
+        "stale interfaces could create false parallelism",
+        "overlapping claims could corrupt convergence truth",
+        "fixture evidence could be mistaken for live proof"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "active protected paths overlap",
+        "required child interface is absent or stale",
+        "authority is ambiguous",
+        "live proof would be fixture-only"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5497/retained/design.md",
+      "design_digest": "a666b74f27b2a9f9399adbae21e036a8155093cfa27e53cfea93312ee65c3946",
+      "diagram_ref": ".csdlc/issues/5497/retained/diagram.mmd",
+      "diagram_digest": "e33bff3622826aefeae52749fd0665fba8bf47024a2e9ce0cef157c32cb0461e"
+    }
+  }
+}

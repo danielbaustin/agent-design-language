@@ -25,11 +25,16 @@ The supported adapter surface is intentionally copy-only:
 
 - supported adapter action:
   - `adl/tools/editor_action.sh prepare --phase init|doctor-ready|run|finish --issue <number> --slug <slug> [--version <vN.N[.P]>] [--title <title>] [--paths <paths>]`
-- canonical control-plane mapping:
-  - `adl/tools/pr.sh init`
-  - `adl/tools/pr.sh doctor --mode ready`
-  - `adl/tools/pr.sh run`
-  - `adl/tools/pr.sh finish`
+- canonical C-SDLC v2 control-plane mapping:
+  - `csdlc-install resolve`
+  - `csdlc-init --root <worktree> --request <bootstrap-request.json>`
+  - `csdlc-doctor --repo <repo> --issue <issue>`
+  - `csdlc-bind --root <worktree> --request <bind-request.json>`
+  - `csdlc-validate --root <worktree> finalize --request <finalize-request.json>`
+  - `csdlc-review record --request <review-request.json>`
+  - `csdlc-publish publish --request <publication-request.json>`
+  - `csdlc-finish --root <worktree> --request <finish-request.json>`
+  - `csdlc-clean cleanup --root <worktree> --request <cleanup-request.json>`
 - adapter mode:
   - browser-prepared, human-run command handoff
 
@@ -42,14 +47,15 @@ The browser/editor may:
 
 The browser/editor may not claim direct browser invocation of:
 
-- `pr create`
-- `pr init`
-- `pr doctor`
-- `pr ready`
-- `pr run`
-- `pr finish`
-- `pr janitor`
-- `pr closeout`
+- `csdlc-init`
+- `csdlc-doctor`
+- `csdlc-bind`
+- `csdlc-validate`
+- `csdlc-review`
+- `csdlc-publish`
+- `csdlc-shepherd`
+- `csdlc-finish`
+- `csdlc-clean`
 
 Those commands exist in the repo control plane and related operational skills. They are not browser-direct actions.
 
@@ -62,24 +68,21 @@ That means:
 - browser code should not recreate lifecycle behavior in JavaScript
 - browser code should not imply hidden direct execution paths
 - browser docs should distinguish implemented repo commands from browser-prepared command handoff
-- editor output should remain compatible with `pr-init`, `pr-ready`, `pr-run`, `pr-finish`, `pr-janitor`, `pr-closeout`, and the card editor skills
+- editor output should remain compatible with the typed C-SDLC v2 operator skills and the card editor route
 
 ## Truth Table
 
 | Lifecycle command | Exists in repo | Browser-direct adapter support | Truthful editor status |
 | --- | --- | --- | --- |
-| `pr create` | yes | no | control-plane only |
-| `pr init` | yes | no | copy-only prepared handoff |
-| `pr doctor --mode ready` | yes | no | copy-only prepared handoff |
-| `pr run` | yes | no | copy-only prepared handoff |
-| `pr finish` | yes | no | copy-only prepared handoff |
-| `pr janitor` | skill-owned | no | out of browser scope |
-| `pr closeout` | skill-owned | no | out of browser scope |
-| `pr start` | legacy alias | no | deprecated compatibility only |
-
-## Legacy Compatibility
-
-`adl/tools/editor_action.sh start` remains available for older deterministic editor demos that still validate the v0.85 compatibility path. It is not the taught current workflow.
+| `csdlc-init` | yes | no | copy-only prepared handoff |
+| `csdlc-doctor` | yes | no | copy-only prepared handoff |
+| `csdlc-bind` | yes | no | copy-only prepared handoff |
+| `csdlc-validate finalize` | yes | no | copy-only prepared handoff |
+| `csdlc-review record` | yes | no | copy-only prepared handoff |
+| `csdlc-publish publish` | yes | no | copy-only prepared handoff |
+| `csdlc-shepherd` | yes | no | out of browser scope |
+| `csdlc-finish` | yes | no | terminal observation handoff |
+| `csdlc-clean cleanup` | yes | no | post-terminal cleanup handoff |
 
 ## Proof Surface
 
@@ -89,5 +92,8 @@ The contract is backed by:
 - `adl/tools/test_editor_action.sh`
 - `docs/tooling/editor/demo.md`
 - `docs/tooling/editor/current_skill_wiring_demo.md`
+
+The former v0.85 `start` compatibility action is retired and fails closed; it
+is not part of the adapter contract.
 
 The adapter surface should only be widened in a follow-on issue with matching docs, validation, and proof updates.

@@ -1,0 +1,57 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5778,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Derive terminal truth and finish in one idempotent command",
+    "slug": "derived-terminal-finish",
+    "version": "v0.91.8",
+    "generation": 25
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement only the first serialized closeout-simplification slice: derived terminal truth and one idempotent finish command with compatibility reads; leave cleanup and deletion to #5779 and #5780.",
+      "deliverables": [
+        "Derived terminal resolver and typed result schemas",
+        "csdlc-finish owner binary",
+        "Exact-head and idempotent finish integration tests",
+        "Logical terminal claim-release compatibility",
+        "Updated operator manifest and focused documentation"
+      ],
+      "acceptance_criteria": [
+        "AC-1: One implementation issue needs one PR and successful finish creates no tracked post-merge diff or second PR",
+        "AC-2: Exact-head review, required checks, publication identity, and expected-SHA merge protection remain fail-closed",
+        "AC-3: Already-merged, interrupted-after-merge, and concurrent finish calls converge idempotently",
+        "AC-4: Merged, closed-unmerged, and approved no-PR outcomes derive from live GitHub and immutable Git truth",
+        "AC-5: Terminal remote state makes stale local claims non-blocking without deleting dirty work",
+        "AC-6: Legacy terminal records and receipts remain readable without rewrite",
+        "AC-7: Focused Gate 4-7 tests and strict Clippy pass"
+      ],
+      "dependencies": [
+        "#5627 and PR #5629 complete",
+        "GitHub API and Git graph remain canonical remote authorities",
+        "#5779 and #5780 follow after this issue"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5778",
+        "#5627 and PR #5629",
+        "#5748 and PR #5777",
+        "csdlc-v2/src/bin/csdlc-closeout.rs",
+        "csdlc-v2/src/readiness.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/merge.rs",
+        "csdlc-v2/src/github.rs",
+        "csdlc-v2/tests/gate7_lifecycle.rs"
+      ],
+      "non_goals": [
+        "Legacy command deletion before parity",
+        "Standalone cleanup implementation owned by follow-on #5779",
+        "Historical record rewrite",
+        "Runtime, provider, ADL language, or deployment changes"
+      ]
+    }
+  }
+}

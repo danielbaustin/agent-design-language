@@ -1,0 +1,28 @@
+flowchart TB
+  CFG["Runtime init file\nlistener + public HTTPS base + TLS + origins + agents"]
+  G["External guardian\nchild launch + signals + reaping + bounded restart"]
+  K["Runtime v3 Tokio kernel\nAxum + rustls on configured address"]
+  AUTH["Authentication and authority\nEd25519 commands + bearer sessions + origin policy"]
+  API["One secure API router\nHTTPS HTTP + authenticated WebSocket"]
+  OBS["HTML Observatory\nlive agent and Runtime state"]
+  LOCAL["Local operator route\nconfigured HTTPS endpoint"]
+  REMOTE["Remote gateway route\noperator-configured HTTPS endpoint"]
+  EVT["tracing adl_event stderr\nredacted structured events"]
+  VECTOR["Vector\nparse + buffer + retry + transform + export"]
+  CP["Signed continuity\npressure serialization + restart restore"]
+  SEL["Reviewed selector\nexplicit rollback"]
+
+  CFG --> G
+  G --> K
+  CFG --> K
+  K --> AUTH --> API
+  LOCAL --> API
+  REMOTE --> API
+  API --> OBS
+  K --> EVT --> VECTOR
+  K --> CP --> G
+  SEL --> G
+
+  DENY1["Deny HTTP, missing auth, bad origin, oversized frame"] -.-> AUTH
+  DENY2["Deny hardcoded IP, fake discovery, secret leakage"] -.-> CFG
+  DENY3["Deny unbounded restart, sidecar, Runtime v2 coupling"] -.-> G

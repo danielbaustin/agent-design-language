@@ -1,0 +1,30 @@
+{
+  "issue": 5755,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "daafe79ccca762cbb445eefe74fe519a4ab9af837706f5d0b8d0a82b0321055e",
+  "claim_id": "claim-5755-runtime-protocol-security",
+  "actor": "codex:5755-runtime-protocol-security",
+  "reason": "Record final focused validation after review P3 diagnostic fix.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "env",
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5755-target",
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "adl-runtime-kernel/Cargo.toml",
+        "--test",
+        "control",
+        "--test",
+        "protocol_adapters"
+      ],
+      "purpose": "Final exact-diff proof after diagnostic fix: /v1/control body limit, mTLS boundary, no-client-auth rejection, and invalid mTLS key diagnostic regression.",
+      "outcome": "passed",
+      "evidence_ref": "local terminal output: control 22 passed; protocol_adapters 12 passed"
+    }
+  }
+}

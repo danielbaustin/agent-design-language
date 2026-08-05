@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5648,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_generation": 14,
+  "expected_digest": "4452451bac56b2b8878629cbd8f8ecd866baf0fe7cae042e95b725c476a6dce6",
+  "claim_id": "claim-5648-operator-active-claim-revoke",
+  "actor": "codex:5648-execution",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5648-operator-active-claim-revoke",
+  "title": "[v0.91.8][csdlc-v2][tools] Add operator active-claim revoke (#5648)",
+  "body": "Closes #5648\n\n## Summary\n- add typed operator-authorized active-claim revoke with generation/digest/claim CAS\n- clear protected-path ownership atomically and retain audit provenance\n- fail closed on stale, missing, mismatched, or expired claims; expired claims use recovery\n- expose the route through csdlc-bind and public schemas\n\n## Validation\n- csdlc-validate local_pass: focused claim-revoke tests, cargo fmt --check, strict targeted Clippy\n- bounded exact-head subagent review: PASS after expiry-guard remediation\n\nNo AWS execution was performed.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

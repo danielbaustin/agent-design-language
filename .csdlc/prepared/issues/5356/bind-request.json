@@ -1,0 +1,23 @@
+{
+  "issue": 5356,
+  "base_branch": "main",
+  "branch": "codex/5356-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5356-v0918-wp18-preparation",
+    "owner": "codex:5356-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784668986,
+    "expires_unix_seconds": 1785273786,
+    "heartbeat_unix_seconds": 1784668986,
+    "branch": "codex/5356-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5356",
+      ".csdlc/locks/5356.lock",
+      ".csdlc/prepared/issues/5356",
+      ".csdlc/evidence/5356"
+    ],
+    "purpose": "Prepare and review #5356 only; claim no review-output or product path and perform no internal review until WP-17 #5360 is merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral"
+  }
+}

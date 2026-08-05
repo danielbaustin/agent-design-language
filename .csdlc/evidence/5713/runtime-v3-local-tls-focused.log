@@ -1,0 +1,27 @@
+Exact substantive head: d38b73bcf
+
+Command: cargo test --locked --manifest-path adl-runtime/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5713/target --test local_tls
+Result: PASS
+Tests: 13 passed; 0 failed; 0 ignored
+
+Covered regressions:
+- first bootstrap and restart identity reuse
+- rustls acceptance and configured SAN validation
+- changed-SAN rejection and explicit matching replacement
+- generation-manifest replacement and failed-replacement preservation
+- managed-external material preservation
+- advisory-lock writer exclusion and crash-safe reacquisition
+- restrictive private-key permissions and permission repair
+- stale public-certificate copy repair
+
+Command: cargo test --locked --manifest-path adl-runtime/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5713/target --bin adl-runtime-lifecycle-soak init_fixture_uses_stable_local_tls_bootstrap
+Result: PASS; 1 passed; 0 failed
+
+Command: cargo clippy --locked --manifest-path adl-runtime/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5713/target --all-targets -- -D warnings
+Result: PASS
+
+Command: cargo fmt --manifest-path adl-runtime/Cargo.toml -- --check
+Result: PASS
+
+Command: git diff --check
+Result: PASS

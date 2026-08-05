@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5683,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5683-v0918-unity-observatory-visual-remediation",
+  "title": "[v0.91.8][WP-15][unity][demo] Remediate flagship Observatory render artifacts and presentation proof",
+  "body": "Closes #5683\n\nRemediates the flagship Unity Observatory visual artifacts, retains direct Full HD and QHD live-editor proof, and tightens focused contract validation. Runtime presentation remains explicitly fixture and contract-only. Hooke completed exact-head review after current-main integration with no actionable findings.",
+  "draft": false,
+  "revision": "git-blake3:a8832158d65476586719d17c37bee6174b844b98:930b23fefa28b988f0cdfc4cbfe08ac2607cf5f0874ea3bb2a928c967fa9c850",
+  "commit_sha": "a8832158d65476586719d17c37bee6174b844b98"
+}

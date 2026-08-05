@@ -1,0 +1,17 @@
+{
+  "issue": 5347,
+  "claim_id": "claim-5347-external-band-deletion",
+  "expected_generation": 14,
+  "expected_digest": "e212fb7018ca7c886c60a452e3fa4e75896b8af952cd7b340c84393c297ae7cc",
+  "now_unix_seconds": 1785551120,
+  "actor": "codex:5347-replacement-sole-writer",
+  "reason": "After the first #5347 review-finding repair, the live-reference scan found additional retained source, test, and tool files that still name deleted obsolete external demo/proof binaries; amend scope to remove non-colliding live references while preserving #5346-owned pr_cmd_inline paths.",
+  "add_protected_paths": [
+    "adl/src/demo/v086_review_surface.rs",
+    "adl/src/speculative_decoding_prototype.rs",
+    "adl/tools/test_select_validation_lanes.sh",
+    "adl/tools/test_v0916_unity_observatory_soak_integration.sh",
+    "adl/tools/uts_benchmark_runner.py",
+    "adl/tools/validate_v0917_soak2_4682_status.sh"
+  ]
+}

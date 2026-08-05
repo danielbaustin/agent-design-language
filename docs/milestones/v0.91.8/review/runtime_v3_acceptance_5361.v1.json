@@ -1,0 +1,286 @@
+{
+  "schema": "adl.runtime_v3.acceptance.v1",
+  "issue": 5361,
+  "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+  "dependency_proofs": [
+    {
+      "issue": 5336,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "issue": 5591,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "issue": 5592,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "issue": 5589,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "issue": 5590,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "issue": 5341,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "issue": 5349,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "issue": 5350,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "issue": 5501,
+      "status": "integrated",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    }
+  ],
+  "consumer_proofs": [
+    {
+      "consumer": "adl_v2",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "consumer": "provider_tools",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "consumer": "multi_agent_workcell",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    }
+  ],
+  "proofs": [
+    {
+      "surface": "secure_local_https",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "secure_remote_https",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "observatory",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "telemetry",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "address_configuration",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "canonical_ingress",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "checkpoint_replay_resume",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "pressure_shutdown",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "guardian",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "rollback",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "recovery",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "reasoning_graphs",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "loops",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "affect_control",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "adaptive_learning",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "governed_operations",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "runtime_v2_independence",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "strict_lint",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "line_count",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "module_growth",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "dependency_audit",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "test_count",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "local_pre_pr_validation",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    },
+    {
+      "surface": "exact_revision_review",
+      "status": "passed",
+      "revision": "6da67ed6b731f9f8ffef9827c252e6266a0423aa",
+      "proof_ref": ".csdlc/evidence/5361/acceptance-proof-summary.json",
+      "proof_sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"
+    }
+  ],
+  "non_claims": [
+    {
+      "surface": "aws",
+      "status": "not_claimed",
+      "reason": "No AWS commands, credentials, remote validation resources, or deployment claims were used for #5361."
+    },
+    {
+      "surface": "gpu",
+      "status": "not_claimed",
+      "reason": "GPU health remains an explicit Runtime v3 non-pass/non-claim surface; no GPU proof was available or promoted."
+    },
+    {
+      "surface": "remote_provider",
+      "status": "not_claimed",
+      "reason": "No remote provider deployment or credentialed remote-provider execution was available or promoted."
+    }
+  ],
+  "notes": [
+    "Retained receipts are audit evidence and did not block downstream WP-12; live PR landing ancestry is recorded in .csdlc/evidence/5361/dependency-ancestry.json.",
+    "Operator-provided background guardian at https://localhost:20997 was stale during acceptance; bounded FastWork operational proof started a fresh local guardian and proved HTTPS, Observatory, rollback, and continuity.",
+    "GitHub PR CI is not claimed by this pre-publication register and remains required during publish/shepherd/closeout.",
+    "Runtime v3 inventory is a reviewed exception over the 12000 target but below the hard 20000-line ceiling and 1000-test ceiling."
+  ]
+}

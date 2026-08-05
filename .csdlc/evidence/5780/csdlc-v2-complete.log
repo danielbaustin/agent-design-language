@@ -1,0 +1,453 @@
+
+running 44 tests
+test cutover::tests::clocks_and_deletion_authority_are_fixed ... ok
+test cards::tests::latest_pass_supersedes_waiting_for_the_same_validation ... ok
+test cards::tests::latest_failure_supersedes_an_earlier_pass ... ok
+test finish::tests::merged_pr_derives_terminal_without_mutating_record ... ok
+test finish::tests::open_pr_is_not_terminal ... ok
+test git::tests::prepared_review_evidence_is_narrowly_metadata_safe ... ok
+test eligibility::tests::schema_bundle_is_versioned ... ok
+test github::tests::classifies_common_tail_states ... ok
+test github::tests::classifies_mergeability_states_without_treating_pending_as_stale ... ok
+test github::tests::exact_head_changes_requested_wins_over_exact_head_approval ... ok
+test github::tests::later_approval_supersedes_same_reviewer_changes_request ... ok
+test github::tests::later_comment_does_not_revoke_same_reviewer_approval ... ok
+test github::tests::later_comment_does_not_revoke_same_reviewer_changes_request ... ok
+test github::tests::newer_check_run_identity_replaces_stale_duplicate_name ... ok
+test github::tests::normalizes_every_supported_mergeability_variant_explicitly ... ok
+test github::tests::producer_accepts_only_remote_closing_issue_linkage ... ok
+test github::tests::review_decision_ignores_approval_from_a_superseded_head ... ok
+test github_token::tests::explicit_file_is_used ... ok
+test lifecycle::terminal_projection_authority_tests::aggregate_overlap_exception_is_exact_expired_and_projection_only ... ok
+test git::tests::shared_request_path_is_one_overwritten_git_common_file_per_issue ... ok
+test merge::tests::accepts_exact_green_remote_gate ... ok
+test merge::tests::accepts_has_hooks_after_github_normalization_to_clean ... ok
+test merge::tests::builds_distinguishable_merge_and_already_merged_results ... ok
+test merge::tests::rejects_head_drift ... ok
+test merge::tests::rejects_incomplete_request_identity ... ok
+test merge::tests::rejects_pending_required_check ... ok
+test merge::tests::serializes_each_supported_merge_method ... ok
+test operator::tests::v1_override_is_rejected_after_sunset ... ok
+test schema::tests::exposes_heartbeat_request_schema ... ok
+test store::edit_authorization_tests::implemented_spp_review_remediation_authorizes_only_bounded_replacements ... ok
+test store::edit_authorization_tests::post_review_spp_replacements_remain_rejected ... ok
+test lifecycle::terminal_projection_authority_tests::derived_terminal_authority_logically_releases_every_stale_claim_path ... ok
+test eligibility::tests::malformed_digest_is_rejected ... ok
+test eligibility::tests::unknown_or_duplicate_overrides_are_invalid ... ok
+test eligibility::tests::missing_approval_fails_closed ... ok
+test eligibility::tests::default_partition_and_exact_overrides_derive_lines ... ok
+test eligibility::tests::mandatory_phase_c_windows_fail_closed ... ok
+test eligibility::tests::exact_operator_approval_can_accelerate_protection_windows ... ok
+test eligibility::tests::all_authoritative_inputs_are_approval_bound ... ok
+test cutover::tests::changed_path_failure_restores_exact_original_bytes ... ok
+test cutover::tests::failed_smoke_restores_v1 ... ok
+test cutover::tests::successful_transaction_proves_v2_v1_v2_and_keeps_override ... ok
+test cutover::tests::every_selector_write_error_restores_exact_original_bytes ... ok
+test cutover::tests::every_failed_smoke_restores_exact_original_selector_bytes ... ok
+
+test result: ok. 44 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test tests::ambiguous_create_failure_observes_before_deciding_retry ... ok
+test tests::normalization_rejects_fork_or_missing_repository_identity ... ok
+test tests::remote_url_requires_exact_github_host_and_repository ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 3 tests
+test malformed_identity_update_is_rejected_before_mutation ... ok
+test identity_operation_updates_all_cards_without_content_drift ... ok
+test pre_change_native_1_0_0_fixture_loads_but_legacy_relabel_is_rejected ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 16 tests
+test current_guidance_guard_rejects_exact_former_wrapper_command ... ok
+test external_cargo_target_is_exact_existing_and_outside_checkout ... ok
+test current_bootstrap_guidance_does_not_call_deleted_prompt_wrapper ... ok
+test eleven_skills_are_typed_and_bind_the_generation_selector ... ok
+test coexistence_fails_closed_when_v1_or_v2_is_missing ... ok
+test operator_guidance_is_bound_to_manifest_and_coexistence_contract ... ok
+test current_operator_guidance_has_no_sunset_v1_route ... ok
+test shared_destination_and_non_executable_sources_are_rejected_without_mutation ... ok
+test missing_late_source_leaves_prior_generation_untouched ... ok
+test untracked_build_input_is_rejected_before_cargo_runs ... ok
+test dirty_shared_owner_dependency_is_rejected_before_cargo_runs ... ok
+test stale_owner_binary_provenance_fails_closed ... ok
+test repo_wide_active_command_scan_enforces_final_authority ... ok
+test freshly_installed_stable_edit_binary_is_executable ... ok
+test symlinked_installed_binaries_fail_coexistence ... ok
+test installer_records_provenance_without_replacing_other_files ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 35.94s
+
+
+running 5 tests
+test explicit_v2_rehearsal_rolls_back_to_unchanged_v1_default ... ok
+test relabeled_arbitrary_commands_are_rejected ... ok
+test manifest_requires_v1_default_opt_in_and_exact_proofs ... ok
+test dirty_tree_is_refused_before_proof_attribution ... ok
+test tracked_post_command_mutation_is_refused ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+
+running 60 tests
+test bootstrap_rejects_one_path_for_both_authored_artifact_roles ... ok
+test bootstrap_rejects_missing_vpp_command_before_authoring_files ... ok
+test bootstrap_constructs_all_six_cards_and_ready_doctor ... ok
+test bind_refuses_primary_checkout_and_worktree_mismatch ... ok
+test bind_refuses_overlapping_protected_path_reserved_by_another_issue ... ok
+test bind_refuses_branch_at_a_different_worktree ... ok
+test bind_rejects_standalone_repository_with_matching_worktree_suffix ... ok
+test bind_rejects_reserved_worktree_that_does_not_match_current_checkout ... ok
+test bind_supports_issue_local_state_without_touching_primary_checkout ... ok
+test active_claim_transition_rejects_stale_owner_without_any_write ... ok
+test claim_revoke_requires_unexpired_claim ... ok
+test bind_creates_and_idempotently_reuses_typed_worktree ... ok
+test claim_revoke_fails_closed_for_stale_digest_and_missing_authority ... ok
+test bind_activates_exact_reserved_claim_from_existing_worktree ... ok
+test claim_revoke_clears_unexpired_claim_with_operator_cas_audit ... ok
+test active_claim_transition_atomically_updates_purpose_and_scope ... ok
+test active_claim_transition_guards_cas_expiry_collision_and_real_cli ... ok
+test direct_markdown_drift_is_corruption ... ok
+test doctor_rejects_index_digest_tampering ... ok
+test bound_claim_scope_amendment_is_collision_checked_and_audited ... ok
+test field_ownership_violation_fails_without_generation_change ... ok
+test heartbeat_is_compare_and_swap_and_missed_heartbeat_does_not_enable_recovery ... ok
+test expired_claim_reacquires_and_preserves_previous_owner_evidence ... ok
+test illegal_transition_fails_closed ... ok
+test design_reapproval_rejects_unrelated_card_projection_drift ... ok
+test fresh_initialization_accepts_overlap_released_by_metadata_advanced_merged_terminal ... ok
+test bound_plan_progress_and_validation_lane_replacement_are_typed ... ok
+test heartbeat_and_expired_recovery_record_positive_evidence ... ok
+test invalid_issue_local_init_fails_before_creating_artifacts ... ok
+test expired_recovery_cannot_bypass_cross_worktree_overlap_authority ... ok
+test initialized_approved_stale_design_can_be_reapproved_before_readiness ... ok
+test lifecycle_binaries_share_stable_typed_exit_classes ... ok
+test execution_replacement_is_sor_only_and_implemented_only ... ok
+test native_registry_and_manifest_symlink_escapes_fail_before_authoring ... ok
+test native_registry_is_required_and_shape_checked_before_issue_authoring ... ok
+test issue_local_design_paths_do_not_look_like_existing_records ... ok
+test closed_issue_claim_release_is_typed_and_compare_and_swap_guarded ... ok
+test concurrent_reacquisition_across_worktrees_allows_only_one_overlapping_writer ... ok
+test public_schema_bundle_covers_requests_state_and_doctor_output ... ok
+test missing_design_or_diagram_blocks_readiness ... ok
+test interrupted_commit_keeps_complete_backup_and_next_writer_recovers ... ok
+test bound_and_implemented_design_reapproval_refreshes_truth_and_reviewed_rejects ... ok
+test implemented_spp_replacements_remain_generation_digest_and_claim_guarded ... ok
+test retained_bootstrap_without_new_fields_loads_as_explicit_none ... ok
+test implemented_sip_review_remediation_rejects_non_authority_collections ... ok
+test bound_replan_is_typed_claimed_and_limited_to_planning_cards ... ok
+test implemented_spp_review_remediation_rejects_unbounded_collections ... ok
+test reacquire_rejects_direct_rendered_card_drift ... ok
+test planning_replacements_reject_invalid_requests_without_mutation ... ok
+test stale_generation_and_digest_fail_closed ... ok
+test implemented_review_remediation_allows_guarded_sip_authority_and_stp_acceptance ... ok
+test reacquire_fails_closed_for_stale_binding_and_live_overlap ... ok
+test semantic_edit_updates_one_owned_projection_atomically ... ok
+test placeholder_design_is_pending_then_can_be_completed_approved_and_bound ... ok
+test ready_transition_requires_current_design_and_automatic_budgets ... ok
+test released_claim_reacquires_without_phase_or_audit_rewind ... ok
+test sor_status_cannot_fabricate_terminal_truth ... ok
+test implemented_spp_review_remediation_allows_guarded_plan_and_stop_condition_corrections ... ok
+test planning_replacements_are_phase_bounded_and_allow_narrow_implemented_corrections ... ok
+test issue_5337_preparation_converts_to_complete_implementation_truth_with_typed_edits ... ok
+
+test result: ok. 60 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.19s
+
+
+running 17 tests
+test scheduler_and_shepherd_are_read_only_classifiers ... ok
+test selection_is_stable_topological_and_includes_dependencies ... ok
+test cancellation_is_observed_before_process_start ... ok
+test invalid_cycle_network_credentials_and_budget_fail_closed ... ok
+test deferred_dependency_blocks_local_dependent_and_non_goal_only_converges ... ok
+test unsafe_lane_ids_are_rejected_before_evidence_paths_exist ... ok
+test timeout_failure_redaction_and_deferred_ci_are_truthful ... ok
+test failed_lane_can_be_repaired_and_retried_to_local_pass ... ok
+test deterministic_budget_packing_accepts_feasible_uneven_wave ... ok
+test high_output_drains_and_failed_peer_cancels_process_group ... ok
+test validate_cli_redacts_machine_readable_command ... ok
+test cancellation_during_execution_terminates_process_group ... ok
+test shepherd_cli_exposes_schema_and_checked_examples ... ok
+test independent_lanes_run_concurrently_and_converge_with_typed_evidence ... ok
+test routine_lifecycle_contract_measures_four_commands_and_two_artifacts ... ok
+test finalize_is_one_atomic_implemented_transition_and_failure_writes_no_state ... ok
+test deadline_timeout_is_typed_and_fails_aggregate ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.07s
+
+
+running 14 tests
+test missing_incomplete_stale_and_unresolved_review_fail_closed ... ok
+test out_of_scope_finding_must_remain_visible_and_routed ... ok
+test exact_completed_review_with_resolved_findings_is_publishable ... ok
+test guard_rejects_malformed_fixed_and_accepted_risk_evidence ... ok
+test guard_cli_is_read_only_and_returns_typed_truth ... ok
+test substantive_revision_honors_review_scope_pathspecs ... ok
+test non_substantive_exception_is_narrow_and_machine_proven ... ok
+test typed_publication_metadata_commit_does_not_stale_review_but_source_drift_does ... ok
+test dirty_substantive_tree_is_rejected_before_review_assignment ... ok
+test direct_exact_review_records_and_advances_without_assignment ... ok
+test assignment_and_recording_update_index_and_srp_without_publication_side_effect ... ok
+test doctor_accepts_committed_typed_metadata_after_review ... ok
+test metadata_only_changes_do_not_stale_a_clean_review ... ok
+test reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.09s
+
+
+running 5 tests
+test base_head_or_repository_mismatch_fails_closed ... ok
+test drifted_mutable_fields_update_same_pr ... ok
+test ambiguous_create_outage_is_reconciled_by_observation_before_retry ... ok
+test publication_body_requires_github_closing_keyword_for_issue ... ok
+test public_schema_keeps_publication_and_drops_merged_reconciliation ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 5 tests
+test requested_changes_remain_routed_and_block_readiness ... ok
+test unknown_conflict_or_review_truth_never_becomes_green ... ok
+test pending_failed_and_unobserved_required_checks_are_distinct ... ok
+test green_required_truth_is_ready_without_promoting_optional_skips ... ok
+test public_schemas_keep_readiness_but_drop_terminal_mutation_contracts ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 8 tests
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmp8HLyfn/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpkgDcWQ/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmp6ZgPSs/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpMzPF2Z/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpBUiwm8/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpc6VcPt/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpV5tPhY/nested-output/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpEhYV9J/.git/
+test duplicate_heading_fails_with_report_before_canonical_output_exists ... ok
+test public_schemas_include_import_parity_and_sunset_contracts ... ok
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmp5zFcYe/.git/
+Initialized empty Git repository in /private/var/folders/rq/nnff0vs91jzfvmb8tjqxtjgc0000gn/T/.tmpFlv5te/.git/
+test overlapping_or_traversing_roots_fail_without_legacy_mutation ... ok
+test unrepresentable_markdown_and_missing_design_return_no_write_reports ... ok
+test changed_raw_source_cannot_replace_existing_migration_evidence ... ok
+test compatibility_failure_resumes_and_fixed_view_cannot_overwrite_index ... ok
+test one_way_ast_import_retains_every_authored_section_and_generates_view ... ok
+test shadow_parity_compares_normalized_outcomes_not_markdown_bytes ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.08s
+
+
+running 8 tests
+test evidence_input_rejects_wrong_schema_or_non_v1_default ... ok
+test every_retained_behavior_has_current_parity_proof ... ok
+test selector_requires_opt_in_before_cutover_and_supports_v1_override_after_cutover ... ok
+test hard_budget_or_critical_parity_failure_stops_cutover ... ok
+test proceed_requires_every_scenario_hard_budget_and_zero_critical_parity_loss ... ok
+test missing_or_waiting_evidence_incubates_but_hard_failure_stops ... ok
+test native_sample_authority_resolves_distinct_native_and_import_families ... ok
+test sample_generation_is_idempotent_and_builds_six_ast_validated_cards_each ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+
+running 9 tests
+test terminal_census_rejects_truncation_wrong_identity_and_set_drift ... ok
+test removing_a_legacy_receipt_cannot_change_derived_terminal_truth ... ok
+test symlinked_expected_path_is_rejected_without_removal ... ok
+test concurrent_removal_serializes_to_removed_then_already_absent ... ok
+test missing_relocated_and_primary_paths_fail_closed ... ok
+test clean_worktree_classifies_removes_and_repeats_idempotently ... ok
+test symlinked_projection_and_lock_ancestors_are_rejected_without_escape ... ok
+test dirty_tracked_and_untracked_paths_are_reported_without_removal ... ok
+test tracked_v0918_terminal_census_is_compatible_and_read_only ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.37s
+
+
+running 10 tests
+test closed_no_pr_requires_canonical_github_approval_label ... ok
+test open_issue_without_pr_is_not_terminal ... ok
+test mutable_terminal_cache_expires_and_is_bound_to_exact_record ... ok
+test finish_uses_the_canonical_issue_authority_lock ... ok
+test published_finish_accepts_owned_claim_without_legacy_merge_ready_state ... ok
+test terminal_cache_rejects_symlinked_git_common_parent ... ok
+test concurrent_identical_finish_retention_converges ... ok
+test mutable_terminal_cache_is_replaceable_by_a_fresher_live_observation ... ok
+test closed_no_pr_terminal_cache_is_minimal_rebuildable_and_idempotent ... ok
+test publication_accepts_clean_forward_csdlc_metadata_only_head ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s
+
+
+running 3 tests
+test operation_marker_is_stable_and_idempotent ... ok
+test split_github_binaries_reject_the_wrong_surface_before_network ... ok
+test issue_create_and_comment_reconcile_by_marker_with_exact_readback ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.30s
+
+
+running 3 tests
+test competing_closeout_binary_and_skill_are_absent ... ok
+test publication_and_store_expose_no_terminal_mutation_route ... ok
+test historical_phase_and_receipt_shapes_remain_readable_only ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 1 test
+test src/lifecycle.rs - lifecycle::initialize_native_json (line 629) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running unittests src/lib.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_v2-e73501d2d61ae6a3)
+     Running unittests src/bin/csdlc-bind.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_bind-729993d7237ca300)
+     Running unittests src/bin/csdlc-clean.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_clean-2a4d180dc971c687)
+     Running unittests src/bin/csdlc-cutover.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_cutover-285fa75563d3d5ec)
+     Running unittests src/bin/csdlc-doctor.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_doctor-3a563ed7420d39d8)
+     Running unittests src/bin/csdlc-edit.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_edit-2dbad70fff49cdae)
+     Running unittests src/bin/csdlc-eligibility.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_eligibility-355165bf6399d36c)
+     Running unittests src/bin/csdlc-finish.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_finish-db0c7daed5479b5e)
+     Running unittests src/bin/csdlc-github.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_github-487fc6eccd3342b8)
+     Running unittests src/bin/csdlc-github-issue.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_github_issue-2c9971ce45809987)
+     Running unittests src/bin/csdlc-github-pr.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_github_pr-ffa013617869959f)
+     Running unittests src/bin/csdlc-init.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_init-698abdd97ca68ea4)
+     Running unittests src/bin/csdlc-install.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_install-e3ced34e22a61af5)
+     Running unittests src/bin/csdlc-merge.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_merge-2126ea01f03ff30d)
+     Running unittests src/bin/csdlc-pr-state.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_pr_state-4d4ac9d0d43530de)
+     Running unittests src/bin/csdlc-proof.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_proof-79426b5b62a1b5b0)
+     Running unittests src/bin/csdlc-publish.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_publish-019cb42dcca6cad9)
+     Running unittests src/bin/csdlc-review.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_review-f8b01df607e7b503)
+     Running unittests src/bin/csdlc-schedule.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_schedule-8e34669378e9b48c)
+     Running unittests src/bin/csdlc-shadow.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_shadow-54755b3c5202f79d)
+     Running unittests src/bin/csdlc-shepherd.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_shepherd-0acd930f314e0d03)
+     Running unittests src/bin/csdlc-soak.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_soak-5cd234c59a70c142)
+     Running unittests src/bin/csdlc-validate.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/csdlc_validate-7a509abe3b8c4347)
+     Running tests/card_identity.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/card_identity-99c1b5b4dcc0fbeb)
+     Running tests/gate10a.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate10a-da772be4f0432f0e)
+     Running tests/gate10b.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate10b-167d2c6310fc6457)
+     Running tests/gate2.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate2-0aa0d406ff30b361)
+     Running tests/gate4.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate4-63fb758e943f9739)
+     Running tests/gate5.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate5-0d00aea7175a7ed4)
+     Running tests/gate6.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate6-b189ed29d6854646)
+     Running tests/gate7.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate7-ff7e489c1a7e427a)
+     Running tests/gate8.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate8-bc017d98a8a01347)
+     Running tests/gate9.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate9-a8bf53f6d0cbd9f0)
+     Running tests/gate_cleanup.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate_cleanup-b55e85f8000b8590)
+     Running tests/gate_finish.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate_finish-adc53dd7fc01d65f)
+     Running tests/gate_github_actions.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate_github_actions-d653a8e8fccbe514)
+     Running tests/gate_terminal_authority_deletion.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate_terminal_authority_deletion-b2c9796f833a9b07)
+   Doc-tests csdlc_v2

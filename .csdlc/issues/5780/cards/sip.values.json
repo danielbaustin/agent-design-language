@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5780,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Delete terminal reconciliation and receipt-authority machinery",
+    "slug": "delete-terminal-reconciliation",
+    "version": "v0.91.8",
+    "generation": 5
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Finish the closeout redesign by deleting supported tracked post-merge terminal mutation, receipt authority, reconciliation, repair, transport, and coupled-prune machinery.",
+      "required_outcome": "The supported operator surface uses csdlc-finish for terminal delivery truth, csdlc-pr-state for live status, and csdlc-clean for independent cleanup; legacy terminal records and receipts remain read-only compatible.",
+      "declared_scope": [
+        "Delete the csdlc-closeout binary, skill, installation entry, and supported commands",
+        "Delete current terminal projection and receipt writers, repairs, transports, and reconciliation APIs",
+        "Retain read-only legacy phase, terminal evidence, receipt deserialization, and compatibility indexing",
+        "Replace obsolete behavior tests with compatibility and non-reintroduction guards",
+        "Update active operator documentation and record reduction metrics"
+      ],
+      "authority_boundary": [
+        "csdlc-finish is the sole terminal mutation authority",
+        "csdlc-clean never changes delivery truth",
+        "Legacy records and receipts are immutable read-only evidence",
+        "Historical architecture and tracked evidence are not rewritten"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed C-SDLC v2 only",
+        "No tracked edits on main",
+        "No AWS",
+        "No compatibility wrapper that preserves a deleted writer",
+        "Exact-head independent review before publication"
+      ]
+    }
+  }
+}

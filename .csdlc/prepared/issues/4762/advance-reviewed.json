@@ -1,0 +1,14 @@
+{
+  "issue": 4762,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "1a72a26d169b8890b3933bef200ac2962c7d25325921abc8e1ec81ecb53be3f6",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "actor": "codex",
+  "reason": "Exact-head pre-PR review passed with no actionable findings, and #4762 remains bounded to the auditable birth-witness package without claiming that the v0.92 birthday occurred.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

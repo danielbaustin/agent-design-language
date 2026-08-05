@@ -1,0 +1,351 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5756,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "4d17d6d585363c1f9d984fc262eae3544b655682c1a09740c0cdff2d8e49bd39",
+  "phase": "closed_out",
+  "generation": 10,
+  "digest": "f7da2edaeb31e5dae0675811e9c283d96cb1aad6f0947bb7c95858e3e1a8eee4",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "codex-bounded-review",
+    "scope": [
+      "adl/src/provider_adapter.rs"
+    ],
+    "reviewed_revision": "git-blake3:92fed26e1ff2031a57d80a014fbef77542da55d8:ec2eef569becd5f45193c2450055559f61aff9585114fd2aaeb989728357f85b",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5756,
+    "pull_request": 5759,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5759",
+    "base": "main",
+    "head": "codex/5756-minimax-billing-classification",
+    "revision": "git-blake3:92fed26e1ff2031a57d80a014fbef77542da55d8:ec2eef569becd5f45193c2450055559f61aff9585114fd2aaeb989728357f85b",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5759,
+    "head_sha": "92fed26e1ff2031a57d80a014fbef77542da55d8",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91343423753"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342428042"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413160"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413429"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413392"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413490"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342412979"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342383525"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413345"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342412976"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413006"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413528"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413420"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342412972"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413330"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30689800243/job/91342413233"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5759,
+    "disposition": "merged",
+    "observed_sha": "92fed26e1ff2031a57d80a014fbef77542da55d8",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5756.json",
+    "released_branch": "codex/5756-minimax-billing-classification",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "adl/src/provider_adapter.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5756/retained/design.md",
+  "diagram_path": ".csdlc/issues/5756/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator",
+      "revision": "04dd4283135d39f64ebee68fb19ace701493ed28cd054a78f6ed644ba3512572"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "258478f753542aff4e29b95f4f9a619b4ba3d669e58700fbb1b902dbcde4a9f5",
+      "rendered_digest": "c7c3f8c5ad6c62689dbdffbe7975cc3376e72f94af303101e7261f3251b7568f",
+      "ast_digest": "abab5bf49ed88d40ec24837d5262b16c1d8474c17947db6430b55f8a5ffce5cf"
+    },
+    "stp": {
+      "values_digest": "5ded0ed0ffebfb64bdc6000a278d868a8bcb4327119ca03a4013efc0bbf5a702",
+      "rendered_digest": "da00ee1a8c16b895f41cd7831e874119d09b26ff32a224d5725053d5e70a7107",
+      "ast_digest": "f0ac95c8696e3847c6c49fffabc4db3a731762ffbf7d4c40e92b63d19b74ee7c"
+    },
+    "spp": {
+      "values_digest": "13900e2a56a3aaab95336b375ae9b128b43aa9397bf6d527f43a05c930bf6ff4",
+      "rendered_digest": "a1ada050dae55dea3a326f2ff469ea37ce0684f33454d3a8e7616c02aaa19dd8",
+      "ast_digest": "beda08d654538e21329ecedeaa6675d03ebf77cd25c942f087baea12a82f9fae"
+    },
+    "vpp": {
+      "values_digest": "a667648727f6692f6a3e4ed0010040a4a92fd4dc072162739ece818695483594",
+      "rendered_digest": "0a43b233b504c3777fa9292416763441cc619411d3570244acc07d0d571f79e9",
+      "ast_digest": "3eaa77a6d8d83c0c71baa60b026406942f90e3d4f9aeaf4fc7b7292d066b24dc"
+    },
+    "srp": {
+      "values_digest": "c534a7a2355a9d60cd98f9aa3140f4b3b2c61d74b86a7a3b20220f22f36fefb2",
+      "rendered_digest": "ae32abcb317ac68e81e3ba86ec7bbdc94e6d8f20bd477f6426061e9f983251d1",
+      "ast_digest": "2bc11877b8d7418e414e372b3fe60078349fc574a9264e33d496051525c22252"
+    },
+    "sor": {
+      "values_digest": "a690ad0086fb7e4911cf5a81e271bca8019ad754d0055a7eb8a4c5076234f7c4",
+      "rendered_digest": "0438f62810f35d15386379dae6b512f3b869a91fda6071081380873d213181e9",
+      "ast_digest": "e645dff14aa4ab8a7cda0fc57b391d89eb7ddad6f723d41a6ee19efc3fba22b3"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "recover stale review after committed request artifacts before final publication"
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 9,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 10,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "align validation lanes with repository-root typed finalize commands",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"provider-minimax-tests\",\"proof_role\":\"Focused MiniMax adapter regressions for structured 1008 billing classification on success and non-success HTTP responses.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests::minimax\",\"--lib\"],\"parallel_group\":\"local\",\"defer_reason\":null},{\"lane\":\"provider-non-minimax-tests\",\"proof_role\":\"Focused OpenAI, Anthropic, DeepSeek, and generic hosted provider regressions for bare 1008 non-billing classification.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests::non_minimax\",\"--lib\"],\"parallel_group\":\"local\",\"defer_reason\":null},{\"lane\":\"strict-clippy\",\"proof_role\":\"Strict lint proof for the touched provider adapter crate surface.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "align validation lanes with repository-root typed finalize commands",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"provider-minimax-tests\",\"proof_role\":\"Focused MiniMax adapter regressions for structured 1008 billing classification on success and non-success HTTP responses.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--offline\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests::minimax\",\"--lib\"],\"parallel_group\":\"local\",\"defer_reason\":null},{\"lane\":\"provider-non-minimax-tests\",\"proof_role\":\"Focused OpenAI, Anthropic, DeepSeek, and generic hosted provider regressions for bare 1008 non-billing classification.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":240,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"test\",\"--offline\",\"--manifest-path\",\"adl/Cargo.toml\",\"provider_adapter::tests::non_minimax\",\"--lib\"],\"parallel_group\":\"local\",\"defer_reason\":null},{\"lane\":\"strict-clippy\",\"proof_role\":\"Strict lint proof for the touched provider adapter crate surface.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":1000,\"argv\":[\"cargo\",\"clippy\",\"--offline\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "recover stale review after committed request artifacts before final publication",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the retained terminal receipt for v0.91.8 corrective issue 5756 in the dedicated aggregate closeout projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

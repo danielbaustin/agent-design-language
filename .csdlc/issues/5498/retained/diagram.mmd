@@ -1,0 +1,21 @@
+flowchart TD
+    G["#5499 conductor: admitted typed assignment"] --> A["#5498 task/context adapter"]
+    C["Bounded context packet"] --> A
+    V["C-SDLC v2 live claim + freshness"] --> A
+
+    A --> O["Explicit create / attach / message / handoff / inspect / cancel / escalate"]
+    O --> T["Codex task transport trait"]
+    T --> R["Sanitized typed receipt or refusal"]
+
+    R --> D["#5500 read-only observation"]
+    R --> X["#5502 output/handoff reference"]
+    X --> L["#5501 live workcell proof"]
+
+    D5499["#5499 live-merged into origin/main + ancestry"] --> Gate["Implementation dependency gate"]
+    D5349["#5349 WP-09 live-merged into origin/main + ancestry"] --> Gate
+    Receipts["Retained receipts and typed closeout records are audit-only"] -.-> Gate
+    Paths["Pairwise-disjoint normalized paths for #5499 / #5498 / #5500 / #5502"] --> Gate
+    Gate --> A
+
+    M["#4760 Memory Palace at WP-14"] -. "durable context authority" .-> C
+    A -. "never owns" .-> N["Planning / lifecycle / transcript store / review / merge / closeout"]

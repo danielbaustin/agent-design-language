@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5355,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21A] Prepare next-milestone closeout plan",
+    "slug": "v0918-wp21a-next-milestone-closeout-plan",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/5355\n.csdlc/evidence/5355\n.csdlc/prepared/issues/5355\ndocs/milestones/v0.91.8/NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md\ndocs/milestones/v0.91.8/README.md\ndocs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md\ndocs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\ndocs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "review_revision": "git-blake3:bd5501be6be7bdb4b1aefac09da58fde7912c51a:6b8f88f469939c7b937d13f04b153635dba010ddd04047c5b555ba2e7f86ff15",
+      "reviewer": "subagent:gpt-5.5:WP21A-reviewer",
+      "review_prompts": [
+        "Does the WP-21A closeout-planning packet consume current reviewed WP-21 #5362 truth without treating historical #5489/#5383 packets as live authority?",
+        "Is #5362 proved by live merged PR state and ancestry to refreshed origin/main and the exact #5355 execution base before execution claims are accepted?",
+        "Are version:v0.92 issues, #5357 remediation, PR publication, merge, closeout, AWS, and main-checkout mutations absent from #5355 scope?",
+        "Do focused docs/YAML/link checks, typed C-SDLC validation, and diff hygiene match the actual touched WP-21A surfaces without overclaiming deferred proof?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "WP-22 review and WP-23 release ceremony remain future work.",
+        "This planning packet does not execute v0.92 or claim first-birthday readiness."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

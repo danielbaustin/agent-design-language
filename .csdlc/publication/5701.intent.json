@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5701,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5701-runtime-v3-openapi-contracts",
+  "title": "[v0.91.8][runtime-v3][api] Define Runtime v3 OpenAPI contracts (#5701)",
+  "body": "Closes #5701\nCloses #5718\n\n## Summary\n\nDefines and serves the complete versioned Runtime v3 Core and Observatory OpenAPI contracts from the guardian-launched Axum/Tokio/Rustls listener. Health, metrics, and Observatory reads are public; writes require operator login and retain authoritative runtime signature and policy verification. The separate HTML Observatory keeps its existing design while moving to the version-neutral `demos/html-observatory/` public path with Runtime v3 branding.\n\n## Validation\n\n- HTML Observatory integrated proof passed.\n- Validation-lane selector contract passed.\n- Runtime v3 explicit Observatory opt-in parity test passed.\n- Runtime API health/telemetry/init contract test passed.\n- Browser verified `https://localhost:8765/demos/html-observatory/?runtime=v3&runtimeApiBase=https://localhost:20997&live=1` with Runtime v3 branding and the existing design.\n- Exact GPT-5.5 review passed with zero findings at product commit 7801b941d0f00a89c8e8ebe4bc70eb93a73a8359.\n- `git diff --check` passed.",
+  "draft": false,
+  "revision": "git-blake3:40216e766c81a3ef022dddfa4ccd71273ff40d63:ffc9dc8f21cb44d45fd815f299378505ebc0afd486fe2f0ba8f1338bbacd9f29",
+  "commit_sha": "40216e766c81a3ef022dddfa4ccd71273ff40d63"
+}

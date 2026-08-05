@@ -1,0 +1,21 @@
+{
+  "issue": 5357,
+  "card": "sip",
+  "expected_generation": 2,
+  "expected_digest": "1cba915c2fbaa871a3d40b45fffc8fa1aef61976afa2ac3a8126cb130e908927",
+  "claim_id": "claim-5357-v0918-wp19-review-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Align WP-19 preparation with the operator-required final WP-18 second pass after residual coding and the expanded canonical-document audit.",
+  "operation": {
+    "operation": "replace_operator_constraints",
+    "values": [
+      "Use typed C-SDLC v2 binaries and the current native six-card projection only; keep all tracked work in the bound #5357 worktree and never on main",
+      "Refresh only the exact canonical review-document paths in the active claim; change no product code, dependency, Runtime v2 surface, AWS state, credential, or paid service",
+      "Do not collide with active #5791 ownership of README.md, the canonical inventory, or the next-milestone handoff; integrate those exact changes from main after #5791 merges",
+      "Do not freeze or dispatch external review until #5791 completes the final WP-18 second pass after residual coding and its merge is ancestral to the #5357 target revision",
+      "Retain repository-relative publication-safe evidence and exclude secrets, private prompts, raw provider output, host paths, and local scratch roots",
+      "Run one bounded exact-revision documentation review after the complete canonical sweep, fix every actionable finding, validate, commit, push, and stop without dispatch, PR publication, merge, or release claim"
+    ]
+  },
+  "fail_after_backup": false
+}

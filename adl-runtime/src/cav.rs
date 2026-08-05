@@ -111,15 +111,19 @@ mod tests {
 
     #[test]
     fn cav_component_contract_rejects_non_fail_closed_status() {
-        let mut status = CsmCavComponentStatus::default();
-        status.fail_closed_on_policy_conflict = false;
+        let status = CsmCavComponentStatus {
+            fail_closed_on_policy_conflict: false,
+            ..Default::default()
+        };
         assert_eq!(status.validate(), Err("cav_must_fail_closed"));
     }
 
     #[test]
     fn cav_component_contract_rejects_sidecar_model() {
-        let mut status = CsmCavComponentStatus::default();
-        status.no_separate_binary = false;
+        let status = CsmCavComponentStatus {
+            no_separate_binary: false,
+            ..Default::default()
+        };
         assert_eq!(
             status.validate(),
             Err("cav_must_be_embedded_runtime_component")

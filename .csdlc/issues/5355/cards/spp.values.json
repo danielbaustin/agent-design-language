@@ -1,0 +1,85 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5355,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21A] Prepare next-milestone closeout plan",
+    "slug": "v0918-wp21a-next-milestone-closeout-plan",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 2,
+      "summary": "Prepare now; execute only after #5362 is live-merged and ancestral.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Refresh #5362 live issue/PR state, fetch origin, and block unless the observed #5362 merge commit is ancestral to refreshed origin/main and the exact #5355 execution base.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Read accepted WP-21 outputs and canonical v0.91.8 planning inputs, then author only the WP-21A closeout-planning packet and review-ready handoff.",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused docs, YAML, link/crosswalk, typed C-SDLC, and diff hygiene checks; record exact commands and evidence without claiming deferred proof.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Obtain exact-head bounded review before any publication and hand WP-22 forward only when blockers are absent or explicitly preserved.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "live merge plus ancestry is the dependency gate",
+        "receipts audit-only",
+        "no preparation review churn",
+        "no implementation in preparation"
+      ],
+      "risks": [
+        "historical preparation evidence could be mistaken for current truth",
+        "canonical document inventory may be incomplete",
+        "handoff language may overclaim v0.92 readiness"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "#5362 not live-merged",
+        "#5362 merge not ancestral",
+        "canonical document missing",
+        "handoff would overclaim"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5355/design.md",
+      "design_digest": "e4dd6dbc4b549584aace09c823c15e65144e547ee7b0ebf42f25cecf4ff1efae",
+      "diagram_ref": ".csdlc/prepared/issues/5355/diagram.mmd",
+      "diagram_digest": "aa86d8f320c6149366895acd1a90371502b605da677d6887a2e8c85cd859d0dd"
+    }
+  }
+}

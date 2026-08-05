@@ -1,0 +1,41 @@
+{
+  "schema": "adl.unity_editor_liveness.proof.v1",
+  "issue": 4741,
+  "observed_at": "2026-07-23T21:50:39Z",
+  "source_revision": "2fb6fa86fee8b96457e0c179646a0c5109861e4a",
+  "project_ref": "demos/v0.91.6/unity-observatory",
+  "editor_version": "6000.5.1f1",
+  "mode": "skipped_fail_closed",
+  "mode_reason": "owner_binary_provenance_invalid",
+  "process_evidence": {
+    "status": "not_checked",
+    "reason": "prerequisite provenance validation failed before process inspection",
+    "broad_process_scan": false,
+    "uses_ps": false
+  },
+  "staging": {
+    "root": "/Volumes/FastWork/adl-unity-observatory",
+    "created": false
+  },
+  "terminal": {
+    "exit_code": 2,
+    "outcome": "owner_binary_provenance_invalid",
+    "classification": "repository_owner_binary_receipt_drift"
+  },
+  "owner_binary": {
+    "repo_ref": "/Users/daniel/git/agent-design-language/.adl/bin/adl",
+    "sha256": "03696d2f54b64dabcc7b4c445fd90fdcff2807cd17abd5a925800beae49ad5fb",
+    "installed_source_hash": "c837322454e3973c728335d561a4b0179b57678b7caff09c21d0bd5887b28b16",
+    "current_source_hash": "0db8351b2a7fa9170494b31818e4e382033937a680594a622dec520994a4ffed",
+    "built_during_issue": false
+  },
+  "claims": {
+    "implementation_review": "passed",
+    "deterministic_liveness_contract": "proved",
+    "live_unity_attempt": "not_started_due_to_owner_binary_provenance_gate",
+    "unity_validation": "not_reached",
+    "ilpp_root_cause": "not_claimed",
+    "mcp_alignment": "not_claimed",
+    "investor_demo": "not_claimed"
+  }
+}

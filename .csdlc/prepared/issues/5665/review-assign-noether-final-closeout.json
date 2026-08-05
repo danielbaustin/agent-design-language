@@ -1,0 +1,29 @@
+{
+  "schema": "csdlc.review_assignment_request.v1",
+  "issue": 5665,
+  "expected_generation": 14,
+  "expected_digest": "9c660aa624d69bbdb562cbf9211038363edfd7efe9917638b0f8d03afd6e0882",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "reviewer": "Noether",
+  "assigned_by": "codex:issue-5665-slot-1",
+  "scope": [
+    "adl-runtime/src/runtime_api.rs",
+    "adl-runtime/tests/runtime_api_wss.rs",
+    "adl-runtime/Cargo.toml",
+    "adl-runtime/Cargo.lock",
+    "adl/Cargo.lock",
+    "adl/src/bin/run_wp12_acip_websocket_transport_proof.rs",
+    "adl/src/bin/run_v0916_acip_aee_memory_integration.rs",
+    "adl/src/bin/run_v0916_integrated_runtime_soak.rs",
+    "adl/src/bin/run_v0916_runtime_failure_injection.rs",
+    "adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs",
+    "infra/runtime-v3/runtime-api-5665.toml",
+    "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+    ".csdlc/evidence/5665/runtime-v3-wss-focused.log",
+    ".csdlc/evidence/5665/runtime-v3-strict-clippy.log",
+    ".csdlc/evidence/5665/wp12-wrapper-tombstone-check.log",
+    ".csdlc/evidence/5665/runtime-v2-wrapper-tombstone-checks.log",
+    ".csdlc/evidence/5665/runtime-v3-loc-measurement.md",
+    ".csdlc/issues/5665/index.json"
+  ]
+}

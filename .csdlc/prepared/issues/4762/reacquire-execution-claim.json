@@ -1,0 +1,29 @@
+{
+  "issue": 4762,
+  "expected_generation": 0,
+  "expected_digest": "4435d51381e1f66de5751755dab86562f05ed9ac36417e0a335c63062fbc4d84",
+  "now_unix_seconds": 1785529361,
+  "actor": "codex:019fb9d5-3bcb-7123-bbbd-5bf33c1cb4d2",
+  "reason": "Operator authorized #4762 execution in the existing FastWork worktree using the completed preparation packet; reacquire the expired preparation claim for the real auditable birth-witness and receipt package. Closeout and terminal receipt reconciliation remain a separate lane and do not block execution.",
+  "replacement": {
+    "id": "claim-4762-birth-witness-receipt-execution",
+    "owner": "codex:019fb9d5-3bcb-7123-bbbd-5bf33c1cb4d2",
+    "generation": 0,
+    "acquired_unix_seconds": 1785529361,
+    "expires_unix_seconds": 1786134161,
+    "heartbeat_unix_seconds": 1785529361,
+    "branch": "codex/4762-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/4762",
+      ".csdlc/issues/4762",
+      ".csdlc/locks/4762.lock",
+      ".csdlc/prepared/issues/4762",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/v092_handoff_4762",
+      "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+    ],
+    "purpose": "Execute #4762 by producing the real auditable birth-witness register, receipt package, negative-case dispositions, validation evidence, exact-head review evidence, and v0.91.8/v0.92 handoff consumption links without claiming that the v0.92 birthday has occurred."
+  }
+}

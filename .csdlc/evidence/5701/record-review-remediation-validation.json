@@ -1,0 +1,22 @@
+{
+  "issue": 5701,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "07d216fbc35adef8829cdc6fdd7a90aa66e302c2be2aadf595ceb1646e4cafe1",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Record the consolidated proof after resolving every actionable exact-review finding.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test-and-clippy",
+        "runtime-v3-openapi-review-remediation"
+      ],
+      "purpose": "Prove sole production OpenAPI authority, versioned route parity, canonical ACIP dispatch, failure-safe replay sequencing, first-frame Observatory authentication, guardian persistence, and strict Rust quality.",
+      "outcome": "passed",
+      "evidence_ref": "Kernel control 21/21; guardian soak 7/7; Observatory WSS 6/6; OpenAPI contracts 6/6; adl-runtime library 134/134; runtime API WSS 2/2; strict all-target kernel Clippy passed; strict all-target adl-runtime Clippy passed; git diff --check passed."
+    }
+  }
+}

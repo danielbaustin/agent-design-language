@@ -1,0 +1,25 @@
+flowchart LR
+  R["Typed cleanup request"] --> L["Issue-scoped Git-common lock"]
+  L --> W["Discover registered worktrees"]
+  W --> X{"Exact non-primary target?"}
+  X -->|"No"| S["Typed non-destructive skip"]
+  X -->|"Yes"| D{"Target worktree dirty?"}
+  D -->|"Yes"| S
+  D -->|"No, classify"| C["cleanup_ready"]
+  D -->|"No, remove"| M["Non-forced git worktree remove"]
+  M --> V["Verify registration absent"]
+  V --> O["cleanup_removed"]
+
+  A["v0.91.8 census"] --> I["Read-only compatibility index"]
+  P["Tracked terminal projections"] --> I
+  T["Optional legacy receipts"] --> I
+  E["Optional derived envelopes"] --> I
+  I --> Q{"Identity parity?"}
+  Q -->|"Yes"| G["Validated compatibility report"]
+  Q -->|"No"| F["Fail closed without rewrite"]
+
+  S -.-> N["Delivery truth unchanged"]
+  C -.-> N
+  O -.-> N
+  G -.-> N
+  F -.-> N

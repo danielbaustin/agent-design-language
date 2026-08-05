@@ -1,0 +1,7 @@
+{
+  "issue": 5360,
+  "expected_generation": 6,
+  "expected_digest": "0d2ff7a4d9aff36960a5a252894ffb4ec049c2bda8cb952c006405ef1502c942",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "reviewer": "subagent:Kuhn:019fbcf1-1ae3-7f70-9c5f-69f40c290322"
+}

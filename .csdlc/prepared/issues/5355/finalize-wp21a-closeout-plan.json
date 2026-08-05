@@ -1,0 +1,105 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5355,
+  "expected_generation": 6,
+  "expected_digest": "69c12583dea73e6898b0e66679545655446b7cd9b4fab90ba288a7f1e2bd315a",
+  "claim_id": "claim-5355-v0918-preparation",
+  "actor": "codex:wp21a-conductor",
+  "summary": "Implemented and validated the WP-21A next-milestone closeout-planning packet after WP-21 merged.",
+  "changes": [
+    "Added the canonical v0.92 closeout-planning packet with prerequisites, sequence, owners, evidence, stop conditions, rollback, non-claims, and review handoff.",
+    "Linked the packet from the v0.91.8 README, canonical inventory, next-milestone handoff, and feature handoff.",
+    "Recorded exact WP-21 PR #5807 merge truth without making asynchronous typed closeout receipts a planning blocker."
+  ],
+  "artifacts": [
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md",
+    "docs/milestones/v0.91.8/README.md",
+    "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+    "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+    "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "typed-doctor-5355",
+          "proof_role": "Validate the bound WP-21A typed packet before implementation finalization.",
+          "purpose": "typed issue integrity",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 500},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp21a-docs",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 30,
+          "executable": "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+          "argv": ["--repo", ".", "--issue", "5355"],
+          "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+        },
+        {
+          "id": "wp21-ancestry",
+          "proof_role": "Prove the exact WP-21 merge is contained in the integrated WP-21A head.",
+          "purpose": "dependency ancestry",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 1, "memory_mib": 64, "tokens": 100},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp21a-docs",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 10,
+          "executable": "git",
+          "argv": ["merge-base", "--is-ancestor", "eaa62d3d2c0241bc07ce827fedef0e42389d0491", "HEAD"],
+          "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+        },
+        {
+          "id": "wave-and-links",
+          "proof_role": "Parse the issue wave and verify every relative link in the five changed documents.",
+          "purpose": "documentation contract",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 500},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp21a-docs",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 20,
+          "executable": "ruby",
+          "argv": ["-e", "require 'yaml'; YAML.safe_load(File.read('docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml'), aliases: true); files=%w[docs/milestones/v0.91.8/NEXT_MILESTONE_CLOSEOUT_PLAN_v0.91.8.md docs/milestones/v0.91.8/README.md docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md]; missing=[]; files.each{|f| File.read(f).scan(/\\[[^\\]]+\\]\\(([^)]+)\\)/).flatten.each{|href| next if href =~ /^(https?:|mailto:|#)/; p=href.sub(/#.*/, ''); next if p.empty?; missing << \"#{f} -> #{href}\" unless File.exist?(File.expand_path(p, File.dirname(f)))}}; abort(missing.join('\\n')) unless missing.empty?; puts 'wave-and-links: PASS'"],
+          "evidence": {"max_log_bytes": 12000, "redact_values": [], "require_relative_paths": true}
+        },
+        {
+          "id": "diff-check",
+          "proof_role": "Verify whitespace and diff hygiene.",
+          "purpose": "diff hygiene",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 1, "memory_mib": 64, "tokens": 100},
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "wp21a-docs",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 10,
+          "executable": "git",
+          "argv": ["diff", "--check", "origin/main...HEAD"],
+          "evidence": {"max_log_bytes": 4096, "redact_values": [], "require_relative_paths": true}
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": ["typed-doctor-5355", "wp21-ancestry", "wave-and-links", "diff-check"],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {"max_parallel": 4, "cpu_units": 4, "memory_mib": 512, "tokens": 1200},
+    "root": "/Volumes/FastWork/adl-wp-5355",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-5355/.csdlc/evidence/5355",
+    "cancellation_file": null
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5765,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][planning][github] Schedule Agent Logic account repository migration",
+    "slug": "v0-92-planning-github-agent-logic-account-repository-migration",
+    "version": "v0.92",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Add the smallest source-grounded v0.92 planning reference, validate it, review it, and publish a PR without performing migration work.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Add the bounded migration scheduling reference to the v0.92 issue-wave YAML",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Run focused YAML/diff validation and exact-head review before publication",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Planning-only status remains explicit",
+        "asksifu is never a migration candidate",
+        "Unknown sixth candidate blocks execution",
+        "No tracked edit occurs on main"
+      ],
+      "risks": [
+        "The TBD source plan is intentionally local and ignored; the YAML reference must remain truthful about that boundary"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Any request to transfer or configure GitHub",
+        "Any need to edit files outside the declared scope",
+        "Any work on main"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5765/design.md",
+      "design_digest": "a9efa5d35de1d00dcd47d31009de46f6db5a009128c1767afe05565d5812d187",
+      "diagram_ref": ".csdlc/prepared/issues/5765/diagram.mmd",
+      "diagram_digest": "6dc96fc975be9e1bcaae4933fe273b7cfcf6c42f514f642ce96e7937fa5d0c33"
+    }
+  }
+}

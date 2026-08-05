@@ -1,0 +1,25 @@
+{
+  "issue": 5655,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "748c05a318c594134894d8e3db6a79635985e665ed762642d21084595de005cb",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Record full C-SDLC v2 regression proof after adding csdlc-github.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml"
+      ],
+      "purpose": "Prove the new GitHub action command surface does not regress C-SDLC v2 lifecycle, schema, publication, merge, closeout, import, and cutover behavior.",
+      "outcome": "passed",
+      "evidence_ref": "Full suite passed including gate_github_actions 6/6 and doc-test 1/1 with TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp and CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target"
+    }
+  },
+  "fail_after_backup": false
+}

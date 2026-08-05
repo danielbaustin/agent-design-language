@@ -1,0 +1,16 @@
+{
+  "issue": 5765,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "06ab6eff025a748af881c31fe9862f397de9d4bbbf662d9ec5afa3109b248408",
+  "claim_id": "claim-5765-v092-account-migration-scheduling",
+  "actor": "codex:5765",
+  "reason": "Record the bounded planning-reference implementation before validation and review.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Added the planning-only Agent Logic repository migration reference to the canonical v0.92 issue-wave YAML.",
+    "changes": ["Added issue 5765 scheduled_planning entry", "Preserved Gate 0 prerequisites and asksifu personal exclusion"],
+    "artifacts": ["docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"]
+  },
+  "fail_after_backup": false
+}

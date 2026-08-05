@@ -1,0 +1,8 @@
+{
+  "issue": 5698,
+  "expected_generation": 5,
+  "expected_digest": "4efd57243998e39d0b1f9cc720997c0d9008b33e9e50c9e28b2178b59585e990",
+  "claim_id": "claim-5698-runtime-v3-redb-state",
+  "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+  "reason": "Recover stale #5698 review/publication truth after exact-head CI found an adl-v2 locked-standalone lockfile drift and a Runtime v3 guardian-soak startup mismatch that require bounded repair before republishing."
+}

@@ -1,0 +1,14 @@
+{
+  "actor": "codex:5717-execution",
+  "card": "spp",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "2f274d0b3907d642f463f3d18df0642aea9197b67d094b1d2b3aae5b3bd952c6",
+  "expected_generation": 10,
+  "issue": 5717,
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S3",
+    "status": "completed"
+  },
+  "reason": "Mark served podcast entrypoint and route-output updates complete after promoting the studio page to `/podcast/` and adding hidden preview."
+}

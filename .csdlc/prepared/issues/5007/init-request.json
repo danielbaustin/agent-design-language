@@ -1,0 +1,147 @@
+{
+  "issue": 5007,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5007/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5007/diagram.mmd",
+  "design_reviewer": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+  "design_approved": true,
+  "claim": {
+    "id": "prep-5007-v0918-wp14",
+    "owner": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+    "generation": 0,
+    "acquired_unix_seconds": 1784755804,
+    "expires_unix_seconds": 1785360604,
+    "heartbeat_unix_seconds": 1784755804,
+    "branch": "codex/5007-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5007",
+      ".csdlc/locks/5007.lock",
+      ".csdlc/prepared/issues/5007"
+    ],
+    "purpose": "Preparation only for later execution of the WP-14 Memory Palace ADR acceptance follow-on; no implementation, PR, review, merge, or closeout."
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-14][ADR] Prepare #5007 Memory Palace ADR acceptance",
+    "slug": "v0918-wp14-memory-palace-adr-acceptance-prep-5007",
+    "version": "v0.91.8",
+    "goal": "Prepare typed C-SDLC v2 state for later execution of the Memory Palace ADR acceptance follow-on.",
+    "required_outcome": "A later execution session can bind this issue from the issue worktree and either accept the ADR with complete proof or record an operator-approved blocker.",
+    "declared_scope": [
+      "Create minimal typed v2 issue state for #5007.",
+      "Preserve the ADR acceptance dependency on complete #4760 proof.",
+      "Keep this session preparation-only."
+    ],
+    "authority_boundary": [
+      "Typed C-SDLC v2 artifacts are the preparation authority.",
+      "Legacy .adl task bundle is source context only.",
+      "Receipts are audit-only and non-blocking for this preparation pass."
+    ],
+    "operator_constraints": [
+      "No implementation.",
+      "No PR, prep review, broad tests, raw gh, AWS, or root-main writes.",
+      "Use one issue-bound worktree under /Volumes/FastWork from origin/main."
+    ],
+    "task_boundary": "Preparation only: seed v2 cards, concise design and diagram, then run focused doctor.",
+    "deliverables": [
+      "Minimal six-card v2 packet for #5007.",
+      "Concise design and Mermaid diagram.",
+      "Focused csdlc-doctor result."
+    ],
+    "acceptance_criteria": [
+      "AC1: All six v2 cards exist for #5007.",
+      "AC2: Design and diagram identify the later execution boundary and #4760 proof dependency without implementation.",
+      "AC3: Focused v2 doctor is run and recorded in the handoff report."
+    ],
+    "dependencies": [
+      "#4760 complete Memory Palace implementation proof.",
+      "ADR 0051 deferred disposition.",
+      "Chronosense implementation sprint #4765 and Memory Palace temporal index proof #4768.",
+      "Long-running context continuity proof #4771.",
+      "Existing .adl/v0.91.7 task bundle for #5007.",
+      "origin/main at 79c7dccf12540863f6c038e1fd7ef45e2357a55e."
+    ],
+    "repo_inputs": [
+      ".adl/v0.91.7/tasks/issue-5007__v0-91-7-wp-14-adr-accept-memory-palace-architecture-after-complete-implementation-proof/stp.md",
+      "docs/adr/0051-chronosense-and-memory-palace-adr-disposition.md",
+      "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md"
+    ],
+    "non_goals": [
+      "Do not write an accepted ADR from planning intent alone.",
+      "Do not implement Memory Palace in this ADR issue.",
+      "Do not expand v0.92 claims beyond retained proof."
+    ],
+    "plan_summary": "Seed typed v2 preparation artifacts and leave ADR acceptance to a later proof-gated execution session.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Inspect existing #5007 task context and preserve the ADR proof gate.",
+        "acceptance_ids": [
+          "AC-2"
+        ],
+        "status": "completed"
+      },
+      {
+        "id": "S2",
+        "action": "Generate minimal typed v2 cards, design, and diagram.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused csdlc-doctor and report prep-only handoff.",
+        "acceptance_ids": [
+          "AC-3"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Preparation does not implement or publish #5007.",
+      "ADR acceptance remains blocked until #4760 complete proof exists.",
+      "Every eventual ADR claim must map to retained proof."
+    ],
+    "risks": [
+      "#4760 or related proof dependencies may still be incomplete when execution starts.",
+      "Legacy issue version labels may differ from the v0.91.8 preparation wave."
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "A live claim collision appears.",
+      "The focused doctor fails on v2 state integrity.",
+      "The task requires implementation or GitHub mutation."
+    ],
+    "validation_lanes": [
+      {
+        "lane": "prep-doctor",
+        "proof_role": "Focused v2 state integrity check only.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "csdlc-doctor",
+          "--issue",
+          "5007"
+        ],
+        "parallel_group": "prep",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed and report the exact v2 doctor or init error; do not repair outside the prep boundary.",
+    "review_prompts": [
+      "Later review should verify that ADR acceptance waits for complete #4760 proof and maps each claim to retained evidence."
+    ],
+    "review_scope": "No prep review requested; later execution review only."
+  }
+}

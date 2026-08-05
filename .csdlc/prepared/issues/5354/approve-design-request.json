@@ -1,0 +1,7 @@
+{
+  "issue": 5354,
+  "expected_generation": 0,
+  "expected_digest": "a907e9a797e3135f9e32067cae02c1b6c4fe2f770475ecefbe0a75b6c4238cf1",
+  "claim_id": "claim-5354-v0918-wp15-demo-preparation",
+  "reviewer": "subagent:codex-cli-5354-design-rereview"
+}

@@ -16,17 +16,6 @@ assert_contains() {
   fi
 }
 
-test_speculative_showcase() {
-  local report="$TMP/speculative-demo-report.json"
-  local out
-  out="$(bash "$ROOT/adl/tools/demo_v0912_speculative_decoding_showcase.sh" --out "$report")"
-  assert_contains "WP-11 speculative decoding showcase" "$out" "speculative showcase header"
-  assert_contains "worthwhile_for_adl: true" "$out" "speculative worthiness"
-  assert_contains "same_family_code_generation" "$out" "speculative scenario listing"
-  assert_contains "cross_family_tokenizer_mismatch" "$out" "speculative mismatch listing"
-  [[ -f "$report" ]] || { echo "missing speculative demo report" >&2; exit 1; }
-}
-
 test_workflow_guardrails_showcase() {
   local out
   out="$(bash "$ROOT/adl/tools/demo_v0912_workflow_guardrails_showcase.sh")"
@@ -38,7 +27,6 @@ test_workflow_guardrails_showcase() {
   assert_contains "card_drift_invocation: doctor 3015 --version v0.91.2 --mode full --slug v0-91-2-wp-16-workflow-guardrails-hardening" "$out" "workflow card drift"
 }
 
-test_speculative_showcase
 test_workflow_guardrails_showcase
 
 echo "PASS test_wp17a_demo_follow_ons"

@@ -1,0 +1,7 @@
+{
+  "issue": 5500,
+  "expected_generation": 0,
+  "expected_digest": "affef159162dacbe9bd6ffecb83137db726a99abbdab6b9d8d2e42471d77268a",
+  "claim_id": "claim-5500-v0918-wp10a-dashboard-preparation",
+  "reviewer": "subagent:019f8628-e8d2-7762-b325-5d4caa699de9"
+}

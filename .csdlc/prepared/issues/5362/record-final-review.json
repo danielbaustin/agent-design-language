@@ -1,0 +1,31 @@
+{
+  "schema": "csdlc.review_record_request.v1",
+  "issue": 5362,
+  "expected_generation": 10,
+  "expected_digest": "7140876a323edb50023b7b72e3e7894f729f5e6195b8e4e5018dee36064c0f92",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:wp21-conductor",
+  "evidence": {
+    "reviewer": "subagent:gpt-5.5:Locke",
+    "scope": [
+      ".csdlc/issues/5362",
+      ".csdlc/evidence/5362",
+      ".csdlc/prepared/issues/5362",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md"
+    ],
+    "reviewed_revision": "git-blake3:bee2a56c4ce4fffe6a09ed6cc1f2e48137d246de:7e7d35c3a20cf80c4c8f3bd50d152a7e28cc345d6fbea64a7dc1fed3c7c9afe1",
+    "findings": [],
+    "residual_risks": [
+      "This documentation reconciliation does not execute v0.92 work or claim first-birthday readiness.",
+      "Publication, CI, merge, and terminal lifecycle reconciliation remain separate steps."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

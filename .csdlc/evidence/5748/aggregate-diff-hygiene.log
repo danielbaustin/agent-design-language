@@ -1,0 +1,3 @@
+validated_revision=25fdcdafa131c76a8f80627961c01d2c5e5980f3
+command=git diff --check origin/main..HEAD
+result=PASS

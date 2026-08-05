@@ -1,0 +1,8 @@
+{
+  "issue": 5701,
+  "expected_generation": 12,
+  "expected_digest": "9249df03698f166c959a64e605a988a948d5f439ec0cbb624cdc3f1d6d2319b6",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Recover exact review and publication truth before integrating current main to resolve PR #5705's real merge conflict."
+}

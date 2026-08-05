@@ -1,0 +1,23 @@
+{
+  "issue": 5347,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "6ae0a316c76dfec0939b9ea818453d929ad90c531c89bced1ece6ae03cc55e92",
+  "claim_id": "claim-5347-current-preparation-refresh",
+  "actor": "codex:5347-execution-owner",
+  "reason": "Record focused execution validation for the scoped WP-13 external-band deletion.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "ruby",
+        ".csdlc/prepared/issues/5347/run-validation-lane.rb",
+        "execution"
+      ],
+      "purpose": "Prove #5347 deletes only manifest-listed obsolete external demo/proof binaries, preserves retained current binaries, does not depend on WP-16 or #5346 terminal closeout, remains disjoint from #5346 reserved core deletion paths, and removes 1476 net lines.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5347/execution-validation/external-band-deletion.log"
+    }
+  },
+  "fail_after_backup": false
+}

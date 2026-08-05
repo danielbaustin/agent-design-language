@@ -1,0 +1,25 @@
+{
+  "issue": 5762,
+  "base_branch": "main",
+  "branch": "codex/5762-terminal-sor-validation-fixtures",
+  "worktree": ".",
+  "claim": {
+    "id": "codex-5762-terminal-sor-validation-fixtures",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1785574293,
+    "expires_unix_seconds": 1785660693,
+    "heartbeat_unix_seconds": 1785574293,
+    "branch": "codex/5762-terminal-sor-validation-fixtures",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/store.rs",
+      ".csdlc/designs/5762",
+      ".csdlc/evidence/5762",
+      ".csdlc/issues/5762",
+      ".csdlc/prepared/issues/5762",
+      ".csdlc/requests/5762"
+    ],
+    "purpose": "Fix terminal SOR validation repair tests to use deterministic temporary authority"
+  }
+}

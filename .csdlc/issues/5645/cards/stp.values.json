@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5645,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Add typed fail-closed csdlc-merge command",
+    "slug": "typed-csdlc-merge-command",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement and validate the typed csdlc-merge command.",
+      "deliverables": [
+        "csdlc-merge binary",
+        "versioned request/result schema",
+        "focused unit and fixture tests",
+        "design and diagram"
+      ],
+      "acceptance_criteria": [
+        "Reject stale or non-merge-ready requests without a merge attempt",
+        "Pass expected head SHA to GitHub",
+        "Return exact merge commit SHA",
+        "Classify permission failures without leaking tokens"
+      ],
+      "dependencies": [
+        "existing publication/readiness contracts",
+        "existing GitHub token resolver and Octocrab client"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/bin/csdlc-publish.rs",
+        "csdlc-v2/src/github.rs",
+        "csdlc-v2/src/readiness.rs",
+        "csdlc-v2/src/store.rs"
+      ],
+      "non_goals": [
+        "automatic merge on publish",
+        "changing branch protection",
+        "combining merge and closeout"
+      ]
+    }
+  }
+}

@@ -4,6 +4,8 @@ use sha2::{Digest, Sha256};
 pub const CORPUS_SCHEMA: &str = "adl.characterization.corpus.v1";
 pub const OBSERVATION_SCHEMA: &str = "adl.characterization.observation.v1";
 pub const NORMALIZED_SCHEMA: &str = "adl.characterization.normalized.v1";
+pub const SHADOW_MANIFEST_SCHEMA: &str = "adl.characterization.shadow-manifest.v1";
+pub const SHADOW_REPORT_SCHEMA: &str = "adl.characterization.shadow-report.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -165,4 +167,78 @@ pub struct NormalizedObservation {
     pub incumbent_revision: String,
     pub binary_sha256: String,
     pub commands: Vec<CommandObservation>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ShadowDisposition {
+    ExactMatch,
+    NormalizedMatch,
+    ApprovedIntentionalDifference,
+    RegressionBlocker,
+    UnsupportedBlocker,
+    EvidenceInvalid,
+}
+
+impl ShadowDisposition {
+    pub const fn is_blocking(self) -> bool {
+        matches!(
+            self,
+            Self::RegressionBlocker | Self::UnsupportedBlocker | Self::EvidenceInvalid
+        )
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ShadowManifest {
+    pub schema: String,
+    pub candidate_revision: String,
+    pub candidate_binary_sha256: String,
+    pub candidate_lock_sha256: String,
+    pub candidate_install_receipt_sha256: String,
+    pub candidate_selector_generation: String,
+    pub candidate_selector_sha256: String,
+    #[serde(default)]
+    pub decisions: std::collections::BTreeMap<String, IntentionalDifference>,
+    pub cases: Vec<ShadowCase>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ShadowCase {
+    pub id: String,
+    pub disposition: ShadowDisposition,
+    pub steps: Vec<ShadowStep>,
+    #[serde(default)]
+    pub normalization: Vec<NormalizationRule>,
+    pub decision_ref: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ShadowStep {
+    pub id: String,
+    pub args: Vec<String>,
+    pub expected_exit: i32,
+    #[serde(default)]
+    pub stdout_contains: Vec<String>,
+    #[serde(default)]
+    pub stderr_contains: Vec<String>,
+    #[serde(default)]
+    pub pre_actions: Vec<PreAction>,
+    pub capture_stdout_to: Option<String>,
+    pub capture_stdout_json_field: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct IntentionalDifference {
+    pub owner_issue: u64,
+    pub authority: String,
+    pub rationale: String,
+    pub replacement_proof: String,
+    pub risk: String,
+    pub reviewer: String,
+    pub rollback_impact: String,
 }

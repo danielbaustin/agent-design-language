@@ -1,0 +1,8 @@
+{
+  "action": "issue_create",
+  "repository": "danielbaustin/agent-design-language",
+  "title": "[v0.91.8][csdlc-v2][review] Allow bounded SPP correction during implemented review remediation",
+  "body": "## Problem\n\nExact pre-PR review can find an actionable contradiction in SPP steps, invariants, or stop conditions after the issue reaches `implemented`, but typed `csdlc-edit` rejects `replace_plan_steps` and `replace_planning_collection` in that phase. This makes truthful review remediation impossible without forbidden direct card edits.\n\n## Required fix\n\nPermit bounded typed SPP plan-step, invariant, and stop-condition correction during `implemented` while an active claim exists. Preserve digest/generation/CAS checks, renderer/schema validation, audit recording, and exact-review invalidation. Add positive implemented-phase tests and retain rejection in later publication/merge phases.\n\n## Acceptance\n\n- `csdlc-edit` can correct SPP steps, invariants, and stop conditions during `implemented`.\n- The mutation remains claim-, generation-, and digest-guarded and re-renders cards atomically.\n- Reviewed/published/merge-ready phases remain fail-closed.\n- Focused tests, format, strict Clippy, and exact review pass.\n- PR body includes `Closes #<issue>`.\n",
+  "labels": ["version:v0.91.8", "area:review", "type:bug", "track:roadmap"],
+  "operation_key": "wp16-implemented-spp-review-remediation"
+}

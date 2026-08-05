@@ -1,0 +1,50 @@
+# Structured Review Prompt
+
+Template: 1.0.0
+
+Issue: 5362
+
+Repository: danielbaustin/agent-design-language
+
+Card: srp
+
+Status: pre_phase
+
+## Scope
+
+.csdlc/issues/5362
+.csdlc/evidence/5362
+.csdlc/prepared/issues/5362
+docs/planning/ADL_FEATURE_LIST.md
+docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md
+docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md
+docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md
+docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md
+docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md
+docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md
+
+## Prompts
+
+- Are feature dispositions evidence-bound?
+- Do v0.92 inputs avoid birthday implementation claims?
+
+## Findings
+
+[]
+
+## Dispositions
+
+Every actionable finding requires a terminal disposition.
+
+## Residual Risk
+
+- This documentation reconciliation does not execute v0.92 work or claim first-birthday readiness.
+- Publication, CI, merge, and terminal lifecycle reconciliation remain separate steps.
+
+## Review Result
+
+Revision: Some("git-blake3:bee2a56c4ce4fffe6a09ed6cc1f2e48137d246de:7e7d35c3a20cf80c4c8f3bd50d152a7e28cc345d6fbea64a7dc1fed3c7c9afe1")
+
+Reviewer: Some("subagent:gpt-5.5:Locke")
+
+Result: pass

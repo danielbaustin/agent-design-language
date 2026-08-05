@@ -1,0 +1,469 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5664,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "5c4f0b80a55fc6a22577fde823f493baa9e2e6fd707b7a7966ab6a241f78a977",
+  "phase": "closed_out",
+  "generation": 12,
+  "digest": "a3287f9cb3f3e70cc8cd8f289c4e8e2b5b7eed8bf713a8969123bd3821b2d477",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "Einstein",
+    "assigned_by": "codex:closeout-runtime-tooling",
+    "revision": "git-blake3:16e6594dae2f76e41ebf432c9ea477523e685247:1f523588da7bda807b7e6789ec508118eaf7fa08edbad5af11f1fa707f197b3f",
+    "scope": [
+      "."
+    ]
+  },
+  "review": {
+    "reviewer": "Einstein",
+    "scope": [
+      "."
+    ],
+    "reviewed_revision": "git-blake3:16e6594dae2f76e41ebf432c9ea477523e685247:1f523588da7bda807b7e6789ec508118eaf7fa08edbad5af11f1fa707f197b3f",
+    "findings": [],
+    "residual_risks": [
+      "Production serve wiring remains outside this disjoint adapter-slice publication and is not claimed complete.",
+      "#5664 terminal closeout relies on #5755/#5758 as the merged remediation for the prior mTLS and /v1/control body-bound blockers."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5664,
+    "pull_request": 5680,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5680",
+    "base": "main",
+    "head": "codex/5664-runtime-v3-protocol-adapters",
+    "revision": "git-blake3:16e6594dae2f76e41ebf432c9ea477523e685247:1f523588da7bda807b7e6789ec508118eaf7fa08edbad5af11f1fa707f197b3f",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5680,
+    "head_sha": "16e6594dae2f76e41ebf432c9ea477523e685247",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865618041"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865263599"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865231955"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232328"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232497"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232134"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232416"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865214019"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865231752"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232339"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232474"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232200"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232166"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232251"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865231771"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30229364661/job/89865232309"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5680,
+    "disposition": "merged",
+    "observed_sha": "16e6594dae2f76e41ebf432c9ea477523e685247",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5664.json",
+    "released_branch": "codex/5664-runtime-v3-protocol-adapters",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5664",
+      ".csdlc/issues/5664",
+      ".csdlc/locks/5664.lock",
+      ".csdlc/prepared/issues/5664",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/operations.rs",
+      "adl-runtime-kernel/tests/protocol_adapters.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5664/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5664/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:5664",
+      "revision": "f147b4efce2025891338fe9668a0cabe923b75dd24f98b8c2af6226e1b534b17"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "03e8f521104c33ca262ff5dd148f2cf09dc6e78383ac2f8544ff800dcd709bd6",
+      "rendered_digest": "2ff4d42bf592fa7a8e3c7db9b60977fa5d559b6b2ef512b99b3f75ca37891b6d",
+      "ast_digest": "58af9abe8352b3cc20c252c930c9c6f0f5c5bc07de7ea737cfcb60d494ac35e0"
+    },
+    "stp": {
+      "values_digest": "922b28423f59b3af87b7dc83f3921c578e1c9f3137a9d70bb654e0f9414022c1",
+      "rendered_digest": "ebd4375a918f0b3b601ba52e2977b4b23e866b56a90cf0467d490e4ab1667ce5",
+      "ast_digest": "62fc797c14b2ff5b2f8a94664e1c3212ff7e60a5417bdc1de60c25462326a155"
+    },
+    "spp": {
+      "values_digest": "f0f273d56d99de08309cd7dec96976df789d6a5e128b3b09225066e2207bb9aa",
+      "rendered_digest": "d83d290dbba51d7d52252e8e5d99102b52e469d5f992acf1d38bee44fc332923",
+      "ast_digest": "a00c37e4be848f812489601f2646fc715f87524ca067072bf3aba077a464d270"
+    },
+    "vpp": {
+      "values_digest": "161736d84db26d69c7e2bf610db7562c47f78468b71d87b18d09b4dd264e0749",
+      "rendered_digest": "63471152dcd0f8f5b387ba75321598e3054fec83c19ac56c7a3d0f1049b67a96",
+      "ast_digest": "7f79aeaa65f405c6a4826cc428d82c785c11c279886ed790cb51f63897368404"
+    },
+    "srp": {
+      "values_digest": "c216750200f1c66bff97c7f00bf88d0bb2b134800244b3adad04d76c96de64e6",
+      "rendered_digest": "40a1535145d6090130450ecad333df9fdb1acb88a74deedb8f18be22ebbba231",
+      "ast_digest": "edc82b43bcbf1c6fc87ea96da5b776dc2f43a7b2fb03634fb94a32c7edbdc755"
+    },
+    "sor": {
+      "values_digest": "73596ade4ab3c762e76ecae425613c7b13dd1b4409f0796961d75fa3230485bb",
+      "rendered_digest": "49eb243c182596563c06f08cbf4c5483363ca2f2021c67a51fa00b3992fbf1e5",
+      "ast_digest": "32cadd917126d5a7845793d5e6f86bcf32adbd8914e934f14f9793ce6c283ea1"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover stale exact-review evidence after the branch tip moved past reviewed code head 8c3dbdad84c4d01764321c4c5db73962da64aaed; re-enter implemented phase for exact-head review and truthful publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:closeout-runtime-tooling",
+      "reason": "Recover stale review/publication truth after #5755 resolved the terminal security blockers; re-enter implemented phase for exact-head terminal review and truthful closeout."
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Finalize the already-recorded clean exact-head review after merged corrective #5755 resolved the two accepted #5664 security blockers."
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 12,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 13,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Reserve Runtime v3 kernel manifest and assembly integration paths required for real protocol adapters while remaining disjoint from #5657 and #5665 protected paths.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/src/assembly.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Reserve superseded Runtime v3 receipt-only protocol test surfaces so #5664 can delete obsolete in-process external-adapter proof and satisfy net LoC reduction.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover stale exact-review evidence after the branch tip moved past reviewed code head 8c3dbdad84c4d01764321c4c5db73962da64aaed; re-enter implemented phase for exact-head review and truthful publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 10,
+      "generation": 5,
+      "actor": "codex:closeout-runtime-tooling",
+      "reason": "Operator-directed terminal closeout requires transferring the still-live historical session claim before exact-head review recovery; preserve all existing issue work and use typed C-SDLC v2 only.",
+      "operation": "{\"claim_id\":\"claim-5664-runtime-v3-protocol-adapters\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:root-task-5664-terminal-closeout\",\"previous_owner\":\"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex:closeout-runtime-tooling",
+      "reason": "Reacquire issue 5664 in its canonical existing worktree for exact-head review recovery, merged-state verification, and typed terminal closeout.",
+      "operation": "{\"branch\":\"codex/5664-runtime-v3-protocol-adapters\",\"claim_id\":\"claim-5664-terminal-closeout-20260731\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:closeout-runtime-tooling\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5664\",\".csdlc/issues/5664\",\".csdlc/locks/5664.lock\",\".csdlc/prepared/issues/5664\",\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\",\"adl-runtime-kernel/tests/protocol_adapters.rs\"],\"purpose\":\"Recover exact merged-head review truth and complete typed terminal closeout for issue 5664\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 5,
+      "actor": "codex:v0918-terminal-closeout",
+      "reason": "Release the bounded terminal-closeout claim after independent exact-head review found unresolved mTLS and outbound-request-bound acceptance defects; preserve all issue work and fail closed without a receipt.",
+      "operation": "{\"claim_id\":\"claim-5664-terminal-closeout-20260731\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:close-every-eligible-v0918-issue\",\"previous_owner\":\"codex:closeout-runtime-tooling\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 5,
+      "actor": "codex:closeout-runtime-tooling",
+      "reason": "Reacquire issue 5664 in its canonical existing worktree for exact-head review recovery, merged-state verification, and typed terminal closeout.",
+      "operation": "{\"branch\":\"codex/5664-runtime-v3-protocol-adapters\",\"claim_id\":\"claim-5664-terminal-closeout-20260731\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:closeout-runtime-tooling\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5664\",\".csdlc/issues/5664\",\".csdlc/locks/5664.lock\",\".csdlc/prepared/issues/5664\",\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\",\"adl-runtime-kernel/tests/protocol_adapters.rs\"],\"purpose\":\"Recover exact merged-head review truth and complete typed terminal closeout for issue 5664\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 6,
+      "actor": "codex:closeout-runtime-tooling",
+      "reason": "Recover stale review/publication truth after #5755 resolved the terminal security blockers; re-enter implemented phase for exact-head terminal review and truthful closeout.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 6,
+      "actor": "codex:closeout-runtime-tooling",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 7,
+      "actor": "codex:closeout-runtime-tooling",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 7,
+      "actor": "codex:019fbc07-079f-7393-b14d-ce496234188f",
+      "reason": "Transfer the authenticated #5664 terminal-closeout claim after the owning session completed its clean exact-head review and explicitly handed the issue forward for typed terminal closeout.",
+      "operation": "{\"claim_id\":\"claim-5664-terminal-closeout-20260731\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-assigned:#5664-completion-import-lane-after-owner-handoff\",\"previous_owner\":\"codex:closeout-runtime-tooling\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 7,
+      "actor": "codex:019fbc07-079f-7393-b14d-ce496234188f",
+      "reason": "Accept the completed owner handoff and bind this session to the remaining authenticated #5664 terminal closeout and receipt handoff.",
+      "operation": "{\"branch\":\"codex/5664-runtime-v3-protocol-adapters\",\"claim_id\":\"claim-5664-import-closeout-20260801\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:019fbc07-079f-7393-b14d-ce496234188f\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5664\",\".csdlc/issues/5664\",\".csdlc/locks/5664.lock\",\".csdlc/prepared/issues/5664\",\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/operations.rs\",\"adl-runtime-kernel/tests/protocol_adapters.rs\"],\"purpose\":\"Complete authenticated #5664 merged-state closeout, source push and prune, then hand the retained terminal receipt to #5748.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Finalize the already-recorded clean exact-head review after merged corrective #5755 resolved the two accepted #5664 security blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 21,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 22,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 23,
+      "generation": 12,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the authenticated, pushed, and source-pruned issue 5664 terminal receipt over the older aggregate published projection after normal transport detected the shared receipt/projection mismatch.",
+      "operation": "{\"authority_issue\":5748,\"corrupt_projection_digest\":\"297dd46aeb37b2dfc5138ffdc0b217df22bdd40a8b63d205a85efa43da758291\",\"operation\":\"reconcile_corrupt_terminal_receipt\",\"source_receipt_digest\":\"cac4fb1948a622cb284ab3985feb03a710391c6ad5c703197b57acacdc06fae6\"}"
+    }
+  ]
+}

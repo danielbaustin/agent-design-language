@@ -1,0 +1,15 @@
+flowchart TD
+    A["Runtime v3 init config"] --> B{"api.tls.mode"}
+    B -->|"managed_external"| C["Validate configured PEM paths"]
+    C --> D["Load rustls server config without mutation"]
+    B -->|"local_self_signed"| E["Resolve configured state_root/tls_dir"]
+    E --> F{"valid local cert/key exists"}
+    F -->|"yes"| G["Reuse exact certificate identity"]
+    F -->|"no or explicit replace"| H["Acquire local bootstrap lock"]
+    H --> I["Generate rcgen server cert with DNS/IP SANs"]
+    I --> J["Write key and public cert to temp siblings"]
+    J --> K{"rustls accepts generated material"}
+    K -->|"yes"| L["Atomic rename into configured state root"]
+    K -->|"no"| M["Retain last valid cert and emit structured failure"]
+    L --> G
+    G --> D

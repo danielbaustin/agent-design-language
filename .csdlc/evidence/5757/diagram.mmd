@@ -1,0 +1,24 @@
+flowchart TD
+  browser["HTML Observatory browser"]
+  trusted["Trusted Runtime v3 origin gate\nhttps://localhost:20997 only"]
+  reject["Reject before bearer or WSS"]
+  fetch["Public Observatory fetch\n/v1/observatory"]
+  wss["Authenticated WSS control\n/v1/observatory/ws"]
+  generation["Monotonic live generation"]
+  retained["Retained/fallback completion"]
+  live["Live/WSS completion"]
+  render["Current UI render"]
+  tls["Shared localhost certificate proof\n8765 and 20997"]
+  rust["Focused Runtime v3 HTTPS/WSS tests"]
+
+  browser --> trusted
+  trusted --> fetch
+  trusted --> wss
+  trusted --> reject
+  fetch --> generation
+  wss --> generation
+  retained --> generation
+  live --> generation
+  generation --> render
+  tls --> rust
+  rust --> wss

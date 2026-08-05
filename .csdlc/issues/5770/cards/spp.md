@@ -1,0 +1,72 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5770
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Validate exact closure evidence and atomically retain terminal authority.
+
+## Plan
+
+Revision 1
+
+## Steps
+
+[
+  {
+    "id": "S1",
+    "action": "Retain terminal recovery evidence",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2"
+    ],
+    "status": "completed"
+  }
+]
+
+## Invariants
+
+- target projection and receipt are absent before recovery
+- No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery.
+
+## Risks
+
+- remote evidence supplied to this deterministic operation must come from the typed GitHub observation surface
+
+## Estimates
+
+{
+  "elapsed_seconds": 7200,
+  "total_tokens": 40000,
+  "validation_seconds": 1200
+}
+
+## Design
+
+.csdlc/issues/5770/retained/design.md
+
+Digest: 0f0a85d0b78f95f7af19ff53c4896be514f6c1528de4916ad4ead5707c1577bf
+
+## Diagram
+
+.csdlc/issues/5770/retained/diagram.mmd
+
+Digest: 046ad1554b3109e751e61c48d3a4e2dd027cbbd0dacb664c2a31dab371a9c322
+
+## Stop Conditions
+
+- existing target authority
+- stale recovery authority
+- inconsistent closure evidence
+
+## Handoff
+
+Proceed only after doctor readiness.

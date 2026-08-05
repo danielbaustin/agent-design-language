@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5335,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][planning] Create v0.91.8 ADL Core Rearchitecture milestone and sprint",
+    "slug": "recordless-terminal-recovery-5335",
+    "version": "version:v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Record observed closure without reconstructing unavailable lifecycle history.",
+      "deliverables": [
+        "terminal projection",
+        "retained terminal receipt"
+      ],
+      "acceptance_criteria": [
+        "issue is observed closed",
+        "terminal evidence is internally consistent"
+      ],
+      "dependencies": [
+        "issue:5383"
+      ],
+      "repo_inputs": [
+        "github-issue:5335",
+        "superseded_by:issue:5383",
+        "github-body-blake3:e88cc7f246963a657a1ab7f410bbaf60e1397f515cde1a725b8410f001967ed3"
+      ],
+      "non_goals": [
+        "No historical implementation, review, publication, readiness, or CI lifecycle is reconstructed by this terminal recovery."
+      ]
+    }
+  }
+}

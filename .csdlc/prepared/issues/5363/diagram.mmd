@@ -1,0 +1,11 @@
+flowchart TD
+    A["WP-18 #5356 internal review consumable"] --> B["WP-19 #5357 external review live merged"]
+    B --> C{"#5357 merge SHA ancestral to exact #5363 execution base?"}
+    C -- "No" --> X["Block WP-20 execution"]
+    C -- "Yes" --> D["Verify #5548 completed evidence: PR #5598 commit aac8eaa7 ancestral"]
+    D --> E["Verify #5558 completed evidence: PR #5749 c34f0c94 and PR #5769 a5df18f1 ancestral"]
+    E --> F["Inventory accepted WP-18/WP-19 findings"]
+    F --> G["Fix only accepted findings; route non-goals/blockers explicitly"]
+    G --> H["Run focused checks per fix class plus integrated release preflight"]
+    H --> I["Exact revision review before any publication"]
+    I --> J["Admit WP-21 #5362 only with blocker truth"]

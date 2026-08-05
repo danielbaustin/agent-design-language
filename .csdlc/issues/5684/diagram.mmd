@@ -1,0 +1,11 @@
+flowchart TD
+  Request["C-SDLC GitHub requests"] --> Facade["csdlc-github compatibility facade"]
+  Request --> Issue["csdlc-github-issue"]
+  Request --> PR["csdlc-github-pr"]
+  Issue --> Shared["shared GitHub marker/reconciliation logic"]
+  PR --> Shared
+  Shared --> Resilience["adl-resilience retry/backoff"]
+  Resilience --> Runtime["adl-runtime backoff callers"]
+  Manifest["operator manifest + coexistence inventory"] --> Install["csdlc-install stable binary set"]
+  Install --> Issue
+  Install --> PR

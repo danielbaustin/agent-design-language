@@ -1,0 +1,11 @@
+{
+  "issue": 5663,
+  "card": "srp",
+  "expected_generation": 32,
+  "expected_digest": "60c922eb6ab48d9405d7bd93e00004e3d469652a2ae5a68750f060b216f7df84",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Consolidated external exact-head review passed with zero findings.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"},
+  "fail_after_backup": false
+}

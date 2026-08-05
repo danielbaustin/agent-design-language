@@ -12,7 +12,7 @@ but it does not start implementation early.
 Use the broader rescue-sprint operating contract in
 `docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md` for how prep-scout
 handoffs interact with watcher ownership, session-ledger claims, and the normal
-`pr.sh run` promotion path.
+typed `csdlc-bind` promotion path.
 
 ## When To Use It
 
@@ -35,9 +35,9 @@ Do not use the lane when:
 
 The prep scout may use:
 
-- `workflow-conductor` for routing truth
-- repo-native `bash adl/tools/pr.sh issue list|view|search`
-- repo-native `bash adl/tools/pr.sh doctor <issue> --mode ready --json`
+- `csdlc-doctor` for routing truth
+- typed `csdlc-github-issue` reads
+- typed `csdlc-doctor --repo <repo> --issue <issue>`
 - root-checkout inspection commands while the root checkout remains clean on
   `main`
 - issue/task-bundle reads for the candidate issue
@@ -53,7 +53,7 @@ The prep scout may also note that a candidate would need:
 
 The prep scout must not:
 
-- run `pr run` for the candidate issue
+- run `csdlc-bind` for the candidate issue
 - bind or create an implementation worktree for the candidate issue
 - start product, tooling, docs, or test implementation for the candidate issue
 - publish or update a PR for the candidate issue
@@ -79,16 +79,16 @@ normal execution path.
 
 1. Confirm the current issue is in a wait-capable state.
 2. Confirm `git status --short --branch` is clean on root `main`.
-3. Use `workflow-conductor` to route the current issue and preserve the waiting
+3. Use `csdlc-doctor` to route the current issue and preserve the waiting
    lane truth separately from the prep lane.
 4. Inspect candidate issues with repo-native issue commands.
 5. Check for collision evidence in the shared session ledger and existing
    worktree/PR state.
-6. Run `pr.sh doctor --mode ready --json` for the candidate when a task bundle
+6. Run typed `csdlc-doctor` readiness for the candidate when a task bundle
    already exists.
 7. Emit one bounded handoff result and stop.
 8. If the candidate is promoted into execution, create the normal session
-   claim, run `bash adl/tools/pr.sh run <issue>`, create the issue-bound goal,
+   claim, run typed `csdlc-bind`, create the issue-bound goal,
    and then begin edits in the bound worktree.
 
 ## Handoff States
@@ -98,7 +98,7 @@ Use one of these terminal handoff states:
 - `ready`
   - The candidate is structurally ready for normal execution.
   - Include the exact next command, normally
-    `bash adl/tools/pr.sh run <issue>`.
+    `csdlc-bind --root <worktree> --request <bind-request.json>`.
 - `blocked`
   - The candidate is not executable yet because readiness defects or hard
     dependencies are present.
@@ -121,7 +121,7 @@ prep_scout_handoff:
     - "repo-native issue view/list result"
     - "doctor/readiness result"
     - "session-ledger or worktree collision result"
-  next_command: "bash adl/tools/pr.sh run <issue>"
+  next_command: "csdlc-bind --root <worktree> --request <bind-request.json>"
   notes:
     - "record any tooling gap explicitly"
 ```
@@ -139,7 +139,7 @@ surfaces without starting implementation for the candidate issues:
     resume truthfully
 - `#4530` -> `ready`
   - the issue is structurally ready for normal execution; the next step is the
-    standard session claim plus `bash adl/tools/pr.sh run 4530`, not early
+    standard session claim plus typed `csdlc-bind`, not early
     implementation from the prep lane
 
 These examples are intentionally workflow-level proof only. They do not claim
@@ -153,7 +153,7 @@ Execution Packet should name:
 - the candidate next-issue queue
 - whether the prep lane is read-only or blocked pending tooling support
 - the owner or watcher responsible for the prep handoff
-- the promotion rule from prep to normal `pr run`
+- the promotion rule from prep to typed `csdlc-bind`
 
 ## Non-Claims
 

@@ -66,6 +66,104 @@ if ADL_FASTWORK_ROOT="$tmp_dir/missing-fallback" bash "$WRAPPER" "$fake" >/dev/n
   exit 1
 fi
 
+guard_repo="$tmp_dir/guard-repo"
+guard_build="$tmp_dir/guard-build"
+mkdir -p "$guard_repo/adl/tools" "$guard_repo/adl" "$guard_build"
+cp "$WRAPPER" "$guard_repo/adl/tools/run_cargo_validation.sh"
+chmod +x "$guard_repo/adl/tools/run_cargo_validation.sh"
+printf 'tracked lock bytes\n' >"$guard_repo/adl/Cargo.lock"
+(
+  cd "$guard_repo"
+  git init -q
+  git config user.name "Test User"
+  git config user.email "test@example.invalid"
+  git add adl/Cargo.lock adl/tools/run_cargo_validation.sh
+  git commit -q -m init
+)
+mkdir -p "$guard_repo/fake-bin"
+cat >"$guard_repo/fake-bin/cargo" <<'EOF_CARGO'
+#!/usr/bin/env bash
+printf 'cargo ran\n' >"$FAKE_RAN"
+if [[ "${1:-}" != "fmt" ]]; then
+  printf 'command-created drift\n' >"$TEST_LOCK_PATH"
+fi
+exit "${FAKE_STATUS:-0}"
+EOF_CARGO
+chmod +x "$guard_repo/fake-bin/cargo"
+
+if (
+  cd "$guard_repo"
+  PATH="$guard_repo/fake-bin:$PATH" \
+    FAKE_RAN="$tmp_dir/missing-locked-ran" \
+    TEST_LOCK_PATH="$guard_repo/adl/Cargo.lock" \
+    ADL_CARGO_BUILD_ROOT="$guard_build" \
+    bash adl/tools/run_cargo_validation.sh cargo check
+) >/dev/null 2>&1; then
+  echo "Cargo validation accepted cargo without --locked" >&2
+  exit 1
+fi
+[[ ! -e "$tmp_dir/missing-locked-ran" ]] || {
+  echo "Cargo validation executed cargo before rejecting missing --locked" >&2
+  exit 1
+}
+
+(
+  cd "$guard_repo"
+  PATH="$guard_repo/fake-bin:$PATH" \
+    FAKE_RAN="$tmp_dir/fmt-ran" \
+    TEST_LOCK_PATH="$guard_repo/adl/Cargo.lock" \
+    ADL_CARGO_BUILD_ROOT="$guard_build" \
+    bash adl/tools/run_cargo_validation.sh cargo fmt --manifest-path adl/Cargo.toml --all -- --check
+) >/dev/null 2>&1
+grep -Fx 'cargo ran' "$tmp_dir/fmt-ran" >/dev/null
+
+cp "$guard_repo/adl/Cargo.lock" "$tmp_dir/guard-lock.before"
+guard_log="$tmp_dir/guard.log"
+set +e
+(
+  cd "$guard_repo"
+  PATH="$guard_repo/fake-bin:$PATH" \
+    FAKE_RAN="$tmp_dir/guard-ran" \
+    TEST_LOCK_PATH="$guard_repo/adl/Cargo.lock" \
+    ADL_CARGO_BUILD_ROOT="$guard_build" \
+    bash adl/tools/run_cargo_validation.sh cargo check --locked
+) >"$guard_log" 2>&1
+guard_status=$?
+set -e
+[[ "$guard_status" -ne 0 ]] || {
+  echo "Cargo validation accepted invocation-created lock drift" >&2
+  exit 1
+}
+cmp -s "$tmp_dir/guard-lock.before" "$guard_repo/adl/Cargo.lock" || {
+  echo "Cargo validation did not restore exact lock bytes" >&2
+  exit 1
+}
+grep -Fq 'Cargo validation restored invocation-created lockfile drift: adl/Cargo.lock' "$guard_log" || {
+  echo "Cargo validation did not report the exact drift path" >&2
+  cat "$guard_log" >&2
+  exit 1
+}
+
+printf 'pre-existing user lock bytes\n' >"$guard_repo/adl/Cargo.lock"
+cp "$guard_repo/adl/Cargo.lock" "$tmp_dir/guard-user-lock.before"
+set +e
+(
+  cd "$guard_repo"
+  PATH="$guard_repo/fake-bin:$PATH" \
+    FAKE_RAN="$tmp_dir/guard-user-ran" \
+    TEST_LOCK_PATH="$guard_repo/adl/Cargo.lock" \
+    FAKE_STATUS=73 \
+    ADL_CARGO_BUILD_ROOT="$guard_build" \
+    bash adl/tools/run_cargo_validation.sh cargo check --locked
+) >/dev/null 2>&1
+guard_user_status=$?
+set -e
+[[ "$guard_user_status" -ne 0 ]]
+cmp -s "$tmp_dir/guard-user-lock.before" "$guard_repo/adl/Cargo.lock" || {
+  echo "Cargo validation overwrote pre-existing user lock bytes" >&2
+  exit 1
+}
+
 escaped="$tmp_dir/escaped"
 mkdir -p "$escaped"
 symlink_root="$tmp_dir/symlink-root"

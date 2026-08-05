@@ -1,0 +1,72 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5658,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tooling] Keep all issue lifecycle writes in the bound worktree",
+    "slug": "csdlc-bound-worktree-lifecycle-writes",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "csdlc-lifecycle-focused",
+          "proof_role": "Prove bound-worktree lifecycle materialization and fail-closed primary-main behavior",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 3000,
+          "argv": [
+            "cargo",
+            "test",
+            "-p",
+            "csdlc-v2",
+            "gate7_lifecycle",
+            "--test",
+            "gate7_lifecycle"
+          ],
+          "parallel_group": "csdlc-v2",
+          "defer_reason": null
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Prove the patch is whitespace-clean",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 500,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "hygiene",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on any lifecycle-root ambiguity, root-main write attempt outside explicit bootstrap/read-only operation, stale claim, stale digest, lock mismatch, or exact-revision mismatch.",
+      "design_ref": ".csdlc/issues/5658/retained/design.md",
+      "design_digest": "189b48e4d4e95c977ca91cf04fc0d9cb51b22c9fd9273dff485ce5c40ef6481d",
+      "diagram_ref": ".csdlc/issues/5658/retained/diagram.mmd",
+      "diagram_digest": "8f635a68bed24f3a68337c6a60d9a9e535f28e0d91d389ded22b2ff91c1b8380"
+    }
+  }
+}

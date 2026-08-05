@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5779,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][closeout] Decouple safe cleanup and migrate legacy terminal receipts",
+    "slug": "standalone-cleanup",
+    "version": "v0.91.8",
+    "generation": 6
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement and prove the bounded standalone cleanup and legacy compatibility migration surface required by issue #5779.",
+      "deliverables": [
+        "csdlc-clean binary and library contract",
+        "Compatibility-only legacy receipt index",
+        "Migration parity validator",
+        "Focused cleanup and concurrency tests",
+        "Updated operator inventory and documentation"
+      ],
+      "acceptance_criteria": [
+        "AC-1: cleanup success, skip, or failure cannot change derived terminal truth",
+        "AC-2: dirty or unclassified worktrees return cleanup_skipped_dirty with exact paths and are not deleted",
+        "AC-3: clean registered worktrees are removed idempotently",
+        "AC-4: removing legacy receipts in a fixture does not change derived terminal resolution",
+        "AC-5: current v0.91.8 terminal records match the compatibility census without historical rewrites",
+        "AC-6: focused tests, strict Clippy, and exact-head review pass"
+      ],
+      "dependencies": [
+        "Issue #5778 and PR #5782 merged",
+        "Derived terminal resolver and Git-common cache",
+        "Legacy terminal receipt corpus"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5779",
+        "csdlc-v2/src/finish.rs",
+        "csdlc-v2/src/bin/csdlc-closeout.rs",
+        "csdlc-v2/src/readiness.rs",
+        "csdlc-v2/src/store.rs",
+        ".csdlc/evidence/5748/v0918-closeout-prune-results.json"
+      ],
+      "non_goals": [
+        "No terminal lifecycle redesign beyond consuming #5778",
+        "No deletion of legacy commands in this issue",
+        "No forced cleanup or external archive service"
+      ]
+    }
+  }
+}

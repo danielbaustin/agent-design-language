@@ -1,0 +1,201 @@
+{
+  "issue": 5733,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5733/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5733/diagram.mmd",
+  "design_reviewer": "codex:5733-preflight",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5733-demo-matrix-proof-coverage",
+    "owner": "codex:5733-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785536500,
+    "expires_unix_seconds": 1786141300,
+    "heartbeat_unix_seconds": 1785536500,
+    "branch": "codex/5733-demo-matrix-proof-coverage",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5733",
+      ".csdlc/locks/5733.lock",
+      ".csdlc/prepared/issues/5733",
+      ".csdlc/evidence/5733",
+      ".csdlc/publication/5733.intent.json",
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733",
+      "adl/tools/validate_v0918_demo_matrix.py"
+    ],
+    "purpose": "Reconcile v0.91.8 demo matrix and feature-proof coverage with current issue/proof truth without rerunning owned demos."
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-15][demo-matrix] Reconcile demo matrix and feature-proof coverage",
+    "slug": "v0918-demo-matrix-proof-coverage",
+    "version": "v0.91.8",
+    "goal": "Map every claimed v0.91.8 feature or launch surface to owning issue, exact proof or explicit blocker/non-claim/deferred disposition, and public claim boundary.",
+    "required_outcome": "DEMO_MATRIX_v0.91.8.md and FEATURE_PROOF_COVERAGE_v0.91.8.md agree with current issue and proof truth, backed by a focused deterministic validator.",
+    "declared_scope": [
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733",
+      "adl/tools/validate_v0918_demo_matrix.py"
+    ],
+    "authority_boundary": [
+      "This issue owns matrix and feature-proof coverage truth only.",
+      "Owning issues retain authority over runtime, demo, deployment, podcast, Unity, and v0.92 handoff execution proof.",
+      "Planning, fixtures, screenshots, retained packets, and metadata must not be promoted into runtime proof."
+    ],
+    "operator_constraints": [
+      "never touch or switch primary main",
+      "use typed C-SDLC v2 lifecycle",
+      "use FastWork for this worktree",
+      "do not rerun demos owned by other issues",
+      "do not claim release readiness or v0.92 activation readiness"
+    ],
+    "task_boundary": "Reconcile the two canonical v0.91.8 coverage docs and add focused deterministic validation.",
+    "deliverables": [
+      "updated v0.91.8 demo matrix",
+      "updated v0.91.8 feature-proof coverage index",
+      "machine-readable coverage ledger or deterministic validator",
+      "explicit live demo, retained proof, blocker, non-claim, and deferred classifications",
+      "bounded exact-head review and ready PR closing #5733"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Every matrix row names an owning issue and exact evidence or an explicit blocker/non-claim/deferred disposition.",
+      "AC-2: #5354 convergence output is consumed as input; #5733 does not rerun or replace integrated convergence.",
+      "AC-3: Demo evidence, runtime proof, documentation-only evidence, and planned work are not conflated.",
+      "AC-4: Unity, Runtime v3, ADL v2, C-SDLC v2, Observatory, distributed workcell, Podcast Studio, and v0.92 handoff rows preserve actual claim boundaries.",
+      "AC-5: Matrix and feature-proof coverage have no contradictory status or ownership entries.",
+      "AC-6: Focused validation and one bounded pre-PR review pass at the exact publication revision."
+    ],
+    "dependencies": [
+      "#5354 final reviewed convergence packet",
+      "current accepted revisions and proof packets named by the existing matrix",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      ".csdlc/evidence/5354/convergence-proof.v1.json",
+      ".csdlc/issues/5354",
+      ".csdlc/issues/5605"
+    ],
+    "non_goals": [
+      "implementing or rerunning product demos owned by other issues",
+      "converting planning, fixtures, screenshots, or metadata into runtime proof",
+      "claiming release readiness or v0.92 activation readiness",
+      "blocking this issue on typed closeout receipts"
+    ],
+    "plan_summary": "Bootstrap #5733, inspect current issue/proof truth, reconcile the two canonical matrices with explicit claim boundaries, add a focused validator, record validation and review, then publish a ready PR.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Initialize and bind issue-local C-SDLC v2 lifecycle state.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-6"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Inventory current matrix rows, feature-proof rows, #5354 convergence evidence, and issue-wave owner truth.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Update the canonical docs and add deterministic validation for owners, evidence, dispositions, and contradictions.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run focused validation, exact-head review, publish, and shepherd the PR.",
+        "acceptance_ids": [
+          "AC-6"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "every live/proven claim has an owner and evidence",
+      "explicit blockers and non-claims are preserved rather than hidden",
+      "planned work and runtime proof remain separate",
+      "the #5354 convergence packet is consumed, not rerun",
+      "public claim boundaries stay narrower than internal evidence"
+    ],
+    "risks": [
+      "existing docs may contain stale issue status or proof language",
+      "validator may need to encode only stable document structure to avoid brittle prose coupling"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "protected-path collision is reported by typed v2 binding",
+      "required #5354 evidence is absent or contradictory",
+      "focused validator fails after repair attempt",
+      "exact-head review returns actionable in-scope findings"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "v0918-demo-matrix-validator",
+        "proof_role": "Focused deterministic validation for owner, evidence, disposition, and contradiction coverage in the v0.91.8 demo matrix and feature-proof coverage docs.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1,
+        "argv": [
+          "python3",
+          "adl/tools/validate_v0918_demo_matrix.py"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      },
+      {
+        "lane": "docs-diff-hygiene",
+        "proof_role": "Git diff whitespace hygiene for the bounded documentation and validator changes.",
+        "acceptance_ids": [
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 1,
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "parallel_group": "local",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on stale issue/proof claims, missing owner, missing evidence/disposition, contradictory matrix rows, validator failure, or stale exact-head review.",
+    "review_prompts": [
+      "Check that every matrix and feature-proof row has a truthful owner and evidence or explicit disposition.",
+      "Check that #5354 evidence is consumed without rerunning or overstating integrated convergence.",
+      "Check that demo, retained proof, blocker, non-claim, and deferred categories are not conflated.",
+      "Check that the validator is deterministic and not brittle beyond the bounded matrix contract."
+    ],
+    "review_scope": "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md, docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md, docs/milestones/v0.91.8/review/wp15_demo_matrix_5733, adl/tools/validate_v0918_demo_matrix.py"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "issue": 5355,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "308bf2e34459dc2fcfd52019a7d5279e583a4682ad2b83de845fb7c52b9d9540",
+  "claim_id": "claim-5355-v0918-preparation",
+  "actor": "codex:5355-preparation-owner",
+  "reason": "Record the issue-local preparation packet without claiming implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Preparation-only packet updated for later WP-21A execution; no closeout-plan implementation, PR publication, merge, closeout, #5357 remediation, version:v0.92 issue mutation, AWS work, or main-checkout mutation was performed.",
+    "changes": [
+      ".csdlc/issues/5355 cards regenerated through typed C-SDLC v2 card-edit requests",
+      ".csdlc/prepared/issues/5355 typed request artifacts retained for preparation evidence"
+    ],
+    "artifacts": [
+      ".csdlc/prepared/issues/5355/edit-acceptance-plan.json",
+      ".csdlc/prepared/issues/5355/edit-review-prompts.json",
+      ".csdlc/prepared/issues/5355/edit-prep-sor.json",
+      ".csdlc/prepared/issues/5355/validate-prep-request.json"
+    ]
+  }
+}

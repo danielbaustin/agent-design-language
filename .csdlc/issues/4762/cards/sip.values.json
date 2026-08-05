@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4762,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21][birth-witnesses] Prepare #4762 birth witnesses and receipt package",
+    "slug": "v0918-wp21-birth-witnesses-receipt-prep-4762",
+    "version": "v0.91.8",
+    "generation": 20
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Implement the #4762 auditable birth-witness register and receipt package for v0.91.8 to v0.92 handoff consumption without claiming that the v0.92 birthday occurred.",
+      "required_outcome": "Retained witness, receipt, negative-case, validation, and handoff-consumption artifacts exist, validate deterministically, and preserve explicit non-claims for birthday occurrence, personhood, production citizenship, and v0.93 governance.",
+      "declared_scope": [
+        "Retained #4762 schema, negative-case register, execution design, and validator under .csdlc/prepared/issues/4762/.",
+        "Reviewer-facing witness register, receipt, README, and summary under docs/milestones/v0.91.8/review/v092_handoff_4762/.",
+        "v0.91.8 and v0.92 handoff docs cite the package by exact path while preserving birth_event_status: not_claimed.",
+        "Focused validation and exact-head review evidence retained under .csdlc/evidence/4762/."
+      ],
+      "authority_boundary": [
+        "Issue #4762 authorizes the birth-witnesses and receipt package only.",
+        "This work may implement auditable handoff artifacts and validation scripts but may not start the future v0.92 birthday event.",
+        "Publication may create a ready PR with Closes #4762; merge and post-merge closeout remain out of scope for this session."
+      ],
+      "initial_assumptions": [
+        "The live reacquired claim binds this worktree and branch.",
+        "The package is docs/artifact validation work, not runtime/product code."
+      ],
+      "operator_constraints": [
+        "Operate only in /Volumes/FastWork/adl-wp-4762 on codex/4762-v0918-wp14-preparation.",
+        "Do not edit primary main and do not use /private/tmp.",
+        "Use repaired v2 binaries from /Volumes/FastWork/adl-wp-5737/csdlc-v2/target/debug.",
+        "Do not claim that the v0.92 birthday occurred."
+      ]
+    }
+  }
+}

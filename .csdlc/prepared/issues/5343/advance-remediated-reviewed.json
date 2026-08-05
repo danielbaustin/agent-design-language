@@ -1,0 +1,14 @@
+{
+  "issue": 5343,
+  "card": "sor",
+  "expected_generation": 17,
+  "expected_digest": "245d1a1f20537dda886a74e544f1b3286ec51d0b716c325aa00bc143d1426ab2",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Advance the clean exact remediation review with both P1 findings fixed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

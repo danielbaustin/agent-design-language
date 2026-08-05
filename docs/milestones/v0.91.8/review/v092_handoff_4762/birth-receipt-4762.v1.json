@@ -1,0 +1,70 @@
+{
+  "schema": "adl.birth_receipt.v1",
+  "issue": 4762,
+  "receipt_status": "implemented",
+  "birth_event_status": "not_claimed",
+  "receipt_kind": "auditable_pre_birth_receipt_package",
+  "summary": "This receipt implements the #4762 witness/receipt surface for v0.91.8 to v0.92 handoff consumption. It does not assert that the first v0.92 birthday has happened.",
+  "required_evidence_surfaces": [
+    {
+      "surface": "stable_name_and_identity_root",
+      "status": "required_for_future_birth_event",
+      "source": "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+    },
+    {
+      "surface": "continuity_record_and_head",
+      "status": "required_for_future_birth_event",
+      "source": "docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md"
+    },
+    {
+      "surface": "redaction_safe_memory_grounding",
+      "status": "required_for_future_birth_event",
+      "source": "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    },
+    {
+      "surface": "capability_envelope",
+      "status": "required_for_future_birth_event",
+      "source": "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md"
+    },
+    {
+      "surface": "witness_set",
+      "status": "implemented_for_handoff_as_register",
+      "source": "docs/milestones/v0.91.8/review/v092_handoff_4762/birth-witness-register-4762.v1.json"
+    },
+    {
+      "surface": "citizen_facing_receipt",
+      "status": "implemented_for_handoff_as_this_receipt",
+      "source": "docs/milestones/v0.91.8/review/v092_handoff_4762/birth-receipt-4762.v1.json"
+    },
+    {
+      "surface": "negative_case_dispositions",
+      "status": "implemented_for_handoff",
+      "source": ".csdlc/prepared/issues/4762/birth-witness-receipt-negative-cases.v1.json"
+    }
+  ],
+  "witness_register_ref": "docs/milestones/v0.91.8/review/v092_handoff_4762/birth-witness-register-4762.v1.json",
+  "negative_case_ref": ".csdlc/prepared/issues/4762/birth-witness-receipt-negative-cases.v1.json",
+  "claim_boundaries": [
+    "This package is handoff evidence, not the birth event.",
+    "It does not claim the first true Godel-agent birthday has happened.",
+    "It does not claim legal personhood.",
+    "It does not claim production citizenship.",
+    "It does not claim completed constitutional governance.",
+    "It does not claim v0.93 governance completion.",
+    "It rejects missing identity, continuity, memory, capability, witness, or receipt evidence as blockers."
+  ],
+  "handoff_consumers": [
+    {
+      "consumer": "v0.91.8 WP-21 #5362",
+      "path": "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md"
+    },
+    {
+      "consumer": "v0.91.8 activation map",
+      "path": "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md"
+    },
+    {
+      "consumer": "v0.92 first birthday launch packet",
+      "path": "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md"
+    }
+  ]
+}

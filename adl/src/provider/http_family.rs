@@ -1132,6 +1132,9 @@ pub struct HttpProvider {
     auth: Option<HttpAuth>,
     headers: HashMap<String, String>,
     timeout_secs: Option<u64>,
+    vendor: String,
+    model: String,
+    chat_mode: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -1218,7 +1221,7 @@ impl HttpProvider {
         target: &ProviderInvocationTargetV1,
     ) -> Result<Self> {
         let cfg = &spec.config;
-        let endpoint = target
+        let mut endpoint = target
             .endpoint
             .clone()
             .or_else(|| target.base_url.clone())
@@ -1228,6 +1231,33 @@ impl HttpProvider {
                     "config.endpoint is required (set providers.<id>.config.endpoint)",
                 )
             })?;
+        if target.vendor == "google" && endpoint.ends_with("/models") {
+            endpoint = format!(
+                "{}/{}:generateContent",
+                endpoint.trim_end_matches('/'),
+                target.provider_model_id
+            );
+        }
+        // Existing user-configured HTTP endpoints retain the legacy `{prompt}`
+        // contract. Only profiles with a declared chat-completions contract
+        // opt into vendor/model-aware payloads.
+        let chat_mode = target
+            .profile
+            .as_deref()
+            .and_then(|profile| profile.split(':').next())
+            .is_some_and(|family| {
+                matches!(
+                    family,
+                    "kimi"
+                        | "minimax"
+                        | "qwen"
+                        | "xai"
+                        | "mistral"
+                        | "cohere"
+                        | "deepseek"
+                        | "gemini"
+                )
+            });
         if !is_allowed_remote_endpoint(&endpoint) {
             return Err(invalid_config(
                 "http",
@@ -1283,6 +1313,9 @@ impl HttpProvider {
             auth,
             headers,
             timeout_secs,
+            vendor: target.vendor.clone(),
+            model: target.provider_model_id.clone(),
+            chat_mode,
         })
     }
 }
@@ -1319,7 +1352,18 @@ impl Provider for HttpProvider {
             req = req.bearer_auth(token);
         }
 
-        let body = serde_json::json!({ "prompt": prompt });
+        let body = if !self.chat_mode {
+            serde_json::json!({ "prompt": prompt })
+        } else if self.vendor == "google" {
+            serde_json::json!({
+                "contents": [{"role": "user", "parts": [{"text": prompt}]}]
+            })
+        } else {
+            serde_json::json!({
+                "model": self.model,
+                "messages": [{"role": "user", "content": prompt}]
+            })
+        };
 
         let resp = match req.json(&body).send() {
             Ok(resp) => resp,
@@ -1368,9 +1412,28 @@ impl Provider for HttpProvider {
             .json()
             .context("http provider response was not valid JSON")
             .map_err(|err| runtime_error_non_retryable("http", err.to_string()))?;
-        let out = json.get("output").and_then(|v| v.as_str()).ok_or_else(|| {
-            runtime_error_non_retryable("http", "response missing 'output' field")
-        })?;
+        let out = json
+            .get("output")
+            .and_then(|v| v.as_str())
+            .or_else(|| {
+                json.pointer("/choices/0/message/content")
+                    .and_then(|v| v.as_str())
+            })
+            .or_else(|| {
+                json.pointer("/message/content/0/text")
+                    .and_then(|v| v.as_str())
+            })
+            .or_else(|| {
+                json.pointer("/candidates/0/content/parts/0/text")
+                    .and_then(|v| v.as_str())
+            })
+            .ok_or_else(|| {
+                if self.chat_mode {
+                    runtime_error_non_retryable("http", "response missing supported text output")
+                } else {
+                    runtime_error_non_retryable("http", "response missing 'output' field")
+                }
+            })?;
 
         Ok(out.to_string())
     }

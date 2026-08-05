@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5548,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][csdlc-v2][tests] Initialize Gate 2 temp roots before terminal recovery",
+    "slug": "gate2-temp-root-init",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "csdlc-v2/tests/gate2.rs",
+      "review_revision": "git-blake3:43451b2eaf433f17eb2719f9e75f1a621885d767:45862a2828b4da5afa32c4310da86d54ad05ad38aabd14a8f3412036a31d19d0",
+      "reviewer": "subagent:/root/review_5727",
+      "review_prompts": [
+        "Does the repair preserve terminal receipt/common-directory fail-closed behavior for real repositories?",
+        "Do Gate 2 fixtures now reach their intended assertions without masking production behavior?",
+        "Is the regression explicit about non-Git fixture behavior?",
+        "Did the change stay within issue #5548 and avoid #5558?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "No new source commit belongs to #5548: merged PR #5598 commit aac8eaa7d already introduced the temporary-root git initialization helper and is retained on current origin/main."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

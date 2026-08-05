@@ -1,0 +1,10 @@
+
+running 3 tests
+test open_issue_without_pr_is_not_terminal ... ok
+test terminal_cache_rejects_symlinked_git_common_parent ... ok
+test closed_no_pr_terminal_cache_is_minimal_rebuildable_and_idempotent ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running tests/gate_finish.rs (csdlc-v2/target/debug/deps/gate_finish-6a1ed09d8d6e9fc2)

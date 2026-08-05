@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5702,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5702-podcast-launch-plan",
+  "title": "[v0.91.8][podcast] Prepare next-week podcast launch plan",
+  "body": "## Summary\n- Adds the #5702 podcast studio launch plan under `.adl/docs/TBD/`, focused on next-week launch readiness.\n- Makes audio and RSS hard launch gates, plans ten prepared episodes, guest readiness, DeepSeek/human guest paths, Deepgram investigation, and agent-logic.ai/podcast site-design alignment.\n- Records Gemini 3.1 Pro Preview review evidence and explicit dispositions for launch-critical suggestions.\n\n## Validation\n- `python3 .csdlc/prepared/issues/5702/validate_podcast_launch_plan.py`\n- `git diff --check`\n- `csdlc-doctor --repo . --issue 5702`\n\n## Review\n- Bounded subagent review by `Lovelace:019faedd-8ef9-71c2-8296-2165d325bf73` passed at exact reviewed revision `git-blake3:862d5d006bd35f00ebf35bc2041e50102a07547e:5e3ecb8dd4e12316169019f9bd88cd4644ba375847e63cd8ad65493d0b3194ac`.\n- Current PR head adds only typed C-SDLC lifecycle metadata after that reviewed substantive commit.\n\nCloses #5702",
+  "draft": false,
+  "revision": "git-blake3:85a18e90804b2406f9c444e86974fc2551039905:b06de1e94bda07a80cda22451acdaafdcccdcd1a240e5d526442f26efb0ad54a",
+  "commit_sha": "85a18e90804b2406f9c444e86974fc2551039905"
+}

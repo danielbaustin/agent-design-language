@@ -102,7 +102,7 @@ These rules are mandatory for ADL issue work.
    - Before issue work, check root `git status --short --branch` and
      `git worktree list --porcelain`. If the primary checkout is on a feature
      branch or has tracked changes, stop and route the recovery through
-     `workflow-conductor` / repo-native `pr run` or `pr doctor` evidence when
+     typed v2 `csdlc-doctor` / `csdlc-bind` evidence when
      available. Use only the narrowest manual fallback needed to preserve work
      into an issue worktree and restore the primary checkout to clean `main`.
    - See `docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md` for
@@ -124,16 +124,22 @@ These rules are mandatory for ADL issue work.
 5. Always review work with a subagent before opening the PR.
    - Run a bounded review subagent over the changed work product.
    - Fix all actionable findings immediately before publication.
-6. Always perform closeout after the issue is closed.
-   - Use the normal closeout path so issue truth, cards, artifacts, and GitHub
-     state all agree.
+   - Every implementation PR body must include the correct GitHub closing
+     keyword for its tracked issue, normally `Closes #<issue>`, so GitHub closes
+     the issue immediately when the PR merges. A bare issue mention such as
+     `Related #<issue>` is not sufficient. `csdlc-finish` derives terminal
+     authority from live GitHub state and must not create a second closeout PR
+     or rewrite tracked cards after merge.
+6. Always finish and clean up truthfully.
+   - Use `csdlc-finish` for terminal authority, then run `csdlc-clean cleanup`
+     separately for the exact registered worktree.
 
 ## Repository-Specific Working Style
 
 ### C-SDLC v2 coexistence (Gate 10A)
 
 - Generation authority is `csdlc-v2/operator/generation-selector.json`. Gate 10A-C records are historical; Gate 10D2 is the current final `v1_sunset` authority.
-- Explicit v2 work routes through the nine typed contracts under `csdlc-v2/operator/skills/`; those skills delegate to Rust binaries and never mutate Markdown/state directly.
+- Explicit v2 work routes through the eleven typed contracts under `csdlc-v2/operator/skills/`; those skills delegate to Rust binaries and never mutate Markdown/state directly.
 - Resolve every current lifecycle route through `csdlc-install resolve`, which reads that selector as the sole authority. Install v2 only into the dedicated `.adl/bin/csdlc-v2/` generation directory; the final verifier also fails if forbidden v1 paths reappear.
 - Historical rollback and recovery proofs remain immutable evidence. The exact D2 approval authorizes the completed v1 command-surface sunset; retained session ownership remains a shared invariant.
 
@@ -219,8 +225,8 @@ For a normal tracked issue:
 11. run the smallest meaningful validation for the touched surface
 12. run a pre-PR subagent review and fix findings
 13. run `csdlc-review` before `csdlc-publish`; publication must fail closed without current review truth
-14. use `update_goal` for truthful terminal session state, then perform closeout
-   after merge/closure
+14. use `update_goal` for truthful terminal session state after `csdlc-finish`,
+   then run cleanup separately after merge/closure
 
 ## Validation Expectations
 

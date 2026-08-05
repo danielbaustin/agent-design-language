@@ -7,22 +7,24 @@
     "title": "Recover stale approved design in initialized records",
     "slug": "initialized-stale-design-recovery",
     "version": "v0.91.8",
-    "generation": 5
+    "generation": 12
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Exact implementation revision before publication.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "csdlc-v2/src/store.rs\ncsdlc-v2/tests/gate2.rs",
+      "review_revision": "git-blake3:41db01bd38534bd4b3c95139773ecfa9c2d6e1f9:f358475f2059745a0f633a254dce44cd4a972f6d640df95c021c40f3867fa808",
+      "reviewer": "subagent:019f669a-596c-71e2-adb3-bd753875989d",
       "review_prompts": [
         "Is recovery limited to truly stale initialized-approved inputs?",
         "Are CAS, claim, atomicity, and readiness gates preserved?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "The unrelated pre-existing non-Git Gate 2 fixture blocker remains tracked in #5548 and does not weaken the focused recovery proof."
+      ],
+      "review_result": "pass"
     }
   }
 }

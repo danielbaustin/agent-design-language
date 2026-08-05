@@ -1,0 +1,31 @@
+{
+  "issue": 5502,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "5291e444c0b85453996f0c149c10e18a1f120d0118fe98cf56d4f6170a3652f4",
+  "claim_id": "claim-5502-v0918-output-convergence-preparation",
+  "actor": "codex:019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+  "reason": "Record the bounded output convergence and deterministic replanning implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Implemented the isolated ADL v2 workcell convergence crate after live dependency ancestry was proven.",
+    "changes": [
+      "Added adl-workcell-convergence as a pure Rust workspace crate with no runtime, network, filesystem, GitHub, task, merge, or lifecycle mutation client",
+      "Implemented converge(ConvergenceInput) -> Result<ConvergenceEnvelope, ConvergenceError> with content-derived BLAKE3 decision identity",
+      "Emits deterministic Integrate, Replan, or Blocked decisions plus a read-only projection of partial successes, residual blockers, and remaining work",
+      "Validates exact conductor assignment binding, output identity, source revision, claim, branch, worktree, path scope, declared artifacts, validation refs, and review refs",
+      "Rejects malformed revisions, traversal or absolute paths, secret-bearing fields, overlapping active claims, duplicate conflicting outputs, hidden mutation authority, missing artifacts, and out-of-scope artifacts",
+      "Updated the #5502 validation lane to run the implemented offline convergence contract and line-budget proof"
+    ],
+    "artifacts": [
+      "adl-v2/Cargo.toml",
+      "adl-v2/Cargo.lock",
+      "adl-v2/crates/adl-workcell-convergence/Cargo.toml",
+      "adl-v2/crates/adl-workcell-convergence/src/hygiene.rs",
+      "adl-v2/crates/adl-workcell-convergence/src/lib.rs",
+      "adl-v2/crates/adl-workcell-convergence/src/model.rs",
+      "adl-v2/crates/adl-workcell-convergence/tests/convergence.rs",
+      ".csdlc/prepared/issues/5502/run-validation-lane.rb"
+    ]
+  }
+}

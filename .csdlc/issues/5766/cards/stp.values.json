@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5766,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime][api] Reconcile CSM runtime advertised endpoints with mounted routes",
+    "slug": "csm-runtime-endpoint-inventory",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair endpoint inventory/router truth and focused tests for #5766 only.",
+      "deliverables": [
+        "Reconciled endpoint inventory",
+        "Focused route inventory tests",
+        "Truthful readiness distinction",
+        "Updated evidence/register wording if stale"
+      ],
+      "acceptance_criteria": [
+        "AC-1: CSM_RUNTIME_API_ENDPOINTS and runtime_api_router agree exactly, with a focused route inventory test.",
+        "AC-2: /v1/ready CSM semantics are truthful if mounted; otherwise it is not advertised as available.",
+        "AC-3: Existing Runtime v3 kernel /v1/ready work remains distinct from this CSM runtime API surface.",
+        "AC-4: Focused runtime API tests pass.",
+        "AC-5: No AWS work."
+      ],
+      "dependencies": [
+        "current Runtime v3 observatory/runtime API source",
+        "#5764 overnight probe evidence"
+      ],
+      "repo_inputs": [
+        "adl-runtime/src/runtime_api.rs",
+        "adl/src/csm_runtime_api.rs",
+        "adl/src/csm_api_gateway_bridge.rs",
+        "docs/reviews/v0.91.8/internal-review-5356/FINDINGS_REGISTER.md"
+      ],
+      "non_goals": [
+        "Implement all planned CSM feature endpoints",
+        "Change Runtime v3 kernel readiness semantics",
+        "AWS usage",
+        "Observatory Shepherd model integration"
+      ]
+    }
+  }
+}

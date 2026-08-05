@@ -1,0 +1,13 @@
+flowchart LR
+  D["Changed paths"] --> P["Existing path classifier"]
+  P -->|".csdlc metadata"| T["Focused tooling contracts"]
+  P -->|"csdlc-v2 Rust"| C["Standalone C-SDLC v2 job"]
+  P -->|"ADL or Runtime"| A["Existing ADL proof lanes"]
+  P -->|"mixed"| M["Standalone plus existing lanes"]
+  T --> G["Stable adl-ci aggregate"]
+  C --> G
+  A --> G
+  M --> G
+  P --> V["Truthful stable adl-coverage aggregate"]
+  W["Declared writable root or FastWork"] --> R["Portable Cargo validation wrapper"]
+  R --> C

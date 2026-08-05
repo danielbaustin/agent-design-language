@@ -1,0 +1,18 @@
+{
+  "schema": "adl.v0918.internal_review_specialist_matrix.v1",
+  "issue": 5356,
+  "exact_identity_required": true,
+  "lanes": [
+    {"id":"code","required":true,"focus":["correctness","security-sensitive behavior","module growth","COTS reuse","runtime and compiler integration"]},
+    {"id":"security","required":true,"focus":["authority","trust boundaries","credentials","network exposure","replay","redaction"]},
+    {"id":"tests","required":true,"focus":["acceptance coverage","negative proof","determinism","CI and PVF truth","false positives"]},
+    {"id":"docs","required":true,"focus":["canonical consistency","feature status","links","deployment claims","release and handoff truth"]},
+    {"id":"architecture","required":true,"focus":["owner boundaries","coupling","component contracts","COTS","cutover and rollback fitness"]},
+    {"id":"evidence","required":true,"focus":["revision identity","corpus integrity","issue and PR state","typed closeout","provenance and publication safety"]}
+  ],
+  "required_result_fields": ["lane","revision","corpus_sha256","reviewed_paths","commands","findings","residual_risks","disposition"],
+  "allowed_dispositions": ["pass","findings_returned","blocked"],
+  "finding_severities": ["P0","P1","P2","P3"],
+  "finding_dispositions": ["open","accepted","fixed","rejected_with_reason","duplicate","routed","not_applicable"],
+  "publication_blockers": ["identity_mismatch","incomplete_corpus","missing_lane","P0","P1","undispositioned_P2_or_P3","redaction_failure","provenance_failure"]
+}

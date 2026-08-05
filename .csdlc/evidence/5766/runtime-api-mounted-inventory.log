@@ -1,0 +1,301 @@
+
+running 1 test
+test runtime_api::tests::runtime_api_contract_advertises_only_served_routes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 134 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+   Compiling libc v0.2.186
+   Compiling cfg-if v1.0.4
+   Compiling memchr v2.8.3
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v2.0.1
+   Compiling serde_core v1.0.228
+   Compiling typenum v1.20.1
+   Compiling itoa v1.0.18
+   Compiling bytes v1.12.1
+   Compiling pin-project-lite v0.2.17
+   Compiling once_cell v1.21.4
+   Compiling stable_deref_trait v1.2.1
+   Compiling zeroize v1.9.0
+   Compiling equivalent v1.0.2
+   Compiling futures-core v0.3.32
+   Compiling log v0.4.33
+   Compiling pkg-config v0.3.33
+   Compiling dunce v1.0.5
+   Compiling fs_extra v1.3.0
+   Compiling futures-sink v0.3.32
+   Compiling autocfg v1.5.1
+   Compiling version_check v0.9.5
+   Compiling subtle v2.6.1
+   Compiling hashbrown v0.17.1
+   Compiling futures-channel v0.3.32
+   Compiling slab v0.4.12
+   Compiling futures-task v0.3.32
+   Compiling futures-io v0.3.33
+   Compiling http v1.4.2
+   Compiling rustls-pki-types v1.15.1
+   Compiling tracing-core v0.1.36
+   Compiling zerocopy v0.8.54
+   Compiling generic-array v0.14.7
+   Compiling aws-lc-rs v1.17.3
+   Compiling untrusted v0.9.0
+   Compiling writeable v0.6.3
+   Compiling thiserror v2.0.19
+   Compiling litemap v0.8.2
+   Compiling hybrid-array v0.4.13
+   Compiling utf8_iter v1.0.4
+   Compiling zmij v1.0.21
+   Compiling getrandom v0.3.4
+   Compiling icu_properties_data v2.2.0
+   Compiling icu_normalizer_data v2.2.0
+   Compiling jobserver v0.1.35
+   Compiling errno v0.3.14
+   Compiling mio v1.2.1
+   Compiling socket2 v0.6.5
+   Compiling syn v2.0.118
+   Compiling cc v1.4.0
+   Compiling signal-hook-registry v1.4.8
+   Compiling syn v3.0.3
+   Compiling serde v1.0.228
+   Compiling httparse v1.10.1
+   Compiling num-conv v0.2.2
+   Compiling crypto-common v0.2.2
+   Compiling block-buffer v0.12.1
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling time-core v0.1.9
+   Compiling serde_json v1.0.150
+   Compiling rustls v0.23.42
+   Compiling const-oid v0.10.2
+   Compiling digest v0.10.7
+   Compiling time-macros v0.2.32
+   Compiling http-body v1.1.0
+   Compiling num-traits v0.2.19
+   Compiling deranged v0.5.8
+   Compiling cmake v0.1.58
+   Compiling powerfmt v0.2.0
+   Compiling crc32fast v1.5.0
+   Compiling smallvec v1.15.2
+   Compiling rand_core v0.9.5
+   Compiling cpufeatures v0.3.0
+   Compiling cpufeatures v0.2.17
+   Compiling mime v0.3.17
+   Compiling unicase v2.9.0
+   Compiling tower-service v0.3.3
+   Compiling fnv v1.0.7
+   Compiling atomic-waker v1.1.2
+   Compiling aho-corasick v1.1.4
+   Compiling mime_guess v2.0.5
+   Compiling digest v0.11.3
+   Compiling httpdate v1.0.3
+   Compiling minimal-lexical v0.2.1
+   Compiling sha2 v0.11.0
+   Compiling same-file v1.0.6
+   Compiling data-encoding v2.11.0
+   Compiling bitflags v2.13.0
+   Compiling aws-lc-sys v0.43.0
+   Compiling indexmap v2.14.0
+   Compiling zlib-rs v0.6.6
+   Compiling semver v1.0.28
+   Compiling bumpalo v3.20.3
+   Compiling percent-encoding v2.3.2
+   Compiling regex-syntax v0.8.11
+   Compiling time v0.3.54
+   Compiling simd-adler32 v0.3.10
+   Compiling zopfli v0.8.3
+   Compiling rustc_version v0.4.1
+   Compiling form_urlencoded v1.2.2
+   Compiling walkdir v2.5.0
+   Compiling nom v7.1.3
+   Compiling sha1 v0.10.7
+   Compiling getrandom v0.2.17
+   Compiling webpki-roots v1.0.9
+   Compiling getrandom v0.4.3
+   Compiling anyhow v1.0.103
+   Compiling base64 v0.22.1
+   Compiling sync_wrapper v1.0.2
+   Compiling rustversion v1.0.23
+   Compiling tower-layer v0.3.3
+   Compiling webpki-roots v0.26.11
+   Compiling curve25519-dalek v5.0.0
+   Compiling rust-embed-utils v8.12.0
+   Compiling http-body-util v0.1.4
+   Compiling fs-err v3.3.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling synstructure v0.13.2
+   Compiling either v1.16.0
+   Compiling utoipa-swagger-ui-vendored v0.1.2
+   Compiling lazy_static v1.5.0
+   Compiling ryu v1.0.23
+   Compiling itertools v0.14.0
+   Compiling rand_chacha v0.9.0
+   Compiling serde_derive_internals v0.29.1
+   Compiling regex-automata v0.4.16
+   Compiling rand v0.9.5
+   Compiling thiserror-impl v2.0.19
+   Compiling rusticata-macros v4.1.0
+   Compiling objc2-core-foundation v0.3.2
+   Compiling num-integer v0.1.46
+   Compiling serde_path_to_error v0.1.20
+   Compiling blake3 v1.8.5
+   Compiling ring v0.17.14
+   Compiling schemars v0.8.22
+   Compiling foldhash v0.2.0
+   Compiling signature v3.0.0
+   Compiling allocator-api2 v0.2.21
+   Compiling thiserror v1.0.69
+   Compiling winnow v1.0.4
+   Compiling redb v4.1.0
+   Compiling matchit v0.8.4
+   Compiling oid-registry v0.8.1
+   Compiling hashbrown v0.16.1
+   Compiling toml_parser v1.1.2+spec-1.1.0
+   Compiling objc2-io-kit v0.3.2
+   Compiling ed25519 v3.0.0
+   Compiling num-bigint v0.4.8
+   Compiling arc-swap v1.9.2
+   Compiling sharded-slab v0.1.7
+   Compiling rand_core v0.6.4
+   Compiling displaydoc v0.2.6
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling zerovec-derive v0.11.3
+   Compiling futures-macro v0.3.32
+   Compiling tokio-macros v2.7.0
+   Compiling tracing-attributes v0.1.31
+   Compiling serde_derive v1.0.228
+   Compiling regex v1.13.1
+   Compiling futures-util v0.3.32
+   Compiling tokio v1.52.3
+   Compiling asn1-rs-derive v0.6.0
+   Compiling asn1-rs-impl v0.2.0
+   Compiling rust-embed-impl v8.12.0
+   Compiling zerofrom v0.1.8
+   Compiling utoipa-gen v5.5.0
+   Compiling flate2 v1.1.9
+   Compiling yoke v0.8.3
+   Compiling zerovec v0.11.6
+   Compiling zerotrie v0.2.4
+   Compiling zip v3.0.0
+   Compiling schemars_derive v0.8.22
+   Compiling tracing v0.1.44
+   Compiling prost-derive v0.13.5
+   Compiling thiserror-impl v1.0.69
+   Compiling asn1-rs v0.7.2
+   Compiling rust-embed v8.12.0
+   Compiling tinystr v0.8.3
+   Compiling potential_utf v0.1.5
+   Compiling axum-core v0.5.6
+   Compiling icu_collections v2.2.0
+   Compiling icu_locale_core v2.2.0
+   Compiling serde_spanned v1.1.1
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling tracing-log v0.2.0
+   Compiling icu_provider v2.2.0
+   Compiling thread_local v1.1.10
+   Compiling arrayref v0.3.9
+   Compiling futures-executor v0.3.32
+   Compiling winnow v0.7.15
+   Compiling icu_properties v2.2.0
+   Compiling icu_normalizer v2.2.0
+   Compiling fixedbitset v0.5.7
+   Compiling nu-ansi-term v0.50.3
+   Compiling arrayvec v0.7.8
+   Compiling constant_time_eq v0.4.2
+   Compiling dyn-clone v1.0.20
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling ryu-js v0.2.2
+   Compiling tracing-subscriber v0.3.23
+   Compiling petgraph v0.7.1
+   Compiling prost v0.13.5
+   Compiling futures v0.3.32
+   Compiling der-parser v10.0.0
+   Compiling ed25519-dalek v3.0.0
+   Compiling rand_chacha v0.3.1
+   Compiling lru v0.16.4
+   Compiling idna_adapter v1.2.2
+   Compiling sysinfo v0.38.4
+   Compiling idna v1.1.0
+   Compiling serde_urlencoded v0.7.1
+   Compiling serde_jcs v0.2.0
+   Compiling toml v0.9.12+spec-1.1.0
+   Compiling uuid v1.24.0
+   Compiling yasna v0.6.0
+   Compiling url v2.5.8
+   Compiling async-trait v0.1.91
+   Compiling tokio-util v0.7.18
+   Compiling utoipa-swagger-ui v9.0.2
+   Compiling tower v0.5.3
+   Compiling pem v3.0.6
+   Compiling h2 v0.4.15
+   Compiling sha2 v0.10.9
+   Compiling hex v0.4.3
+   Compiling rsntp v4.1.2
+   Compiling adl-resilience v0.1.0 (/Volumes/FastWork/adl-wp-5766/adl-resilience)
+   Compiling rand v0.8.7
+   Compiling x509-parser v0.18.1
+   Compiling hmac v0.12.1
+   Compiling fs2 v0.4.3
+   Compiling secrecy v0.8.0
+   Compiling rustix v1.1.4
+   Compiling fastrand v2.4.1
+   Compiling utoipa v5.5.0
+   Compiling rcgen v0.14.8
+   Compiling tempfile v3.27.0
+   Compiling hyper v1.11.0
+   Compiling hyper-util v0.1.20
+   Compiling rustls-webpki v0.103.13
+   Compiling tokio-rustls v0.26.4
+   Compiling tungstenite v0.29.0
+   Compiling axum-server v0.8.0
+   Compiling tokio-tungstenite v0.29.0
+   Compiling axum v0.8.9
+   Compiling adl-runtime-kernel v0.92.0 (/Volumes/FastWork/adl-wp-5766/adl-runtime-kernel)
+   Compiling adl-runtime v0.91.7 (/Volumes/FastWork/adl-wp-5766/adl-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.97s
+     Running unittests src/lib.rs (adl-runtime/target/debug/deps/adl_runtime-e27734699a527871)
+     Running unittests src/bin/adl-runtime-guardian.rs (adl-runtime/target/debug/deps/adl_runtime_guardian-3588c59926bd4fe6)
+     Running unittests src/bin/adl-runtime-lifecycle-soak.rs (adl-runtime/target/debug/deps/adl_runtime_lifecycle_soak-7ec097405e5d64da)
+     Running unittests src/bin/adl-runtime-local-tls-bootstrap.rs (adl-runtime/target/debug/deps/adl_runtime_local_tls_bootstrap-d0dcefc3824be7be)
+     Running tests/guardian_cli.rs (adl-runtime/target/debug/deps/guardian_cli-0f671fd7e56da165)
+     Running tests/independence.rs (adl-runtime/target/debug/deps/independence-a828b8096b4c6d82)
+     Running tests/local_tls.rs (adl-runtime/target/debug/deps/local_tls-f7ed2ef4c468e663)
+     Running tests/runtime_api_wss.rs (adl-runtime/target/debug/deps/runtime_api_wss-06b27b392bc690ac)

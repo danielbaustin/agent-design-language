@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 4758,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/4758-v0918-preparation",
+  "title": "Implement #4758 WP-21 launch readiness package",
+  "body": "Closes #4758\n\nImplements the #4758 WP-21 launch-readiness evidence package under `.csdlc/evidence/4758/launch-readiness/`.\n\nThis PR records #5384 platform acceptance as passing evidence and preserves open #5363, #5362, #5352, and #4763 as blockers/non-claims. It does not write public launch copy, start v0.92 implementation, or claim v0.92 launch readiness.\n\nValidation:\n- `csdlc-validate --root /Volumes/FastWork/adl-wp-4758 finalize --request /Users/daniel/git/agent-design-language/.git/csdlc-v2/requests/4758.json`\n- `ruby -rjson -e ... .csdlc/evidence/4758/launch-readiness/*.v1.json .csdlc/prepared/issues/4758/dependency-snapshot.v1.json`\n- `git diff --check`\n- `git diff --check origin/main...HEAD`\n- `csdlc-doctor --repo /Volumes/FastWork/adl-wp-4758 --issue 4758`\n\nReview:\n- Fixed P2 review finding R1 before typed review: stale pre-finalize `review_revision` in `consumption.v1.json`.\n- Typed review passed at `git-blake3:91dc19bbd5c2095ac4940ed9b7d7097e92fa04bd:33aa546fea52ef65c283c1f445903fb4dcd8a92f09cdf2d1840322360c16f409`.\n- Publication guard accepted metadata-only review state at `git-blake3:260df81974883f0fb71b25cd0b85b045b335c1e9:fbdb68e2e0fe89bf4a4f6d9948dfd74e5b29f22d921131ec6b0b077ce2b01a35`.\n",
+  "draft": false,
+  "revision": "git-blake3:260df81974883f0fb71b25cd0b85b045b335c1e9:fbdb68e2e0fe89bf4a4f6d9948dfd74e5b29f22d921131ec6b0b077ce2b01a35",
+  "commit_sha": "260df81974883f0fb71b25cd0b85b045b335c1e9"
+}

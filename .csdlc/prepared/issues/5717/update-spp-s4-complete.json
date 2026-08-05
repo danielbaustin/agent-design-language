@@ -1,0 +1,14 @@
+{
+  "actor": "codex:5717-execution",
+  "card": "spp",
+  "claim_id": "claim-5717-podcast-studio-copy",
+  "expected_digest": "842099cccc4f00c868653b49e5ebbe22685ad7f9a6fff902eb113ec5a0a99f2f",
+  "expected_generation": 11,
+  "issue": 5717,
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S4",
+    "status": "completed"
+  },
+  "reason": "Mark focused studio/audio/RSS validation complete after structural, HTTP, browser, and diff hygiene checks passed."
+}

@@ -1,0 +1,14 @@
+{
+  "issue": 4759,
+  "card": "spp",
+  "expected_generation": 10,
+  "expected_digest": "2b57478289a61abac7624554323776d819ce840cce09316b7a3f3dd5d7a37872",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Mark typed lifecycle execution and validation recording complete after csdlc-validate finalize passed.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S3",
+    "status": "completed"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5361,
+  "expected_generation": 15,
+  "expected_digest": "a35df2d252a84f4596048ce5f291cdd0a88297ba3c7da2b23823835b32f62667",
+  "claim_id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
+  "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5361-v0918-runtime-v3-acceptance-readiness",
+  "title": "[v0.91.8][WP-12] Prove Runtime v3 acceptance gate",
+  "body": "Closes #5361\n\n## Summary\n- refreshes the existing bound #5361 worktree from current origin/main and records live merged/ancestral dependency proof for #5591, #5592, #5589, #5590, #5501, and #5350, with retained receipts kept as audit evidence\n- records Runtime v3 acceptance evidence for stable v2 install, HTTPS/Observatory operation, rollback, continuity, weather, 10000-agent bounded projection, consumer readiness, exact parity, and Runtime v2 independence\n- fixes the only acceptance defect found locally: two test-only CAV initializers that failed strict Runtime v3 Clippy\n\n## Validation\n- `.adl/bin/csdlc-v2/csdlc-install verify --repo . --bin-dir .adl/bin/csdlc-v2 --inventory csdlc-v2/operator/coexistence.json`\n- `ADL_RUNTIME_V3_PROOF_ROOT=/Volumes/FastWork/adl-5361 CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-target bash adl/tools/run_runtime_v3_operational_proof.sh`\n- `CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/kernel-test-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml`\n- `CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-test-target cargo test --locked --manifest-path adl-runtime/Cargo.toml`\n- `CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/kernel-clippy-target cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets --all-features -- -D warnings`\n- `CARGO_TARGET_DIR=/Volumes/FastWork/adl-5361/runtime-clippy-target cargo clippy --locked --manifest-path adl-runtime/Cargo.toml --all-targets --all-features -- -D warnings`\n- `cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --all -- --check`\n- `cargo fmt --manifest-path adl-runtime/Cargo.toml --all -- --check`\n- `cargo tree --locked --manifest-path adl-runtime-kernel/Cargo.toml`\n- `cargo tree --locked --manifest-path adl-runtime/Cargo.toml`\n- `bash adl/tools/report_runtime_v3_loc.sh`\n- `.adl/bin/csdlc-v2/csdlc-validate --root . --request .csdlc/prepared/issues/5361/validate-acceptance.json`\n- `.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 5361`\n- exact-head GPT-5.5 review: PASS, no findings\n\n## Non-Claims\n- The operator-provided background guardian at https://localhost:20997 was stale/unavailable during acceptance; bounded FastWork Runtime v3 operational proof supplied the live guardian proof.\n- GitHub PR CI is not claimed by the pre-publication register and must pass before merge.\n- No AWS, GPU, or remote-provider deployment proof is claimed.",
+  "draft": true,
+  "token_file": null
+}

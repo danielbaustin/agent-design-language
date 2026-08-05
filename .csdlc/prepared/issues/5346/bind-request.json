@@ -1,0 +1,25 @@
+{
+  "issue": 5346,
+  "base_branch": "main",
+  "branch": "codex/5346-v0918-wp13-final-adl-deletion",
+  "worktree": ".worktrees/adl-wp-5346",
+  "claim": {
+    "id": "claim-5346-v0918-wp13-deletion-preparation",
+    "owner": "codex:5346-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784661641,
+    "expires_unix_seconds": 1785266441,
+    "heartbeat_unix_seconds": 1784661641,
+    "branch": "codex/5346-v0918-wp13-final-adl-deletion",
+    "worktree": ".worktrees/adl-wp-5346",
+    "protected_paths": [
+      ".csdlc/issues/5346",
+      ".csdlc/locks/5346.lock",
+      ".csdlc/prepared/issues/5346",
+      ".csdlc/evidence/5346",
+      "docs/milestones/v0.91.8/evidence/wp13/5346-deletion-eligibility.v1.json",
+      "docs/milestones/v0.91.8/evidence/wp13/5346-post-deletion-validation.v1.json"
+    ],
+    "purpose": "Prepare and review #5346 only; no source path may be claimed or deleted until #5344/#5343/#5358/#5361 are merged, typed closed_out, receipt-backed, claim-free, ancestral, and the #5346/#5347 manifests prove disjoint ownership"
+  }
+}

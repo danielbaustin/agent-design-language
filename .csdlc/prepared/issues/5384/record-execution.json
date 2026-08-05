@@ -1,0 +1,25 @@
+{
+  "issue": 5384,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "5059679aeafb6914575e06b4f277a5fb4d323b1499ea474efd4d3aedf3006d27",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the bounded WP-14A platform acceptance implementation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Added a compact exact-revision platform acceptance ledger, repo-native executable dependency gate, retained operations and rollback evidence index, and explicit accepted-feature and non-claim boundaries.",
+    "changes": [
+      "Pinned the four accepted issue, PR head, and squash-merge identities.",
+      "Replaced raw GitHub CLI dependency checks with repo-native ADL issue and PR validation binaries.",
+      "Required every accepted merge to be ancestral to the accepted current-main baseline.",
+      "Indexed retained C-SDLC v2, Runtime v3, ADL v2 soak, rollback, and cutover proof without rerunning expensive predecessor suites."
+    ],
+    "artifacts": [
+      ".csdlc/prepared/issues/5384/dependency-gate.json",
+      ".csdlc/prepared/issues/5384/validate_dependency_gate.rb",
+      ".csdlc/evidence/5384/platform-acceptance-ledger.v1.json",
+      "docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md"
+    ]
+  }
+}

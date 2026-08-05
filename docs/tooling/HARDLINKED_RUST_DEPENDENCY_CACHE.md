@@ -84,7 +84,7 @@ helper through:
 
 - root `AGENTS.md`, under the normal issue execution and validation flow
 - `adl/tools/skills/pr-run/SKILL.md`, before bounded validation
-- `adl/tools/skills/workflow-conductor/SKILL.md`, when routing to `pr-run`
+- typed v2 doctor/bind guidance, when routing to execution
 - `adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`, under build acceleration
 - `adl/config/validation_lane_selector.v0.91.6.json`, which assigns the helper
   and its contract test to `rust_dependency_cache_warmup_contracts`

@@ -2,6 +2,33 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
+## v0.91.8 (Active bridge/release-tail milestone)
+
+Status: Active. The `v0.91.8` package lives under
+`docs/milestones/v0.91.8/` and is the exact-revision bridge before `v0.92`.
+
+Current state:
+- WP-16 merged at `2e9d2dd7c` and records the integrated quality gate as
+  passing.
+- The WP-16 issue outcome audit covers 67 issues: 34 working-code outcomes,
+  21 useful durable results, 12 partial or ambiguous records, and 0
+  unacceptable outcomes.
+- ADL v2, Runtime v3, and C-SDLC v2 focused/integrated validation lanes passed
+  at the WP-16 execution revision.
+- WP-17 documentation truth alignment and both WP-18 internal reviews are
+  closed. The final second pass merged through PR `#5799`; WP-19 external
+  review is ready to freeze but has not been
+  dispatched; later remediation/preflight, v0.92 handoff alignment, and
+  ceremony gates remain open.
+- This is an active milestone entry, not a release entry.
+
+Scope notes:
+- `v0.91.8` accepts the ADL v2, Runtime v3, and C-SDLC v2 platform revisions
+  that `v0.92` must consume.
+- `v0.91.8` does not claim birthday activation, final release approval, or
+  broad unproven runtime/provider/security behavior from the WP-16 packet
+  alone.
+
 ## v0.91.6 (Active bridge/readiness tranche)
 
 Status: Active. The `v0.91.6` package lives under `docs/milestones/v0.91.6/`

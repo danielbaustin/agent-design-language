@@ -1,0 +1,13 @@
+{
+  "issue": 5499,
+  "card": "srp",
+  "expected_generation": 15,
+  "expected_digest": "98d7183c5987b7ee539410f72543828002dbb25924df2dbe635f51b096fda09e",
+  "claim_id": "claim-5499-v0918-wp10a-conductor-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The single pre-PR review is clean after both actionable findings were fixed and revalidated.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

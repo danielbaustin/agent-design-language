@@ -1,0 +1,7 @@
+flowchart LR
+  A["Typed request"] --> B["Rust csdlc-github"]
+  B --> C["Token resolver + Octocrab"]
+  C --> D["GitHub issue or PR"]
+  D --> E["Exact readback"]
+  E --> F["Typed result"]
+  E -->|"mismatch or ambiguous"| X["Fail closed"]

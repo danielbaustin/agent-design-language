@@ -1,0 +1,5 @@
+{
+  "status": "pass",
+  "lane": "baseline-comparison",
+  "baseline": "comparison_only_not_executed_as_substitute"
+}

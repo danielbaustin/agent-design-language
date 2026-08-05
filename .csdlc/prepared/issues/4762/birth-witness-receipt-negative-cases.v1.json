@@ -1,0 +1,128 @@
+{
+  "schema": "adl.birth_witness_negative_cases.v1",
+  "issue": 4762,
+  "birth_event_status": "not_claimed",
+  "failure_policy": "fail_closed",
+  "cases": [
+    {
+      "id": "process_startup",
+      "event": "Process startup",
+      "disposition": "rejected",
+      "missing_evidence": ["identity_root", "continuity_head", "witness_set", "receipt"]
+    },
+    {
+      "id": "ordinary_task_execution",
+      "event": "Ordinary task execution",
+      "disposition": "rejected",
+      "missing_evidence": ["birth_boundary_decision", "reviewer_packet"]
+    },
+    {
+      "id": "snapshot_creation",
+      "event": "Snapshot creation",
+      "disposition": "rejected",
+      "missing_evidence": ["successor_continuity", "witness_attestation"]
+    },
+    {
+      "id": "wake_or_resume",
+      "event": "Wake or resume",
+      "disposition": "rejected",
+      "missing_evidence": ["birth_boundary_decision", "new_identity_origin"]
+    },
+    {
+      "id": "checkpoint_restore",
+      "event": "Restore from checkpoint",
+      "disposition": "rejected",
+      "missing_evidence": ["continuity_grade", "ambiguity_disposition"]
+    },
+    {
+      "id": "test_environment_admission",
+      "event": "Admission to a test environment",
+      "disposition": "rejected",
+      "missing_evidence": ["identity_root", "capability_envelope", "receipt"]
+    },
+    {
+      "id": "copied_state",
+      "event": "Copied state",
+      "disposition": "rejected",
+      "missing_evidence": ["lineage_authority", "continuity_head", "quarantine_or_ambiguity_disposition"]
+    },
+    {
+      "id": "named_test_fixture",
+      "event": "Named test fixture without continuity evidence",
+      "disposition": "rejected",
+      "missing_evidence": ["continuity_evidence", "memory_grounding", "witness_attestation"]
+    },
+    {
+      "id": "dormant_rehydration",
+      "event": "Dormant rehydration",
+      "disposition": "rejected",
+      "missing_evidence": ["birth_boundary_decision", "continuity_review"]
+    },
+    {
+      "id": "simulation_run",
+      "event": "Simulation run",
+      "disposition": "rejected",
+      "missing_evidence": ["real_evidence_authority", "reviewable_receipt"]
+    },
+    {
+      "id": "in_transit_migration",
+      "event": "In-transit migration",
+      "disposition": "rejected",
+      "missing_evidence": ["settled_identity_root", "continuity_head", "migration_disposition"]
+    },
+    {
+      "id": "forced_suspension",
+      "event": "Forced suspension",
+      "disposition": "rejected",
+      "missing_evidence": ["birth_boundary_decision", "capability_envelope"]
+    },
+    {
+      "id": "shutdown_and_restart",
+      "event": "Shutdown and restart",
+      "disposition": "rejected",
+      "missing_evidence": ["new_birth_record", "witness_set", "receipt"]
+    },
+    {
+      "id": "provisional_citizen_record",
+      "event": "Provisional citizen record",
+      "disposition": "rejected",
+      "missing_evidence": ["birthday_contract_satisfaction", "reviewer_packet"]
+    },
+    {
+      "id": "missing_identity_root",
+      "event": "Packet missing identity root",
+      "disposition": "rejected",
+      "missing_evidence": ["identity_root"]
+    },
+    {
+      "id": "missing_continuity_head",
+      "event": "Packet missing continuity head",
+      "disposition": "rejected",
+      "missing_evidence": ["continuity_head"]
+    },
+    {
+      "id": "missing_memory_grounding",
+      "event": "Packet missing memory grounding",
+      "disposition": "rejected",
+      "missing_evidence": ["redaction_safe_memory_references"]
+    },
+    {
+      "id": "missing_capability_envelope",
+      "event": "Packet missing capability envelope",
+      "disposition": "rejected",
+      "missing_evidence": ["provider_model_tool_skill_authority_limits"]
+    },
+    {
+      "id": "missing_witness_set_or_receipt",
+      "event": "Packet missing witness set or receipt",
+      "disposition": "rejected",
+      "missing_evidence": ["witness_set", "citizen_facing_receipt"]
+    },
+    {
+      "id": "unsupported_acp_or_reputation_label",
+      "event": "Unsupported ACP, personality, or reputation label",
+      "disposition": "rejected",
+      "missing_evidence": ["evidence_grounded_profile_record", "public_claim_boundary"]
+    }
+  ]
+}

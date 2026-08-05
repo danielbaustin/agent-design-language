@@ -1,0 +1,14 @@
+{
+  "issue": 5702,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "590293a1bd8bccb10c3411b828a1d33d88ae920a2a84fa5c829f7563ce5986e6",
+  "claim_id": "claim-5702-podcast-launch-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "record completed launch plan drafting step",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  }
+}

@@ -298,7 +298,6 @@ assert_not_has "$csdlc_binary_taxonomy_output" "pr_cmd"
 
 scheduler_cli_wave="$TMP/scheduler_cli_wave.txt"
 cat >"$scheduler_cli_wave" <<'EOF'
-M	adl/src/bin/run_v0916_integrated_runtime_soak.rs
 M	adl/src/cli/mod.rs
 M	adl/src/cli/scheduler_cmd.rs
 M	adl/src/cli/tests.rs
@@ -308,8 +307,8 @@ EOF
 scheduler_cli_wave_output="$(bash "$SCRIPT" --changed-files "$scheduler_cli_wave" --print-plan)"
 assert_has "$scheduler_cli_wave_output" "mode=focused"
 assert_has "$scheduler_cli_wave_output" "reason=bounded_rust_surface_runs_focused_nextest"
-assert_has "$scheduler_cli_wave_output" "filter_tokens=run_v0916_integrated_runtime_soak,scheduler_cli"
-assert_has "$scheduler_cli_wave_output" "filter_expression=binary_id(adl::bin/run_v0916_integrated_runtime_soak) and test(/^tests::/) or test(/^cli::scheduler_cmd::tests::/) or test(/^cli::tests::runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch$/) or test(/^cli::tests::open_usage::usage_mentions_v0_4_and_legacy_examples$/)"
+assert_has "$scheduler_cli_wave_output" "filter_tokens=scheduler_cli"
+assert_has "$scheduler_cli_wave_output" "filter_expression=test(/^cli::scheduler_cmd::tests::/) or test(/^cli::tests::runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch$/) or test(/^cli::tests::open_usage::usage_mentions_v0_4_and_legacy_examples$/)"
 
 tokio_bootstrap_wave="$TMP/tokio_bootstrap_wave.txt"
 cat >"$tokio_bootstrap_wave" <<'EOF'
@@ -335,13 +334,6 @@ assert_has "$direct_tooling_binaries_output" "mode=focused"
 assert_has "$direct_tooling_binaries_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$direct_tooling_binaries_output" "filter_tokens=tooling_cmd"
 assert_has "$direct_tooling_binaries_output" "filter_expression=test(tooling_cmd)"
-
-csdlc_prompt_editor_child="$TMP/csdlc_prompt_editor_child.txt"
-printf 'M\tadl/src/csdlc_prompt_editor/values.rs\n' >"$csdlc_prompt_editor_child"
-csdlc_prompt_editor_child_output="$(bash "$SCRIPT" --changed-files "$csdlc_prompt_editor_child" --print-plan)"
-assert_has "$csdlc_prompt_editor_child_output" "mode=focused"
-assert_has "$csdlc_prompt_editor_child_output" "filter_tokens=csdlc_prompt_editor"
-assert_has "$csdlc_prompt_editor_child_output" "filter_expression=test(csdlc_prompt_editor)"
 
 run_artifacts_runtime="$TMP/run_artifacts_runtime.txt"
 printf 'M\tadl/src/cli/run_artifacts/runtime/trace_validation.rs\n' >"$run_artifacts_runtime"

@@ -1,0 +1,80 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "preparation-contract",
+        "proof_role": "Prove six current typed cards, exact non-overlapping document scope, canonical-document existence and links, structured-file validity, stale-truth exclusions, undispatched handoff state, budgets, diff hygiene, and typed doctor truth",
+        "purpose": "Verify the complete preparation packet while making no dispatch or product claim.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 4000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "preparation",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5357/validate-preparation.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "wp18-terminal-gate",
+        "proof_role": "Prove closed first-pass #5356 plus merged final second-pass #5791 after residual coding, current-main integration, and ancestry to the exact external-review target",
+        "purpose": "Fail closed until #5791 merges the final internal second pass and current main is integrated.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 2000},
+        "credentials": [], "network": "denied", "dependencies": [], "parallel_group": "execution-gate",
+        "release_gate": "required", "execution": "local", "timeout_seconds": 120,
+        "executable": "ruby", "argv": [".csdlc/prepared/issues/5357/check-dependencies.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "corpus-dispatch-preflight",
+        "proof_role": "Build and verify the immutable all-v0.91.8 exact-revision corpus and dispatch receipt while enforcing identity, independence, redaction, and non-self-inclusion",
+        "purpose": "Validate frozen corpus and append-only dispatch identity before send.",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 6000},
+        "credentials": [], "network": "denied", "dependencies": ["wp18-terminal-gate"], "parallel_group": "review",
+        "release_gate": "required", "execution": "local", "timeout_seconds": 300,
+        "executable": "ruby", "argv": [".csdlc/prepared/issues/5357/run-validation-lane.rb", "corpus-dispatch-preflight"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "review-output-contract",
+        "proof_role": "Validate findings-first severity order, exact evidence, evidence/inference/author-decision separation, residual risk, and typed synthesis mapping",
+        "purpose": "Validate findings order, exact evidence, statement classes, and retained receipt binding.",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 5000},
+        "credentials": [], "network": "denied", "dependencies": ["corpus-dispatch-preflight"], "parallel_group": "review",
+        "release_gate": "required", "execution": "local", "timeout_seconds": 300,
+        "executable": "ruby", "argv": [".csdlc/prepared/issues/5357/run-validation-lane.rb", "review-output-contract"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "complete",
+        "proof_role": "Run final-review ancestry, canonical-doc, link, structured-file, corpus, dispatch, output, redaction, exact-review, and publication preflight",
+        "purpose": "Run all dependency, corpus, dispatch, output, redaction, and exact-review checks.",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 9000},
+        "credentials": [], "network": "denied", "dependencies": ["review-output-contract"], "parallel_group": "pre-publication",
+        "release_gate": "required", "execution": "local", "timeout_seconds": 900,
+        "executable": "ruby", "argv": [".csdlc/prepared/issues/5357/run-validation-lane.rb", "complete"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "post-merge-exact",
+        "proof_role": "Re-run target ancestry, canonical corpus/receipt/output digests, redaction, typed synthesis, CI, and WP-20 handoff after authorized merge",
+        "purpose": "Re-run exact identities and retained proofs after authorized merge; terminal bookkeeping remains separate.",
+        "determinism": "deterministic", "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 9000},
+        "credentials": [], "network": "denied", "dependencies": ["complete"], "parallel_group": "post-merge",
+        "release_gate": "required", "execution": "local", "timeout_seconds": 900,
+        "executable": "ruby", "argv": [".csdlc/prepared/issues/5357/run-validation-lane.rb", "post-merge-exact"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {"requested_lanes": ["preparation-contract"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 2, "cpu_units": 6, "memory_mib": 1024, "tokens": 50000},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5357/preparation-validation",
+  "cancellation_file": null
+}

@@ -1,0 +1,8 @@
+{
+  "status": "pass",
+  "issue": 5502,
+  "phase": "bound",
+  "cards": 6,
+  "protected_paths": 4,
+  "product_changes": 0
+}

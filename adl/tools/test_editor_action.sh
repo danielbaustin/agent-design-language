@@ -14,16 +14,16 @@ fail() {
 }
 
 out="$(bash adl/tools/editor_action.sh prepare --phase run --issue 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90)"
-[[ "$out" == "./adl/tools/pr.sh run 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90" ]] || fail "prepare should emit the current pr run command"
-pass "prepare emits current pr run command"
+[[ "$out" == ".adl/bin/csdlc-v2/csdlc-bind --root <worktree> --request <bind-request.json>" ]] || fail "prepare should emit the current csdlc-bind command"
+pass "prepare emits current csdlc-bind command"
 
 out="$(bash adl/tools/editor_action.sh prepare --phase doctor-ready --issue 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90)"
-[[ "$out" == "./adl/tools/pr.sh doctor 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90 --mode ready" ]] || fail "prepare should emit the ready doctor command"
-pass "prepare emits ready doctor command"
+[[ "$out" == ".adl/bin/csdlc-v2/csdlc-doctor --repo <repo> --issue 2053" ]] || fail "prepare should emit the ready csdlc-doctor command"
+pass "prepare emits ready csdlc-doctor command"
 
 out="$(bash adl/tools/editor_action.sh prepare --phase finish --issue 2053 --slug backlog-tools-refresh-web-task-editor-current-skills --version v0.90 --title "[v0.90][tools] Refresh editor" --paths "docs/tooling/editor/README.md")"
-[[ "$out" == "./adl/tools/pr.sh finish 2053 --title '[v0.90][tools] Refresh editor' --paths 'docs/tooling/editor/README.md'" ]] || fail "prepare should shell-quote finish title and paths"
-pass "prepare emits quoted finish command"
+[[ "$out" == ".adl/bin/csdlc-v2/csdlc-validate --root <worktree> finalize --request <finalize-request.json>" ]] || fail "prepare should emit the finalize validation command"
+pass "prepare emits finalize validation command"
 
 out="$(bash adl/tools/editor_action.sh contract)"
 [[ "$out" == *"editor_adapter_schema: editor.command_adapter.v2"* ]] || fail "contract text should include schema header"
@@ -42,15 +42,7 @@ out="$(bash adl/tools/editor_action.sh contract --format json)"
 [[ "$out" == *"\"run\""* ]] || fail "contract json should include singular run in the language contract"
 pass "contract json exposes the supported adapter surface"
 
-out="$(bash adl/tools/editor_action.sh start --issue 938 --branch codex/938-v085-editor-control-plane-adapter --dry-run)"
-[[ "$out" == "./adl/tools/pr.sh start 938 --slug v085-editor-control-plane-adapter" ]] || fail "legacy dry-run should derive the slug from the branch"
-pass "legacy start dry-run remains compatible"
-
-if bash adl/tools/editor_action.sh start --issue 938 --branch codex/939-v085-editor-review-flow-integration --dry-run >/dev/null 2>&1; then
-  fail "mismatched issue and branch should fail"
+if bash adl/tools/editor_action.sh start --issue 938 --branch codex/938-v085-editor-control-plane-adapter --dry-run >/dev/null 2>&1; then
+  fail "sunset start action should fail closed"
 fi
-pass "mismatched issue and branch are rejected"
-
-out="$(bash adl/tools/editor_action.sh start --issue 938 --branch codex/938-v085-editor-control-plane-adapter --slug v085-editor-control-plane-adapter --dry-run)"
-[[ "$out" == "./adl/tools/pr.sh start 938 --slug v085-editor-control-plane-adapter" ]] || fail "legacy explicit slug should still produce the same command"
-pass "legacy explicit slug stays consistent"
+pass "sunset start action is unavailable"

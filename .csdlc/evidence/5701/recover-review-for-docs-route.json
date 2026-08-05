@@ -1,0 +1,8 @@
+{
+  "issue": 5701,
+  "expected_generation": 4,
+  "expected_digest": "5d4eaa362e6d103ca2f437bb89e74c60a95421c1cdbde2d6d546602015e268fc",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Operator expanded #5701 to require real Axum routes for raw OpenAPI JSON and browsable Swagger UI documentation, so the existing reviewed and published truth at 79dad564 is stale before further implementation."
+}

@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5733,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][demo-matrix] Reconcile demo matrix and feature-proof coverage",
+    "slug": "v0918-demo-matrix-proof-coverage",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Map every claimed v0.91.8 feature or launch surface to owning issue, exact proof or explicit blocker/non-claim/deferred disposition, and public claim boundary.",
+      "required_outcome": "DEMO_MATRIX_v0.91.8.md and FEATURE_PROOF_COVERAGE_v0.91.8.md agree with current issue and proof truth, backed by a focused deterministic validator.",
+      "declared_scope": [
+        "docs/milestones/v0.91.8/DEMO_MATRIX_v0.91.8.md",
+        "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+        "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733",
+        "adl/tools/validate_v0918_demo_matrix.py"
+      ],
+      "authority_boundary": [
+        "This issue owns matrix and feature-proof coverage truth only.",
+        "Owning issues retain authority over runtime, demo, deployment, podcast, Unity, and v0.92 handoff execution proof.",
+        "Planning, fixtures, screenshots, retained packets, and metadata must not be promoted into runtime proof."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "never touch or switch primary main",
+        "use typed C-SDLC v2 lifecycle",
+        "use FastWork for this worktree",
+        "do not rerun demos owned by other issues",
+        "do not claim release readiness or v0.92 activation readiness"
+      ]
+    }
+  }
+}

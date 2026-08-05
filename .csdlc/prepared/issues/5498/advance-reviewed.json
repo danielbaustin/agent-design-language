@@ -1,0 +1,13 @@
+{
+  "issue": 5498,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "0f651754d42f318051a573d3d888925f5eb2e8acb64b7feaeda93b164daa590f",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The single bounded pre-PR review cycle is complete with zero actionable findings at the exact final product and validation revision.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

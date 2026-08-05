@@ -1,0 +1,67 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "review-corpus-contract",
+        "proof_role": "Validate the exact 75-document v0.91.8 corpus, every concrete implementation-manifest path, dated open-issue inventory, portable paths, local links, structured files, 122-row feature crosswalk, WP-18 ancestry, and fail-closed undispatched handoff state",
+        "purpose": "Prove the corrective documentation packet is ready to freeze without claiming that the external review has occurred.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 3000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "docs",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5804/validate-review-corpus.rb"],
+        "evidence": {"max_log_bytes": 65536, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "wp19-dependency-contract",
+        "proof_role": "Verify merged WP-18 first and final review passes are ancestors of the corrective target",
+        "purpose": "Keep the external-review handoff grounded in both completed internal review passes.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 64, "tokens": 1000},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "docs",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5357/check-dependencies.rb"],
+        "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "Reject whitespace errors in the corrective change",
+        "purpose": "Keep the review packet mechanically clean.",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 32, "tokens": 500},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "docs",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 30,
+        "executable": "git",
+        "argv": ["diff", "--check"],
+        "evidence": {"max_log_bytes": 16384, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["review-corpus-contract", "wp19-dependency-contract", "diff-hygiene"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 3, "cpu_units": 3, "memory_mib": 224, "tokens": 4500},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5804/validation",
+  "cancellation_file": null
+}

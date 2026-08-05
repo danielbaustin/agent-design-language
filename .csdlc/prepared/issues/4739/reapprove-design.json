@@ -1,0 +1,7 @@
+{
+  "issue": 4739,
+  "expected_generation": 0,
+  "expected_digest": "92e74bd853d9617d42af9fcc5aa369e05506ba84dfcdacce4917257670196a48",
+  "claim_id": "claim-4739-v0918-wp15-unity-mcp-alignment-prep",
+  "reviewer": "operator:v0918-wp15-unity-specialist-review"
+}

@@ -1,0 +1,25 @@
+flowchart TD
+    B["WP-02 pinned baseline and owner map"] --> E["#5346 terminal deletion eligibility"]
+    S["#5344 soak and #5343 reversible switch"] --> G["Terminal dependency gate"]
+    C["#5358 C-SDLC v2 acceptance"] --> G
+    R["#5361 Runtime v3 acceptance"] --> G
+    E --> G
+    X["Resolve #5346/#5347 dependency cycle"] --> G
+    G --> M["Freeze canonical #5347 external-band manifest"]
+    M --> D{"Zero overlap with #5346 manifest?"}
+    D -->|no| Z["Fail closed"]
+    D -->|yes| P["Typed claim amendment for exact file paths"]
+    P --> V["Owner, replacement, reachability, and receipt proof"]
+    V --> Q{"Every row deletion-eligible?"}
+    Q -->|no| Z
+    Q -->|yes| K["Delete exact manifest paths"]
+    K --> T["Focused owner, parity, security, CI, and consumer proof"]
+    T --> U{"Post-deletion proof green?"}
+    U -->|no| Y["Revert exact deletion commit"]
+    U -->|yes| H["Serialized merge and typed closeout"]
+
+    subgraph Excluded["Never owned by #5347"]
+      A2["ADL v2 language/compiler/engine/CLI"]
+      F2["#5346 final core deletion paths"]
+      RV2["Runtime v2 edits"]
+    end

@@ -1,0 +1,52 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5657,
+  "expected_generation": 1,
+  "expected_digest": "9c1a09bc76705d53bd025a8999aabcbfa9037ea9857ce00f9cfdba99a99809ee",
+  "claim_id": "claim-5657-runtime-v3-launch-recovery",
+  "actor": "codex:issue-5657-runtime-launch",
+  "summary": "Reject degraded production adapters before readiness, remove TLS private-key material from continuity identity, and keep the runtime as an Axum JSON API for the separate Observatory app.",
+  "changes": [
+    "Added typed production adapter readiness validation.",
+    "Made the serve binary fail closed before listener readiness when required adapters are degraded or missing.",
+    "Removed TLS private-key hash from continuity identity projection.",
+    "Kept the runtime API-only; the separate Observatory app consumes the authenticated feed.",
+    "Added focused production-readiness regression proof."
+  ],
+  "artifacts": [
+    "adl-runtime-kernel/src/assembly.rs",
+    "adl-runtime-kernel/src/operations.rs",
+    "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+    "adl-runtime-kernel/src/control.rs",
+    "adl-runtime-kernel/tests/assembly.rs"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "runtime-v3-launch-focused",
+          "proof_role": "Focused Runtime v3 production-readiness and Observatory contract proof",
+          "purpose": "Run assembly, Observatory WebSocket, and formatting-compatible Rust tests against the exact implementation.",
+          "determinism": "deterministic",
+          "resources": {"cpu_units": 2, "memory_mib": 2048, "tokens": 3000},
+          "credentials": [],
+          "network": "loopback",
+          "dependencies": [],
+          "parallel_group": "runtime-v3-launch",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "/usr/bin/env",
+          "argv": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5657/target", "--test", "assembly", "--test", "observatory"],
+          "evidence": {"max_log_bytes": 131072, "redact_values": [], "require_relative_paths": true}
+        }
+      ]
+    },
+    "selection": {"requested_lanes": ["runtime-v3-launch-focused"], "allow_network": false, "available_credentials": []},
+    "budget": {"max_parallel": 1, "cpu_units": 2, "memory_mib": 2048, "tokens": 3000},
+    "root": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5657",
+    "evidence_dir": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5657/.csdlc/evidence/5657",
+    "cancellation_file": null
+  }
+}

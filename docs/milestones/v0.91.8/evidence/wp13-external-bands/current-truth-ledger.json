@@ -1,0 +1,189 @@
+{
+  "schema": "adl.wp13.external_band_current_truth.v1",
+  "repository": "danielbaustin/agent-design-language",
+  "issue": 5347,
+  "revision": "5f166d03303fef23afaad865992f5fbe14d4efc5",
+  "observed_utc": "2026-07-31T21:13:00Z",
+  "scope": "preparation-only external-band owner and evidence ledger; not a deletion manifest and not product-path authority",
+  "blocking_readiness": {
+    "execution_ready": false,
+    "reason": "#5346 is open, no typed #5346 record or final-core manifest is present in this worktree, and live #5346 still depends on #5347 while operator sequencing requires #5346 terminal closeout before #5347 deletion execution.",
+    "live_issue_observations": [
+      {
+        "issue": 5346,
+        "github_state": "OPEN",
+        "typed_phase": "missing",
+        "blocker": "final-core deletion owner has no terminal closeout or exact final-core manifest available to #5347"
+      },
+      {
+        "issue": 5347,
+        "github_state": "OPEN",
+        "typed_phase": "bound",
+        "blocker": "preparation-only claim excludes product paths and deletion authority"
+      }
+    ],
+    "closed_dependency_inputs": [
+      {"issue": 5343, "typed_phase": "closed_out", "observed_sha": "e4bbc988cad682cbb2ff8d24085e1a99bccec1ce"},
+      {"issue": 5344, "typed_phase": "closed_out", "observed_sha": "141dfa20ccc3753060687259ad933397331df9c7"},
+      {"issue": 5358, "typed_phase": "closed_out", "observed_sha": "e048230245b1ad101c8056678123a2747faa4b60"},
+      {"issue": 5361, "typed_phase": "closed_out", "observed_sha": "f7fc71421f4bcf70039b910c9b88b538bb111400"}
+    ]
+  },
+  "external_bands": [
+    {
+      "band": "runtime_v3_adapter",
+      "accepted_owner": "Runtime v3 adapter boundary owned by #5341 and accepted by Runtime v3 umbrella #5361",
+      "status": "accepted_terminal_owner_with_nonterminal_consumer",
+      "replacement_issues": [
+        {"issue": 5341, "typed_phase": "closed_out", "observed_sha": "c2c381cdd1393d1074e06f786320e81ac66a305f", "receipt_path": "csdlc-v2/closeout/5341.json"},
+        {"issue": 5361, "typed_phase": "closed_out", "observed_sha": "f7fc71421f4bcf70039b910c9b88b538bb111400", "receipt_path": "csdlc-v2/closeout/5361.json"},
+        {"issue": 5354, "typed_phase": "reviewed", "github_state": "CLOSED", "blocker": "live consumer proof exists but typed terminal projection is not closed_out in this worktree"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/evidence/5341/inventory-and-boundary.log", "sha256": "8fb6a3a35fb12da6c888ad12f7a5bbeb716297ca48e50b4847990c12c772576e"},
+        {"path": ".csdlc/evidence/5361/acceptance-proof-summary.json", "sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"},
+        {"path": ".csdlc/evidence/5354/convergence-proof.v1.json", "sha256": "6efc130bcdb3215b0cbfc63c875cc0e92daffb2a26ba96fddebdc32df2455624"}
+      ],
+      "manifest_admission": "blocked_until_5354_typed_terminal_projection_or_manifest_row_omits_consumer_dependency"
+    },
+    {
+      "band": "runtime_v3_kernel_continuity_and_canonical_ingress",
+      "accepted_owner": "Runtime v3 #5361 with Parity-A #5591",
+      "status": "accepted_terminal_owner",
+      "replacement_issues": [
+        {"issue": 5361, "typed_phase": "closed_out", "observed_sha": "f7fc71421f4bcf70039b910c9b88b538bb111400", "receipt_path": "csdlc-v2/closeout/5361.json"},
+        {"issue": 5591, "typed_phase": "closed_out", "observed_sha": "59b61985c9964e56d83272efa7035f12be462fd7", "receipt_path": "csdlc-v2/closeout/5591.json"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/evidence/5361/acceptance-proof-summary.json", "sha256": "cd2408359dfbbb1bd20ea9ad87ef517cb73455c4af5df6af3645306fc5aaf453"},
+        {"path": ".csdlc/evidence/5354/convergence-proof.v1.json", "sha256": "6efc130bcdb3215b0cbfc63c875cc0e92daffb2a26ba96fddebdc32df2455624"}
+      ],
+      "manifest_admission": "eligible_only_for_individual_non_core_rows_after_5346_disjoint_manifest"
+    },
+    {
+      "band": "reasoning_graphs_bounded_loops_adaptive_learning_affect_and_governed_cognition",
+      "accepted_owner": "Runtime v3 Parity-B #5592; downstream Adaptive Learning DAG queue #5107 for future v0.92 work",
+      "status": "accepted_terminal_owner_for_runtime_parity_only",
+      "replacement_issues": [
+        {"issue": 5592, "typed_phase": "closed_out", "observed_sha": "dbd461697755c048f9b9bbb7eb1a3ca66b0c3e56", "receipt_path": "csdlc-v2/closeout/5592.json"},
+        {"issue": 5107, "typed_phase": "closed_out", "observed_sha": "8bf36c9d214a54212e7c483fb29872e9be9e92b3", "receipt_path": "csdlc-v2/closeout/5107.json"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/issues/5592/index.json", "sha256": "2d94d704c433f4ce836bc3647f79fdfe2fbdf41e5d0419c6625985de81d3498f"},
+        {"path": "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md", "sha256": "f3fa8586c3ea45d7997dd50be4224238f31f93427d201ad5136b80473b3ee427"}
+      ],
+      "manifest_admission": "eligible_only_for_rows whose behavior is fully covered by Runtime v3 parity; v0.92 adaptive-learning implementation remains a non-claim"
+    },
+    {
+      "band": "governed_operations_identity_provider_state_and_continuity",
+      "accepted_owner": "Runtime v3 Parity-C #5589",
+      "status": "accepted_terminal_owner",
+      "replacement_issues": [
+        {"issue": 5589, "typed_phase": "closed_out", "observed_sha": "0f22baf5d4b2fdef485164aa4c83002fdb520a3e", "receipt_path": "csdlc-v2/closeout/5589.json"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/issues/5589/index.json", "sha256": "3c4d6cdecedcd85648106d33567f6a6addca6a59b63cf9dfdb3e499efbe686c0"},
+        {"path": ".csdlc/evidence/5589/implementation/focused-lanes.log", "sha256": "58ca9468e8d46523d8136a15675b397ffc8719661567bdc5b845b35d7d570693"}
+      ],
+      "manifest_admission": "eligible_only_for_individual_rows with authority-rooted reachability and no Runtime v2 deletion"
+    },
+    {
+      "band": "secure_runtime_access_guardian_observatory_rollback_and_telemetry",
+      "accepted_owner": "Runtime v3 Parity-D #5590",
+      "status": "accepted_terminal_owner",
+      "replacement_issues": [
+        {"issue": 5590, "typed_phase": "closed_out", "observed_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a", "receipt_path": "csdlc-v2/closeout/5590.json"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/issues/5590/index.json", "sha256": "62ad099c5da29f443471dba71d87745e753e541ff04eab6c22a0224d0e2c8a08"},
+        {"path": ".csdlc/evidence/5590/preparation/complete-card-contract.log", "sha256": "65005c2321f5c6a8f77b253315d886875ad31a41181bbf856f97d23b8f927d1b"}
+      ],
+      "manifest_admission": "eligible_only_for_individual_rows after selector rollback and consumer proof lanes pass"
+    },
+    {
+      "band": "provider_and_governed_tool_adapters",
+      "accepted_owner": "Provider/governed-tool adapters #5349 with provider-profile follow-on #5671; #5675 needs typed terminal projection before deletion admission",
+      "status": "partially_terminal_with_projection_blocker",
+      "replacement_issues": [
+        {"issue": 5349, "typed_phase": "closed_out", "observed_sha": "a9c974a84093cf13990d9cbe0b5827d7445bc3ce", "receipt_path": "csdlc-v2/closeout/5349.json"},
+        {"issue": 5671, "typed_phase": "closed_out", "observed_sha": "828ab4876818888c067b8ecefcda3ac6330a71fc", "receipt_path": "csdlc-v2/closeout/5671.json"},
+        {"issue": 5675, "typed_phase": "published", "github_state": "CLOSED", "blocker": "provider-route follow-on is not typed closed_out in this worktree"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/issues/5349/index.json", "sha256": "3b81dd2659cfadcb3a02426560819a2d207df1d4ca8fe2ec730fc03d5bf70154"},
+        {"path": ".csdlc/issues/5671/index.json", "sha256": "240f82dbf631f10c3666f5392d6a35d25676437548decd7fe57d5e67c9c3c905"},
+        {"path": ".csdlc/evidence/5671/provider-profile-focused.log", "sha256": "ec7b7f6fdda411735e8ee4567ec23cc9b88740d88476be4f7321500da827d45e"}
+      ],
+      "manifest_admission": "blocked_for_rows_depending_on_5675_until_typed_terminal_projection_exists"
+    },
+    {
+      "band": "unity_observatory_tooling_and_demo_proof",
+      "accepted_owner": "Unity/demo owners #4739, #4741, #5332, #5683; consumed by #5354 live convergence proof",
+      "status": "accepted_terminal_owner_with_nonterminal_consumer",
+      "replacement_issues": [
+        {"issue": 4739, "typed_phase": "closed_out", "observed_sha": "7411c86b899ae209448b3c4374959e2cb4b84c5c", "receipt_path": "csdlc-v2/closeout/4739.json"},
+        {"issue": 4741, "typed_phase": "closed_out", "observed_sha": "34831bab95f87ab6e2beb729130499850a051a4f", "receipt_path": "csdlc-v2/closeout/4741.json"},
+        {"issue": 5332, "typed_phase": "closed_out", "observed_sha": "0176aead8a012b0b74fa12443f7833bc71f00ca6", "receipt_path": "csdlc-v2/closeout/5332.json"},
+        {"issue": 5683, "typed_phase": "closed_out", "observed_sha": "cc19f5a187e73cf6110958b05bd347b6855bf92f", "receipt_path": "csdlc-v2/closeout/5683.json"},
+        {"issue": 5354, "typed_phase": "reviewed", "github_state": "CLOSED", "blocker": "integration consumer remains nonterminal locally"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/evidence/5683/LIVE_UNITY_PROOF.md", "sha256": "b027ba9ce7105b0e25d3cdbfc172dfae89ff8b4d58ffac23033e1f16472d5a32"},
+        {"path": ".csdlc/evidence/5354/convergence-proof.v1.json", "sha256": "6efc130bcdb3215b0cbfc63c875cc0e92daffb2a26ba96fddebdc32df2455624"}
+      ],
+      "manifest_admission": "blocked_for_rows_requiring_5354_until_typed_terminal_projection_exists"
+    },
+    {
+      "band": "distributed_csdlc_workcell",
+      "accepted_owner": "Distributed C-SDLC workcell proof #5501 plus child owners #5497/#5498/#5500/#5502",
+      "status": "accepted_terminal_owner_with_child_projection_caveats",
+      "replacement_issues": [
+        {"issue": 5501, "typed_phase": "closed_out", "observed_sha": "9ff6a0a2f808a2f6207ad8de245c60f646706912", "receipt_path": "csdlc-v2/closeout/5501.json"},
+        {"issue": 5498, "typed_phase": "closed_out", "observed_sha": "96359ed5bc008c63632e76a72eb1f2f77bfd9dd1", "receipt_path": "csdlc-v2/closeout/5498.json"},
+        {"issue": 5500, "typed_phase": "closed_out", "observed_sha": "a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803", "receipt_path": "csdlc-v2/closeout/5500.json"},
+        {"issue": 5502, "typed_phase": "closed_out", "observed_sha": "3b900210cd30ee381c860a624499d1e4d8aea0d8", "receipt_path": "csdlc-v2/closeout/5502.json"},
+        {"issue": 5499, "typed_phase": "published", "blocker": "conductor child is not typed closed_out locally"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/evidence/5501/retained-live-proof.json", "sha256": "37abbc9da98d86a0e1a3c42d94349079d3067cab385040ba4a4cdd858cd583d4"}
+      ],
+      "manifest_admission": "eligible_only_for_rows that do not depend on nonterminal child #5499, otherwise blocked"
+    },
+    {
+      "band": "shadow_parity_and_proof_tooling",
+      "accepted_owner": "Shadow parity #5350, C-SDLC v2 acceptance #5358, Runtime v3 acceptance #5361, and C-SDLC v2 repair #5737",
+      "status": "accepted_terminal_owner",
+      "replacement_issues": [
+        {"issue": 5350, "typed_phase": "closed_out", "observed_sha": "e392ddb66f01722fb2b40ac0bc9eeae3d56c67b5", "receipt_path": "csdlc-v2/closeout/5350.json"},
+        {"issue": 5358, "typed_phase": "closed_out", "observed_sha": "e048230245b1ad101c8056678123a2747faa4b60", "receipt_path": "csdlc-v2/closeout/5358.json"},
+        {"issue": 5361, "typed_phase": "closed_out", "observed_sha": "f7fc71421f4bcf70039b910c9b88b538bb111400", "receipt_path": "csdlc-v2/closeout/5361.json"},
+        {"issue": 5737, "typed_phase": "closed_out", "observed_sha": "86c2d7ae8f25cc890d6e8d892b3539a663d902f6", "receipt_path": "csdlc-v2/closeout/5737.json"}
+      ],
+      "evidence_refs": [
+        {"path": ".csdlc/evidence/5350/shadow-report.json", "sha256": "5db06455fbcffa267bea69c7b91ec645fc8080cf7490e5075f7fed343656a6f0"},
+        {"path": ".csdlc/evidence/5358/preparation-validation/csdlc-doctor-5358.log", "sha256": "26ff19ebc7c088fdf80820fee3442f757e3a5e7022d99967a9956dc36881fee4"}
+      ],
+      "manifest_admission": "eligible_only_for proof-tool rows; C-SDLC v2 lifecycle authority must not be deleted by #5347"
+    }
+  ],
+  "retained_file_authority": {
+    "rule": "Every retain_owned or retain_evidence row in a later deletion manifest must name owner, consumer, rationale, proof role, sunset condition, and evidence ref. Historical evidence may retain references to deleted executable names without preserving executable authority.",
+    "mandatory_retained_paths": [
+      ".csdlc/issues/5347",
+      ".csdlc/prepared/issues/5347",
+      ".csdlc/evidence/5347",
+      "docs/milestones/v0.91.8/evidence/wp13-external-bands",
+      "docs/milestones/v0.91.8/BASELINE_AND_OWNERSHIP_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md"
+    ]
+  },
+  "non_overlap_with_5346": {
+    "rule": "#5347 must have zero canonical path overlap with #5346. #5346 exclusively owns final language, compiler, engine, CLI, compatibility, and ADL v2 core deletion.",
+    "current_status": "blocked",
+    "reason": "#5346 final-core manifest is absent; no #5347 deletion manifest may be frozen."
+  },
+  "rollback_and_no_deferral": {
+    "rollback": "Only a clean Git revert of the exact future deletion commit is accepted.",
+    "no_deferral": "No delete_external row may rely on pending, skipped, fixture-only, metadata-only, CI-only, live-GitHub-only, or nonterminal typed evidence."
+  }
+}

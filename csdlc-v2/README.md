@@ -13,7 +13,7 @@ Gate 2 provides the typed lifecycle/card engine and whole-record transactions.
 Gate 3 adds separate `csdlc-init` and `csdlc-bind` binaries for deterministic
 construction and safe Git worktree/claim binding. Git uses typed argv arrays;
 the control plane contains no shell or Python lifecycle logic. Later gates add
-PVF, review truth, publication, and closeout without widening this core's
+PVF, review truth, publication, and terminal finish without widening this core's
 authority.
 
 Gate 4 adds `csdlc-validate`, `csdlc-schedule`, and `csdlc-shepherd`. Validation
@@ -65,12 +65,10 @@ Markdown from typed values, parses it with `markdown.rs`, validates semantic
 anchors, and records values/rendered/AST digests. Direct Markdown edits fail
 doctor as corruption.
 
-For a closed-out record whose SRP routes residual work after terminal receipt
-retention, use `csdlc-closeout reconcile-terminal` with the exact branch,
-worktree, initialization digest, actor/reason, and `follow_ups` values. Each
-follow-up must already be present in SRP residual risk; the typed operation
-updates SOR and the retained receipt atomically and rejects arbitrary card
-mutation.
+Historical terminal records and retained receipts remain deserializable and
+available through read-only compatibility inspection. They are not writable
+delivery authority. New terminal authority is the minimal derived envelope
+produced by `csdlc-finish` from live GitHub state.
 
 Issue-local bootstrap is supported when all six cards and the approved design
 already live in the target worktree: use a claim whose worktree is `.` and run

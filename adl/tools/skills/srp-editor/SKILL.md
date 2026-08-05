@@ -23,14 +23,11 @@ prompt-template values renderer and structure/schema validators before using
 Markdown as lifecycle state:
 
 ```sh
-adl-csdlc tooling prompt-template validate-values --kind srp --values <path>
-adl-csdlc tooling prompt-template edit-values --kind srp --values <path> --set <field=value> --out <path>
-adl-csdlc tooling prompt-template render --kind srp --values <path> --out <path>
-adl-csdlc tooling prompt-template validate-structure --kind srp --input <path>
+csdlc-edit --root <worktree> apply --request <edit-request.json>
+csdlc-validate --root <worktree> finalize --request <validation-request.json>
 ```
 
-If `adl-csdlc` is not already on `PATH`, run the same commands from a fresh
-checkout through `cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- ...`.
+Resolve both binaries through `csdlc-install resolve` before use.
 
 Use this skill for SRP truth repairs: review scope, review prompts, findings,
 dispositions, reviewer notes, residual risks, and recommended outcome. Do not
@@ -96,7 +93,7 @@ This skill must not:
 ## Handoff
 
 Typical callers are:
-- `workflow-conductor` when doctor or card evidence reports an incomplete SRP
+- `csdlc-doctor` followed by `srp-editor` when card evidence reports an incomplete SRP
 - `sprint-conductor` during sprint-wide structured prompt preflight
 - `pr-run` or human review after bounded subagent review results are available
 - `pr-finish` when final review truth blocks publication

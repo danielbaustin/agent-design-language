@@ -1,0 +1,13 @@
+{
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5703,
+  "required_checks": [
+    "adl-ci",
+    "adl-coverage",
+    "adl-tooling-contracts",
+    "adl-path-policy"
+  ],
+  "require_review": false,
+  "token_file": "/Users/daniel/keys/github.token",
+  "linked_issue": 5344
+}

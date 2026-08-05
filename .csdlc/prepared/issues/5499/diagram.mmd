@@ -1,0 +1,22 @@
+flowchart TD
+    G["Typed C-SDLC v2 issue graph"] --> C["WP-10A conductor: pure planning component"]
+    P["ADL v2 execution plan"] --> C
+    W["WIP cap + serialized gates"] --> C
+
+    C --> A["Deterministic admitted assignments"]
+    C --> R["Typed refusal records"]
+
+    A --> T["#5498 task and context adapter"]
+    A --> D["#5500 read-only dashboard projection"]
+    T --> O["#5502 output convergence and replan"]
+    D --> O
+    O --> L["#5501 live distributed workcell proof"]
+    L --> U["#5497 umbrella closeout"]
+
+    D5340["#5340 live-merged + ancestral"] --> Gate["Execution dependency gate"]
+    D5341["#5341 live-merged + ancestral"] --> Gate
+    D5342["#5342 live-merged + ancestral"] --> Gate
+    D5349["#5349 WP-09 live-merged + ancestral"] --> Gate
+    Gate --> C
+
+    C -. "never owns" .-> N["Task creation / GitHub mutation / merge / closeout"]

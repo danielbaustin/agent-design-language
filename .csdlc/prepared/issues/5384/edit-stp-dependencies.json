@@ -1,0 +1,20 @@
+{
+  "issue": 5384,
+  "card": "stp",
+  "expected_generation": 3,
+  "expected_digest": "40e85ea591b70a133c9fa2092e7d318c9c544fa68c1cc1f1fa6cc851f972fbfd",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Replace the obsolete grab-bag predecessor graph with the four direct accepted platform inputs.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "C-SDLC v2 acceptance #5358",
+      "Runtime v3 acceptance #5361",
+      "ADL v2 soak and rollback proof #5344",
+      "ADL v2 reversible default switch #5343",
+      "WP-13 deletion #5346/#5347 is deferred and non-blocking for WP-14A; it becomes a hard gate immediately before internal review #5356"
+    ]
+  }
+}

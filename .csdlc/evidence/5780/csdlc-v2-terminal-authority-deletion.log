@@ -1,0 +1,10 @@
+
+running 3 tests
+test competing_closeout_binary_and_skill_are_absent ... ok
+test publication_and_store_expose_no_terminal_mutation_route ... ok
+test historical_phase_and_receipt_shapes_remain_readable_only ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running tests/gate_terminal_authority_deletion.rs (/Volumes/FastWork/adl-csdlc-v2-target/debug/deps/gate_terminal_authority_deletion-b2c9796f833a9b07)

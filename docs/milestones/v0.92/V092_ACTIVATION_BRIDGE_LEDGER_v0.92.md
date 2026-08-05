@@ -8,6 +8,14 @@ This document refreshes the `v0.92` activation and first-birthday planning
 surface after the pre-`v0.92` implementation/proof path was created. It is not activation
 evidence, release evidence, or a claim that `v0.92` is ready to execute.
 
+v0.91.8 WP-21 issue `#4759` now supplies the activation bridge consumed by this
+ledger:
+`docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md`.
+That bridge consumes the WP-14A platform acceptance ledger at
+`docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md`
+and routes every activation input to accepted evidence, a named WP-21 owner, an
+explicit blocker, or a non-claim.
+
 Current verdict: `v0.92` activation remains blocked until the `v0.91.6` and
 `v0.91.7` readiness, implementation, and integrated-proof tranches produce
 reviewed evidence, decision records, or explicit evidence-backed blockers for
@@ -27,6 +35,10 @@ Tracked sources:
 - `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`
 - `docs/milestones/v0.91.5/V092_ACTIVATION_TEST_MAP_v0.91.5.md`
 - `docs/milestones/v0.91.5/features/V092_ACTIVATION_READINESS_v0.91.5.md`
+- `docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md`
+- `docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md`
+- `docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md`
+- `docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md`
 - `docs/milestones/v0.91.6/`
 - `docs/milestones/v0.91.7/`
 - `docs/milestones/v0.92/README.md`
@@ -57,6 +69,21 @@ Those issues are closed retained inputs, not still-open activation blockers.
 What remains blocking for `v0.92` is any surface that still lacks reviewed
 runtime/product evidence or an explicit evidence-backed blocker with operator
 approval.
+
+## v0.91.8 Activation Bridge Consumption
+
+The v0.91.8 activation bridge supplies the exact platform baseline and the row
+dispositions this ledger may consume:
+
+| Input | Evidence consumed by v0.92 | Consumption boundary |
+| --- | --- | --- |
+| Accepted platform baseline | WP-14A baseline `11151e0beab02b1667f6505b7f8992bfd47d2f8f` in `docs/milestones/v0.91.8/review/V0918_WP14A_PLATFORM_ACCEPTANCE_5384.md` | Baseline acceptance only; no v0.92 birthday readiness claim. |
+| C-SDLC v2 lifecycle | Accepted merge `fc75f4fc697262f89f99461679a406be0b4b3775` for #5358 | Lifecycle governance input only; downstream issues still need their own typed records. |
+| Runtime v3 platform | Accepted merge `f7258b07e9da414bfee518f0c89a76071bc03ee8` for #5361 | Runtime platform input only; unresolved Parity-B/C/D rows remain owner-gated where named. |
+| ADL v2 soak/rollback | Accepted merge `d4825d4be9ed14ed6060dd33cbdafe5eaa5efcd2` for #5344 | Soak and rollback input only; deletion remains outside this bridge. |
+| ADL v2 reversible default | Accepted merge `e1b6a34e4763a79d1c40c641e64c0c061a0aa96c` for #5343 | Selector/default input only; rollback window and branding truth remain bounded by WP-14A. |
+| WP-21 activation rows | `docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md` | Each row must retain `accepted_platform_input`, `handoff_owned`, `blocked_with_evidence`, or `deferred_non_claim` truth before use. |
+| Birth-witness successor | #4762 merged through PR #5744 at `021be8e33b486d9b66886ff299c20607ed8a071a` | Consume the retained package at `docs/milestones/v0.91.8/review/v092_handoff_4762/` as witness/receipt proof. The package preserves `birth_event_status: not_claimed`; it does not establish the birthday event or publication approval. |
 
 ## Consumption States
 
@@ -94,11 +121,13 @@ completion proof by themselves.
 | Resilience, citizen persistence, and sleep/wake | implementation_required | current concrete blocker evidence for `#4783`; owners `#4778` and `#4780`-`#4782` require per-issue disposition; WP-07 runtime integration consumes the result | Transient fault handling, checkpoint/restore, sleep/wake, hibernation, simulation, in-transit custody, migration, replay, and continuity proof must be integrated_proven or blocked_with_evidence before v0.92. Current repo-visible concrete blocked-state detail is strongest for `#4783`; the rest of the resilience family is ownership that still requires proof or blocker disposition. |
 | Curiosity Engine / Discovery Substrate | implementation_required | `v0.91.7` WP-10 | Curiosity is required before `v0.92` activation consumes governed discovery behavior; absent proof blocks activation with evidence and operator approval. |
 | Constructability Gate | implementation_required | `v0.91.7` WP-10 | Birthday evidence must distinguish provisional cognition from authoritative shared reality. |
-| Reasoning graph, loop runtime, and `adl.skill.v1` | implementation_required | `v0.91.7` WP-11 | Pre-`v0.92` implementation must connect prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and `adl.skill.v1`; deeper convergence remains later. |
+| Reasoning graph, loop runtime, and `adl.skill.v1` | implementation_required | `v0.91.7` WP-11, including historical `#5104` merge evidence for loop runtime | Pre-`v0.92` implementation must connect prompts, skills, loops, trace, ObsMem, PVF, AEE, current Runtime v3 contracts, UTS, ACC, and `adl.skill.v1`; deeper convergence remains later. WP-01 must verify whether `#5104` still qualifies loops as validated, replayable objects under current Runtime v3 authority before consuming that claim. |
+| Adaptive Learning DAG | implementation_required | `v0.92` WP-07A planning queue after verified v0.91.7 loop-runtime evidence | v0.92 may queue evaluation bindings, stateful adaptation, policy-governed graph modification, and Adaptive Learning DAG proof, but it must not claim learning-driven graph mutation until implementation WPs produce replay-safe evidence and negative tests. |
 | Affect, happiness, humor, and wellbeing claims | integrated_proven for operational reasoning-control; subjective affect not_claimed | `v0.91.7` WP-13 `#4752`; `docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`; `docs/milestones/v0.91.7/review/wp13_affect_happiness_boundary_4752.md` | Public birthday evidence may cite bounded affect-like reasoning-control signals and safe-test language only. It must not imply hidden emotion, subjective happiness, wellbeing, suffering, consciousness, scalar happiness scores, reward channels, or public reputation. |
 | Godel mechanics | boundary_proven for CSM-supervised admission readiness and claim-boundary consumption; provider requests remain resolved_not_invoked and adaptive DAG completion not_claimed | `v0.91.7` WP-13 and `v0.92` birthday docs | The first true Godel-agent birthday may consume only the Runtime v2 Godel/constructability boundary: retained Godel plan evidence, CSM-supervised non-invoked provider-request admission, constructability anchors, validator pass, and operator review. |
 | Economics context | operator_scoped_out | `v0.91.7` WP-13 | Economics is context-only for `v0.92` unless a reviewed decision reopens explicit activation tests; that scoped-out posture requires retained evidence, risk, and operator approval. |
 | Guild foundation | boundary_proven for declarative governance handoff context; guild record and hook producer/consumer behavior and v0.93 governance not_claimed | `v0.91.7` WP-13 `#4755` | `v0.92` may consume only the Runtime v2 guild foundation vocabulary, allowlists, deferrals, and promotion gates as birthday governance context. It may not claim implemented identity/witness routing, membership events, moderation hooks, constitutional citizenship, polis authority, delegated governance authority, binding collective decision-making, public guild product readiness, or governance completion. |
+| First-birthday public launch docs | implementation_required with the documentation surface implemented and #4762 proof input merged | `v0.92` WP-14 `#4763` | `v0.92` may consume the tracked external-launch copy, reviewer FAQ, publication gate, forbidden-claim checklist, and merged #4762 retained witness/receipt package. Final birthday and publication claims still require v0.92 packet validation, current exact-head review, exact evidence citation, and operator authorization for the target channel. |
 
 ## Birthday Contract Refresh
 
@@ -173,6 +202,7 @@ sprint surface rather than reconstructing state from individual issue histories.
 - Curiosity Engine / Discovery Substrate
 - Constructability Gate
 - reasoning graph, loop runtime, and `adl.skill.v1`
+- Adaptive Learning DAG planning after verified loop-runtime evidence
 - security readiness
 - ACIP/A2A/protobuf/JSON/WebSocket projection decisions
 - affect/happiness operational reasoning-control boundary from `#4752`; no
@@ -189,8 +219,8 @@ sprint surface rather than reconstructing state from individual issue histories.
 ## Non-Goals
 
 - Do not claim `v0.92` activation readiness in this ledger.
-- Do not implement Memory Palace, ACIP transport, ACP profiles, resilience, or
-  runtime behavior here.
+- Do not implement Memory Palace, ACIP transport, ACP profiles, Adaptive
+  Learning DAG runtime behavior, resilience, or other runtime behavior here.
 - Do not absorb `v0.93` governance, `v0.94` secure execution/trust/time, or
   `v0.95` MVP convergence work.
 - Do not treat planning ownership as completed proof.

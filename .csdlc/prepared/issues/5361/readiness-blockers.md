@@ -15,10 +15,14 @@ deployment, AWS, or shared milestone file was changed.
 - Dependency-gated lanes retain explicit defer reasons.
 - The diagram routes Parity-A #5591 directly into #5361 as well as into the
   three downstream parity children.
+- The dependency graph and validator require exact-revision shadow parity from
+  #5350 before acceptance synthesis.
 - The acceptance-register validator requires every claimed revision to exist,
   requires dependency and proof revisions to be ancestors of the accepted
   revision, and hashes retained artifacts from `revision:path` rather than the
   current working tree.
+- AC-6 quality validation requires retained line-count, module-growth,
+  dependency-audit, test-count, CI, and exact-revision review proofs.
 
 ## Resolved Typed Tooling Preconditions
 

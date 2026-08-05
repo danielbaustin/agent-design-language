@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5788,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tooling][lockfile] Prevent validation and binary installation from rewriting tracked Cargo.lock files",
+    "slug": "lockfile-preservation",
+    "version": "v0.91.8",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Use current targets, --locked, and exact pre-invocation byte restoration for invocation-created drift.",
+      "deliverables": [
+        "Current owner-binary inventory",
+        "Lock-preserving installer and validation builds",
+        "Removed-target and dependency-drift regressions"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Removed target failure leaves Cargo.lock byte-identical",
+        "AC-2: Dependency-resolution drift is restored fail-closed",
+        "AC-3: Pre-existing user-owned lock changes remain byte-identical",
+        "AC-4: Repository-native Cargo validation uses --locked",
+        "AC-5: Default owner inventory contains only current Cargo targets"
+      ],
+      "dependencies": [
+        "Issue #5788 is open",
+        "Current origin/main"
+      ],
+      "repo_inputs": [
+        "adl/Cargo.toml",
+        "adl/tools/install_owner_binaries.sh",
+        "adl/tools/run_owner_validation_lane.sh"
+      ],
+      "non_goals": [
+        "No dependency upgrades",
+        "No Cargo.lock edits",
+        "No AWS",
+        "No broad Rust rebuild"
+      ]
+    }
+  }
+}

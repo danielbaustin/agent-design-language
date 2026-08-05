@@ -1,0 +1,21 @@
+{
+  "issue": 5344,
+  "card": "sor",
+  "expected_generation": 16,
+  "expected_digest": "c43d10219634a36c6790992d7a7d1fc6ae6404dab7f9d48f90109b7e91dc4294",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Record the focused CI path-policy regression proof after the exact-head PR failure.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "adl/tools/test_ci_path_policy.sh"
+      ],
+      "purpose": "Prove literal UTF-8 tracked paths remain Windows-portable while genuinely illegal Windows path components still fail closed.",
+      "outcome": "passed",
+      "evidence_ref": "adl/tools/test_ci_path_policy.sh"
+    }
+  }
+}

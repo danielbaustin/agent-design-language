@@ -1,0 +1,107 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "dependency-and-consumer-register",
+        "proof_role": "Verify retained dependency and consumer proof is exact-revision bound",
+        "purpose": "Validate #5361 dependency and consumer acceptance register entries",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "acceptance-register",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5361/validate_acceptance_register.rb", "--section", "dependencies"],
+        "evidence": {"max_log_bytes": 20000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "secure-access-and-observatory-register",
+        "proof_role": "Verify HTTPS access, Observatory, telemetry, and address configuration proof",
+        "purpose": "Validate #5361 access acceptance register entries",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["dependency-and-consumer-register"],
+        "parallel_group": "acceptance-register",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5361/validate_acceptance_register.rb", "--section", "access"],
+        "evidence": {"max_log_bytes": 20000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "operations-and-rollback-register",
+        "proof_role": "Verify guardian, continuity, pressure shutdown, rollback, and recovery proof",
+        "purpose": "Validate #5361 operations acceptance register entries",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["dependency-and-consumer-register"],
+        "parallel_group": "acceptance-register",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5361/validate_acceptance_register.rb", "--section", "operations"],
+        "evidence": {"max_log_bytes": 20000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "quality-and-independence-register",
+        "proof_role": "Verify Runtime v2 independence, strict lint, budgets, local pre-PR readiness evidence, review, and non-claims",
+        "purpose": "Validate #5361 quality acceptance register entries",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": ["dependency-and-consumer-register"],
+        "parallel_group": "acceptance-register",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "ruby",
+        "argv": [".csdlc/prepared/issues/5361/validate_acceptance_register.rb", "--section", "quality"],
+        "evidence": {"max_log_bytes": 20000, "redact_values": [], "require_relative_paths": true}
+      },
+      {
+        "id": "diff-hygiene",
+        "proof_role": "Verify exact issue diff has no whitespace errors",
+        "purpose": "Run final diff hygiene for #5361 acceptance",
+        "determinism": "deterministic",
+        "resources": {"cpu_units": 1, "memory_mib": 128, "tokens": 0},
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local-control",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 120,
+        "executable": "git",
+        "argv": ["diff", "--check"],
+        "evidence": {"max_log_bytes": 20000, "redact_values": [], "require_relative_paths": true}
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": [
+      "dependency-and-consumer-register",
+      "secure-access-and-observatory-register",
+      "operations-and-rollback-register",
+      "quality-and-independence-register",
+      "diff-hygiene"
+    ],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {"max_parallel": 4, "cpu_units": 4, "memory_mib": 512, "tokens": 0},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5361/typed-acceptance-validation",
+  "cancellation_file": null
+}

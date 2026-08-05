@@ -1,0 +1,13 @@
+{
+  "issue": 5701,
+  "expected_generation": 7,
+  "expected_digest": "dc797bfc2ff0a264c37e1f690764693e2e9ab38f6136776225529d155391e846",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "now_unix_seconds": 1785355684,
+  "add_protected_paths": [
+    "adl-runtime-kernel/tests/guardian_soak.rs",
+    "adl-runtime-kernel/tests/observatory.rs"
+  ],
+  "reason": "Add the two focused Runtime v3 integration-test paths required to prove the exact review remediations: canonical ACIP dispatch from Observatory WSS, failure-safe sequence rollback, and guardian soak parity. The prior #5344 router claim is terminal and released."
+}

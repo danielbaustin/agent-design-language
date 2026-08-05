@@ -1,0 +1,10 @@
+{
+  "schema": "csdlc.doctor.report.v1",
+  "issue": 5352,
+  "status": "pass",
+  "phase": "implemented",
+  "generation": 7,
+  "ready": false,
+  "findings": [],
+  "next_operation": "inspect_phase"
+}

@@ -1,0 +1,73 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5645,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Add typed fail-closed csdlc-merge command",
+    "slug": "typed-csdlc-merge-command",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Added typed csdlc-merge request/result contracts, canonical merge_ready and exact-head validation, Octocrab merge invocation, merge-SHA output, and focused fail-closed tests.",
+      "actual_changes": [
+        "Added csdlc-v2 merge module and public schemas.",
+        "Added csdlc-merge binary using the shared token resolver and Octocrab.",
+        "Kept csdlc-publish non-merging."
+      ],
+      "artifacts": [
+        "csdlc-v2/src/merge.rs",
+        "csdlc-v2/src/bin/csdlc-merge.rs",
+        "csdlc-v2/src/schema.rs",
+        "csdlc-v2/Cargo.toml"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "merge"
+          ],
+          "purpose": "Prove typed merge request/result schemas, exact-head drift rejection, required-check gating, and successful green gate classification.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5645/merge-command.log"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "merge"
+          ],
+          "purpose": "Prove typed merge request/result schemas, exact-head drift rejection, required-check gating, and successful green gate classification.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5645/merge-command.log"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "merge"
+          ],
+          "purpose": "Prove typed merge request/result schemas, exact-head drift rejection, required-check gating, and successful green gate classification.",
+          "outcome": "passed",
+          "evidence_ref": ".csdlc/evidence/5645/merge-command.log"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

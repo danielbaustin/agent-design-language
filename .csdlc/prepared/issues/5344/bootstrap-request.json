@@ -1,0 +1,258 @@
+{
+  "issue": 5344,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5344/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5344/diagram.mmd",
+  "design_reviewer": "codex:5344-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5344-v0918-wp12-soak-rollback-preparation",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784660034,
+    "expires_unix_seconds": 1785264834,
+    "heartbeat_unix_seconds": 1784660034,
+    "branch": "codex/5344-v0918-wp12-soak-rollback",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5344",
+      ".csdlc/locks/5344.lock",
+      ".csdlc/prepared/issues/5344",
+      ".csdlc/evidence/5344",
+      "adl-v2/tools/run-soak.sh",
+      "adl-v2/tools/prove-rollback.sh",
+      "docs/milestones/v0.91.8/evidence/wp12"
+    ],
+    "purpose": "Prepare and review WP-12 soak and rollback contracts only; execution remains prohibited until #5350 and #5361 are merged, typed closed_out, receipt-backed, and ancestral"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-12] Run opt-in soak and prove rollback",
+    "slug": "v0918-wp12-opt-in-soak-rollback",
+    "version": "v0.91.8",
+    "goal": "Run representative ADL v2 opt-in scenarios at exact revisions, retain a bounded soak packet, and prove explicit restoration of the exact prior selector state after successful and failed selection attempts before handing reviewed cutover authority to child #5343.",
+    "required_outcome": "A deterministic exact-revision soak and rollback packet proves local, CI, Runtime v3, provider-disposition, and demo behavior; exact prior selector bytes and digest are restored through the authoritative selector transaction; #5343 and deletion remain fail-closed until acceptance.",
+    "declared_scope": [
+      "issue-local C-SDLC lifecycle, preparation, review, validation, and evidence records",
+      "adl-v2/tools/run-soak.sh bounded manifest-driven orchestration harness",
+      "adl-v2/tools/prove-rollback.sh authoritative selector rollback and fault harness",
+      "docs/milestones/v0.91.8/evidence/wp12 normalized exact-revision soak and rollback report",
+      "dependency, receipt, ancestry, COTS, budget, PVF, no-deferral, cutover, and rollback gates"
+    ],
+    "authority_boundary": [
+      "#5344 owns only its issue-local records, two bounded soak/rollback harness paths, and its retained report path",
+      "#5345 selector and installer are read-only dependencies invoked only through their authoritative public interface",
+      "#5350 parity implementation and classifications and #5361 Runtime v3 implementation and acceptance are read-only inputs",
+      "#5343 alone owns reviewed default switching; #5344 performs isolated opt-in proof and grants no default-cutover authority",
+      "Runtime v2 and incumbent ADL are untouched rollback evidence and may not be edited, copied, imported, or linked",
+      "No AWS, raw credentials, hidden network, production-provider claim, deletion, or release authority is in scope"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries and current-registry semantic card operations only",
+      "Keep the primary checkout clean on main and all tracked #5344 work in the dedicated FastWork issue worktree",
+      "Stop on any typed protected-path collision and never steal, widen, hand-edit, or bypass another claim",
+      "Preparation only: no soak, selector mutation, cutover, product implementation, publication, PR, AWS, raw gh, or Runtime v2 edit",
+      "Do not execute until #5350 and #5361 are each live merged, typed closed_out, backed by a retained merged receipt, and ancestral to the exact execution revision",
+      "Use only an isolated selector root during later execution and reject production or default selector paths",
+      "Use /Volumes/FastWork for generated validation and build output",
+      "Run bounded preparation review, fix every actionable finding, commit and push the preparation branch, and stop"
+    ],
+    "task_boundary": "Prepare a durable reviewed execution packet and dependency gate for WP-12; do not run the soak or rollback harness, mutate a selector, implement product behavior, open a PR, publish, cut over, delete code, use AWS/raw gh, or edit Runtime v2.",
+    "deliverables": [
+      "All six current-registry typed cards with exact scope, authority, dependencies, and no-deferral truth",
+      "Reversible soak/rollback design and Mermaid diagram",
+      "Exact #5350/#5361 live-merge, typed-closeout, retained-receipt, and ancestry gate",
+      "Manifest-driven local, CI, Runtime v3, provider-disposition, and demo soak contract",
+      "Successful-selection and failed-selection exact rollback proof contract",
+      "Selector failure-preservation and rollback verification matrix",
+      "COTS decision, protected paths, LoC/module/test/time budgets, PVF classes, and exact-review plan",
+      "Normalized redacted exact-revision report and reviewed handoff gate to #5343"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Product execution starts only when #5350 and #5361 are each GitHub merged, typed closed_out with no active claim, backed by a retained merged terminal receipt, and the receipt merge SHA is ancestral to the exact #5344 revision",
+      "AC-2: One canonically ordered immutable manifest identifies every local, CI, Runtime v3, provider-disposition, demo, negative, and rollback scenario with exact input, command, expected claim class, timeout, and artifact digest",
+      "AC-3: The harness snapshots prior selector bytes, digest, schema, generation, executable digest, and installation receipt, verifies an isolated root, and performs opt-in only through the authoritative locked compare-and-swap selector interface",
+      "AC-4: Successful selection, failed selection, failed soak, stale expectation, invalid or missing receipt, lock contention, interruption, and verification mismatch prove byte-preserving failure or explicit rollback through the same selector transaction",
+      "AC-5: Every path that selects the opt-in generation ends by re-reading and proving exact restoration of the prior selector bytes and digest; restoration failure blocks #5343, WP-13, publication, and closeout",
+      "AC-6: The retained report is deterministic, repo-relative, redacted, exact-revision and exact-tool-version bound, and distinguishes live, local or mock, credential-blocked, not-applicable, pass, fail, and non-claim dispositions without production overclaim",
+      "AC-7: #5344 never changes the default generation, never edits selector storage directly, never edits Runtime v2, and hands off to #5343 only after exact review accepts soak, rollback, compatibility-window, and residual-risk evidence",
+      "AC-8: Preparation, dependency, rollback, soak, budget, CI, and post-merge PVF lanes are executable and complete with no deferred acceptance; orchestration stays within 800 nonblank lines, tests and fixtures within 1,200, modules below 500, and 120/300/1800/3600-second budgets unless exact reviewed variance is recorded"
+    ],
+    "dependencies": [
+      "#5350 WP-11 live merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "#5361 Runtime v3 acceptance live merged, typed closed_out, claim released, retained merged receipt present, and merge SHA ancestral",
+      "#5345 authoritative selector and installer public interface available as a read-only dependency on current main",
+      "Reviewed parity classifications and accepted Runtime v3 scenarios available at exact revisions",
+      "Child #5343 remains blocked until #5344 exact evidence is reviewed and accepted"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issue #5344 source prompt",
+      "docs/templates/prompts/current.json",
+      "csdlc-v2/operator/generation-selector.json",
+      "docs/milestones/v0.91.8/DESIGN_v0.91.8.md",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/DELETION_AND_CUTOVER_v0.91.8.md",
+      "future retained closeout receipts and merged revisions for #5350 and #5361",
+      "future reviewed selector interface from #5345 and accepted scenario manifests from #5350/#5361"
+    ],
+    "non_goals": [
+      "Default generation selection or implementation of child #5343",
+      "Selector, installer, language, compiler, engine, records, provider, governed-tool, Runtime, or C-SDLC implementation",
+      "Incumbent ADL or Runtime v2 source changes, deletion, copying, linking, or cleanup",
+      "AWS, cloud provisioning, live credential acquisition, raw provider payload retention, or production-provider claims from mock evidence",
+      "WP-13 deletion, integrated release, milestone closeout, or v0.92 handoff",
+      "Any product implementation, soak execution, selector mutation, publication, PR, or closeout during this preparation task"
+    ],
+    "plan_summary": "Render and validate all six cards; freeze the reversible selector transaction, exact dependency gate, scenario manifest, evidence schema, protected paths, COTS, budgets, PVF, no-deferral, cutover, and rollback invariants; obtain bounded preparation review and fix findings; commit and push preparation only; wait for #5350 and #5361 terminal receipts and ancestry; then execute the complete exact-revision soak/rollback lifecycle without widening authority.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Complete all six typed cards, design, Mermaid diagram, protected paths, COTS, budgets, PVF, no-deferral, selector rollback invariants, preparation validation, bounded review/fixes, durable commit, and push without execution",
+        "acceptance_ids": ["AC-1", "AC-7", "AC-8"],
+        "status": "in_progress"
+      },
+      {
+        "id": "S2",
+        "action": "Maintain a read-only dependency watch and begin execution only when #5350 and #5361 satisfy live merge, typed closed_out, retained receipt, claim release, and ancestry gates",
+        "acceptance_ids": ["AC-1"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Implement the bounded manifest-driven soak and rollback harnesses without editing selector implementation, default state, Runtime v2, or dependency-owned code",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5", "AC-7", "AC-8"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run every local, CI, Runtime v3, provider-disposition, demo, negative, rollback, evidence-integrity, budget, and no-deferral lane at the exact revision and fix all findings",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-8"],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Obtain exact-revision review, publish through typed v2, shepherd required checks, merge only under authorization, run post-merge proof, close out, retain the terminal receipt, release the claim, and hand accepted evidence to #5343",
+        "acceptance_ids": ["AC-1", "AC-5", "AC-6", "AC-7", "AC-8"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "No execution begins before both dependency issues are live merged, typed closed_out, receipt-backed, claim-free, and ancestral",
+      "Only an isolated opt-in selector root may be mutated and the default selector is never changed by #5344",
+      "Every selector mutation uses the authoritative locked compare-and-swap interface; direct storage edits are forbidden",
+      "Prior selector bytes and digest are captured before mutation and restored exactly after every selected soak path",
+      "Every failure preserves prior bytes or enters explicit verified rollback; no implicit fallback is allowed",
+      "Rollback failure blocks #5343, WP-13 deletion, publication, and closeout",
+      "Evidence is deterministic, redacted, repo-relative, exact-revision bound, and claim-classified",
+      "Runtime v2 remains untouched rollback evidence and is never an edit or dependency target",
+      "All applicable acceptance and PVF lanes complete without deferral before publication"
+    ],
+    "risks": [
+      "A soak harness can accidentally become a second selector, workflow engine, or runtime supervisor",
+      "A test root can resolve to a production or default selector path and mutate operator state",
+      "Partial selector writes, stale expectations, interruption, or lock races can make rollback non-exact",
+      "Long-running scenarios can produce nondeterministic, machine-local, secret-bearing, or non-replayable evidence",
+      "Mock or credential-blocked provider evidence can be misrepresented as production readiness",
+      "A passing happy-path soak can hide failed-selection or failed-soak rollback defects",
+      "Child #5343 or WP-13 can begin from metadata instead of reviewed exact evidence",
+      "Harness and fixture growth can recreate maintenance burden unless LoC/module/time budgets remain enforced"
+    ],
+    "planning_profile": "migration",
+    "stop_conditions": [
+      "Any #5350 or #5361 live merge, typed closed_out, retained receipt, claim release, or ancestry predicate is absent or contradictory",
+      "Any intended protected path collides with an active typed claim",
+      "The authoritative selector cannot use an isolated root or requires direct storage editing",
+      "Exact prior selector bytes or digest cannot be retained and verified after rollback",
+      "A scenario requires AWS, raw credentials, hidden network, Runtime v2 edits, or production-state mutation",
+      "The scenario manifest, evidence, or claim classification is non-deterministic, secret-bearing, host-bound, or incomplete",
+      "Any acceptance or validation item would be deferred, skipped, or replaced with metadata-only proof",
+      "A LoC, module, test, dependency, or duration budget exceeds its limit without exact reviewed variance"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "preparation-contract",
+        "proof_role": "Prove all six cards, design/diagram, scope, protected paths, dependency predicates, COTS, budgets, PVF, no-deferral, rollback invariants, and root safety",
+        "acceptance_ids": ["AC-1", "AC-7", "AC-8"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5344/validate-preparation.rb"],
+        "parallel_group": "preparation",
+        "defer_reason": null
+      },
+      {
+        "lane": "dependency-terminal-gate",
+        "proof_role": "Fail closed unless #5350 and #5361 are merged, typed closed_out, receipt-backed, claim-free, and ancestral",
+        "acceptance_ids": ["AC-1"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5344/check-dependencies.rb"],
+        "parallel_group": "execution-gate",
+        "defer_reason": "Run only when execution is requested; it must fail closed until both dependencies are terminal and ancestral"
+      },
+      {
+        "lane": "rollback-fault-matrix",
+        "proof_role": "Prove isolated-root opt-in, prior-byte preservation, locked CAS selection, successful/failed selection, failed soak, explicit rollback, and exact restoration",
+        "acceptance_ids": ["AC-3", "AC-4", "AC-5", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 300,
+        "budget_tokens": 6000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5344/run-validation-lane.rb", "rollback-fault-matrix"],
+        "parallel_group": "rollback",
+        "defer_reason": "Execute after dependency closure and harness implementation; mandatory before publication"
+      },
+      {
+        "lane": "representative-soak",
+        "proof_role": "Run the frozen local, CI, Runtime v3, provider-disposition, demo, negative, and rollback scenario manifest and retain normalized evidence",
+        "acceptance_ids": ["AC-2", "AC-4", "AC-5", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 1800,
+        "budget_tokens": 10000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5344/run-validation-lane.rb", "representative-soak"],
+        "parallel_group": "soak",
+        "defer_reason": "Execute after dependency closure and harness implementation; mandatory before publication"
+      },
+      {
+        "lane": "soak-budgets-and-evidence",
+        "proof_role": "Enforce COTS closure, no forbidden dependencies, LoC/module/test/time limits, deterministic evidence schema, redaction, repo-relative paths, test count, and no-deferral",
+        "acceptance_ids": ["AC-6", "AC-8"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 3600,
+        "budget_tokens": 7000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5344/run-validation-lane.rb", "soak-budgets-and-evidence"],
+        "parallel_group": "evidence",
+        "defer_reason": "Execute at the exact implementation revision after all proving scenarios; mandatory before publication"
+      },
+      {
+        "lane": "post-merge-exact",
+        "proof_role": "Re-run dependency ancestry, rollback, representative soak, evidence integrity, budgets, exact revision identity, and #5343 handoff gate after authorized merge",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8"],
+        "deterministic": true,
+        "resource_profile": "large",
+        "budget_seconds": 3600,
+        "budget_tokens": 12000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5344/run-validation-lane.rb", "post-merge-exact"],
+        "parallel_group": "post-merge",
+        "defer_reason": "Execute only after authorized merge and typed merged-state reconciliation; mandatory before closeout"
+      }
+    ],
+    "failure_policy": "Fail closed without soak, selector mutation, publication, cutover, merge, #5343 handoff, deletion, or closeout on an incomplete dependency gate, claim collision, non-isolated root, direct selector edit, prior-byte damage, rollback mismatch, stale or invalid receipt, hidden network/credential/AWS use, Runtime v2 edit, secret or host-path disclosure, overclaim, budget violation, deferred acceptance, stale review, red CI, or absent post-merge proof.",
+    "review_prompts": [
+      "Can any path, symlink, environment value, stale receipt, or argument escape the isolated selector root or mutate the default selector?",
+      "Does every selector mutation use the authoritative locked compare-and-swap API and prove exact prior-byte preservation or explicit exact rollback?",
+      "Do successful selection, failed selection, failed soak, interruption, contention, and verification mismatch all have deterministic negative proof?",
+      "Are #5350/#5361 merge, typed closeout, retained receipt, claim release, and ancestry predicates exact and fail-closed?",
+      "Does the manifest cover local, CI, Runtime v3, provider-disposition, demo, negative, and rollback scenarios without production overclaim?",
+      "Are COTS, dependency exclusions, LoC/module/test/time budgets, PVF classification, no-deferral, redaction, exact review, and post-merge proof complete?"
+    ],
+    "review_scope": ".csdlc/issues/5344\n.csdlc/locks/5344.lock\n.csdlc/prepared/issues/5344\n.csdlc/evidence/5344\nadl-v2/tools/run-soak.sh\nadl-v2/tools/prove-rollback.sh\ndocs/milestones/v0.91.8/evidence/wp12"
+  }
+}

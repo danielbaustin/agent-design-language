@@ -31,7 +31,7 @@ REQUIRED_FEATURE_SURFACES = {
     "html_observatory": {
         "classification": "proven",
         "issues": {4690},
-        "evidence": {"demos/v0.91.7/html-observatory/README.md"},
+        "evidence": {"demos/html-observatory/README.md"},
     },
     "runtime_v2_observatory_packet": {
         "classification": "proven_retained",

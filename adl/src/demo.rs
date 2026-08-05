@@ -964,6 +964,17 @@ mod tests {
         p
     }
 
+    fn repo_tmp_dir(prefix: &str) -> PathBuf {
+        let mut p = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        p.pop();
+        p.push(".adl/tmp/adl-test-temp");
+        std::fs::create_dir_all(&p).unwrap();
+        let seq = TEMP_DIR_SEQ.fetch_add(1, Ordering::Relaxed);
+        p.push(format!("adl-{prefix}-pid{}-n{seq}", std::process::id()));
+        std::fs::create_dir_all(&p).unwrap();
+        p
+    }
+
     #[test]
     fn run_demo_writes_required_artifacts() {
         let out = tmp_dir("demo-a");
@@ -1082,6 +1093,26 @@ mod tests {
             summary.contains("final_result: escalate"),
             "summary was:\n{summary}"
         );
+    }
+
+    #[test]
+    fn v086_review_surface_demo_marks_retired_external_entries() {
+        let out = repo_tmp_dir("v086-review-surface");
+        let artifacts = write_v086_review_surface_demo(&out).unwrap();
+        assert!(artifacts
+            .iter()
+            .any(|path| path.ends_with("demo_manifest.json")));
+        assert!(out.join("d1_control_path/summary.txt").is_file());
+        assert!(out.join("d2_fast_slow/comparison.txt").is_file());
+        assert!(out.join("d3_candidate_selection/selection.json").is_file());
+        assert!(out.join("d4_freedom_gate/blocked_case.json").is_file());
+
+        let manifest = std::fs::read_to_string(out.join("demo_manifest.json")).unwrap();
+        assert!(manifest.contains("retired_by_5347_historical_artifact_only"));
+        assert!(!manifest.contains("./adl/tools/demo_v086_fast_slow.sh"));
+        assert!(!manifest.contains("./adl/tools/demo_v086_candidate_selection.sh"));
+        assert!(!manifest.contains("./adl/tools/demo_v086_freedom_gate.sh"));
+        std::fs::remove_dir_all(&out).unwrap();
     }
 
     #[test]

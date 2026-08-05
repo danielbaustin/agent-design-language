@@ -8,11 +8,10 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator release-evidence review-readiness-cleanup portable-contract-normalizer medium-article-writer arxiv-paper-writer diagram-author spp-editor srp-editor sprint-conductor sprint-review stp-editor sip-editor sor-editor; do
+  for skill in issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator release-evidence review-readiness-cleanup portable-contract-normalizer medium-article-writer arxiv-paper-writer diagram-author spp-editor srp-editor sprint-conductor sprint-review stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
-  [[ -f "${root}/skills/workflow-conductor/SKILL.md" ]]
   [[ -f "${root}/skills/issue-watcher/SKILL.md" ]]
   [[ -f "${root}/skills/pr-init/SKILL.md" ]]
   [[ -f "${root}/skills/pr-ready/SKILL.md" ]]
@@ -84,7 +83,6 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/sip-editor/SKILL.md" ]]
   [[ -f "${root}/skills/sor-editor/SKILL.md" ]]
 
-  grep -Fq "thin orchestrator" "${root}/skills/workflow-conductor/SKILL.md"
   grep -Fq "Watch one issue, PR, branch, or dependency gate" "${root}/skills/issue-watcher/SKILL.md"
   grep -Fq "qualitative card review" "${root}/skills/pr-init/SKILL.md"
   grep -Fq "execution_readiness" "${root}/skills/pr-ready/references/output-contract.md"
@@ -125,7 +123,6 @@ assert_skill_bundle() {
   grep -Fq "truthful execution and integration state" "${root}/skills/sor-editor/SKILL.md"
 
   bash "${repo_root}/adl/tools/validate_skill_frontmatter.sh" \
-    "${root}/skills/workflow-conductor/SKILL.md" \
     "${root}/skills/issue-watcher/SKILL.md" \
     "${root}/skills/pr-init/SKILL.md" \
     "${root}/skills/pr-ready/SKILL.md" \
@@ -193,7 +190,7 @@ assert_skill_bundle "${CODEX_HOME}"
 
 malformed_root="${tmpdir}/malformed-skills"
 cp -R "${repo_root}/adl/tools/skills" "${malformed_root}"
-cat >"${malformed_root}/workflow-conductor/SKILL.md" <<'EOF'
+cat >"${malformed_root}/issue-watcher/SKILL.md" <<'EOF'
 ---
 name: broken
 description: first

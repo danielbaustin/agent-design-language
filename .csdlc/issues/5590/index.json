@@ -3,47 +3,10 @@
   "issue": 5590,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "23af54704a287240d22af7ec75e979b61e6577225862d85aa2bc509d532b60b1",
-  "phase": "published",
-  "generation": 16,
-  "digest": "a8b9d8a2673c60fb528217aca4cdbcf64adec791b5423d1089f5109a5305f181",
-  "claim": {
-    "id": "claim-5590-runtime-v3-parity-d-preparation",
-    "owner": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
-    "generation": 16,
-    "acquired_unix_seconds": 1784601952,
-    "expires_unix_seconds": 1785206752,
-    "heartbeat_unix_seconds": 1784601952,
-    "branch": "codex/5590-runtime-v3-parity-d",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/evidence/5590",
-      ".csdlc/issues/5590",
-      ".csdlc/locks/5590.lock",
-      ".csdlc/prepared/issues/5590",
-      "adl-runtime-kernel/Cargo.lock",
-      "adl-runtime-kernel/Cargo.toml",
-      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
-      "adl-runtime-kernel/src/config.rs",
-      "adl-runtime-kernel/src/control.rs",
-      "adl-runtime-kernel/src/telemetry.rs",
-      "adl-runtime-kernel/tests/configuration.rs",
-      "adl-runtime-kernel/tests/control.rs",
-      "adl-runtime-kernel/tests/observatory.rs",
-      "adl-runtime-kernel/tests/telemetry.rs",
-      "adl-runtime/src/bin/adl-runtime-guardian.rs",
-      "adl-runtime/src/guardian.rs",
-      "adl-runtime/tests/guardian_cli.rs",
-      "adl/tools/check_coverage_impact.sh",
-      "adl/tools/run_runtime_v3_guardian_soak.sh",
-      "adl/tools/run_runtime_v3_operational_proof.sh",
-      "adl/tools/runtime_v3_operational_selector.sh",
-      "adl/tools/test_check_coverage_impact.sh",
-      "adl/tools/test_runtime_v3_operational_selector.sh",
-      "demos/v0.91.7/html-observatory",
-      "infra/runtime-v3"
-    ],
-    "purpose": "Implement every #5590 Runtime v3 Parity-D outcome: secure configured HTTPS and WebSocket access, live Observatory consumption, external guardian recovery, Vector telemetry boundary, operational Runtime v3 rollback, and exact positive and negative proof"
-  },
+  "phase": "closed_out",
+  "generation": 24,
+  "digest": "a4ac8a5be8dae5f86739f4b29a2eac940dd21ad1d4c8b2225c2baf010b07221c",
+  "claim": null,
   "review_assignment": {
     "reviewer": "subagent:019f8692-79df-7fe0-98bd-8d42df9b5f1a",
     "assigned_by": "codex:5590-sole-writer-takeover",
@@ -103,15 +66,72 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5621",
     "base": "main",
     "head": "codex/5590-runtime-v3-parity-d",
-    "revision": "git-blake3:04e1a02fe958529af31f8ecc52017855a36fad99:eb9d4df2dac2a085a26daacaca2db54b33ee4e0a5daf0670ed73fc4be1778823",
+    "revision": "git-blake3:a79ab1b395b7331e4b6288d19effdb5fc392e39a:9279fa134bcbb350b4665b459dedc7d0333fc88a854eea42859cb6f4afe3b655",
     "draft": false,
-    "observed_state": "open"
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5621,
+    "head_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29928454100/job/88954866001"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29928454100/job/88951814339"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5621,
+    "disposition": "merged",
+    "observed_sha": "a79ab1b395b7331e4b6288d19effdb5fc392e39a",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5590.json",
+    "released_branch": "codex/5590-runtime-v3-parity-d",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5590",
+      ".csdlc/issues/5590",
+      ".csdlc/locks/5590.lock",
+      ".csdlc/prepared/issues/5590",
+      "adl-runtime-kernel/Cargo.lock",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/config.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/observatory.rs",
+      "adl-runtime-kernel/tests/telemetry.rs",
+      "adl-runtime/src/bin/adl-runtime-guardian.rs",
+      "adl-runtime/src/guardian.rs",
+      "adl-runtime/tests/guardian_cli.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_runtime_v3_guardian_soak.sh",
+      "adl/tools/run_runtime_v3_operational_proof.sh",
+      "adl/tools/runtime_v3_operational_selector.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_runtime_v3_operational_selector.sh",
+      "demos/v0.91.7/html-observatory",
+      "infra/runtime-v3"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5590/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5590/diagram.mmd",
+  "design_path": ".csdlc/issues/5590/retained/design.md",
+  "diagram_path": ".csdlc/issues/5590/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex:019f828e-8480-7242-a054-1b9df00f2f17",
@@ -120,34 +140,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f378ee1d6091795d426fd0f31e22215f02e1230d84d0fd90af2e30e59d6426a3",
+      "values_digest": "f3cf152869dd44926cdbe64fc461a364dba7d7f318aea5d08609963526414531",
       "rendered_digest": "e88f17d82847eda7ebf748e6c5c0db98b6dcb4035390cd6e8e990e7d271cf925",
       "ast_digest": "cafd78c5558bddede73d9c794101793129f298be4d15bfa1dc68b8e94b94104f"
     },
     "stp": {
-      "values_digest": "d2fea151fad1f8d297f8041570a1ecc0f7282dc5a8c7d1d70ea08d5b673ae807",
+      "values_digest": "6ea5f99bbf4e2764f05303476735ec6261de0e0fe3b2982fa519533d8eeb2e27",
       "rendered_digest": "3ce05fb3e369f9f1b6d6456f7340b025e10df76e891e73a2ba55828aa33f4a36",
       "ast_digest": "062ccdf6b207cd880685dabf22082d9d1d3b5644eb0a931e8b041091b225099e"
     },
     "spp": {
-      "values_digest": "49831231e84a0ce6f7328aca1c8b1b881631b1d0ebbf07cbab3ab6fe30356337",
-      "rendered_digest": "99669c02524aa94692d53473e4a79cb2efa7f8b4c28e037150268db97b2546cd",
-      "ast_digest": "eca6800a4ab66571e1763a76ef7d1ad673b08d4effedb0bc3bacb21155117849"
+      "values_digest": "dc28b716146fca05da814cff2807a7c6cbc2dde04d691304014d2342b101549d",
+      "rendered_digest": "66a5daf77b59ff7499a759c26a4fb229e2065cac791c8b93783e2dea0799b99f",
+      "ast_digest": "451ee251d53c5235b571bca9603d14b5149cbc1c54ccc437f47d03821394704a"
     },
     "vpp": {
-      "values_digest": "085170bdc549b3ff3657f860c92ed2d12a6f21d64b062d6e0f572afc3237bd44",
-      "rendered_digest": "cf314ec09a7efd878b8586f1629211c9c42136f40fe5625bdc193e099e569755",
-      "ast_digest": "88550d94d71abf970d92338718154e89d69115e0e48ca926f3927d92ed06b1a7"
+      "values_digest": "edd66f71cbb68059be99e42705efbc662561c2f81a2ef6ce92d562044fff492f",
+      "rendered_digest": "311ed6c3628b1e709d246fe493b151a184f18ed6d641ddb08f8b8611bb13afc7",
+      "ast_digest": "652ebcbecf070202e4993155a32a60702f3959cedf86d39ed81b0bb75f9b8bb7"
     },
     "srp": {
-      "values_digest": "363b77ec1aab88204d55b84c8c678259087df9e9df5f2ec7f931ca44a4fb2508",
-      "rendered_digest": "e995801391e090de93127d2a29deccbeffdbd45767eff28b5c82d3d210009f6d",
-      "ast_digest": "95a05e45a4938782d79ec2ed4105045b4aefc1005d542ea2a841b94191e54e2d"
+      "values_digest": "649f2dc0ba72745aa6acb91d47ca7504a34b1808d9edd18488202e2ea03f6ded",
+      "rendered_digest": "14f860b9f077d801f1273810ae507f52aa88725481669aefaad204b9466f5184",
+      "ast_digest": "7d19d4fa719db6b0bb9e9703a2260cc96789fb869b0085d19da3ff24883667a8"
     },
     "sor": {
-      "values_digest": "500e54f675998e9cca6db98c05b59524699fdc23e12aaf195e32e9576cbcf177",
-      "rendered_digest": "9e41f00807b6a29a55e32e3d004957cbdff359027c7bb43d2aa1960306420a82",
-      "ast_digest": "9699d1fd040e94ef7ed105498b34833281b41a2b9c1f9172124187d1fe616118"
+      "values_digest": "af011022e603426224b5080f4019f25fcfb01e72080e2d70e03439e072b90e72",
+      "rendered_digest": "19dac11f11ce1610f0f2c4079414c96c9a431b55e9dfd864590f500b599c2aee",
+      "ast_digest": "7c745de44af2a1844a985e4588ee2394ea7cd155c8cb367b4facd965108c7666"
     }
   },
   "transitions": [
@@ -206,6 +226,27 @@
       "to": "published",
       "actor": "codex:5590-sole-writer-takeover",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -425,6 +466,62 @@
       "actor": "codex:5590-sole-writer-takeover",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 32,
+      "generation": 17,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 33,
+      "generation": 18,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "Record the single required post-merge Runtime v3 operational proof at merge commit 8ba224027a7ebd410aa4596c9edce571758f8a0a.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ADL_RUNTIME_V3_PROOF_ROOT=/Volumes/FastWork/adl-5590 CARGO_HOME=/Volumes/FastWork/adl-5590/cargo-home CARGO_TARGET_DIR=/Volumes/FastWork/adl-5590/runtime-target bash adl/tools/run_runtime_v3_operational_proof.sh\"],\"purpose\":\"Prove the landed Runtime v3 Parity-D path through an external guardian, HTTPS bearer authorization, WSS discovery, operational rollback restoration, and cryptographically restored candidate and prior continuity.\",\"outcome\":\"passed\",\"evidence_ref\":\"merge:8ba224027a7ebd410aa4596c9edce571758f8a0a:/Volumes/FastWork/adl-5590/operational-proof.*; runtime_v3_operational_proof=pass\"}}"
+    },
+    {
+      "sequence": 34,
+      "generation": 19,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 35,
+      "generation": 20,
+      "actor": "codex:5590-sole-writer-takeover",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 36,
+      "generation": 21,
+      "actor": "codex:adl-post-merge-closeout",
+      "reason": "materialize retained terminal closeout receipt after post-merge sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 37,
+      "generation": 22,
+      "actor": "adl-post-merge-closeout",
+      "reason": "post-merge terminal reconciliation sweep",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 38,
+      "generation": 23,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 39,
+      "generation": 24,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

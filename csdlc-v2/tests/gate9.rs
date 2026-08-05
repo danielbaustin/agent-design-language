@@ -7,9 +7,6 @@ use csdlc_v2::{
 };
 use strum::IntoEnumIterator;
 
-#[path = "gate7_lifecycle.rs"]
-mod lifecycle_soak;
-
 fn passing_scenarios() -> Vec<ScenarioEvidence> {
     SoakScenario::iter()
         .map(|scenario| ScenarioEvidence {
@@ -256,56 +253,6 @@ fn evidence_input_rejects_wrong_schema_or_non_v1_default() {
     input.schema = "csdlc.soak_evidence.v1".into();
     input.default_generation = Generation::V2;
     assert!(decide_from_evidence(input).is_err());
-}
-
-#[test]
-fn representative_samples_reopen_persisted_store_between_lifecycle_phases() {
-    let samples = std::path::Path::new("../docs/architecture/csdlc-v2/gate9/samples");
-    let slugs = ["docs-only", "small-rust", "hostile-recovery"];
-    let outcomes = slugs.map(|slug| {
-        let packet: csdlc_v2::SamplePacket =
-            serde_json::from_slice(&std::fs::read(samples.join(slug).join("packet.json")).unwrap())
-                .unwrap();
-        assert_eq!(packet.slug, slug);
-        assert_eq!(packet.card_paths.len(), 6);
-        let title = std::fs::read_to_string(samples.join(slug).join("sip.md"))
-            .unwrap()
-            .lines()
-            .next()
-            .unwrap()
-            .trim_start_matches("# ")
-            .to_owned();
-        lifecycle_soak::run_complete_lifecycle(
-            packet.issue,
-            &title,
-            &packet.slug,
-            slug == "hostile-recovery",
-        )
-    });
-    assert_eq!(outcomes.len(), 3);
-    for (slug, outcome) in slugs.into_iter().zip(outcomes) {
-        let legacy: csdlc_v2::NormalizedOutcome = serde_json::from_slice(
-            &std::fs::read(samples.join(slug).join("legacy-observation.json")).unwrap(),
-        )
-        .unwrap();
-        let comparison = csdlc_v2::compare_shadow(&legacy, &outcome);
-        assert!(
-            !comparison.equivalent,
-            "{slug}: retained v1 difference must remain visible"
-        );
-        assert_eq!(comparison.differences, vec!["card_statuses"]);
-        assert_eq!(
-            legacy.card_statuses[&csdlc_v2::CardKind::Srp].to_string(),
-            "pre_phase"
-        );
-        assert_eq!(
-            outcome.card_statuses[&csdlc_v2::CardKind::Srp].to_string(),
-            "complete"
-        );
-        let mut normalized = legacy.clone();
-        normalized.card_statuses = outcome.card_statuses.clone();
-        assert!(csdlc_v2::compare_shadow(&normalized, &outcome).equivalent);
-    }
 }
 
 #[test]

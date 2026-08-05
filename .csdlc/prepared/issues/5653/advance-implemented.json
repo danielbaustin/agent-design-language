@@ -1,0 +1,11 @@
+{
+  "issue": 5653,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "b42e4432e994cf6c1674ef37483a906f46ebf415737997f40b6902b2b913851f",
+  "claim_id": "claim-5653-readme-refresh",
+  "actor": "codex:5653-execution",
+  "reason": "README implementation is complete and focused proof is green",
+  "operation": {"operation": "advance_phase", "phase": "implemented"},
+  "fail_after_backup": false
+}

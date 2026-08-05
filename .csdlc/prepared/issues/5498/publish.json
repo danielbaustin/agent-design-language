@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5498,
+  "expected_generation": 13,
+  "expected_digest": "214dac410ebd04ddc66f01ee6a24687b79e6b5e60cbf3c67b7b8f3b6547983ea",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5498-v0918-wp10a-task-context-adapter",
+  "title": "[v0.91.8][WP-10A] Add bounded Codex task and context adapter",
+  "body": "Closes #5498\n\nAdds a small async ADL v2 adapter for conductor-approved task create, attach, message, handoff, inspect, cancel, and escalate operations. Requests bind to verified issue/claim/worktree/path authority, bounded context digests, deadlines, and idempotency keys; receipts retain only sanitized identifiers, status, digests, and evidence references.\n\nTask-level serialization closes cancellation races, repeated terminal cancellation replays without redispatch, terminal observations block later messages and handoffs, and timeout results remain explicitly indeterminate. Focused FastWork proof passes 15/15 tests, strict all-target Clippy, formatting, dependency/ancestry checks, diff hygiene, and LoC budgets. The single GPT-5.5 pre-PR review cycle resolved every finding and finished with zero blockers. No Runtime v2, AWS, raw gh, provider calls, or private transcript retention.",
+  "draft": true,
+  "token_file": null
+}

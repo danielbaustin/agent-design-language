@@ -1,0 +1,13 @@
+flowchart LR
+  I["#5715 integrated studio export"] --> R["Reference studio HTML"]
+  O["Operator copy/logo fixes"] --> R
+  L["Agent Logic logo asset"] --> R
+  R --> G["Podcast launch generator"]
+  G --> S["Served studio route"]
+  G --> P["Podcast landing page"]
+  G --> F["RSS feed"]
+  A["Existing audio artifact"] --> P
+  A --> F
+  V["Focused validation"] --> S
+  V --> F
+  V --> A

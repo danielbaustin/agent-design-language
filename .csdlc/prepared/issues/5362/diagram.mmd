@@ -1,0 +1,11 @@
+flowchart TD
+    A["Refresh origin/main at execution base"] --> B["Verify #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, #5107"]
+    B --> C{"All live CLOSED and current-main closed_out/merged receipts?"}
+    C -- "No" --> X["Block and record exact missing gate"]
+    C -- "Yes" --> D["Consume exact current-main evidence paths"]
+    D --> E["Assign feature-list dispositions"]
+    E --> F["Prepare source handoff and v0.92 planning seed"]
+    F --> G{"Unsupported readiness or birthday claim?"}
+    G -- "Yes" --> X
+    G -- "No" --> H["Bounded review before any PR"]
+    H --> I["Then WP-21A may consume #5362"]

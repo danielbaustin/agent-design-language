@@ -1,0 +1,11 @@
+{
+  "issue": 5648,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5648-operator-active-claim-revoke",
+  "expected_generation": 15,
+  "expected_digest": "e105187c5664e8b9387a7296dade389ac9fb2f0581db75d5120fda95663677c2",
+  "now_unix_seconds": 1784921361,
+  "actor": "codex:issue-5655-slot-1",
+  "operator_authority": "github://danielbaustin/agent-design-language/issues/5648 observed closed at 2026-07-24T18:04:54Z while retained published lifecycle claim blocks #5655 implementation scope",
+  "reason": "Release stale broad csdlc-v2 source/test claim from closed issue #5648 before implementing #5655."
+}

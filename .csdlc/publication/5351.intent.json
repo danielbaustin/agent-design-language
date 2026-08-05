@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5351,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5351-v0918-preparation",
+  "title": "[v0.91.8][WP-16] Run integrated platform quality gate",
+  "body": "Closes #5351\n\nRuns the v0.91.8 integrated platform quality gate and retains exact, repository-relative release evidence.\n\nResults:\n- 67 milestone issues audited: 34 working-code outcomes, 21 useful durable results, 12 partial or explicitly bounded outcomes, and 0 unacceptable outcomes.\n- ADL v2 all-target tests: 170 passed, 0 failed.\n- Runtime v3 all-target tests: 299 passed, 0 failed, 1 declared ignore.\n- C-SDLC v2 all-target tests: 277 passed, 0 failed.\n- Focused, integrated-platform, and complete validation lanes passed at exact substantive revision a02b9cb31c7d79f09175ef57f9557f37b2067c22.\n- Routed blockers #5762, #5763, and #5770 were repaired and merged before the final gate.\n\nReview:\n- Exact-revision gpt-5.5 review completed with zero actionable findings.\n- Retained evidence passes host-path, redaction, and diff hygiene checks.\n\nWP-17 is released immediately after this PR merges. Typed closeout is asynchronous and nonblocking.",
+  "draft": false,
+  "revision": "git-blake3:4e023950c26e7d48c9df305856c3c6f6d6640a9b:9124318f4f837051e4d12e898fd0645da08aedea633c6fcf53c0b1ca8ee711e0",
+  "commit_sha": "4e023950c26e7d48c9df305856c3c6f6d6640a9b"
+}

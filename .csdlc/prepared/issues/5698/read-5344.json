@@ -1,0 +1,18 @@
+{
+  "repository": "danielbaustin/agent-design-language",
+  "action": "issue_read",
+  "operation_key": "5698-check-5344-live-gate",
+  "token_file": "/Users/daniel/keys/github.token",
+  "issue": 5344,
+  "pull_request": null,
+  "title": null,
+  "body": null,
+  "labels": [],
+  "assignees": [],
+  "milestone": null,
+  "state": null,
+  "comment_body": null,
+  "required_checks": [],
+  "require_review": false,
+  "linked_issue": null
+}

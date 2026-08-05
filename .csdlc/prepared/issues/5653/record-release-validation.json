@@ -1,0 +1,10 @@
+{
+  "issue": 5653,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "8e94cc4a16674d4bf27654bc70804ef95468b23d91913878f7c72fca06296985",
+  "claim_id": "claim-5653-readme-refresh",
+  "actor": "codex:5653-execution",
+  "reason": "Revalidate README and release-note truth after publishing v0.91.7.",
+  "operation": {"operation":"record_validation","result":{"command":["git","diff","--check"],"purpose":"Verify published-release links, homepage link, canonical main badges, and documentation whitespace","outcome":"passed","evidence_ref":".csdlc/evidence/5653/readme-focused.txt"}}
+}

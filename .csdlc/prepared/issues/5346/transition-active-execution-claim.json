@@ -1,0 +1,16 @@
+{
+  "issue": 5346,
+  "expected_generation": 7,
+  "expected_digest": "4361a7cc1ba79b47ee687ffa0d2c4bba39528c6a5141b56673d3090a14376824",
+  "claim_id": "claim-5346-v0918-wp13-deletion-preparation-current",
+  "expected_owner": "codex:5346-preparation-refresh",
+  "expected_purpose": "Refresh #5346 WP-13 preparation only; no source path may be claimed or deleted until #5347, WP-14A #5384, WP-15 #5354, WP-16 #5351, WP-17 #5360, #5344, #5343, #5358, and #5361 gates are terminal, receipt-backed, claim-free, ancestral where applicable, rollback-valid, and disjoint.",
+  "actor": "codex:5346-wp13-execution-owner",
+  "reason": "Operator-authorized WP-13 execution: remove stale WP-16/WP-17 prerequisites and protect the exact orphaned legacy CLI deletion surfaces while preserving #5347 disjointness.",
+  "now_unix_seconds": 1785547899,
+  "purpose": "Execute #5346 WP-13 final ADL CLI deletion under current operator sequence: upstream #5344/#5343/#5358/#5361/#5384 terminal, #5354/#5352 GitHub merged and closed, #5347 disjoint peer manifest, serialized merge ordering, and no primary-main writes. Delete only exact reviewed #5346 manifest rows; do not touch #5347 external-band paths or Runtime v2.",
+  "add_protected_paths": [
+    "adl/src/cli/tooling_cmd",
+    "adl/src/cli/tests/pr_cmd_inline"
+  ]
+}

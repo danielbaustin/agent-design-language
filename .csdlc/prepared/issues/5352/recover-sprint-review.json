@@ -1,0 +1,9 @@
+{
+  "schema": "csdlc.review_recovery_request.v1",
+  "issue": 5352,
+  "expected_generation": 5,
+  "expected_digest": "21a1d8abb5c4aea71244680406fec890066c721302815e2a828577a0b4885e4e",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "actor": "codex:wp21-final-handoff",
+  "reason": "Recover published review truth to remediate the required full WP-21 sprint review findings before merge."
+}

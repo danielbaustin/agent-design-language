@@ -1,0 +1,18 @@
+{
+  "issue": 5670,
+  "expected_generation": 9,
+  "expected_digest": "5416220dd89ac88a888680b53aa4cd8ee138ad9cdb2707786aa70a1c881d2a5a",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "reviewer": "subagent:019f9c5d-654d-7af1-ab7a-f205c27ca0b2",
+  "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "scope": [
+    ".github/workflows/ci.yaml",
+    "adl/tools/run_authoritative_coverage_lane.sh",
+    "adl/tools/test_run_authoritative_coverage_lane.sh",
+    "adl/tools/test_ci_runtime_contracts.sh",
+    "adl/tools/test_ci_path_policy.sh",
+    ".csdlc/evidence/5670",
+    ".csdlc/issues/5670",
+    ".csdlc/prepared/issues/5670"
+  ]
+}

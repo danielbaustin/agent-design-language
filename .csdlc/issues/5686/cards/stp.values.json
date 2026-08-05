@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5686,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][records] Publish #5662 terminal projection to main",
+    "slug": "publish-5662-terminal-projection",
+    "version": "v0.91.8",
+    "generation": 12
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Reapply and verify the two retained #5662 terminal-projection commits on current origin/main, then publish through a dedicated repair PR.",
+      "deliverables": [
+        "Receipt-matching #5662 tracked terminal projection",
+        "Focused validation evidence",
+        "Exact-head bounded review",
+        "PR targeting main"
+      ],
+      "acceptance_criteria": [
+        "AC-1: the #5662 projected record digest matches the canonical closeout receipt",
+        "AC-2: the repair changes no implementation source, Unity assets, runtime code, owner binaries, or canonical receipts",
+        "AC-3: focused typed lifecycle validation passes",
+        "AC-4: exact-head review has no unresolved actionable findings",
+        "AC-5: the published PR targets main and contains only #5662 projection plus #5686 lifecycle truth"
+      ],
+      "dependencies": [
+        "Closed issue #5662 and merged PR #5677",
+        "Canonical closeout receipt .git/csdlc-v2/closeout/5662.json",
+        "Retained commits 6487f1ef8d97549c5ccf092946d93a7aa67c60de and d95b4b0c5ebcc4c4fa95d8dccf19558296c53c6c"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5686",
+        ".csdlc/issues/5662",
+        ".csdlc/publication/5662.intent.json",
+        ".git/csdlc-v2/closeout/5662.json"
+      ],
+      "non_goals": [
+        "No #5662 implementation changes",
+        "No Unity work",
+        "No canonical receipt mutation",
+        "No direct commit to main",
+        "No broad lifecycle tooling refactor"
+      ]
+    }
+  }
+}

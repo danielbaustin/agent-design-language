@@ -1,0 +1,81 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5788,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][tooling][lockfile] Prevent validation and binary installation from rewriting tracked Cargo.lock files",
+    "slug": "lockfile-preservation",
+    "version": "v0.91.8",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Harden the two owner build paths, add fixture-only shell regressions, review exact head, and publish.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Implement current inventory and lock guard",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Run focused shell contracts and exact review",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Publish with Closes #5788",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Exact pre-invocation lock bytes are authoritative",
+        "No v1-sunset target returns to the inventory"
+      ],
+      "risks": [
+        "Restoration could overwrite pre-existing user changes",
+        "Inventory could omit a current operational binary"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Any dependency mutation is required",
+        "Any protected-path collision is reported"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5788/design.md",
+      "design_digest": "8337a903b8ba0bdd7e7dcf89b9cab4578b6dcb26927aca1e368a21efcf473dee",
+      "diagram_ref": ".csdlc/prepared/issues/5788/diagram.mmd",
+      "diagram_digest": "80cb9f38fa23be1b10d13e135847a44ba0d27470b5cd0afb7695e6d0c09955b2"
+    }
+  }
+}

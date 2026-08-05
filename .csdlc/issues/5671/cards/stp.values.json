@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5671,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][provider] Add Anthropic Claude Opus 5 provider profile",
+    "slug": "anthropic-claude-opus-5-provider",
+    "version": "v0.91.8",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement the Opus 5 profile/setup route and bounded tests in the existing provider modules.",
+      "deliverables": [
+        "provider profile",
+        "setup template",
+        "focused Rust tests",
+        "design and diagram"
+      ],
+      "acceptance_criteria": [
+        "AC-1: claude:claude-opus-5 resolves to the Anthropic provider kind, endpoint, and canonical model id.",
+        "AC-2: Existing Claude profiles remain unchanged and profile expansion preserves vendor identity.",
+        "AC-3: provider setup claude-opus-5 emits the profile and ANTHROPIC_API_KEY route.",
+        "AC-4: Mocked Anthropic adapter proof verifies claude-opus-5 and the canonical version header.",
+        "AC-5: Focused Rust validation and exact-head review pass without a live provider call."
+      ],
+      "dependencies": [
+        "existing Rust-native Anthropic Messages adapter",
+        "canonical model id claude-opus-5"
+      ],
+      "repo_inputs": [
+        "adl/src/provider/profiles.rs",
+        "adl/src/provider/mod.rs",
+        "adl/src/cli/provider_cmd.rs",
+        "adl/src/provider/http_family.rs"
+      ],
+      "non_goals": [
+        "new transport",
+        "live API call",
+        "credential provisioning",
+        "pricing or benchmarking"
+      ]
+    }
+  }
+}

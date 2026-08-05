@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -49,22 +49,35 @@ Implemented bounded ADL v2 stable record contracts, exact canonical bytes, real 
     "purpose": "Prove records, canonical bytes, real signatures, external trust, replay, strict channels, tamper rejection, COTS, scope, LoC, formatting, strict Clippy, and fresh-process determinism.",
     "outcome": "passed",
     "evidence_ref": "Exact head 081d52bdd0c073801503f2b6f0f4f9e0d4f2432e: 1039 implementation LoC; 878 test/fixture LoC; 10 records tests and 5 tamper/channel tests; schema diff, all-target tests, repeated tamper target, fmt, strict Clippy, exact COTS, dependency receipts/ancestry, scope, and claim collision checks passed on /Volumes/FastWork in 2 seconds."
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-v2/crates/adl-records/Cargo.toml",
+      "--all-targets",
+      "--locked"
+    ],
+    "purpose": "Prove portable record contracts, deterministic canonical bytes, real Ed25519 signatures, external trust policy, replay protection, strict channel decoding, and tamper rejection at the exact merged head.",
+    "outcome": "passed",
+    "evidence_ref": "Exact merged PR #5628 head 5f48b0854cd36f64bef38ed0d09a09d84fa2e158: 10 records tests and 5 tamper/channel tests passed with zero failures on the existing FastWork target."
   }
 ]
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

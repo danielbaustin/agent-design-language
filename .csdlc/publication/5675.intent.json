@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5675,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5675-provider-adapter-routes-publish",
+  "title": "[v0.91.8][WP-09][provider] Add Kimi and MiniMax hosted adapter routes",
+  "body": "Implements #5675 with Rust-native Kimi/Moonshot and MiniMax hosted provider routes, bounded chat-completion budgets, current MiniMax endpoint, typed billing-envelope classification, and focused adapter tests.\n\nOpus exact-head review completed; all actionable findings were fixed and independently re-reviewed. Live approved-key probes reached both providers but were blocked by insufficient account balances; those failures are recorded as non-retryable billing outcomes.",
+  "draft": false,
+  "revision": "git-blake3:427f9627e59c7550998bede09156ae665b92a98d:abad8047b2fb0ab8d8b2376304d5c7eb756450b13b91d0cf68ff117de0ee2979",
+  "commit_sha": "427f9627e59c7550998bede09156ae665b92a98d"
+}

@@ -1,0 +1,11 @@
+{
+  "issue": 5648,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "e5a31bd34474e7c3f42eaa48a5e5615f5c5af8eafc98fab426b1863254cf31fb",
+  "claim_id": "claim-5648-operator-active-claim-revoke",
+  "actor": "codex:5648-execution",
+  "reason": "Implementation is complete and focused validation is green",
+  "operation": {"operation": "advance_phase", "phase": "implemented"},
+  "fail_after_backup": false
+}

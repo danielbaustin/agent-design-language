@@ -1,0 +1,16 @@
+{
+  "issue": 5356,
+  "claim_id": "claim-5356-v0918-wp18-review-execution-20260802",
+  "expected_owner": "codex:current-session-wp18-review",
+  "expected_generation": 1,
+  "expected_digest": "b90b361e0d43dfba687ccba67ef55cd8061ef1e7f958500cbf2e1ddb243db040",
+  "now_unix_seconds": 1785696556,
+  "actor": "codex:current-session-wp18-review",
+  "reason": "WP-17 #5360 is live-closed with retained typed closeout receipt; begin WP-18 internal review execution and retained findings packet.",
+  "expected_purpose": "Prepare the WP-18 #5356 internal review plan only; do not execute the internal review until WP-17 #5360 is merged, typed closed_out, receipt-backed, claim-free, and ancestral",
+  "purpose": "Execute WP-18 #5356 internal milestone review for v0.91.8, retain the exact-revision review packet and findings register, then resolve in-scope findings through typed claim amendments before publication.",
+  "add_protected_paths": [
+    "docs/reviews/v0.91.8/internal-review-5356",
+    "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_5356.md"
+  ]
+}

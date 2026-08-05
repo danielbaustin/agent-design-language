@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "issue": 5501,
+  "phase": "bound",
+  "cards": 6,
+  "dependencies": 5,
+  "minimum_real_writable_shards": 2,
+  "protected_paths": 4,
+  "product_changes": 0
+}

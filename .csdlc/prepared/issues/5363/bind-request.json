@@ -1,0 +1,23 @@
+{
+  "issue": 5363,
+  "base_branch": "main",
+  "branch": "codex/5363-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5363-v0918-preparation",
+    "owner": "codex:5363-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784754875,
+    "expires_unix_seconds": 1785359675,
+    "heartbeat_unix_seconds": 1784754875,
+    "branch": "codex/5363-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5363",
+      ".csdlc/locks/5363.lock",
+      ".csdlc/prepared/issues/5363",
+      ".csdlc/evidence/5363"
+    ],
+    "purpose": "Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral"
+  }
+}

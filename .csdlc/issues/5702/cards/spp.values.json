@@ -1,0 +1,90 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5702,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast] Launch weekly AI Agent Podcast with flawless audio, RSS, guests, and site design",
+    "slug": "podcast-launch-audio-rss-guests-site-plan",
+    "version": "v0.91.8",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Write a source-backed launch plan that turns the existing Podcast Studio proof into a next-week launch path with required audio, required RSS, ten prepared episodes, guest support, Deepgram investigation, site design alignment, validation gates, and Gemini review.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Inspect existing podcast studio docs, artifacts, and audio outputs",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S2",
+          "action": "Write the reviewable launch plan in `.adl/docs/TBD/`",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S3",
+          "action": "Request Gemini review and record suggestions truthfully",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "S4",
+          "action": "Run focused document validation and prepare for operator review",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "completed"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No tracked edits on main",
+        "All claims about launch/audio/RSS/guests remain planned until proven",
+        "The plan must not demote audio or RSS to optional launch work",
+        "The plan must remain consistent with existing source artifacts"
+      ],
+      "risks": [
+        "Deepgram may not outperform or may add launch risk",
+        "Audio quality proof may take longer than one day",
+        "RSS validation and Apple/Spotify readiness may have external timing constraints",
+        "Ten prepared episodes can drift stale if guest/support metadata is too specific"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "Unable to write in a bound worktree",
+        "Gemini provider unavailable after bounded attempt",
+        "Source evidence contradicts required launch assumptions"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5702/retained/design.md",
+      "design_digest": "d7d3096e844b656cf47fc8c34af24a60f1fa5d7ec27160a28d16d56492ba4fed",
+      "diagram_ref": ".csdlc/issues/5702/retained/diagram.mmd",
+      "diagram_digest": "155686d447184504672b14379d2fbcf083694195a6093ca1c629e59d818460e8"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 4762,
+  "card": "sip",
+  "expected_generation": 5,
+  "expected_digest": "695944dad975ebc80e0cca0fa00822e9676ad8e712900b1441def5b4bcb8a3f6",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "actor": "codex",
+  "reason": "Bind #4762 execution to the already-claimed /Volumes/FastWork/adl-wp-4762 worktree on codex/4762-v0918-wp14-preparation.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "bound"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5355,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21A] Prepare next-milestone closeout plan",
+    "slug": "v0918-wp21a-next-milestone-closeout-plan",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare lifecycle packet only; closeout-plan authoring is future execution work.",
+      "deliverables": [
+        "generated six-card preparation packet",
+        "concise design and diagram",
+        "focused typed doctor validation"
+      ],
+      "acceptance_criteria": [
+        "AC-1: six cards, design, and diagram are issue-specific and generated or regenerated through typed C-SDLC v2 routes",
+        "AC-2: later execution is blocked until WP-21 issue #5362 has a live merged PR and the observed merge commit is ancestral to refreshed origin/main and the exact #5355 execution base",
+        "AC-3: the future closeout-planning packet consumes reviewed WP-21 feature-list and v0.92 planning truth without mutating any version:v0.92 issue",
+        "AC-4: preparation remains issue-local and performs no implementation, #5357 remediation, PR publication, merge, closeout, AWS, or main-checkout mutation",
+        "AC-5: focused validation includes C-SDLC doctor, request-driven C-SDLC validation, predecessor live-state/ancestry checks, canonical docs/YAML checks, and diff hygiene"
+      ],
+      "dependencies": [
+        "WP-21 #5362 live merged into origin/main",
+        "#5362 observed merge SHA ancestral to exact #5355 execution base"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.8/CANONICAL_DOC_INVENTORY_v0.91.8.md",
+        "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        "issue #5355"
+      ],
+      "non_goals": [
+        "closeout-plan authoring during preparation",
+        "birthday implementation",
+        "PR publication",
+        "receipt-gated execution"
+      ]
+    }
+  }
+}

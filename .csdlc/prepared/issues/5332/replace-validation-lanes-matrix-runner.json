@@ -1,0 +1,71 @@
+{
+  "issue": 5332,
+  "card": "vpp",
+  "expected_generation": 2,
+  "expected_digest": "f24bbf556bd6a6db3330c4be97bef33b310b36f19b17dcf272d3cc3005e1f74c",
+  "claim_id": "claim-5332-v0918-wp15-unity-ilpp-exec-prep",
+  "actor": "codex:issue-5332-execution-preparation",
+  "reason": "Give the one-variable diagnostic matrix an explicit repository-owned runner",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "unity-ilpp-classifier-unit",
+        "proof_role": "Prove complete-signature classification, semantic progress reset, readonly progression, and normal-start behavior without Unity",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-ilpp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 5000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"],
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-8", "AC-10"]
+      },
+      {
+        "lane": "unity-ilpp-selector-registration",
+        "proof_role": "Prove the validation selector chooses the focused Unity ILPP lane for every issue-owned implementation, wrapper, unit, matrix-runner, and diagnosis path",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-ilpp-static",
+        "budget_seconds": 180,
+        "budget_tokens": 3000,
+        "argv": ["bash", "adl/tools/test_select_validation_lanes.sh"],
+        "acceptance_ids": ["AC-10", "AC-11"]
+      },
+      {
+        "lane": "unity-ilpp-staged-reproduction",
+        "proof_role": "Reproduce or clear the ILPP loop in one #4741-approved staged batch mode",
+        "deterministic": false,
+        "resource_profile": "large",
+        "parallel_group": "unity-ilpp-live",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": ["bash", "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-6", "AC-9"],
+        "defer_reason": "Run only after #4741 provides exact safe staged-project ownership and the deterministic classifier and selector lanes pass."
+      },
+      {
+        "lane": "unity-ilpp-diagnostic-matrix",
+        "proof_role": "Run explicit one-variable environment cells and retain comparisons that isolate the ILPP failure owner",
+        "deterministic": false,
+        "resource_profile": "large",
+        "parallel_group": "unity-ilpp-live",
+        "budget_seconds": 1800,
+        "budget_tokens": 8000,
+        "argv": ["bash", "adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh"],
+        "acceptance_ids": ["AC-5", "AC-6", "AC-7"],
+        "defer_reason": "Run after the baseline reproduction identifies which declared cells remain necessary; the runner changes one declared variable per cell and skips redundant comparisons."
+      },
+      {
+        "lane": "unity-ilpp-diff-hygiene",
+        "proof_role": "Prove bounded text and shell hygiene",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "unity-ilpp-static",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-10"]
+      }
+    ]
+  }
+}

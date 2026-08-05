@@ -1,0 +1,57 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5683,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-15][unity][demo] Remediate flagship Observatory render artifacts and presentation proof",
+    "slug": "v0918-unity-observatory-visual-remediation",
+    "version": "v0.91.8",
+    "generation": 23
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Correct the visible presentation defects in the existing flagship Observatory without rewriting Runtime v3, Unity-MCP, or licensed asset publication boundaries.",
+      "deliverables": [
+        "Clean flagship Observatory hero composition without corrupted-looking cyan or green artifacts",
+        "Grounded architecture and terrain with controlled lighting and material readability",
+        "Preserved fixed operator shell and truthful runtime classifications",
+        "Fresh Full HD and QHD Play Mode captures",
+        "Direct proof index linking the implementation and visual evidence"
+      ],
+      "acceptance_criteria": [
+        "AC-1: no conspicuous cyan or green block artifacts, corrupted particles, broken emissive meshes, or accidental debug geometry remain in the hero frame",
+        "AC-2: architecture and terrain are grounded and continuous with no visible floating supports, disconnected ramps, exposed voids, or clipped major structures",
+        "AC-3: lighting preserves material detail and depth without blown cyan highlights or crushed black regions",
+        "AC-4: the fixed operator shell remains crisp, aligned, non-overlapping, and internally scrollable only at both target resolutions",
+        "AC-5: runtime state remains fail-closed and never presents fixtures as live Polis truth",
+        "AC-6: direct Unity proof identifies the intended FastWork project, flagship scene, and clean Play Mode result",
+        "AC-7: fresh 1920x1080 and 2560x1440 evidence is retained and visually inspected",
+        "AC-8: focused contract validation and diff hygiene pass without player or owner binary builds",
+        "AC-9: the proof index links the actual Unity evidence and implementation PR rather than a terminal metadata branch",
+        "AC-10: every encountered tooling anomaly is retained in #5683 or routed to a named follow-up"
+      ],
+      "dependencies": [
+        "Merged #5662 / PR #5677 implementation baseline",
+        "Closed Unity tooling prerequisites #4739, #4741, and #5332",
+        "Operator-provisioned FastWork Unity project and licensed local asset packs"
+      ],
+      "repo_inputs": [
+        "GitHub issue #5683",
+        "demos/v0.91.6/unity-observatory",
+        ".csdlc/prepared/issues/5662/final-playmode-1920x1080.png",
+        ".csdlc/prepared/issues/5662/final-playmode-2560x1440.png",
+        "Repository Unity-MCP CLI and #4739 alignment probe"
+      ],
+      "non_goals": [
+        "No Runtime v3 or C-SDLC rewrite",
+        "No Unity-MCP replacement",
+        "No licensed asset publication",
+        "No player binary or replacement owner binary build",
+        "No unsupported live cloud or runtime claims"
+      ]
+    }
+  }
+}

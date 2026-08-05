@@ -16,17 +16,20 @@ Candidate allocation only. v0.92 has no opened GitHub issue wave yet.
 
 The candidate WP sequence below should be consumed by the v0.92 WP-01 planning
 pass. WP-01 should verify prerequisite truth, reconcile `v0.91.5`
-release-tail closeout, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche, the AEE
-completion tranche, and `#3377`, then seed the
-actual GitHub issue wave and full C-SDLC card set.
+release-tail closeout, the `v0.91.6` readiness tranche, the `v0.91.7`
+implementation/proof tranche, merged `v0.91.8` WP-16 quality-gate evidence at
+`2e9d2dd7c4260dcf6ec6af954b0eea97554212df`, WP-17 documentation alignment, the
+AEE completion tranche, and `#3377`, then seed the actual GitHub issue wave and
+full C-SDLC card set.
 
 ## How To Use
 
 Use this WBS as WP-01 seed input, not as proof that v0.92 issues are already
 open. WP-01 should reconcile the sequence with `v0.91.5` release-tail
-closeout, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche, the AEE completion
-tranche, and `#3377`, then generate the
-real issue wave and all five C-SDLC cards for each opened issue.
+closeout, the `v0.91.6` readiness tranche, the `v0.91.7`
+implementation/proof tranche, merged `v0.91.8` WP-16 evidence, WP-17
+documentation alignment, the AEE completion tranche, and `#3377`, then generate
+the real issue wave and all six C-SDLC cards for each opened issue.
 
 ## WBS Summary
 
@@ -38,13 +41,14 @@ milestones.
 
 | WP | Work Package | Description | Primary deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
-| WP-01 | Design pass and issue-wave readiness | Promote reviewed v0.92 planning docs, consume `v0.91.5` release-tail closeout, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche, the AEE completion tranche, and `#3377`, seed issue wave, and prepare cards. | Opened issue wave and full SIP/STP/SPP/SRP/SOR cards, including AEE proof ownership if required. | `v0.91.5` release-tail closeout, activation-test map, `v0.91.6` readiness outputs, `v0.91.7` implementation/proof outputs, AEE completion tranche, and `#3377` readiness packet. |
+| WP-01 | Design pass and issue-wave readiness | Promote reviewed v0.92 planning docs, consume `v0.91.5` release-tail closeout, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche, merged `v0.91.8` WP-16 quality-gate evidence, WP-17 documentation alignment, the AEE completion tranche, and `#3377`, seed issue wave, and prepare cards. | Opened issue wave and full SIP/STP/SPP/VPP/SRP/SOR cards, including AEE proof ownership if required. | `v0.91.5` release-tail closeout, activation-test map, `v0.91.6` readiness outputs, `v0.91.7` implementation/proof outputs, `v0.91.8` WP-16 quality-gate evidence, WP-17 documentation alignment, AEE completion tranche, and `#3377` readiness packet. |
 | WP-02 | Birthday contract and negative cases | Define what counts as birth and what does not. | Feature contract, negative fixtures, and validation rules. | WP-01. |
 | WP-03 | Stable name and identity architecture | Define identity root, stable name, aliases, provenance, and continuity head. | Identity record contract and fixtures. | WP-02 and prior citizen-state lineage. |
 | WP-04 | Continuity across bounded cycles | Prove identity survives multiple bounded cycles with evidence. | Continuity record, cycle fixtures, validation. | WP-03. |
 | WP-05 | Memory grounding and Memory Palace proof slice | Bind identity to witnessed artifacts and memory references without raw private-state exposure, and implement or block the first Memory Palace context-topology slice. | Memory-grounding contract, redacted packet, and Memory Palace proof-slice disposition. | WP-03, WP-04, ObsMem/trace baseline. |
 | WP-06 | Capability envelope | Declare provider, model, tool, skill, authority, and limit context at birth. | Capability envelope and validation fixtures. | WP-03, governed-tool evidence where tool actions are in scope. |
 | WP-07 | ACP / cognitive profiles | Define runtime-visible cognitive profile records grounded in memory, capability, continuity, ToM, and intelligence evidence. | ACP/profile contract, update rules, privacy boundary, and fixtures. | WP-04 through WP-06 plus v0.91.1 evidence. |
+| WP-07A | Adaptive Learning DAG queue | Requalify historical v0.91.7 loop-runtime evidence against current Runtime v3 contracts, then queue evaluation bindings, stateful adaptation, policy-governed graph modification, and Adaptive Learning DAG proof without creating issues early. | Adaptive-learning feature contract, runtime-status verification checklist, work-sequence queue, and negative-test plan. | WP-01, WP-07, historical `#5104` merge evidence, current Runtime v3 reasoning-graph / loop-runtime qualification. |
 | WP-08 | ACIP binary schema and WebSocket carrier | Define protobuf ACIP wire schema, public schema catalog, deterministic JSON projection, and optional binary ACIP-over-WebSocket mock proof. | ACIP `.proto`, schema catalog rules, JSON/protobuf fixtures, mock WebSocket carrier proof. | ACIP substrate and trace/replay baseline. |
 | WP-09 | Birth witnesses and receipts | Define witness set and citizen-facing receipt for the birthday event. | Witness schema, receipt schema, validation. | WP-03 through WP-06. |
 | WP-10 | Birthday review packet | Assemble identity, continuity, memory, capability, witness, and moral context into one review surface. | Reviewer packet and fixture. | WP-02 through WP-09. |
@@ -78,7 +82,8 @@ fifth, and the normal review/remediation/release tail last.
 1. Start with the birthday contract and negative cases.
 2. Add stable name and identity architecture.
 3. Add continuity, memory grounding, capability envelope, ACP/cognitive profile
-   contract, and ACIP binary/schema-catalog transport readiness.
+   contract, Adaptive Learning DAG queue, and ACIP binary/schema-catalog
+   transport readiness.
 4. Add witnesses, receipts, and review packets.
 5. Add migration planning only after local birth semantics are stable.
 6. Build the flagship birthday demo and governance handoff last.
@@ -93,9 +98,18 @@ Before opening v0.92 issues, WP-01 must:
 
 - reconcile the candidate sequence with `v0.91.5` release-tail closeout, the
   activation-test map, the `v0.91.6` readiness tranche, the `v0.91.7`
-  implementation/proof tranche, and `#3377`
+  implementation/proof tranche, merged `v0.91.8` WP-16 quality-gate evidence,
+  WP-17 documentation alignment, and `#3377`
+- consume `docs/milestones/v0.91.8/evidence/wp16/ISSUE_OUTCOME_AUDIT.md`,
+  `docs/milestones/v0.91.8/evidence/wp16/QUALITY_GATE.md`, and
+  `docs/milestones/v0.91.8/evidence/wp16/issue-outcome-audit.v1.json`
+  without treating them as final `v0.91.8` release approval
 - reconcile the AEE completion tranche from v0.91.5 and either seed concrete
   AEE proof work or record why existing v0.92 WPs cover it
+- requalify the post-`#5104` loop-runtime merge evidence against current
+  Runtime v3 contracts before treating bounded recurrent execution over
+  reasoning graphs as a consumed prerequisite for the Adaptive Learning DAG
+  queue
 - verify all feature docs remain linked and scoped, including the Memory
   Palace context-topology proof slice
 - create all six lifecycle cards for every opened issue from the active prompt-template
@@ -115,6 +129,9 @@ Before opening v0.92 issues, WP-01 must:
 - Capability envelope must record limits and authority context.
 - Cognitive profiles must be evidence-grounded, privacy-bounded, and distinct
   from identity, reputation, and public standing.
+- Adaptive-learning work must remain queued until evaluation bindings,
+  stateful adaptation, policy-governed graph mutation, replay proof, and
+  fail-closed negative cases have concrete implementation WPs.
 - Binary ACIP must remain inspectable through public schemas and deterministic
   JSON projection while message contents remain governed by authority and
   visibility policy.

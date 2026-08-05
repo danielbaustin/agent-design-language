@@ -1,0 +1,677 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5764,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "c87577fb18bcffa9a7ab3626e0ddde7132084f1c88dbeb1c648d842460499d85",
+  "phase": "closed_out",
+  "generation": 35,
+  "digest": "03208e694b869010913c24094c52f27534d75a559b3c861eabd3817413321c00",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:Erdos:019fbcdb-9849-74d3-b881-1305a1443442",
+    "assigned_by": "codex:5764-runtime-observatory-readiness",
+    "revision": "git-blake3:1aeef88d20818c1097f67e7852cdab84b74d32e0:829cbbad8e2cf8b77a127b103d86785c45c3b8748a388cbefba8a7f856a64826",
+    "scope": [
+      "adl/tools/validate_v0917_html_observatory.py",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "demos/html-observatory/runtime-v3.config.json",
+      ".csdlc/issues/5764"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:Erdos:019fbcdb-9849-74d3-b881-1305a1443442",
+    "scope": [
+      "adl/tools/validate_v0917_html_observatory.py",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "demos/html-observatory/runtime-v3.config.json",
+      ".csdlc/issues/5764"
+    ],
+    "reviewed_revision": "git-blake3:1aeef88d20818c1097f67e7852cdab84b74d32e0:829cbbad8e2cf8b77a127b103d86785c45c3b8748a388cbefba8a7f856a64826",
+    "findings": [],
+    "residual_risks": [
+      "Erdos performed read-only exact-head source and lifecycle review; the implementation owner separately ran the shell proof wrapper because it writes local evidence and starts local TLS listeners.",
+      "Hosted PR checks must rerun on the republished head after the validator/proof repair is pushed."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5764,
+    "pull_request": 5771,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5771",
+    "base": "main",
+    "head": "codex/5764-runtime-observatory-readiness",
+    "revision": "git-blake3:863846c47c3404c6e4513d8ae2eb3dbcd6278817:57454975dd7d605fe00899533852e9ec16824fe56852f3b0b8b618c88102fecf",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5771,
+    "head_sha": "863846c47c3404c6e4513d8ae2eb3dbcd6278817",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91359048469"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358785606"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358760920"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761257"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761062"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761224"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358760909"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358739019"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358760693"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761186"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761090"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761094"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761034"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761252"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761065"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30695927648/job/91358761058"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5771,
+    "disposition": "merged",
+    "observed_sha": "863846c47c3404c6e4513d8ae2eb3dbcd6278817",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5764.json",
+    "released_branch": "codex/5764-runtime-observatory-readiness",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5764",
+      ".csdlc/issues/5764",
+      ".csdlc/locks/5764.lock",
+      ".csdlc/prepared/issues/5764",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/observability.rs",
+      "adl-runtime-kernel/tests/openapi_contract.rs",
+      "adl-runtime-kernel/tests/support/runtime_init.rs",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "adl/tools/validate_v0917_html_observatory.py",
+      "demos/html-observatory/README.md",
+      "demos/html-observatory/app.js",
+      "demos/html-observatory/runtime-v3.config.json",
+      "docs/api/runtime-v3/v1/observatory.openapi.json",
+      "docs/api/runtime-v3/v1/openapi.json",
+      "docs/api/runtime-v3/v1/runtime.openapi.json"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5764/retained/design.md",
+  "diagram_path": ".csdlc/issues/5764/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator",
+      "revision": "44ed87fe9c967bce4ade59f66480c6a5724f2ef40f1900628446b128a5ef4584"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "83226cf1137d6cfac50037c7af3afdf7884d9add1295b616a9ec700e487a6cd2",
+      "rendered_digest": "ebc9326d1aba09c1cd55320e0a9310826197bda3517d17ed9c0599d83d8982ee",
+      "ast_digest": "d20982b1cd63aa422b6b0ff9b9128d4af75753b654ab4b43960a6d2dfc30e741"
+    },
+    "stp": {
+      "values_digest": "229997dfbd46782d01382b3d246cf51d919c759399fa38c6c6b02b7dcd6f1e86",
+      "rendered_digest": "12c2a85ff84c4950f80b65c3cf4caf62e49a6fb798714c8d862f66f929f8e432",
+      "ast_digest": "2ceaee61ff985688af3f3456ebb90682f980dec257e58f32b6c485494175aaca"
+    },
+    "spp": {
+      "values_digest": "3d0c383a3e85ad61dfe62f40ba5d1ae1959a2c88ae54a7d6413542aca3f41bae",
+      "rendered_digest": "1add1d0ca00af3a559d8ce0a62ae586e992dcdb1b7bf0f2fc59339ec828d91ab",
+      "ast_digest": "f2e4f4c95566c3d5b9279e0d5e383648e751fa7f43d2b8074f9e2a1edcfc9db1"
+    },
+    "vpp": {
+      "values_digest": "6de5cdceabff162e650b09df425354f0e849a3bb84b91eedb95d645719dc576a",
+      "rendered_digest": "8deff893885a51033cfa19b7c301e297e84dd7477c1bdd4c9faaad0f559cfcc4",
+      "ast_digest": "24d11ef01d478c6ff4a7891dc9578b8b423fed6f0ab9a01babacdec2b2613544"
+    },
+    "srp": {
+      "values_digest": "50ef988bbcd9ebafa70b16f44b01958da10ab32f4dde98112127df4aaf05c9fd",
+      "rendered_digest": "32f629657fe0181f03ea6a33fc0ba1bed6c8f27e835abb116d3bd15cf6326ee9",
+      "ast_digest": "52a0e3e779b64d0fd2b8f91d35c8a6d103a6b0463f5bba1f228dabb1c33eb054"
+    },
+    "sor": {
+      "values_digest": "658223979b7dbad48ba3cbf45d48329e6ad5044ba028347dde8d46434b8ef61b",
+      "rendered_digest": "76a0adfcc53ae09cdf80236ec277fe7ce4e8e44372eef2bdbb1cb0b2f9f6d2c2",
+      "ast_digest": "587dedb0dcba9516bf92a87fd62050e0824d6cf853a684718d09f6dd2956da11"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Dedicated FastWork worktree and branch match the initialized claim; advance into a ready lifecycle state before implementation binding."
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after implementation, pre-PR review fixes, and full Runtime v3 validation passed."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after exact-head subagent review returned CLEAN and review evidence was recorded."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Recover reviewed publication state after committing typed review metadata-only lifecycle projections."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after exact-head Pasteur review returned CLEAN and review evidence was recorded."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Recover publication state after a narrow CI clippy source fix so exact-head review and publication can be refreshed truthfully."
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after exact-head Dalton review confirmed the CI clippy fix is clean."
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Recover publication state after hosted Runtime v3 proof exposed a validator fixture missing the new /v1/ready endpoint."
+    },
+    {
+      "sequence": 12,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after exact-head Erdos review confirmed the hosted Runtime v3 proof config validation repair is clean."
+    },
+    {
+      "sequence": 13,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 14,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 15,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 16,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Dedicated FastWork worktree and branch match the initialized claim; advance into a ready lifecycle state before implementation binding.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Add the actual Runtime v3 OpenAPI file and OpenAPI route contract test before implementing the readiness endpoint repair.",
+      "operation": "{\"add_protected_paths\":[\"docs/api/runtime-v3/v1/openapi.json\",\"adl-runtime-kernel/tests/openapi_contract.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Add Runtime v3 soak test init helper before fixing worktree-safe Vector binary resolution exposed by the broad runtime test pass.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/support/runtime_init.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Add observability test harness vector resolver repair discovered by full runtime-kernel validation.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/observability.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Add Observatory browser Runtime v3 readiness consumption after pre-PR review found README/app mismatch.",
+      "operation": "{\"add_protected_paths\":[\"demos/html-observatory/app.js\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 2,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record Runtime v3 and Observatory readiness implementation plus focused/full validation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Implemented a versioned Runtime v3 readiness endpoint and wired the Observatory browser to consume readiness truth while keeping runtime tests worktree-safe through the configured stable Vector binary path.\",\"changes\":[\"Added /v1/ready to Runtime v3 control routes with adl.runtime_v3.readiness.v1 responses and 503 degraded readiness for stale or missing weather freshness.\",\"Updated Runtime v3 OpenAPI and route-inventory tests so /v1/ready is documented, public-read, and route-bound.\",\"Updated Observatory docs and browser adapter so Runtime v3 mode fetches /v1/ready and renders ready/degraded state from degraded_reasons instead of deriving readiness only from the observatory snapshot.\",\"Centralized Runtime v3 test Vector binary resolution through the runtime init test helper so generated init TOML and direct observability tests use the configured stable repo-installed binary, with ADL_RUNTIME_TEST_VECTOR_BINARY override.\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\",\"adl-runtime-kernel/tests/openapi_contract.rs\",\"adl-runtime-kernel/tests/support/runtime_init.rs\",\"adl-runtime-kernel/tests/observability.rs\",\"demos/html-observatory/README.md\",\"demos/html-observatory/app.js\",\"docs/api/runtime-v3/v1/openapi.json\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 3,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record focused and full Runtime v3 validation after pre-PR review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control readiness\",\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control observatory_https_reads_are_public_and_report_weather_freshness\",\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test openapi_contract\",\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test observability\",\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml\",\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check\",\"node --check demos/html-observatory/app.js\",\"python3 -m json.tool docs/api/runtime-v3/v1/openapi.json\",\"git diff --check\"],\"purpose\":\"Prove Runtime v3 /v1/ready semantics, fail-closed missing/stale weather readiness, OpenAPI/route inventory truth, Observatory browser readiness consumption, stable Vector binary test configuration, full runtime-kernel behavior, formatting, JSON, JavaScript syntax, and diff hygiene.\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork terminal output: focused readiness, HTTPS readiness, openapi_contract, observability, and full adl-runtime-kernel passed; full runtime-kernel reported 306 passed and 1 explicit ignored live parity test; rustfmt check, node --check, json.tool, and git diff --check passed\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 4,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after implementation, pre-PR review fixes, and full Runtime v3 validation passed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 5,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record exact-head review fix for Runtime v3 Observatory WebSocket readiness state.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Fixed the Runtime v3 Observatory WebSocket path so stream snapshots do not overwrite /v1/ready truth with synthetic degraded readiness.\",\"changes\":[\"Cache Runtime v3 readiness after polling and reuse it when rendering Observatory WebSocket frames.\",\"Fetch /v1/ready when directly opening the secure WebSocket stream so auto-connect has readiness truth.\",\"Fallback WebSocket frames without a readiness payload now derive only observability readiness instead of claiming weather-degraded readiness.\"],\"artifacts\":[\"demos/html-observatory/app.js\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record focused validation for the Runtime v3 Observatory WebSocket readiness review fix.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"node --check demos/html-observatory/app.js\",\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check\",\"git diff --check\"],\"purpose\":\"Prove the browser readiness-stream repair parses and preserves formatting/diff hygiene without changing Rust surfaces.\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork terminal output: node --check demos/html-observatory/app.js passed; cargo fmt --check passed; git diff --check passed\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record exact-head review fix for browser CORS access to Runtime v3 readiness.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Made /v1/ready browser-consumable from the configured Observatory origin.\",\"changes\":[\"Route /v1/ready through the Observatory CORS/preflight policy.\",\"Reject unauthorized Origin headers for /v1/ready instead of returning an unreadable cross-origin response.\",\"Add CORS regression coverage proving /v1/ready exposes Access-Control-Allow-Origin to the configured Observatory origin.\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/tests/control.rs\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record focused and full validation for the Runtime v3 readiness CORS review fix.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control observatory_cors_allows_only_configured_origins_and_reports_canonical_port\",\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml\",\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check\",\"node --check demos/html-observatory/app.js\",\"python3 -m json.tool docs/api/runtime-v3/v1/openapi.json\",\"git diff --check\"],\"purpose\":\"Prove /v1/ready CORS access for the Observatory origin, complete Runtime v3 behavior, formatting, browser syntax, OpenAPI JSON, and diff hygiene after the final review fix.\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork terminal output: readiness CORS regression passed; full adl-runtime-kernel passed with 306 passed and 1 explicit ignored live parity test; rustfmt check, node --check, json.tool, and git diff --check passed\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 9,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record exact-head review fix for direct Runtime v3 WSS readiness ordering.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Fixed direct Runtime v3 secure-stream connect ordering so the browser caches /v1/ready before rendering Observatory WebSocket frames.\",\"changes\":[\"Make connectLive asynchronous and await Runtime v3 readiness before opening the WSS connection.\",\"Preserve degraded or pending readiness cache before the first stream frame can render.\"],\"artifacts\":[\"demos/html-observatory/app.js\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 10,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record focused validation for direct Runtime v3 WSS readiness ordering fix.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"node --check demos/html-observatory/app.js\",\"git diff --check\"],\"purpose\":\"Prove the direct secure-stream readiness ordering repair parses and preserves diff hygiene.\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork terminal output: node --check demos/html-observatory/app.js passed; git diff --check passed\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Protect the operator-editable HTML Observatory Runtime v3 endpoint configuration file requested after readiness wiring.",
+      "operation": "{\"add_protected_paths\":[\"demos/html-observatory/runtime-v3.config.json\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 11,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record the operator-requested Runtime v3 Observatory endpoint config file and focused validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"node --check demos/html-observatory/app.js\",\"python3 -m json.tool demos/html-observatory/runtime-v3.config.json >/dev/null\",\"git diff --check\"],\"purpose\":\"Prove the HTML Observatory loads Runtime v3 browser endpoint paths from a JSON config file with parseable JavaScript, valid JSON, and clean diff hygiene.\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork terminal output: node --check demos/html-observatory/app.js passed; python3 -m json.tool demos/html-observatory/runtime-v3.config.json passed; git diff --check passed\"}}"
+    },
+    {
+      "sequence": 19,
+      "generation": 12,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record exact-head review fixes for Runtime v3 readiness preflight route documentation and Observatory config artifact truth.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Fixed exact-head review findings for Runtime v3 readiness preflight documentation and Observatory endpoint config artifact truth.\",\"changes\":[\"Documented OPTIONS /v1/ready in the Runtime v3 OpenAPI contract.\",\"Updated the OpenAPI route inventory test to require both GET and OPTIONS for /v1/ready.\",\"Recorded demos/html-observatory/runtime-v3.config.json as a durable execution artifact.\"],\"artifacts\":[\"docs/api/runtime-v3/v1/openapi.json\",\"adl-runtime-kernel/tests/openapi_contract.rs\",\"demos/html-observatory/runtime-v3.config.json\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 13,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record focused validation for exact-head review fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"env CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test openapi_contract openapi_paths_match_current_runtime_v3_axum_route_inventory\",\"python3 -m json.tool docs/api/runtime-v3/v1/openapi.json >/dev/null\",\"node --check demos/html-observatory/app.js\",\"git diff --check origin/main...HEAD\"],\"purpose\":\"Prove the Runtime v3 /v1/ready preflight route is documented in the OpenAPI inventory, OpenAPI JSON remains parseable, Observatory JavaScript remains parseable, and the exact diff has no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork terminal output: openapi route inventory regression passed; python3 json.tool, node --check, and git diff --check passed\"}}"
+    },
+    {
+      "sequence": 21,
+      "generation": 13,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 14,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 15,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after exact-head subagent review returned CLEAN and review evidence was recorded.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 16,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Recover reviewed publication state after committing typed review metadata-only lifecycle projections.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 25,
+      "generation": 16,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 17,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 18,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after exact-head Pasteur review returned CLEAN and review evidence was recorded.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 19,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 29,
+      "generation": 20,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Recover publication state after a narrow CI clippy source fix so exact-head review and publication can be refreshed truthfully.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 30,
+      "generation": 21,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record the narrow CI clippy remediation after recovering stale publication state.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Fixed the GitHub runtime-v3 fast clippy failure without changing Runtime v3 readiness semantics.\",\"changes\":[\"Replaced Option::map_or(true, |freshness| freshness.stale) with Option::is_none_or(|freshness| freshness.stale) in ControlService::readiness_report.\",\"Preserved the fail-closed readiness behavior where missing weather freshness is treated as weather_stale.\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\"]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 22,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record focused validation for the CI clippy remediation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test control readiness\",\"node --check demos/html-observatory/app.js\",\"git diff --check origin/main...HEAD\"],\"purpose\":\"Prove the CI clippy failure is fixed while preserving Runtime v3 readiness behavior and adjacent browser/diff hygiene.\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork terminal output: clippy passed; readiness tests passed with 2 passed; node --check passed; git diff --check origin/main...HEAD passed\"}}"
+    },
+    {
+      "sequence": 32,
+      "generation": 22,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 33,
+      "generation": 23,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 34,
+      "generation": 24,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after exact-head Dalton review confirmed the CI clippy fix is clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 25,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 36,
+      "generation": 26,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Recover publication state after hosted Runtime v3 proof exposed a validator fixture missing the new /v1/ready endpoint.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 37,
+      "generation": 26,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Add the HTML Observatory integrated proof validator fixture after hosted CI exposed that it must model the new Runtime v3 /v1/ready endpoint.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/validate_v0917_html_observatory.py\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 38,
+      "generation": 26,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Hosted Runtime v3 proof contract now validates the config-owned readiness and observatory endpoints, so the integrated proof shell wrapper is an in-scope test artifact for issue #5764.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 39,
+      "generation": 27,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record the hosted Runtime v3 proof repair after CI exposed a stale hard-coded endpoint contract.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Moved the integrated Observatory proof contract to validate Runtime v3 endpoint truth from the checked-in config file.\",\"changes\":[\"Added /v1/ready mock data to the HTML Observatory validator so the Runtime v3 WebSocket connection path exercises readiness before stream setup.\",\"Updated the validator to accept demos/html-observatory/runtime-v3.config.json and assert /v1/observatory, /v1/ready, and /v1/observatory/ws there instead of requiring a deleted hard-coded JavaScript constant.\",\"Updated the integrated proof shell wrapper to include and pass the Runtime v3 config file to the validator.\"],\"artifacts\":[\"adl/tools/validate_v0917_html_observatory.py\",\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\",\"demos/html-observatory/runtime-v3.config.json\"]}"
+    },
+    {
+      "sequence": 40,
+      "generation": 28,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Record focused validation for the hosted Runtime v3 proof repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target bash adl/tools/test_v0917_html_observatory_integrated_proof.sh\",\"node --check demos/html-observatory/app.js\",\"python3 -m json.tool demos/html-observatory/runtime-v3.config.json\",\"python3 -m py_compile adl/tools/validate_v0917_html_observatory.py\",\"git diff --check origin/main...HEAD\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5764-target cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings\"],\"purpose\":\"Prove the hosted HTML Observatory integrated proof validates the config-owned Runtime v3 readiness and observatory endpoints, while preserving JavaScript syntax, config JSON validity, Python validator syntax, diff hygiene, and the runtime clippy lane.\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork terminal output: integrated proof passed; node --check passed; json.tool passed; py_compile passed; git diff --check origin/main...HEAD passed; cargo clippy passed\"}}"
+    },
+    {
+      "sequence": 41,
+      "generation": 28,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 42,
+      "generation": 29,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 43,
+      "generation": 30,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "Advance #5764 after exact-head Erdos review confirmed the hosted Runtime v3 proof config validation repair is clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 44,
+      "generation": 31,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 45,
+      "generation": 32,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "record exact existing PR ready-for-review after remote success",
+      "operation": "record_ready_publication"
+    },
+    {
+      "sequence": 46,
+      "generation": 33,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 47,
+      "generation": 34,
+      "actor": "codex:5764-runtime-observatory-readiness",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 48,
+      "generation": 35,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "Materialize the retained #5764 terminal receipt in the dedicated v0.91.8 aggregate closeout projection.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

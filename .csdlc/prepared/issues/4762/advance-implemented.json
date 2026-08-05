@@ -1,0 +1,13 @@
+{
+  "issue": 4762,
+  "card": "sor",
+  "expected_generation": 12,
+  "expected_digest": "5fe1a8df1a9ea43404af9e1439c08f4b537964fda2f0d661c1508ebf606ab450",
+  "claim_id": "claim-4762-birth-witness-receipt-execution",
+  "actor": "codex",
+  "reason": "The #4762 birth-witness and receipt handoff package is implemented and focused post-merge validation passed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "issue": 5655,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5655/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5655/diagram.mmd",
+  "design_reviewer": "operator:5655",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5655-csdlc-github-actions",
+    "owner": "codex:issue-5655-slot-1",
+    "generation": 0,
+    "acquired_unix_seconds": 1784920947,
+    "expires_unix_seconds": 1785525747,
+    "heartbeat_unix_seconds": 1784920947,
+    "branch": "codex/5655-csdlc-github-actions",
+    "worktree": ".worktrees/adl-wp-5655",
+    "protected_paths": [
+      ".csdlc/evidence/5655",
+      ".csdlc/issues/5655",
+      ".csdlc/locks/5655.lock",
+      ".csdlc/prepared/issues/5655",
+      "csdlc-v2/operator/skills/csdlc-v2-github/SKILL.md"
+    ],
+    "purpose": "Implement one Rust-only, idempotent GitHub action surface for C-SDLC v2"
+  },
+  "initial": {
+    "title": "[v0.91.8][csdlc-v2][tooling] Add repo-native Rust GitHub actions",
+    "slug": "v0-91-8-csdlc-v2-github-actions",
+    "version": "v0.91.8",
+    "goal": "Make every supported GitHub lifecycle action available through typed C-SDLC v2 Rust tools without connector or wrapper fallback.",
+    "required_outcome": "A typed Rust command creates and reconciles issues, updates issue metadata, comments, labels, assignees, closes issues, and preserves existing PR publication, ready, merge, checks, and closeout paths with exact readback and fail-closed errors.",
+    "declared_scope": [
+      "typed csdlc-github Rust command and request/response schemas",
+      "existing shared token resolver and Octocrab boundary",
+      "issue create/update/comment/label/assignee/close operations",
+      "focused action and reconciliation tests",
+      "operator skill documentation"
+    ],
+    "authority_boundary": [
+      "C-SDLC v2 Rust binaries own GitHub lifecycle mutations",
+      "GitHub is the remote system of record; typed local records remain lifecycle authority",
+      "No Runtime, AWS, connector, legacy wrapper, or unrelated issue scope"
+    ],
+    "operator_constraints": [
+      "Rust binaries only; no GitHub connector, raw gh, legacy wrappers, shell, Python, or AWS",
+      "Do not reopen or overload closed issues",
+      "Use existing token resolver without printing secrets",
+      "Keep root main clean and work only in the bound worktree",
+      "Fail closed on permissions, identity mismatch, ambiguity, and stale requests"
+    ],
+    "task_boundary": "Implement, validate, review, publish, merge, and close the bounded Rust GitHub action surface.",
+    "deliverables": [
+      "csdlc-github Rust binary",
+      "typed request/result schemas",
+      "reconciled issue mutations",
+      "focused tests and operator contract"
+    ],
+    "acceptance_criteria": [
+      "AC-1: issue create is idempotent and reconciles exact repository/title/body identity using a durable operation key",
+      "AC-2: issue update, labels, assignees, comments, and close are typed, validated, and reconciled",
+      "AC-3: permission, identity, stale-request, ambiguous-outcome, and mismatch failures are fail-closed",
+      "AC-4: focused Rust tests cover every mutation and no external connector is required"
+    ],
+    "dependencies": [
+      "existing csdlc-v2 publication, merge, closeout, and token resolver code",
+      "GitHub issue #5655"
+    ],
+    "repo_inputs": [
+      "csdlc-v2/src/github.rs",
+      "csdlc-v2/src/github_token.rs",
+      "csdlc-v2/src/bin/csdlc-publish.rs",
+      "csdlc-v2/src/bin/csdlc-merge.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs"
+    ],
+    "non_goals": [
+      "Runtime or AWS work",
+      "GitHub connector integration",
+      "legacy wrapper restoration",
+      "changes to closed issue records"
+    ],
+    "plan_summary": "Add one Rust command surface, prove exact mutation reconciliation, then publish only exact reviewed green work.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Implement typed issue action request/response boundary",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ]
+      },
+      {
+        "id": "S2",
+        "action": "Add focused reconciliation tests and operator contract",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4"
+        ]
+      },
+      {
+        "id": "S3",
+        "action": "Review, publish, merge, and closeout",
+        "status": "pending",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ]
+      }
+    ],
+    "invariants": [
+      "one Rust command surface",
+      "existing token resolver is the only secret source",
+      "remote mutation is followed by exact readback",
+      "ambiguous results never produce unverified lifecycle truth"
+    ],
+    "risks": [
+      "remote mutation may succeed before transport failure",
+      "duplicate comments or labels without durable markers",
+      "issue identity drift between remote readback and local commit"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "connector, wrapper, raw gh, shell, Python, AWS, or Runtime is required",
+      "remote result cannot be reconciled exactly",
+      "protected-path collision or stale claim",
+      "actionable review finding remains open"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "csdlc-github-actions",
+        "proof_role": "Run focused Rust tests covering issue mutation, exact readback, permission failure, ambiguity, and identity mismatch",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 300,
+        "budget_tokens": 2500,
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "csdlc-v2/Cargo.toml"
+        ],
+        "parallel_group": "github-actions",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on invalid requests, stale claims, permission failures, ambiguous remote outcomes, identity mismatch, test failure, or missing exact readback.",
+    "review_prompts": [
+      "Does one Rust command surface cover every declared issue mutation without connector or wrapper fallback?",
+      "Are ambiguous remote outcomes reconciled before retry or local state mutation?",
+      "Are repository, issue, operation key, labels, assignees, comments, and close identity checked exactly?",
+      "Are tokens bounded and never emitted?",
+      "Do tests prove failure behavior rather than only happy paths?"
+    ],
+    "review_scope": "Review the exact Rust GitHub action command, token boundary, request schemas, mutation reconciliation, focused tests, and operator contract."
+  }
+}

@@ -1153,21 +1153,21 @@ pub fn write_v086_review_surface_demo(out_dir: &Path) -> Result<Vec<PathBuf>> {
             {
                 "demo_id": "D2",
                 "title": "Fast vs Slow Routing",
-                "command": "./adl/tools/demo_v086_fast_slow.sh",
+                "command": "retired_by_5347_historical_artifact_only",
                 "artifact_root": "d2_fast_slow",
                 "primary_proof_surface": "d2_fast_slow/comparison.txt",
             },
             {
                 "demo_id": "D3",
                 "title": "Agency / Candidate Selection",
-                "command": "./adl/tools/demo_v086_candidate_selection.sh",
+                "command": "retired_by_5347_historical_artifact_only",
                 "artifact_root": "d3_candidate_selection",
                 "primary_proof_surface": "d3_candidate_selection/selection.json",
             },
             {
                 "demo_id": "D4",
                 "title": "Freedom Gate Enforcement",
-                "command": "./adl/tools/demo_v086_freedom_gate.sh",
+                "command": "retired_by_5347_historical_artifact_only",
                 "artifact_root": "d4_freedom_gate",
                 "primary_proof_surface": "d4_freedom_gate/blocked_case.json",
             }

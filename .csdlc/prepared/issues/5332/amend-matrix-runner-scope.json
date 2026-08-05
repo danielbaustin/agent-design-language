@@ -1,0 +1,12 @@
+{
+  "issue": 5332,
+  "expected_generation": 2,
+  "expected_digest": "f6c57d36984f0ea48250d4960a20e3948984a1ae8802e03a7be85888485ca2cd",
+  "claim_id": "claim-5332-v0918-wp15-unity-ilpp-exec-prep",
+  "actor": "codex:issue-5332-execution-preparation",
+  "reason": "Reserve a dedicated one-variable diagnostic matrix runner required by specialist recheck",
+  "now_unix_seconds": 1784836200,
+  "add_protected_paths": [
+    "adl/tools/run_v0918_unity_ilpp_diagnostic_matrix.sh"
+  ]
+}

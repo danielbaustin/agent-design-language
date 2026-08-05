@@ -192,6 +192,51 @@ run_release_case() {
   fi
 }
 
+run_closeout_gate_case() {
+  local label="$1"
+  local mode="$2"
+  local expected_status="$3"
+  local expected_message="$4"
+
+  local output
+  set +e
+  output="$(cd "$FIXTURE" && DOCTOR_MODE="$mode" \
+    "$BASH_BIN" adl/tools/release_ceremony.sh --version "$VERSION" \
+    --target-branch main --allow-dirty 2>&1)"
+  local status=$?
+  set -e
+
+  if [[ "$status" -ne "$expected_status" ]]; then
+    echo "assertion failed: $label (exit $status != $expected_status)" >&2
+    echo "$output" >&2
+    exit 1
+  fi
+  assert_contains "$output" "$expected_message" "$label"
+}
+
+setup_closeout_gate_fixture() {
+  mkdir -p "$FIXTURE/.csdlc/issues/123/cards" "$FIXTURE/.csdlc/issues/456/cards"
+  mkdir -p "$FIXTURE/.adl/bin/csdlc-v2"
+  cat >"$FIXTURE/.csdlc/issues/123/cards/sip.values.json" <<EOF_INNER
+{"identity":{"issue":123,"version":"$VERSION"}}
+EOF_INNER
+  cat >"$FIXTURE/.csdlc/issues/456/cards/sip.values.json" <<'EOF_INNER'
+{"identity":{"issue":456,"version":"v9.9.9"}}
+EOF_INNER
+  cat >"$FIXTURE/.adl/bin/csdlc-v2/csdlc-doctor" <<'EOF_INNER'
+#!/usr/bin/env bash
+set -euo pipefail
+case "${DOCTOR_MODE:?missing DOCTOR_MODE}" in
+  closed) printf '{"phase":"closed_out"}\n' ;;
+  open) printf '{"phase":"implemented"}\n' ;;
+  error) echo "doctor failed" >&2; exit 7 ;;
+  malformed) printf 'not-json\n' ;;
+  *) exit 2 ;;
+esac
+EOF_INNER
+  chmod +x "$FIXTURE/.adl/bin/csdlc-v2/csdlc-doctor"
+}
+
 assert_remote_tag_absent() {
   if git -C "$FIXTURE" ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
     echo "assertion failed: remote tag $TAG_NAME should be absent" >&2
@@ -223,6 +268,16 @@ assert_local_tag_present() {
 
 make_fixture
 setup_fake_gh
+setup_closeout_gate_fixture
+
+run_closeout_gate_case "all milestone records closed out" closed 0 "preflight checks passed"
+run_closeout_gate_case "non-closed milestone record fails" open 1 "issue 123 is not closed_out"
+run_closeout_gate_case "doctor error fails closed" error 1 "csdlc-doctor rejected issue 123"
+run_closeout_gate_case "malformed doctor JSON fails closed" malformed 1 "csdlc-doctor returned malformed JSON for issue 123"
+
+mv "$FIXTURE/.csdlc" "$FIXTURE/.csdlc.saved"
+run_closeout_gate_case "no milestone records fails" closed 1 "no typed C-SDLC records found for $VERSION"
+mv "$FIXTURE/.csdlc.saved" "$FIXTURE/.csdlc"
 
 # Create/tag preconditions: missing local and remote tags should pass for create-tag and tag mutation.
 reset_git_state

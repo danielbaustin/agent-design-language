@@ -1,0 +1,1237 @@
+{
+  "schema": "adl.wp13.deletion_eligibility.v1",
+  "issue": 5346,
+  "baseline_revision": "208fd23c15aa39915f581fe2db491071cb902e4d",
+  "execution_revision": "e9035ceffac9ea79f914371c33081f07861a2a2c",
+  "reviewed_revision": null,
+  "eligibility_request": ".csdlc/evidence/5346/eligibility-request.json",
+  "eligibility_decision": ".csdlc/evidence/5346/eligibility-decision.json",
+  "external_manifest_input": ".csdlc/evidence/5346/5347-external-band-deletion-manifest.json",
+  "rollback": {
+    "window_complete": true,
+    "evidence_refs": [
+      ".csdlc/issues/5343/index.json",
+      ".git/csdlc-v2/closeout/5343.json"
+    ]
+  },
+  "paths": [
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/basics.rs",
+      "git_mode": "100644",
+      "git_object_id": "f162e97d62211a54618e2f1087fed4484dbc8a4c",
+      "baseline_physical_loc": 4474,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs",
+      "git_mode": "100644",
+      "git_object_id": "f378d54657fa169fb3ba3d99f566ac690f0e431e",
+      "baseline_physical_loc": 10061,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/guardrails.rs",
+      "git_mode": "100644",
+      "git_object_id": "b0390678a7d1be5b2771e250238b3917562af3a4",
+      "baseline_physical_loc": 11,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/branch_and_gitignore.rs",
+      "git_mode": "100644",
+      "git_object_id": "259e54a1e59ac18c241baf80b7a8dfbd7ae61cfd",
+      "baseline_physical_loc": 438,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/canonical_surfaces.rs",
+      "git_mode": "100644",
+      "git_object_id": "841a35fd17df8e8d02b37ee2be8206ace75871e1",
+      "baseline_physical_loc": 361,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/foreign_bundle.rs",
+      "git_mode": "100644",
+      "git_object_id": "ff25e0d4564ef11ee311604d2c338530d0440402",
+      "baseline_physical_loc": 386,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/output_truth.rs",
+      "git_mode": "100644",
+      "git_object_id": "11b6ba489350df6fd75d80aaea404a33a2695048",
+      "baseline_physical_loc": 378,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/guardrails/sync_and_prompt.rs",
+      "git_mode": "100644",
+      "git_object_id": "66e26b3e25c3e11f628463a0760f74f0893eddcc",
+      "baseline_physical_loc": 442,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/mod.rs",
+      "git_mode": "100644",
+      "git_object_id": "2fa6ba9c4dc78996aed74c30b90c472e0d869bc2",
+      "baseline_physical_loc": 5,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/publication.rs",
+      "git_mode": "100644",
+      "git_object_id": "8fc0e29be0587c1c207caf9f65b096bfa9445580",
+      "baseline_physical_loc": 6,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/publication/closeout.rs",
+      "git_mode": "100644",
+      "git_object_id": "bbcbdb85a728aa41fd542cdad03d375634682bdf",
+      "baseline_physical_loc": 247,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/publication/flow.rs",
+      "git_mode": "100644",
+      "git_object_id": "b4b1edc3dd848ee4885dcff7e1c531bd6f540d04",
+      "baseline_physical_loc": 1262,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/publication/janitor.rs",
+      "git_mode": "100644",
+      "git_object_id": "a27793b2b74fa561e78ed3ff8a76bec068e6eb0a",
+      "baseline_physical_loc": 348,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/publication/linkage.rs",
+      "git_mode": "100644",
+      "git_object_id": "b57dd1e670c3ac3c79c08f8b00811d660038ac06",
+      "baseline_physical_loc": 206,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/closeout.rs",
+      "git_mode": "100644",
+      "git_object_id": "bfa689eb51a87bfe5e282f3a52873371fe05c12e",
+      "baseline_physical_loc": 627,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/diagnosis.rs",
+      "git_mode": "100644",
+      "git_object_id": "5dea1a4df7e2d3cb3d78a80450cc8a6455998637",
+      "baseline_physical_loc": 1324,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/mod.rs",
+      "git_mode": "100644",
+      "git_object_id": "204871a8bd1d6bbc6e1cb6131d48c7707f3d4078",
+      "baseline_physical_loc": 5,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs",
+      "git_mode": "100644",
+      "git_object_id": "ad3186b2fc966d12e2576b3b0c0df72f090c9501",
+      "baseline_physical_loc": 3282,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/mod.rs",
+      "git_mode": "100644",
+      "git_object_id": "0cc30b8ab65c236f627567ae92f93d98ca64a243",
+      "baseline_physical_loc": 19,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/repo_helpers.rs",
+      "git_mode": "100644",
+      "git_object_id": "1ae8a2591f8dce2d785071da3ed4ad996e59e94c",
+      "baseline_physical_loc": 5,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/repo_helpers/bootstrap.rs",
+      "git_mode": "100644",
+      "git_object_id": "fb665853198fd089fa779589e79938e5ecb57bd3",
+      "baseline_physical_loc": 1052,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/repo_helpers/context.rs",
+      "git_mode": "100644",
+      "git_object_id": "368cb417a3c40d49d24ae0e5e972fe44cb30cf9d",
+      "baseline_physical_loc": 232,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs",
+      "git_mode": "100644",
+      "git_object_id": "5fdb4ab1fbd37dd7407ada9b4a0c4364979d456e",
+      "baseline_physical_loc": 534,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/support.rs",
+      "git_mode": "100644",
+      "git_object_id": "aeb4c770bb2ac766e2949bc6a43b5fb315dc6c0b",
+      "baseline_physical_loc": 1106,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tests/pr_cmd_inline/versioned_bootstrap.rs",
+      "git_mode": "100644",
+      "git_object_id": "0d9849a07e02794307165065fd86b114e8f0299f",
+      "baseline_physical_loc": 1732,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/card_prompt.rs",
+      "git_mode": "100644",
+      "git_object_id": "fc43e7fb8dcaab93441cf862544d7ed82efa44fe",
+      "baseline_physical_loc": 163,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/ci_log_archive.rs",
+      "git_mode": "100644",
+      "git_object_id": "3d08d391faa5cea65ea00275a2aa7ae87be0c7cd",
+      "baseline_physical_loc": 638,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/code_review.rs",
+      "git_mode": "100644",
+      "git_object_id": "cc31e87e55402c72b99c8f1c920ce42a05acb9fc",
+      "baseline_physical_loc": 123,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/code_review_args.rs",
+      "git_mode": "100644",
+      "git_object_id": "489df0053d3add482b7e3b30f62a09eac2e54d4e",
+      "baseline_physical_loc": 232,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/code_review_build.rs",
+      "git_mode": "100644",
+      "git_object_id": "2ce0d214d08513a87b7d221711615e3b73af19e1",
+      "baseline_physical_loc": 418,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/code_review_helpers.rs",
+      "git_mode": "100644",
+      "git_object_id": "1c8920c0d03b959b008f594a8594c4b121e92eea",
+      "baseline_physical_loc": 86,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/code_review_reviewer.rs",
+      "git_mode": "100644",
+      "git_object_id": "40bf75c567af0b739d21148fa1a3e594cf19e0c9",
+      "baseline_physical_loc": 666,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/code_review_types.rs",
+      "git_mode": "100644",
+      "git_object_id": "65a68afe0d4d8b4c66559a6db9816de1386667fd",
+      "baseline_physical_loc": 198,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/codex_usage_watch.rs",
+      "git_mode": "100644",
+      "git_object_id": "b01efe900e369905d307123069ce11cbb5490689",
+      "baseline_physical_loc": 1025,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/common.rs",
+      "git_mode": "100644",
+      "git_object_id": "037ed1c1e9a04a5db52cfbe786a4d16c1094b57d",
+      "baseline_physical_loc": 389,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/github_release.rs",
+      "git_mode": "100644",
+      "git_object_id": "de25ecd9bac2632d9262a4305b349116d0ada62a",
+      "baseline_physical_loc": 515,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/issue_resource_telemetry.rs",
+      "git_mode": "100644",
+      "git_object_id": "ad89367b6dc605916f69bb44b57fdbf8217bf070",
+      "baseline_physical_loc": 1922,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/markdown.rs",
+      "git_mode": "100644",
+      "git_object_id": "b39de5cf93c00172d657c99cab16b25ac0cfaba0",
+      "baseline_physical_loc": 298,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/markdown_ast_edit.rs",
+      "git_mode": "100644",
+      "git_object_id": "0892413a906e87ea24c311afeaae134f0f4a2822",
+      "baseline_physical_loc": 373,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/portable_project_doctor.rs",
+      "git_mode": "100644",
+      "git_object_id": "84c3ee5445ec03ca843131c0e8a9f064f275b63a",
+      "baseline_physical_loc": 1086,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/public_prompt_packet.rs",
+      "git_mode": "100644",
+      "git_object_id": "f74e2ea08e86197ec1ef80c3243896f37cf59d1b",
+      "baseline_physical_loc": 701,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/review_contract.rs",
+      "git_mode": "100644",
+      "git_object_id": "4034902ae140c40d127edb5c04e1c175bbb1645e",
+      "baseline_physical_loc": 242,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/review_surface.rs",
+      "git_mode": "100644",
+      "git_object_id": "471e6241e19dee5914e7317c8bf00d66440613aa",
+      "baseline_physical_loc": 475,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/srp_sor_update.rs",
+      "git_mode": "100644",
+      "git_object_id": "80690538e8265509e683f56e2275d3f181d15be9",
+      "baseline_physical_loc": 1146,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests.rs",
+      "git_mode": "100644",
+      "git_object_id": "fc7cc16219fffe9d40e61aa54885e16f1e16de23",
+      "baseline_physical_loc": 21,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/card_prompt.rs",
+      "git_mode": "100644",
+      "git_object_id": "a4b3140f9beee4e3761e3eca6e626574c01a2697",
+      "baseline_physical_loc": 82,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/code_review.rs",
+      "git_mode": "100644",
+      "git_object_id": "3cc218d16c82327036c840c36c08dd397356149d",
+      "baseline_physical_loc": 1263,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/codex_usage_watch.rs",
+      "git_mode": "100644",
+      "git_object_id": "ae617d4a5424bea0a2bd2f1e092749aec176e31b",
+      "baseline_physical_loc": 307,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/common_helpers.rs",
+      "git_mode": "100644",
+      "git_object_id": "f832348e74686493c998d9a0382bd5baf1f9a9b7",
+      "baseline_physical_loc": 232,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/markdown_ast_edit.rs",
+      "git_mode": "100644",
+      "git_object_id": "93e614498f81bc22ed1fa5271053d8bf4b98e51d",
+      "baseline_physical_loc": 174,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/prompt_spec.rs",
+      "git_mode": "100644",
+      "git_object_id": "35882bc1dbffbb7daf290c2ccd10acaabf87e536",
+      "baseline_physical_loc": 40,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/prompt_template.rs",
+      "git_mode": "100644",
+      "git_object_id": "25430c45be71476f07df152e08a387a17f476e73",
+      "baseline_physical_loc": 1107,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs",
+      "git_mode": "100644",
+      "git_object_id": "3fd301763e46f5384c14aa62cc5617a2a45e7153",
+      "baseline_physical_loc": 311,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/review_surfaces.rs",
+      "git_mode": "100644",
+      "git_object_id": "1bcb100231502ce9784fc5adc1693ab1e5c38eaa",
+      "baseline_physical_loc": 111,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/structured_prompt.rs",
+      "git_mode": "100644",
+      "git_object_id": "0b5ebe7c486181dc51fb796242609b8a433fd50c",
+      "baseline_physical_loc": 842,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/support.rs",
+      "git_mode": "100644",
+      "git_object_id": "9213f4ac1cdf27a673af32f00d5f4305f6ac4796",
+      "baseline_physical_loc": 913,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs",
+      "git_mode": "100644",
+      "git_object_id": "26c10627c717ce24ac6f3fac93be92d2d853b82e",
+      "baseline_physical_loc": 885,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    },
+    {
+      "path": "adl/src/cli/tooling_cmd/wp_issue_wave.rs",
+      "git_mode": "100644",
+      "git_object_id": "cce2cf1d891b83d0c73710f85b2638953b166322",
+      "baseline_physical_loc": 831,
+      "disposition": "remove",
+      "replacement": {
+        "owner": "typed C-SDLC v2 / retained ADL CLI surfaces",
+        "path": ".adl/bin/csdlc-v2",
+        "proof_refs": [
+          ".csdlc/prepared/issues/5346/check-dependencies.rb",
+          ".csdlc/prepared/issues/5346/run-validation-lane.rb",
+          "AGENTS.md"
+        ]
+      },
+      "symlink_target": null,
+      "generated_owner": null,
+      "cargo_memberships": [
+
+      ]
+    }
+  ]
+}

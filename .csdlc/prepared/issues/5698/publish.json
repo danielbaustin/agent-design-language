@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5698,
+  "expected_generation": 8,
+  "expected_digest": "5ba30b9080f7a4db463435e7eecc5f1136620ad372934596390b112d33b07c09",
+  "claim_id": "claim-5698-runtime-v3-redb-state",
+  "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5698-runtime-v3-redb-state",
+  "title": "[v0.91.8][runtime-v3][state] Unify durable kernel state on redb",
+  "body": "Closes #5698\n\nUnifies Runtime v3 local adapter and governed-operation durable state on one redb-backed kernel store. The implementation replaces checkpoint.json/lifelog.jsonl persistence with `runtime-kernel.redb`, enforces an explicit absolute configured state root, fails closed when legacy flat persistence is present, preserves identity/integrity validation for restored checkpoint bytes, and retains the existing writer-lock and governed-operation behavior without fixture or receipt-only storage.\n\nValidation passed through typed C-SDLC PVF: durable_state 4/4 including the concurrent sequence/head regression, assembly 9/9, governed_operations 28/28, strict all-target Clippy, full Runtime v3 fast, adl-v2 standalone, and git diff hygiene.\n\nGemini 3.1 Pro performed the bounded exact-head review. Its initial concurrency finding was fixed by allocating redb sequence numbers in the same write transaction as row/head persistence; the remediation verification returned PASS / no findings. The exact-head CI repair review at 89e162f79392a520678913cac7af47b6695a8d1a also returned PASS / no findings and confirmed the guardian_soak IPv4 loopback repair preserves real socket proof while matching Runtime v3's IPv4-only control-plane contract.",
+  "draft": false,
+  "remote": "origin",
+  "token_file": "/Users/daniel/keys/github.token"
+}

@@ -1,0 +1,75 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5728,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][architecture][ADR] Record accepted milestone architecture decisions",
+    "slug": "v0-91-8-architecture-adr-record-accepted-milestone-decisions",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Validate and review the exact merged documentation head, reconcile PR #5729, and retain terminal evidence.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Validate the exact committed documentation patch.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Record bounded exact-head review evidence.",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Reconcile the existing merged PR and retain terminal evidence.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "The implementation and merge SHAs remain exact.",
+        "No product or planning content changes during recovery.",
+        "Memory Palace remains deferred under ADR 0051."
+      ],
+      "risks": [
+        "Retroactive lifecycle recovery could overstate historical validation or review.",
+        "A stale branch could differ from the published head."
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "The issue worktree is not at exact implementation head.",
+        "The typed binary rejects the recovery transition.",
+        "Remote PR identity differs from the recorded issue and branch."
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5728/retained/design.md",
+      "design_digest": "e2b4bd34fc5f9d671ef95c54396d862cf36fc6ae280a14fe9abd0f8be33f18a8",
+      "diagram_ref": ".csdlc/issues/5728/retained/diagram.mmd",
+      "diagram_digest": "d60f572805e6599dab28aa1e7930283df706ce863a8fffe920f19e42e8199f73"
+    }
+  }
+}

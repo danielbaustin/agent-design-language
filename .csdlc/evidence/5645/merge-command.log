@@ -1,0 +1,9 @@
+local_pass
+command: CARGO_HOME=/Volumes/FastWork/cargo CARGO_TARGET_DIR=/Volumes/FastWork/csdlc-merge-target cargo test --manifest-path csdlc-v2/Cargo.toml merge
+result: passed
+scope: merge request/result contracts, canonical gate validation, exact-head drift, required check gating, and all filtered csdlc-v2 tests
+credentials: none; no GitHub merge was attempted by validation
+aws: none
+additional_checks: cargo clippy --manifest-path csdlc-v2/Cargo.toml --lib --bin csdlc-merge --tests -- -D warnings
+additional_result: passed
+additional_scope: merge method serialization, invalid request identity, merge result idempotence, and focused merge binary compilation

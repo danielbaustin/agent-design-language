@@ -1,0 +1,50 @@
+# Structured Intent Prompt
+
+Template: 1.0.0
+
+Issue: 5347
+
+Repository: danielbaustin/agent-design-language
+
+Card: sip
+
+Status: ready
+
+## Goal
+
+Prepare an exact, reviewed, disjoint manifest for deleting only incumbent ADL files whose accepted authority has moved outside the ADL v2 language/compiler/engine/CLI core.
+
+## Required Outcome
+
+After every terminal acceptance and cutover gate, #5346 deletion eligibility, and the live dependency graph are reconciled, a canonical manifest can prove each externally owned deletion candidate has an accepted replacement owner and evidence while every retained file has explicit authority and rationale.
+
+## Scope
+
+- issue-local C-SDLC lifecycle, preparation, review, validation, and evidence records
+- docs/milestones/v0.91.8/evidence/wp13-external-bands future manifest and proof packet
+- future exact file paths admitted only by reviewed manifest and typed claim amendment
+- dependency, ancestry, receipt, owner, reachability, disjointness, COTS, budget, PVF, rollback, and no-deferral gates
+
+## Authority
+
+- #5347 owns only externally owned incumbent deletion candidates individually admitted by an exact reviewed manifest
+- #5346 exclusively owns final incumbent language/compiler/engine/CLI deletion and its manifest paths
+- ADL v2, Runtime v3, C-SDLC v2, selector, soak, cutover, acceptance, and release implementations are read-only dependencies
+- Preparation protects only issue-local and evidence paths; no product path is claimed or deletion-authorized
+- Runtime v2 is not edited by this issue and cannot be deleted from metadata-only parity claims
+- No AWS, raw gh, credential access, production mutation, publication, PR, merge, or release authority is in scope
+
+## Assumptions
+
+- none
+
+## Operator Constraints
+
+- Use typed C-SDLC v2 binaries and semantic card operations only; rendered Markdown remains generated projection state
+- Keep the primary checkout clean on main and all tracked #5347 work in the dedicated FastWork worktree
+- Execution authority is WP-21 complete -> WP-13 now -> WP-16 afterward; do not require WP-16 #5351 terminal state before #5347 execution
+- Do not require #5346 terminal closeout before #5347 execution; #5347 deletes only external-owned obsolete demo/proof bands and preserves #5346 as the later serialized final-core deletion lane
+- Coordinate the exact #5347 deletion manifest with #5346 by proving zero overlap against #5346 reserved core language/compiler/engine/CLI paths and retaining the safe merge order #5347 before #5346
+- Do not touch Runtime v2, Runtime v3, C-SDLC v2, ADL v2 language/compiler/engine/CLI core, selector/cutover state, or historical non-executable evidence
+- Use /Volumes/FastWork for generated validation and build output; do not use /private/tmp
+- Run focused proving validation, obtain exactly one bounded pre-PR GPT-5.5 review, fix actionable findings, and publish a ready PR whose body includes Closes #5347; do not perform typed closeout in this session

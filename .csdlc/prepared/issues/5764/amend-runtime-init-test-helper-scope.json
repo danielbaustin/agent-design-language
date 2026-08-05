@@ -1,0 +1,12 @@
+{
+  "issue": 5764,
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "expected_generation": 1,
+  "expected_digest": "20416c272f6984381511fc5aac276ef7694c7e9053f32edeabe960a92b06903f",
+  "now_unix_seconds": 1785574800,
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Add Runtime v3 soak test init helper before fixing worktree-safe Vector binary resolution exposed by the broad runtime test pass.",
+  "add_protected_paths": [
+    "adl-runtime-kernel/tests/support/runtime_init.rs"
+  ]
+}

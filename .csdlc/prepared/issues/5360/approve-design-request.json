@@ -1,0 +1,7 @@
+{
+  "issue": 5360,
+  "expected_generation": 0,
+  "expected_digest": "92006ea6cc25e32d84bd981592a106008ca7755c038bf23ac18ecfdae2af73af",
+  "claim_id": "claim-5360-v0918-wp17-documentation-preparation",
+  "reviewer": "subagent:5360-preparation-review"
+}

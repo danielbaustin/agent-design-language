@@ -1,0 +1,11 @@
+{
+  "schema": "adl.launch_readiness.consumption.v1",
+  "issue": 4758,
+  "consumer": "v0.91.8 WP-21 release-review intake",
+  "manifest_path": ".csdlc/evidence/4758/launch-readiness/launch-readiness.v1.json",
+  "manifest_digest": "d8bfde371e76ad96c1d2556f4eeaea4e0f12de54a7d6bfcc4437dc29f0646096",
+  "review_revision": "8f3eee118c481a2b48774965dc1f6de566e056c8",
+  "proof_ref": ".csdlc/evidence/4758/launch-readiness/validation.v1.log",
+  "outcome": "passed",
+  "consumed_disposition": "blocked_with_evidence"
+}

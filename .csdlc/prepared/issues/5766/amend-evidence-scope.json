@@ -1,0 +1,12 @@
+{
+  "issue": 5766,
+  "expected_generation": 4,
+  "expected_digest": "ac7389deb2221e1613c3512778a4f8860437eb53896ee218908151f320c6487d",
+  "claim_id": "claim-5766-csm-runtime-endpoint-inventory",
+  "actor": "codex:issue-5766-runtime-endpoint-inventory",
+  "reason": "Protect the typed finalize evidence directory created for the #5766 implementation validation.",
+  "now_unix_seconds": 1785786033,
+  "add_protected_paths": [
+    ".csdlc/evidence/5766"
+  ]
+}

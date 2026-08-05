@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5655,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5655-csdlc-github-actions",
+  "title": "[v0.91.8][csdlc-v2] Add Rust GitHub action command surface",
+  "body": "Closes #5655\n\n## Summary\n- Add the Rust-only `csdlc-github` command with typed `run` and `schema` surfaces.\n- Add typed GitHub action request/result schemas for issue create/update/comment/close/read and PR state observation.\n- Enforce operation markers and exact post-mutation readback for issue create/comment/update/close, including exact updated body, labels, and assignees.\n- Add operator guidance for the repo-native C-SDLC v2 GitHub action surface.\n- Repair the CI strict Clippy blockers reported by `csdlc-v2-standalone` without changing behavior.\n\n## Validation\n- Rebased onto `origin/main` `1facdf209`.\n- `TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target cargo clippy --locked --manifest-path csdlc-v2/Cargo.toml --all-targets -- -D warnings` passed.\n- `TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate_github_actions` passed 2/2.\n- `TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target cargo test --locked --manifest-path csdlc-v2/Cargo.toml` passed, including `gate_github_actions` 2/2 and Doc-tests `csdlc_v2` 1/1.\n- `csdlc-doctor --repo . --issue 5655` passed at reviewed generation 19.\n- Boole exact-head read-only review was CLEAN for `1eb3e59819222fe59a590abbbc3b18bbe19643d1` after the CI strict Clippy repair.",
+  "draft": true,
+  "revision": "git-blake3:13ace1e40a49196df5ecb951fc0b7871149f22b4:e8b4da81fb74efb11eb876371890c0fb746564096915aabb761ad14049896d30",
+  "commit_sha": "13ace1e40a49196df5ecb951fc0b7871149f22b4"
+}

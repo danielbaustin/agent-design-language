@@ -1,0 +1,87 @@
+{
+  "schema": "adl.wp10a.live-workcell-manifest.v1",
+  "template": false,
+  "run_id": "wp10a-5501-fa49c2d0",
+  "admitted_plan": {
+    "issue": 5499,
+    "revision": "26a08cf896693c03fdf8dcc503e734bad56e61dc",
+    "digest": "e030138d11892ced3f47507417efc5ecf4786f11396d8b8dee072cdcd813f95b",
+    "review_ref": ".csdlc/evidence/5501/admitted-plan.json"
+  },
+  "negative_case": {
+    "kind": "overlapping_active_claim_path_refusal",
+    "refused": true,
+    "evidence_ref": ".csdlc/evidence/5501/negative-case-refusal.json",
+    "evidence_digest": "88d3f2cb3ca97d0456d09f86451243ac712ea374047ca3eac17363f4a6e81d67"
+  },
+  "shards": [
+    {
+      "issue": 5500,
+      "claim_id": "claim-5500-v0918-wp10a-dashboard-preparation",
+      "claim_generation": 11,
+      "claim_owner": "codex:issue-5500-preparation",
+      "branch": "codex/5500-v0918-wp10a-dashboard",
+      "worktree": "/Volumes/FastWork/adl-wp-5500",
+      "source_revision": "a24992cfaecfb6adaa2f82ea1b780dd7d1cc6803",
+      "protected_paths": [
+        "docs/tooling/milestone-dashboard",
+        "adl/tools/test_milestone_dashboard.sh"
+      ],
+      "write_paths": [
+        "docs/tooling/milestone-dashboard",
+        "adl/tools/test_milestone_dashboard.sh"
+      ],
+      "task_id": "019f8c3b-ec87-7741-a212-812501f7fc4a",
+      "context_envelope_digest": "54b27e3959e20c48f046784bf063e2e4566735bf069e05bef18fcd55034674df",
+      "output_ref": ".csdlc/evidence/5500/dashboard-contract.log",
+      "output_digest": "1ac794ed765fa19138aa1a24054cd6ff9b55457b138d676dd77855d52c51f7ba",
+      "review_ref": ".csdlc/issues/5500/index.json"
+    },
+    {
+      "issue": 5502,
+      "claim_id": "claim-5502-v0918-output-convergence-preparation",
+      "claim_generation": 15,
+      "claim_owner": "codex:5502-preparation-owner",
+      "branch": "codex/5502-v0918-preparation",
+      "worktree": "/Volumes/FastWork/adl-wp-5502",
+      "source_revision": "3b900210cd30ee381c860a624499d1e4d8aea0d8",
+      "protected_paths": [
+        "adl-v2/Cargo.toml",
+        "adl-v2/Cargo.lock",
+        "adl-v2/crates/adl-workcell-convergence"
+      ],
+      "write_paths": [
+        "adl-v2/Cargo.toml",
+        "adl-v2/Cargo.lock",
+        "adl-v2/crates/adl-workcell-convergence"
+      ],
+      "task_id": "019f8c3b-ed47-78e1-a671-d78b1fd3a063",
+      "context_envelope_digest": "186e5aa0c56ba00f2c8e59dad0d99ed3ba74e94ba1d7463ea9eba200442c8d11",
+      "output_ref": ".csdlc/evidence/5502/implementation-validation/convergence-contract.log",
+      "output_digest": "e7d2611d0da6895b0f2f369da3f6e7aa416cd71edb3b3e2696d1a9ae01b2e3e6",
+      "review_ref": ".csdlc/prepared/issues/5502/record-gpt55-review.json"
+    }
+  ],
+  "dashboard": {
+    "source_issue": 5500,
+    "observation_ref": ".csdlc/evidence/5500/dashboard-contract.log",
+    "observation_digest": "1ac794ed765fa19138aa1a24054cd6ff9b55457b138d676dd77855d52c51f7ba",
+    "manual_assertions": false
+  },
+  "convergence": {
+    "source_issue": 5502,
+    "decision_ref": ".csdlc/evidence/5501/convergence-decision.json",
+    "decision_digest": "d2d8a9e552d1b1bf6883cc66103b0429c82ca57c13ef998c5eda5fbc3abf912b"
+  },
+  "baseline": {
+    "declared_work_digest": "fb4e2c174ac0c0e7d4b2cfe3e09dbd39c351b39e4a56a5f819081a811dcce2d7",
+    "equivalence_review_ref": ".csdlc/evidence/5501/single-agent-comparison.json",
+    "budget_seconds": 1800
+  },
+  "manifest_review": {
+    "reviewer": "validator:5501-retained-live-proof",
+    "review_ref": ".csdlc/evidence/5501/retained-live-proof-review.json",
+    "reviewed_digest": "b4d8b53d14fa23176954ddd34e6d496e83e0cd5ac7712b4eb4602fc98d1e280f",
+    "result": "pass"
+  }
+}

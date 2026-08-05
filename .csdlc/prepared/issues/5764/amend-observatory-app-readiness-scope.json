@@ -1,0 +1,12 @@
+{
+  "issue": 5764,
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "expected_generation": 1,
+  "expected_digest": "b41d3635aee968d23c5d377e1719ffe2b8c0278e2b0a52d467c92e8202ef1338",
+  "now_unix_seconds": 1785574800,
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Add Observatory browser Runtime v3 readiness consumption after pre-PR review found README/app mismatch.",
+  "add_protected_paths": [
+    "demos/html-observatory/app.js"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "typed-csdlc-doctor-5362",
+        "proof_role": "Diagnose #5362 typed preparation packet without finalizing execution",
+        "purpose": "preparation-only typed validation",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 64,
+          "tokens": 1000
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "wp21-preparation-hygiene",
+        "release_gate": "optional",
+        "execution": "local",
+        "timeout_seconds": 30,
+        "executable": "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+        "argv": [
+          "--repo",
+          ".",
+          "--issue",
+          "5362"
+        ],
+        "evidence": {
+          "max_log_bytes": 4096,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": [
+      "typed-csdlc-doctor-5362"
+    ],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {
+    "max_parallel": 1,
+    "cpu_units": 1,
+    "memory_mib": 64,
+    "tokens": 1000
+  },
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5362/csdlc-validate-preparation",
+  "cancellation_file": null
+}

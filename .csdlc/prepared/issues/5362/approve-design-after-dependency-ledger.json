@@ -1,0 +1,7 @@
+{
+  "issue": 5362,
+  "expected_generation": 0,
+  "expected_digest": "498acf7216be19795eb466e77e5a17226946fd0755b757574176d8df4bb3cc70",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "reviewer": "operator-policy:release-tail-preparation"
+}

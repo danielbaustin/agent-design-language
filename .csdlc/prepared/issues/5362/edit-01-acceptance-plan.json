@@ -1,0 +1,103 @@
+{
+  "issue": 5362,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "3d8127be165c45f5c3a2c8c6335d518fe510e09b0c42279e366d99e8b98cb0c5",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:5362-preparation-owner",
+  "reason": "replace stale predecessor gate with current-main WP-21 dependency consumption plan",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "AC-1: #5362 remains preparation-only with changes confined to .csdlc/issues/5362, .csdlc/prepared/issues/5362, .csdlc/evidence/5362, and .csdlc/locks/5362.lock",
+      "AC-2: future execution consumes #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 as live CLOSED and current-main closed_out/merged evidence at the execution base",
+      "AC-3: feature-list and v0.92 planning seed work cites exact current-main evidence paths and keeps unsupported readiness, birthday, adaptive-learning, or implementation claims as blockers or non-claims",
+      "AC-4: preparation creates no PR, performs no work-package execution, mutates no predecessor or version:v0.92 issue, and touches no product implementation"
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Refresh origin/main and re-read issue #5362 plus WP_ISSUE_WAVE_v0.91.8.yaml before execution",
+        "acceptance_ids": ["AC-1", "AC-2"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Verify #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 live CLOSED and current-main phase closed_out with merged publication and terminal receipt paths",
+        "acceptance_ids": ["AC-2"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Consume current-main evidence paths from .csdlc/evidence and .csdlc/issues records for handoff, launch, activation, capability envelope, Memory Palace, birth witness, birthday docs, ADR, and Adaptive Learning queue inputs",
+        "acceptance_ids": ["AC-2", "AC-3"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Assign evidence-bound feature-list dispositions and prepare the v0.92 planning-truth handoff without redefining birthday semantics or opening/mutating v0.92 issues",
+        "acceptance_ids": ["AC-3", "AC-4"],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Run focused hygiene and bounded review before any future PR; block instead of publishing if evidence or non-claim checks fail",
+        "acceptance_ids": ["AC-1", "AC-4"],
+        "status": "pending"
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "typed-csdlc-doctor-5362",
+        "proof_role": "Diagnose the #5362 typed issue packet, claim, card projections, and design/diagram digest consistency",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 1000,
+        "argv": [
+          "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+          "--repo",
+          ".",
+          "--issue",
+          "5362"
+        ],
+        "parallel_group": "wp21-preparation-hygiene",
+        "defer_reason": null
+      },
+      {
+        "lane": "typed-csdlc-validate-5362",
+        "proof_role": "Run the focused typed validation/finalize surface for #5362 preparation if the packet remains bound and non-executing",
+        "acceptance_ids": ["AC-1", "AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1500,
+        "argv": [
+          "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate",
+          "--root",
+          ".",
+          "--request",
+          ".csdlc/prepared/issues/5362/validate-preparation.json"
+        ],
+        "parallel_group": "wp21-preparation-hygiene",
+        "defer_reason": null
+      },
+      {
+        "lane": "focused-hygiene",
+        "proof_role": "Run git diff --check, allowed-path checks, dependency-ledger JSON parse, and forbidden-scope scans",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": [
+          "manual-focused-hygiene",
+          "issue-5362-only"
+        ],
+        "parallel_group": "wp21-preparation-hygiene",
+        "defer_reason": null
+      }
+    ]
+  }
+}

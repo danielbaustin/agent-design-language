@@ -1,0 +1,496 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5702,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "9176384166190f289fe3a972b39c30ca0bf79a7afe9cecc9488d3c8688691660",
+  "phase": "closed_out",
+  "generation": 18,
+  "digest": "027db4422b056a591de19bd861f8951d86f2d15bd33e74cecdd607a0573c4e1d",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "Lovelace:019faedd-8ef9-71c2-8296-2165d325bf73",
+    "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "revision": "git-blake3:862d5d006bd35f00ebf35bc2041e50102a07547e:5e3ecb8dd4e12316169019f9bd88cd4644ba375847e63cd8ad65493d0b3194ac",
+    "scope": [
+      ".adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md",
+      ".csdlc/evidence/5702/diff-hygiene.log",
+      ".csdlc/evidence/5702/gemini-3.1-pro-review-summary.json",
+      ".csdlc/evidence/5702/podcast-plan-contract.log",
+      ".csdlc/evidence/5702/typed-doctor.log",
+      ".csdlc/issues/5702/audit.jsonl",
+      ".csdlc/issues/5702/cards/sip.md",
+      ".csdlc/issues/5702/cards/sip.values.json",
+      ".csdlc/issues/5702/cards/sor.md",
+      ".csdlc/issues/5702/cards/sor.values.json",
+      ".csdlc/issues/5702/cards/spp.md",
+      ".csdlc/issues/5702/cards/spp.values.json",
+      ".csdlc/issues/5702/cards/srp.md",
+      ".csdlc/issues/5702/cards/srp.values.json",
+      ".csdlc/issues/5702/cards/stp.md",
+      ".csdlc/issues/5702/cards/stp.values.json",
+      ".csdlc/issues/5702/cards/vpp.md",
+      ".csdlc/issues/5702/cards/vpp.values.json",
+      ".csdlc/issues/5702/index.json",
+      ".csdlc/locks/5702.lock",
+      ".csdlc/prepared/issues/5702/bind-current-worktree.json",
+      ".csdlc/prepared/issues/5702/call_gemini_31_review.py",
+      ".csdlc/prepared/issues/5702/complete-spp-s2.json",
+      ".csdlc/prepared/issues/5702/complete-spp-s3.json",
+      ".csdlc/prepared/issues/5702/complete-spp-s4.json",
+      ".csdlc/prepared/issues/5702/design.md",
+      ".csdlc/prepared/issues/5702/diagram.mmd",
+      ".csdlc/prepared/issues/5702/finalize-plan.json",
+      ".csdlc/prepared/issues/5702/reapprove-design-after-gemini-31.json",
+      ".csdlc/prepared/issues/5702/record-gemini-31-summary-artifact.json",
+      ".csdlc/prepared/issues/5702/record-validation-gemini-31-tracked-review.json",
+      ".csdlc/prepared/issues/5702/validate_podcast_launch_plan.py"
+    ]
+  },
+  "review": {
+    "reviewer": "Lovelace:019faedd-8ef9-71c2-8296-2165d325bf73",
+    "scope": [
+      ".adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md",
+      ".csdlc/evidence/5702/diff-hygiene.log",
+      ".csdlc/evidence/5702/gemini-3.1-pro-review-summary.json",
+      ".csdlc/evidence/5702/podcast-plan-contract.log",
+      ".csdlc/evidence/5702/typed-doctor.log",
+      ".csdlc/issues/5702/audit.jsonl",
+      ".csdlc/issues/5702/cards/sip.md",
+      ".csdlc/issues/5702/cards/sip.values.json",
+      ".csdlc/issues/5702/cards/sor.md",
+      ".csdlc/issues/5702/cards/sor.values.json",
+      ".csdlc/issues/5702/cards/spp.md",
+      ".csdlc/issues/5702/cards/spp.values.json",
+      ".csdlc/issues/5702/cards/srp.md",
+      ".csdlc/issues/5702/cards/srp.values.json",
+      ".csdlc/issues/5702/cards/stp.md",
+      ".csdlc/issues/5702/cards/stp.values.json",
+      ".csdlc/issues/5702/cards/vpp.md",
+      ".csdlc/issues/5702/cards/vpp.values.json",
+      ".csdlc/issues/5702/index.json",
+      ".csdlc/locks/5702.lock",
+      ".csdlc/prepared/issues/5702/bind-current-worktree.json",
+      ".csdlc/prepared/issues/5702/call_gemini_31_review.py",
+      ".csdlc/prepared/issues/5702/complete-spp-s2.json",
+      ".csdlc/prepared/issues/5702/complete-spp-s3.json",
+      ".csdlc/prepared/issues/5702/complete-spp-s4.json",
+      ".csdlc/prepared/issues/5702/design.md",
+      ".csdlc/prepared/issues/5702/diagram.mmd",
+      ".csdlc/prepared/issues/5702/finalize-plan.json",
+      ".csdlc/prepared/issues/5702/reapprove-design-after-gemini-31.json",
+      ".csdlc/prepared/issues/5702/record-gemini-31-summary-artifact.json",
+      ".csdlc/prepared/issues/5702/record-validation-gemini-31-tracked-review.json",
+      ".csdlc/prepared/issues/5702/validate_podcast_launch_plan.py"
+    ],
+    "reviewed_revision": "git-blake3:862d5d006bd35f00ebf35bc2041e50102a07547e:5e3ecb8dd4e12316169019f9bd88cd4644ba375847e63cd8ad65493d0b3194ac",
+    "findings": [
+      {
+        "id": "5702-review-p1-gemini-disposition-overclaim",
+        "severity": "p1",
+        "summary": "SOR and plan previously overclaimed complete Gemini review incorporation; exact-head re-review confirmed the plan now incorporates or explicitly dispositions the launch-critical Gemini 3.1 Pro items.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:862d5d006bd35f00ebf35bc2041e50102a07547e:5e3ecb8dd4e12316169019f9bd88cd4644ba375847e63cd8ad65493d0b3194ac",
+        "route": null
+      },
+      {
+        "id": "5702-review-p2-path-hygiene",
+        "severity": "p2",
+        "summary": "Tracked packet previously retained machine-local FastWork paths; exact-head re-review found no /Volumes/FastWork, /Users/, file://, or similar machine-local path leakage outside intentional redaction-rule examples.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:862d5d006bd35f00ebf35bc2041e50102a07547e:5e3ecb8dd4e12316169019f9bd88cd4644ba375847e63cd8ad65493d0b3194ac",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "This is a plan-only issue; production audio, RSS, website deployment, guest acceptance, and weekly cadence remain unproven until follow-on implementation issues execute."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5702,
+    "pull_request": 5706,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5706",
+    "base": "main",
+    "head": "codex/5702-podcast-launch-plan",
+    "revision": "git-blake3:52b0096b4af7e143f024826b7e313da1cdf10ff2:55ed9b77840a0a0ed552dfa189b3d8dd4073fbf45622a6d83bc1049bacbbed2e",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5706,
+    "head_sha": "52b0096b4af7e143f024826b7e313da1cdf10ff2",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048316"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658119192"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048373"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048162"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048575"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048559"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048576"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90657615315"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048809"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048540"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048109"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048280"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048616"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048619"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048371"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30475965515/job/90658048059"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5706,
+    "disposition": "merged",
+    "observed_sha": "52b0096b4af7e143f024826b7e313da1cdf10ff2",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5702.json",
+    "released_branch": "codex/5702-podcast-launch-plan",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md",
+      ".csdlc/issues/5702",
+      ".csdlc/prepared/issues/5702",
+      ".csdlc/evidence/5702",
+      ".csdlc/locks/5702.lock"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5702/retained/design.md",
+  "diagram_path": ".csdlc/issues/5702/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "revision": "d7d3096e844b656cf47fc8c34af24a60f1fa5d7ec27160a28d16d56492ba4fed"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "15ac37f0f83ec7f122c068e9743b080a66fe95779a5a3d2c12c8dee44e036946",
+      "rendered_digest": "4acc008949f966ac714a55ba0b43c9828347a3d63a67a63605e3cb880abc8293",
+      "ast_digest": "be0f67abdfa488c9731b80dd120485436925f515af3d2e7105c6ad92fb713bc0"
+    },
+    "stp": {
+      "values_digest": "c9046ebdbdb123654e9f671ffb6f0e65d8cc12bd78dd9f3cbbb71d4d48813061",
+      "rendered_digest": "eed904ddea0422c51f76edff00e89fd9b3c8a9122088b250a07ebd785f18f0b9",
+      "ast_digest": "442aa3fc35d3830b1f95bae1062dc0e6f2115fb034dde49efa824834e7f6001f"
+    },
+    "spp": {
+      "values_digest": "f95943fb4c17c81b95fb4064ff6f657798f9abb67ee1f641ffd20136bd0241ad",
+      "rendered_digest": "ff634ad8f919e2fdc5cdfe1e9df26e186d1f18555e0b67969aa2c24531b39303",
+      "ast_digest": "c26bac5e384fab1e55e37f5bdbc9c21d0e4858a65a87d0133921d9540785a04a"
+    },
+    "vpp": {
+      "values_digest": "772d8fa725be75d7a07322e7d03b4c05d3e526749386d29c6c62bf6de450f84f",
+      "rendered_digest": "802747682618c03c7b3af555fce72c6929a83d67378a220125212638e686887e",
+      "ast_digest": "f92b57d3f75f2f91b39a4728b0562505ba49d48901a5164038d4bb72f4c061ca"
+    },
+    "srp": {
+      "values_digest": "3a019f21c4c9e29c36de00642e0941df3d28a397fbb9bde43bdb8f4039e2de63",
+      "rendered_digest": "0a7115969719cd2cf7f8bfb0431b08984435e14b90bd8a26439db62efd205dec",
+      "ast_digest": "a45de291768eee1a59b92222dc8bf6e039608f6f39650c5038b9c35a093c3674"
+    },
+    "sor": {
+      "values_digest": "cd81f70de580106a891d6f363a32718b52a56a90fe0cc176fcd229a5f7dea050",
+      "rendered_digest": "1d121e255887b2f74673a5b5be6c81487ec15133c9959583646ae6fa44e53a15",
+      "ast_digest": "fa7ca4ffd680c36707c35ae1593728f9cbe6dc68aa2abeb8c77e2d44b8b0ac36"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "advance #5702 after assigned exact-head review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record completed launch plan drafting step",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record completed Gemini 3.1 Pro review step",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record completed focused validation and operator-review preparation step",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record tracked Gemini 3.1 Pro review summary artifact",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Prepared the #5702 Podcast Studio next-week launch plan with Gemini 3.1 Pro review incorporated and tracked publication-safe evidence retained.\",\"changes\":[\"Mapped the operator-required Gemini 3.1 Pro review to live API id gemini-3.1-pro-preview after plain gemini-3.1-pro returned 404.\",\"Incorporated Gemini 3.1 Pro launch-risk suggestions for byte-range audio hosting, ID3 tags, artwork, encoding, CORS, cache behavior, Apple validation, and Episode 001 content locking.\"],\"artifacts\":[\".csdlc/evidence/5702/gemini-3.1-pro-review-summary.json\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record Gemini 3.1 Pro review validation evidence",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ADL_GEMINI_REVIEW_MODEL=gemini-3.1-pro-preview\",\"ADL_GEMINI_REVIEW_TIMEOUT_SECONDS=600\",\"ADL_GEMINI_REVIEW_ATTEMPTS=3\",\"python3\",\".adl/local-artifacts/5702-podcast-launch-plan/call_gemini_review.py\"],\"purpose\":\"Run the operator-required Gemini 3.1 Pro planning review and retain a tracked publication-safe summary.\",\"outcome\":\"passed\",\"evidence_ref\":\"gemini-3.1-pro-review-summary.json\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record tracked Gemini 3.1 Pro review harness validation evidence",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ADL_GEMINI_REVIEW_MODEL=gemini-3.1-pro-preview\",\"ADL_GEMINI_REVIEW_TIMEOUT_SECONDS=600\",\"ADL_GEMINI_REVIEW_ATTEMPTS=3\",\"python3\",\".csdlc/prepared/issues/5702/call_gemini_31_review.py\"],\"purpose\":\"Run the operator-required Gemini 3.1 Pro planning review through the tracked issue-local harness.\",\"outcome\":\"passed\",\"evidence_ref\":\"gemini-3.1-pro-review-summary.json\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "repair SOR Gemini review disposition and path hygiene",
+      "operation": "renderer_owned_sor_repair"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 11,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "advance #5702 after assigned exact-head review passed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 12,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 13,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 19,
+      "generation": 16,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 20,
+      "generation": 17,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 21,
+      "generation": 18,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

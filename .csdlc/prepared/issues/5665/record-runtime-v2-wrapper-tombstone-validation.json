@@ -1,0 +1,23 @@
+{
+  "schema": "csdlc.edit_request.v1",
+  "issue": 5665,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "a48cf7f0f795f3a8f5aad11cdd8007ae4585baf6d3340a1106f9c13bd0d7acbc",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "reason": "Record focused compile proof for the retired Runtime v2 retained-proof wrapper tombstones.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "bash",
+        "-lc",
+        "for bin in run_wp12_acip_websocket_transport_proof run_v0916_acip_aee_memory_integration run_v0916_integrated_runtime_soak run_v0916_runtime_failure_injection run_v0917_integrated_resilience_failure_injection; do cargo check --locked --manifest-path adl/Cargo.toml --bin \"$bin\"; done"
+      ],
+      "purpose": "Prove each retired executable Runtime v2 or duplicate WSS proof wrapper compiles as a fail-closed tombstone while #5665 owns the real Runtime v3 API WSS proof.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5665/runtime-v2-wrapper-tombstone-checks.log"
+    }
+  }
+}

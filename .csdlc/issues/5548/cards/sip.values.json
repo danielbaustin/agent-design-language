@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5548,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][csdlc-v2][tests] Initialize Gate 2 temp roots before terminal recovery",
+    "slug": "gate2-temp-root-init",
+    "version": "v0.91.8",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Repair the Gate 2 C-SDLC v2 test fixtures so temporary roots reach their intended assertions.",
+      "required_outcome": "Choose and implement the architecture-correct fix for Gate 2 temporary roots while preserving fail-closed terminal receipt/common-directory invariants for real repositories.",
+      "declared_scope": [
+        "csdlc-v2 Gate 2 test fixture setup",
+        "terminal receipt/common-directory discovery behavior needed by those fixtures",
+        "focused regression proof for non-Git fixture behavior"
+      ],
+      "authority_boundary": [
+        "issue #5548 is the implementation authority",
+        "typed C-SDLC v2 lifecycle state is authoritative",
+        "ADL owner binaries provide live issue truth"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Typed v2 only",
+        "No implementation during preparation",
+        "No raw gh",
+        "No AWS",
+        "Do not touch occupied issue #5558 worktree",
+        "One review before PR, not during preparation"
+      ]
+    }
+  }
+}

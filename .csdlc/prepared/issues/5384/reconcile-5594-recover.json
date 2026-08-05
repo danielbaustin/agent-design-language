@@ -1,0 +1,24 @@
+{
+  "issue": 5594,
+  "expected_claim_id": "claim-5594-v0918-wp01-readiness",
+  "expected_generation": 36,
+  "now_unix_seconds": 1785346023,
+  "replacement": {
+    "id": "claim-5594-wp14a-reconciliation-release-only",
+    "owner": "codex:wp14a-preparation",
+    "generation": 36,
+    "acquired_unix_seconds": 1785346023,
+    "expires_unix_seconds": 1785349623,
+    "heartbeat_unix_seconds": 1785346023,
+    "branch": "codex/5594-v0918-wp01-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5594",
+      ".csdlc/locks/5594.lock",
+      ".csdlc/prepared/issues/5594"
+    ],
+    "purpose": "Reconcile the stale closed WP-01 projection solely to release planning ownership"
+  },
+  "recovery_actor": "codex:wp14a-preparation",
+  "reason": "GitHub issue #5594 is closed and must not reserve current milestone planning paths"
+}

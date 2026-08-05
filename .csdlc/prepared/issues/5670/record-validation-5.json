@@ -1,0 +1,22 @@
+{
+  "issue": 5670,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "08c8cc2ab0931149a6409c1065c4a8433f71152543aeb7ea5a8f1136077cc839",
+  "claim_id": "claim-5670-coverage-shard-fanout",
+  "actor": "codex:issue-5670-slot-1",
+  "reason": "Record focused validation 5 for hosted coverage sharding.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "purpose": "Verify patch whitespace and diff hygiene.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5670/git-diff-check.log"
+    }
+  }
+}

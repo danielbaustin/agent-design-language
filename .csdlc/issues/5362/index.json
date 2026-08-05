@@ -1,0 +1,285 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5362,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "49dd51058366e60d5fb9ca712cb57e8db94cf86b4f1be8d6dc61eb0ac220a0c5",
+  "phase": "published",
+  "generation": 13,
+  "digest": "c9bd19f3c37d0ea3a7f1fdee38dd6cb0f3472acffe0f2e51e7856463b5469219",
+  "claim": {
+    "id": "claim-5362-v0918-preparation-20260804",
+    "owner": "codex:5362-preparation-owner",
+    "generation": 13,
+    "acquired_unix_seconds": 1785865601,
+    "expires_unix_seconds": 1786470401,
+    "heartbeat_unix_seconds": 1785865601,
+    "branch": "codex/5362-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5362",
+      ".csdlc/locks/5362.lock",
+      ".csdlc/prepared/issues/5362",
+      ".csdlc/evidence/5362"
+    ],
+    "purpose": "Prepare #5362 WP-21 feature-list and v0.92 planning-truth handoff only; consume closed/completed WP-21 sidecar evidence from current origin/main; no execution, publication, PR, product implementation, predecessor mutation, or version:v0.92 issue mutation"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:gpt-5.5:Locke",
+    "assigned_by": "codex:wp21-conductor",
+    "revision": "git-blake3:bee2a56c4ce4fffe6a09ed6cc1f2e48137d246de:7e7d35c3a20cf80c4c8f3bd50d152a7e28cc345d6fbea64a7dc1fed3c7c9afe1",
+    "scope": [
+      ".csdlc/issues/5362",
+      ".csdlc/evidence/5362",
+      ".csdlc/prepared/issues/5362",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:gpt-5.5:Locke",
+    "scope": [
+      ".csdlc/issues/5362",
+      ".csdlc/evidence/5362",
+      ".csdlc/prepared/issues/5362",
+      "docs/planning/ADL_FEATURE_LIST.md",
+      "docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+      "docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md",
+      "docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md"
+    ],
+    "reviewed_revision": "git-blake3:bee2a56c4ce4fffe6a09ed6cc1f2e48137d246de:7e7d35c3a20cf80c4c8f3bd50d152a7e28cc345d6fbea64a7dc1fed3c7c9afe1",
+    "findings": [],
+    "residual_risks": [
+      "This documentation reconciliation does not execute v0.92 work or claim first-birthday readiness.",
+      "Publication, CI, merge, and terminal lifecycle reconciliation remain separate steps."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5362,
+    "pull_request": 5807,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5807",
+    "base": "main",
+    "head": "codex/5362-v0918-preparation",
+    "revision": "git-blake3:7a639a3e988cdf58d2f3abfb390044a4cb094ecd:8547ac0e537b29945ecc67c5a45a57781e90dab2f344d734e28275e4af58c782",
+    "draft": false,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5362/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5362/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator-policy:release-tail-preparation",
+      "revision": "50f892eb54bc56a5ab51986782a3406119a2bd04e04f11bcc89507da82ca6bdf"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "07deca37af6783cde69ca124feb1221230f0ce462a4e589d7beafb774e9fe9eb",
+      "rendered_digest": "5f7ba2fa3c47b35b5287dad36410eb01bb0c75ee3d297d317614d8968c560059",
+      "ast_digest": "6239cfa6fe6b6624af27645f0f321f9bdc0ec296fb0ad67bf3f85619d6899fc2"
+    },
+    "stp": {
+      "values_digest": "d4478dab66f26d9720915af3f962207272f1af045315c763587f37426b2d2c15",
+      "rendered_digest": "0999b283c24c36153d7e1596722e0a45e6bb36d0ed5d73b1d10b474f589fb940",
+      "ast_digest": "b0d24b551bbb72be629ae8b3e404ca1af3eaa5d651c567dd477cbcf8730e1d21"
+    },
+    "spp": {
+      "values_digest": "c2f2f4b9bda06e3900782302a6cc37b2ddae73f5fb4d6f16ffd528304323c043",
+      "rendered_digest": "1f4945733487ce994f83f3dfb3460a6b84f736a1f86a94a19f8e1c68b6ca4f6e",
+      "ast_digest": "d569e8f6426b9986f1f44d16aba7248cc1182518205610f68f261e21a3125b4b"
+    },
+    "vpp": {
+      "values_digest": "a74c5607c64197048a142d5b89b13795b7279a90cd44d2c50a506d067f133f03",
+      "rendered_digest": "4d1659280ab6ff25e708850377e092251695f8dc70f6e85f7f383c7913814e3c",
+      "ast_digest": "510252c5e447569ef27c87370be9e38cdb78670487be86b2702a1827c3f29aea"
+    },
+    "srp": {
+      "values_digest": "b4a3c0e734347c4dd952ba622288d246582606fa705a158ff9d004809c7d5fba",
+      "rendered_digest": "3b731bcdfd08f86ccc4383292ecb258cd3a10f33e878f232810bbee3ee638040",
+      "ast_digest": "4bd0c18ec1fb8c4fc54f92e759fed031854fc507a641af0e9d583a88bcc6853e"
+    },
+    "sor": {
+      "values_digest": "4d732658f3fce56dcfbb9f177323b819cb4fcabcf9009c2cc6433beaba7c97d6",
+      "rendered_digest": "c624980d4bde4fbb537f97469b72b58e4f03f86af2cf1b40407bfa16d93fee43",
+      "ast_digest": "b6f0776e0ba81e14429aebf22460219a6aa8c8c2a5e4216a7b6aa741f897845a"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5362-preparation-owner",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5362-preparation-owner",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:5362-wp21-doc-reconciliation",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:wp21-conductor",
+      "reason": "The bounded exact-revision WP-21 documentation review passed bee2a56c4 with zero blockers after both evidence findings were repaired."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:wp21-conductor",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "recover expired issue-local preparation claim before typed card and design refresh",
+      "operation": "{\"previous_owner\":\"codex:5362-preparation-owner\",\"observed_expiry_unix_seconds\":1785359675,\"recovery_actor\":\"codex:5362-preparation-owner\",\"reason\":\"recover expired issue-local preparation claim before typed card and design refresh\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "operator-policy:release-tail-preparation",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "replace stale predecessor gate with current-main WP-21 dependency consumption plan",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: #5362 remains preparation-only with changes confined to .csdlc/issues/5362, .csdlc/prepared/issues/5362, .csdlc/evidence/5362, and .csdlc/locks/5362.lock\",\"AC-2: future execution consumes #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 as live CLOSED and current-main closed_out/merged evidence at the execution base\",\"AC-3: feature-list and v0.92 planning seed work cites exact current-main evidence paths and keeps unsupported readiness, birthday, adaptive-learning, or implementation claims as blockers or non-claims\",\"AC-4: preparation creates no PR, performs no work-package execution, mutates no predecessor or version:v0.92 issue, and touches no product implementation\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Refresh origin/main and re-read issue #5362 plus WP_ISSUE_WAVE_v0.91.8.yaml before execution\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Verify #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 live CLOSED and current-main phase closed_out with merged publication and terminal receipt paths\",\"acceptance_ids\":[\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Consume current-main evidence paths from .csdlc/evidence and .csdlc/issues records for handoff, launch, activation, capability envelope, Memory Palace, birth witness, birthday docs, ADR, and Adaptive Learning queue inputs\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Assign evidence-bound feature-list dispositions and prepare the v0.92 planning-truth handoff without redefining birthday semantics or opening/mutating v0.92 issues\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Run focused hygiene and bounded review before any future PR; block instead of publishing if evidence or non-claim checks fail\",\"acceptance_ids\":[\"AC-1\",\"AC-4\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"typed-csdlc-doctor-5362\",\"proof_role\":\"Diagnose the #5362 typed issue packet, claim, card projections, and design/diagram digest consistency\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5362\"],\"parallel_group\":\"wp21-preparation-hygiene\",\"defer_reason\":null},{\"lane\":\"typed-csdlc-validate-5362\",\"proof_role\":\"Run the focused typed validation/finalize surface for #5362 preparation if the packet remains bound and non-executing\",\"acceptance_ids\":[\"AC-1\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1500,\"argv\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate\",\"--root\",\".\",\"--request\",\".csdlc/prepared/issues/5362/validate-preparation.json\"],\"parallel_group\":\"wp21-preparation-hygiene\",\"defer_reason\":null},{\"lane\":\"focused-hygiene\",\"proof_role\":\"Run git diff --check, allowed-path checks, dependency-ledger JSON parse, and forbidden-scope scans\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"manual-focused-hygiene\",\"issue-5362-only\"],\"parallel_group\":\"wp21-preparation-hygiene\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "replace stale WP-20-only dependency gate with exact WP-21 sidecar dependency set",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"#5352 CLOSED/closed_out/merged on current origin/main as exact-revision v0.92 consumption handoff\",\"#4758 CLOSED/closed_out/merged on current origin/main as launch readiness input\",\"#4759 CLOSED/closed_out/merged on current origin/main as activation-map input\",\"#4760 CLOSED/closed_out/merged on current origin/main as Memory Palace handoff input\",\"#4761 CLOSED/closed_out/merged on current origin/main as capability-envelope input\",\"#4762 CLOSED/closed_out/merged on current origin/main as birth-witness and receipt input\",\"#4763 CLOSED/closed_out/merged on current origin/main as birthday-doc and external-launch input\",\"#5007 CLOSED/closed_out/merged on current origin/main as Memory Palace ADR input\",\"#5107 CLOSED/closed_out/merged on current origin/main as Adaptive Learning DAG queue input only\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "replace stale ancestry stop conditions with current-main evidence and non-claim gates",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any required WP-21 sidecar dependency is not live CLOSED at execution time\",\"Any required dependency lacks current-main phase closed_out, publication observed_state merged, or a terminal receipt path\",\"The execution base is not refreshed from current origin/main before consuming evidence\",\"Feature-list disposition lacks an exact evidence path or owner-bound non-claim\",\"v0.92 wording would overclaim birthday readiness, adaptive-learning implementation, or product implementation\",\"The work would mutate predecessor issues, issue #5357, PR #5805, issue #5804, a version:v0.92 issue, or product implementation\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "tighten execution invariants around current-main evidence consumption and non-claims",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"current-main lifecycle records and terminal receipts are the dependency consumption authority\",\"closed dependency records do not by themselves prove v0.92 birthday readiness or adaptive-learning implementation\",\"feature-list dispositions require exact evidence paths or explicit blockers/non-claims\",\"preparation does not mutate #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, #5107, #5357, PR #5805, #5804, version:v0.92 issues, or product implementation\",\"no PR publication or work-package execution occurs in this preparation branch\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "tighten SIP authority boundary for preparation-only current-main evidence consumption",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"typed C-SDLC v2 only\",\"future execution must refresh origin/main and consume current-main closed_out/merged evidence for #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107\",\"terminal receipts and dependency evidence are consumption inputs, not automatic readiness or birthday claims\",\"no work-package execution, PR publication, predecessor issue mutation, version:v0.92 issue mutation, issue #5357/#5804/PR #5805 mutation, or product implementation during preparation\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "add current-main dependency ledger and release-tail truth sources to STP inputs",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"issue #5362 live body\",\"origin/main 8621b6f3b1b91d3ea290e16d07f80ec29afd4ece\",\".csdlc/evidence/5362/dependency-verification.v1.json\",\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\",\"docs/milestones/v0.91.8/SPRINT_v0.91.8.md\",\"docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md\",\"docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\",\"docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\",\".csdlc/issues/5352/index.json and .csdlc/evidence/5352/* on current main\",\".csdlc/issues/4758/.csdlc/evidence/4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 current-main records/evidence\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:5362-preparation-owner",
+      "reason": "fix grouped dependency input path wording",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"issue #5362 live body\",\"origin/main 8621b6f3b1b91d3ea290e16d07f80ec29afd4ece\",\".csdlc/evidence/5362/dependency-verification.v1.json\",\"docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml\",\"docs/milestones/v0.91.8/SPRINT_v0.91.8.md\",\"docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md\",\"docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\",\"docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\",\".csdlc/issues/5352/index.json and .csdlc/evidence/5352/* on current main\",\".csdlc/issues/4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 current-main records and evidence\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex:5362-wp21-doc-reconciliation",
+      "reason": "Record operator-authorized WP-21 documentation reconciliation execution without publication or v0.92 mutation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Reconciled WP-21 documentation and planning truth against the closed #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 child tracks while preserving v0.92 non-claims.\",\"changes\":[\"Updated docs/planning/ADL_FEATURE_LIST.md current-status and planning-focus language to consume the closed WP-21 child tracks as retained inputs.\",\"Updated v0.91.8 feature preservation and proof coverage docs so closed child tracks remain handoff inputs, not implementation or release-approval claims.\",\"Updated v0.91.8 handoff docs to replace stale publication-candidate and future-review wording with current closed/merged/closed_out child-track truth.\",\"Preserved the explicit non-claims for v0.92 birthday readiness, public launch readiness, Adaptive Learning runtime implementation, and release approval.\"],\"artifacts\":[\"docs/planning/ADL_FEATURE_LIST.md\",\"docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md\",\"docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md\",\"docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md\",\"docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md\",\"docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex:5362-wp21-doc-reconciliation",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:wp21-conductor",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:wp21-conductor",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:wp21-conductor",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:wp21-conductor",
+      "reason": "The bounded exact-revision WP-21 documentation review passed bee2a56c4 with zero blockers after both evidence findings were repaired.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:wp21-conductor",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

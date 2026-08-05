@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5695,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][tooling] Preserve blocked and unstable PR mergeability states",
+    "slug": "pr-state-mergeability",
+    "version": "v0.91.8",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair the bounded mergeability mapping and prove its state table before execution.",
+      "deliverables": [
+        "Corrected mergeability mapping",
+        "Focused classification tests",
+        "Exact review and publication evidence"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Every supported mergeability variant has an explicit classification",
+        "AC-2: blocked and unstable cannot be reported as stale_base",
+        "AC-3: behind remains stale_base and dirty remains conflicted",
+        "AC-4: Focused tests prove the table and csdlc-merge remains fail-closed until clean ancestry and required checks are observed"
+      ],
+      "dependencies": [
+        "octocrab MergeableState variants",
+        "Existing csdlc-pr-state classification and merge gate tests"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/github.rs",
+        "csdlc-v2/src/merge.rs",
+        "Issue 5695"
+      ],
+      "non_goals": [
+        "No provider, Runtime, AWS, or CI workflow changes",
+        "No GitHub merge-policy changes",
+        "No reopening of issue 5683",
+        "No broad test-suite expansion"
+      ]
+    }
+  }
+}

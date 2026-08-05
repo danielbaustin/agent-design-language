@@ -22,7 +22,7 @@ def require_demo_map_routes(path: Path) -> str | None:
     text = path.read_text(encoding="utf-8")
     required_routes = {
         "Cognitive Transition Manifest": "cargo test --manifest-path adl/Cargo.toml cognitive_transition_schema -- --nocapture",
-        "Card Lifecycle Integration": "adl/tools/pr.sh doctor 3201 --version v0.91.3 --json",
+        "Card Lifecycle Integration": ".adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 3201",
         "Transition DAG And Shard Coordination": "python3 adl/tools/validate_transition_dag_packet.py docs/milestones/v0.91.3/review/transition_dag",
         "Evidence Bundle And Review Synthesis": "python3 adl/tools/validate_evidence_bundle_packet.py docs/milestones/v0.91.3/review/evidence_bundle",
         "Governed Merge-Readiness Gate": "python3 adl/tools/validate_merge_readiness_packet.py docs/milestones/v0.91.3/review/merge_readiness",

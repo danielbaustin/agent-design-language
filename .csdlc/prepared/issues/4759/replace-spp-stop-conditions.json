@@ -1,0 +1,20 @@
+{
+  "issue": 4759,
+  "card": "spp",
+  "expected_generation": 8,
+  "expected_digest": "695fa64a07951bf2af408141da6d5acd9f9f44e03c2e8d485c040e61eeeda801",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Replace stale preparation stop conditions with current validation, review, and publication gates.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "focused docs/card validation fails",
+      "exact-head pre-PR review finds actionable issues that are not fixed",
+      "publication would use stale review or ambiguous PR metadata",
+      "scope pressure asks #4759 to implement v0.92 runtime, birthday, Memory Palace, Unity, or sibling WP-21 work",
+      "operator asks to merge or close out before this no-merge handoff is complete"
+    ]
+  }
+}

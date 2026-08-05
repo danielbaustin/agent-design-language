@@ -1,0 +1,97 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5362,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21] Align feature list and v0.92 planning truth",
+    "slug": "v0918-wp21-feature-list-v092-planning-truth",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 4,
+      "summary": "Prepare now; execute only after #5363 is live-merged and ancestral.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Refresh origin/main and re-read issue #5362 plus WP_ISSUE_WAVE_v0.91.8.yaml before execution",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Verify #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 live CLOSED and current-main phase closed_out with merged publication and terminal receipt paths",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Consume current-main evidence paths from .csdlc/evidence and .csdlc/issues records for handoff, launch, activation, capability envelope, Memory Palace, birth witness, birthday docs, ADR, and Adaptive Learning queue inputs",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Assign evidence-bound feature-list dispositions and prepare the v0.92 planning-truth handoff without redefining birthday semantics or opening/mutating v0.92 issues",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Run focused hygiene and bounded review before any future PR; block instead of publishing if evidence or non-claim checks fail",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "current-main lifecycle records and terminal receipts are the dependency consumption authority",
+        "closed dependency records do not by themselves prove v0.92 birthday readiness or adaptive-learning implementation",
+        "feature-list dispositions require exact evidence paths or explicit blockers/non-claims",
+        "preparation does not mutate #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, #5107, #5357, PR #5805, #5804, version:v0.92 issues, or product implementation",
+        "no PR publication or work-package execution occurs in this preparation branch"
+      ],
+      "risks": [
+        "feature-list rows may lack evidence-bound owners",
+        "v0.92 inputs may overclaim birthday readiness",
+        "preflight blockers may be stale"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Any required WP-21 sidecar dependency is not live CLOSED at execution time",
+        "Any required dependency lacks current-main phase closed_out, publication observed_state merged, or a terminal receipt path",
+        "The execution base is not refreshed from current origin/main before consuming evidence",
+        "Feature-list disposition lacks an exact evidence path or owner-bound non-claim",
+        "v0.92 wording would overclaim birthday readiness, adaptive-learning implementation, or product implementation",
+        "The work would mutate predecessor issues, issue #5357, PR #5805, issue #5804, a version:v0.92 issue, or product implementation"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5362/design.md",
+      "design_digest": "50f892eb54bc56a5ab51986782a3406119a2bd04e04f11bcc89507da82ca6bdf",
+      "diagram_ref": ".csdlc/prepared/issues/5362/diagram.mmd",
+      "diagram_digest": "99b840bcedb1ab2bf5c9e85bcd0108c44582427b25c36eb19cb0d98c49df6a68"
+    }
+  }
+}

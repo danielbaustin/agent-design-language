@@ -1,0 +1,14 @@
+{
+  "issue": 4759,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "55dfd387d00c87d2ca847035ccdded2875bdda501c1d6eaa1de572888896924e",
+  "claim_id": "claim-4759-v0918-activation-execution-20260731",
+  "actor": "codex:issue-4759-execution",
+  "reason": "Update SPP summary from preparation-only future work to current #4759 execution truth.",
+  "operation": {
+    "operation": "replan",
+    "field": "plan_summary",
+    "value": "Implement and publish the #4759 WP-21 activation bridge after live #5384 closure, using the accepted WP-14A platform ledger as exact evidence and preserving v0.92 non-claims."
+  }
+}

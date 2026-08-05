@@ -125,7 +125,7 @@ For `split_now` or `defer`, emit:
 
 Recommend:
 
-- `workflow-conductor` for `keep_as_is`
+- normal issue execution for `keep_as_is`
 - `finding-to-issue-planner` or `pr-init` after approval for concrete follow-on issue creation
 - `stp-editor` / `sip-editor` when the current issue cards need narrowing after a split decision
 - operator review for `blocked`

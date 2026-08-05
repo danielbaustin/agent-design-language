@@ -1,0 +1,146 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5362
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Implemented and validated the WP-21 documentation/planning reconciliation against the closed child-track evidence.
+
+## Artifacts
+
+- docs/planning/ADL_FEATURE_LIST.md
+- docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md
+- docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md
+- docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md
+- docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md
+- docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md
+- docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md
+- docs/planning/ADL_FEATURE_LIST.md
+- docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md
+- docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md
+- docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md
+- docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md
+- docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md
+- docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md
+
+## Execution
+
+- Updated docs/planning/ADL_FEATURE_LIST.md current-status and planning-focus language to consume the closed WP-21 child tracks as retained inputs.
+- Updated v0.91.8 feature preservation and proof coverage docs so closed child tracks remain handoff inputs, not implementation or release-approval claims.
+- Updated v0.91.8 handoff docs to replace stale publication-candidate and future-review wording with current closed/merged/closed_out child-track truth.
+- Preserved the explicit non-claims for v0.92 birthday readiness, public launch readiness, Adaptive Learning runtime implementation, and release approval.
+- Reconciled docs/planning/ADL_FEATURE_LIST.md current WP-21 truth with closed retained child tracks.
+- Reconciled v0.91.8 feature preservation, proof coverage, activation-map, and handoff docs without mutating v0.92 work.
+- Preserved non-claims for v0.92 birthday readiness, public launch readiness, Adaptive Learning runtime implementation, and release approval.
+
+## Validation
+
+[
+  {
+    "command": [
+      "ruby",
+      "-e",
+      "files=%w[docs/planning/ADL_FEATURE_LIST.md docs/milestones/v0.91.8/FEATURE_PRESERVATION_CROSSWALK_v0.91.8.md docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md docs/milestones/v0.91.8/features/V092_HANDOFF_v0.91.8.md docs/milestones/v0.91.8/handoff/issue-5352-v092-consumption-handoff.md]; missing=[]; files.each{|f| File.read(f).scan(/\\[[^\\]]+\\]\\(([^)]+)\\)/).flatten.each{|href| next if href =~ /^(https?:|mailto:|#)/; path=href.sub(/#.*/, ''); next if path.empty?; target=File.expand_path(path, File.dirname(f)); missing << \"#{f} -> #{href}\" unless File.exist?(target)}}; abort(\"missing links:\\n#{missing.join(\"\\n\")}\") unless missing.empty?; puts 'changed-doc-links: PASS'"
+    ],
+    "purpose": "changed-doc link validation",
+    "outcome": "passed",
+    "evidence_ref": "changed-doc-links.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "purpose": "git diff hygiene validation",
+    "outcome": "passed",
+    "evidence_ref": "diff-check.log"
+  },
+  {
+    "command": [
+      "ruby",
+      ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb"
+    ],
+    "purpose": "feature preservation crosswalk validation",
+    "outcome": "passed",
+    "evidence_ref": "feature-crosswalk.log"
+  },
+  {
+    "command": [
+      "jq",
+      "empty",
+      ".csdlc/evidence/5362/dependency-verification.v1.json",
+      "docs/milestones/v0.91.8/feature_preservation_crosswalk_5594.v1.json",
+      ".csdlc/issues/5352/index.json",
+      ".csdlc/issues/4758/index.json",
+      ".csdlc/issues/4759/index.json",
+      ".csdlc/issues/4760/index.json",
+      ".csdlc/issues/4761/index.json",
+      ".csdlc/issues/4762/index.json",
+      ".csdlc/issues/4763/index.json",
+      ".csdlc/issues/5007/index.json",
+      ".csdlc/issues/5107/index.json",
+      ".csdlc/issues/5362/index.json"
+    ],
+    "purpose": "JSON structure validation",
+    "outcome": "passed",
+    "evidence_ref": "json-parse.log"
+  },
+  {
+    "command": [
+      "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor",
+      "--repo",
+      ".",
+      "--issue",
+      "5362"
+    ],
+    "purpose": "typed C-SDLC v2 doctor validation",
+    "outcome": "passed",
+    "evidence_ref": "typed-csdlc-doctor-5362.log"
+  },
+  {
+    "command": [
+      "python3",
+      "docs/milestones/v0.91.8/review/wp15_demo_matrix_5733/validate_v0918_demo_matrix.py"
+    ],
+    "purpose": "proof coverage structure validation",
+    "outcome": "passed",
+    "evidence_ref": "v0918-proof-matrix.log"
+  },
+  {
+    "command": [
+      "ruby",
+      "-e",
+      "require 'yaml'; YAML.load_file('docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml'); puts 'yaml: PASS'"
+    ],
+    "purpose": "YAML structure validation",
+    "outcome": "passed",
+    "evidence_ref": "yaml-parse.log"
+  }
+]
+
+## Integration
+
+pr_open
+
+## Publication
+
+Publication: ready
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

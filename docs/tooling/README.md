@@ -111,20 +111,21 @@ These docs describe worktree governance, large-module tracking, and related main
 
 Important repo-local tooling surfaces include:
 
-- `adl/tools/pr.sh doctor` / `adl pr doctor` — canonical PR readiness and drift diagnostics
-- `adl/tools/pr.sh run` / `adl pr run` — canonical execution-context binder
-- `adl/tools/pr.sh finish` / `adl pr finish` — canonical publication / PR open-update path
-- `adl tooling lint-prompt-spec` — Prompt Spec lint and validation
-- `adl tooling card-prompt` — deterministic prompt generation from cards
-- `adl tooling validate-structured-prompt` — structured prompt contract validation
+- `csdlc-doctor` — typed PR readiness and drift diagnostics
+- `csdlc-bind` — typed execution-context binder
+- `csdlc-validate`, `csdlc-review`, and `csdlc-publish` — typed finalization,
+  exact-revision review, and publication path
+- `adl-lint-prompt-spec` — direct Prompt Spec lint and validation binary
+- `adl-prompt-template` — direct prompt-card editor and renderer binary
+- `adl-validate-structured-prompt` — direct structured prompt contract validator
 - `bash adl/tools/run_aws_codefriend_build_lane.sh` — manual GitHub Actions plus AWS CodeBuild lane wrapper for CodeFriend build orchestration; see [AWS CodeFriend Build Lane](AWS_CODEFRIEND_BUILD_LANE.md)
-- `adl tooling ci-log-archive summarize` — summarize extracted CI logs and optionally upload raw logs plus the generated manifest to private S3 evidence storage; see [CI Log Archive To S3](CI_LOG_ARCHIVE_S3.md)
+- CI log archival is not exposed through the removed tooling multiplexer; see
+  [CI Log Archive To S3](CI_LOG_ARCHIVE_S3.md) for historical context.
 - `adl/tools/validation_manager.py --run` — emit durable `adl.build_action_log.v1` packets for local validation actions; see [Build Action Logs](BUILD_ACTION_LOGS.md)
-- `bash adl/tools/validate_structured_prompt.sh` — compatibility wrapper for the dedicated structured-prompt validator binary; see [binary resolution](structured-prompt-validator-binary-resolution.md)
-- `adl tooling generate-wp-issue-wave` — deterministic WBS/sprint-to-issue-wave planning generator
-- `adl tooling verify-review-output-provenance` — provenance verification for review-output artifacts
-- `adl tooling review-card-surface` — bounded deterministic review helper
-- `adl tooling review-runtime-surface` — deterministic validator for the `v0.87.1` runtime review package
+- `csdlc-validate` — current typed C-SDLC v2 lifecycle/card validation; see [structured prompt validation boundary](structured-prompt-validator-binary-resolution.md)
+- current direct owner binaries and typed skills own planning, provenance, and
+  review validation; the removed `adl tooling` multiplexer is not an
+  operational route.
 - `bash adl/tools/demo_v0871_operator_surface.sh` — canonical `v0.87.1` operator-surface demo for runtime bring-up and proof-surface inspection
 - `bash adl/tools/demo_v0871_review_surface.sh` — canonical `v0.87.1` reviewer walkthrough package across operator and runtime-state proof roots
 - `bash adl/tools/run_validation_manager_nessus_lane.sh` — validation-manager
@@ -148,13 +149,12 @@ Important repo-local tooling surfaces include:
 - `bash adl/tools/run_build_platform_benchmark.sh` — shared Wuji, Nessus, AWS
   Spot, and CodeBuild timing workload; see
   [Build Platform Benchmarks](BUILD_PLATFORM_BENCHMARKS.md)
-- `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
+- lifecycle authority is the independent binary set under `.adl/bin/csdlc-v2/`
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust source-and-test module size report; by default it scans both `adl/src` and `adl/tests`, and current snapshots should live under `.adl/reports/manual/` instead of tracked repo docs
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
 
-Deprecated compatibility aliases such as `pr ready`, `pr preflight`, and
-`pr start` may still appear in older tests or docs, but they are not the
-preferred public control-plane surface.
+Historical evidence may mention removed v1 aliases, but active tests and docs
+must not expose them as executable control-plane routes.
 
 ## Current Status
 
@@ -165,7 +165,7 @@ preferred public control-plane surface.
 ## Runtime Operator Surface
 
 For `v0.87.1`, the bounded runtime operator contract is:
-- one canonical runtime invocation path via `bash adl/tools/pr.sh run <adl-file> ...`
+- one canonical runtime invocation path via `adl-runtime run <adl-file> ...`
 - one canonical runtime-root marker at `runtime_environment.json`
 - one canonical per-run inspection set rooted at `run_summary.json`, `run_status.json`, and `logs/trace_v1.json`
 
@@ -179,7 +179,8 @@ For `v0.87.1`, the bounded runtime reviewer contract is:
 - one canonical reviewer guide at `artifacts/v0871/review_surface/README.md`
 - one stable package ordering rooted in D6 operator proof and D7 runtime-state proof
 
-Use `adl tooling review-runtime-surface --review-root artifacts/v0871/review_surface` to validate that review package deterministically.
+The historical review package requires a current direct validator before it can
+be advertised as an executable proof route.
 
 ## Notes
 

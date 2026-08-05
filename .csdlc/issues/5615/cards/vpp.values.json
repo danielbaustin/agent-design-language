@@ -7,7 +7,7 @@
     "title": "[v0.91.8][ci][tooling] Route C-SDLC proof and FastWork builds correctly",
     "slug": "csdlc-ci-fastwork-routing",
     "version": "v0.91.8",
-    "generation": 20
+    "generation": 27
   },
   "status": "ready",
   "content": {
@@ -100,9 +100,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on ambiguous routing, missing selected standalone proof, aggregate mismatch, mixed-route suppression, unwritable external Cargo state, or focused/hosted validation failure.",
-      "design_ref": ".csdlc/prepared/issues/5615/design.md",
+      "design_ref": ".csdlc/issues/5615/retained/design.md",
       "design_digest": "0c99ade6527878996824cfa55544c5afde8b9340f601cfd48eb6add71d2ba557",
-      "diagram_ref": ".csdlc/prepared/issues/5615/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5615/retained/diagram.mmd",
       "diagram_digest": "d42e8e86c1a6711cf71ab414f43d25ed96388aa3997f785010b00817ad86d2fe"
     }
   }

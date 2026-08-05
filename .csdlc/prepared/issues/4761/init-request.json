@@ -1,0 +1,142 @@
+{
+  "issue": 4761,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/4761/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4761/diagram.mmd",
+  "design_reviewer": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+  "design_approved": true,
+  "claim": {
+    "id": "prep-4761-v0918-wp14",
+    "owner": "codex:019f8bb9-beb6-7ad1-b40b-b9f8b1597a11",
+    "generation": 0,
+    "acquired_unix_seconds": 1784755804,
+    "expires_unix_seconds": 1785360604,
+    "heartbeat_unix_seconds": 1784755804,
+    "branch": "codex/4761-v0918-wp14-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/4761",
+      ".csdlc/locks/4761.lock",
+      ".csdlc/prepared/issues/4761"
+    ],
+    "purpose": "Preparation only for later execution of the WP-14 v0.92 capability envelope; no implementation, PR, review, merge, or closeout."
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-14][capability-envelope] Prepare #4761 v0.92 capability envelope",
+    "slug": "v0918-wp14-capability-envelope-prep-4761",
+    "version": "v0.91.8",
+    "goal": "Prepare typed C-SDLC v2 state for later execution of the v0.92 capability envelope.",
+    "required_outcome": "A later execution session can bind this issue from the issue worktree and produce an evidence-backed capability envelope or an operator-approved blocker.",
+    "declared_scope": [
+      "Create minimal typed v2 issue state for #4761.",
+      "Preserve the capability-envelope concern from the existing task bundle.",
+      "Keep this session preparation-only."
+    ],
+    "authority_boundary": [
+      "Typed C-SDLC v2 artifacts are the preparation authority.",
+      "Legacy .adl task bundle is source context only.",
+      "Receipts are audit-only and non-blocking for this preparation pass."
+    ],
+    "operator_constraints": [
+      "No implementation.",
+      "No PR, prep review, broad tests, raw gh, AWS, or root-main writes.",
+      "Use one issue-bound worktree under /Volumes/FastWork from origin/main."
+    ],
+    "task_boundary": "Preparation only: seed v2 cards, concise design and diagram, then run focused doctor.",
+    "deliverables": [
+      "Minimal six-card v2 packet for #4761.",
+      "Concise design and Mermaid diagram.",
+      "Focused csdlc-doctor result."
+    ],
+    "acceptance_criteria": [
+      "AC1: All six v2 cards exist for #4761.",
+      "AC2: Design and diagram identify the later execution boundary without implementation.",
+      "AC3: Focused v2 doctor is run and recorded in the handoff report."
+    ],
+    "dependencies": [
+      "Existing .adl/v0.91.7 task bundle for #4761.",
+      "origin/main at 79c7dccf12540863f6c038e1fd7ef45e2357a55e."
+    ],
+    "repo_inputs": [
+      ".adl/v0.91.7/tasks/issue-4761__v0-91-7-wp-14-capability-envelope-finalize-v0-92-capability-envelope/stp.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+      "docs/milestones/v0.91.7/README.md"
+    ],
+    "non_goals": [
+      "Do not finalize capability claims in this prep issue.",
+      "Do not start v0.92 implementation.",
+      "Do not claim product/runtime readiness without retained integrated evidence."
+    ],
+    "plan_summary": "Seed typed v2 preparation artifacts and leave envelope execution to a later bound session.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Inspect existing #4761 task context and preserve the capability-envelope boundary.",
+        "acceptance_ids": [
+          "AC-2"
+        ],
+        "status": "completed"
+      },
+      {
+        "id": "S2",
+        "action": "Generate minimal typed v2 cards, design, and diagram.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run focused csdlc-doctor and report prep-only handoff.",
+        "acceptance_ids": [
+          "AC-3"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Preparation does not implement or publish #4761.",
+      "Capability claims must map to retained evidence.",
+      "Unsupported claims remain explicit non-claims or blockers."
+    ],
+    "risks": [
+      "Required evidence may still be incomplete when execution starts.",
+      "Legacy issue version labels may differ from the v0.91.8 preparation wave."
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "A live claim collision appears.",
+      "The focused doctor fails on v2 state integrity.",
+      "The task requires implementation or GitHub mutation."
+    ],
+    "validation_lanes": [
+      {
+        "lane": "prep-doctor",
+        "proof_role": "Focused v2 state integrity check only.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": [
+          "csdlc-doctor",
+          "--issue",
+          "4761"
+        ],
+        "parallel_group": "prep",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed and report the exact v2 doctor or init error; do not repair outside the prep boundary.",
+    "review_prompts": [
+      "Later review should verify that every capability claim maps to retained evidence and unsupported claims are explicit."
+    ],
+    "review_scope": "No prep review requested; later execution review only."
+  }
+}

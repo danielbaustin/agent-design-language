@@ -1,0 +1,19 @@
+{
+  "issue": 5663,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "e797a798f4c45852bc83d5d89ae08814c86baccbdf98e5782237b39461f0bb15",
+  "claim_id": "claim-5663-runtime-v3-durable-local-adapters",
+  "actor": "codex:issue-5663-runtime-adapters",
+  "reason": "Record superseding FastWork operation-executor validation after exact-review fixes.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5663/target", "--test", "operations"],
+      "purpose": "Prove operation executor retry, idempotency, timeout, and failure classes after review fixes.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5663/runtime-v3-local-adapters-operations.log"
+    }
+  },
+  "fail_after_backup": false
+}

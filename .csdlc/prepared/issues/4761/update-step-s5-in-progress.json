@@ -1,0 +1,15 @@
+{
+  "issue": 4761,
+  "card": "spp",
+  "expected_generation": 14,
+  "expected_digest": "3c602d9fe44dd21db0663cd63af8cbfe6ae00481ae23c667c920076ced5f8960",
+  "claim_id": "claim-4761-v0918-wp14-capability-envelope-execution",
+  "actor": "codex:gpt-5.5-execution-4761",
+  "reason": "Mark review and ready PR publication step in progress before review phase transition.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S5",
+    "status": "in_progress"
+  },
+  "fail_after_backup": false
+}

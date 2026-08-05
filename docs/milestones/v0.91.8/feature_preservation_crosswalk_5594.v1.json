@@ -2,11 +2,11 @@
   "schema": "adl.v0918.feature_preservation_crosswalk.v1",
   "source": "docs/planning/ADL_FEATURE_LIST.md",
   "source_row_count": 122,
-  "source_row_digest": "89a94d430a99cae0b529f5447587af41bda9903cecf1e3ebbdc25542d733ed9e",
+  "source_row_digest": "4cf6dcde57bab59523ef715d39552b7f1d9daeac963caae51817c8d88a8ceaaa",
   "entries": [
     {
       "row": 1,
-      "source_line": 209,
+      "source_line": 210,
       "feature": "Deterministic workflow execution",
       "canonical_status": "Implemented",
       "canonical_evidence": "runtime/CLI, examples, milestone docs",
@@ -20,7 +20,7 @@
     },
     {
       "row": 2,
-      "source_line": 210,
+      "source_line": 211,
       "feature": "ExecutionPlan runtime",
       "canonical_status": "Implemented",
       "canonical_evidence": "Rust runtime and plan execution",
@@ -34,7 +34,7 @@
     },
     {
       "row": 3,
-      "source_line": 211,
+      "source_line": 212,
       "feature": "Sequential + fork/join coordination",
       "canonical_status": "Implemented",
       "canonical_evidence": "examples, tests, demo docs",
@@ -48,7 +48,7 @@
     },
     {
       "row": 4,
-      "source_line": 212,
+      "source_line": 213,
       "feature": "Bounded concurrency and retry/failure controls",
       "canonical_status": "Implemented",
       "canonical_evidence": "runtime semantics, tests, `v0.7` docs, and `v0.8` crosswalk evidence",
@@ -62,7 +62,7 @@
     },
     {
       "row": 5,
-      "source_line": 213,
+      "source_line": 214,
       "feature": "Run artifacts and replay-oriented inspection",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "run artifacts, trace/review docs, milestone demos",
@@ -76,7 +76,7 @@
     },
     {
       "row": 6,
-      "source_line": 214,
+      "source_line": 215,
       "feature": "Signing, verification, and trust policy",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "signing/verification surfaces, trust docs",
@@ -90,7 +90,7 @@
     },
     {
       "row": 7,
-      "source_line": 215,
+      "source_line": 216,
       "feature": "Provider and transport substrate",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "provider docs, HTTP/local provider surfaces, reviewer package",
@@ -105,7 +105,7 @@
     },
     {
       "row": 8,
-      "source_line": 216,
+      "source_line": 217,
       "feature": "Remote execution baseline",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "bounded remote execution surfaces and docs",
@@ -119,7 +119,7 @@
     },
     {
       "row": 9,
-      "source_line": 217,
+      "source_line": 218,
       "feature": "Human-in-the-loop pause/resume",
       "canonical_status": "Implemented baseline; AEE-required subset pulled forward",
       "canonical_evidence": "runtime/control surfaces and review docs",
@@ -133,7 +133,7 @@
     },
     {
       "row": 10,
-      "source_line": 218,
+      "source_line": 219,
       "feature": "Structured authoring model",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "SIP/STP/SPP/SRP/SOR contracts and prompt tooling",
@@ -147,7 +147,7 @@
     },
     {
       "row": 11,
-      "source_line": 219,
+      "source_line": 220,
       "feature": "Structured planning and Structured Review Prompt workflow",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.91` SPP/SRP feature docs, readiness records, validation tooling, and issue-bundle workflow surfaces; historical records may still mention the older Structured Review Policy wording",
@@ -161,7 +161,7 @@
     },
     {
       "row": 12,
-      "source_line": 220,
+      "source_line": 221,
       "feature": "Control-plane lifecycle",
       "canonical_status": "Implemented baseline; AEE-required truth surfaces pulled forward",
       "canonical_evidence": "`pr init/create/start/run/finish`, doctor, janitor, closeout surfaces",
@@ -175,7 +175,7 @@
     },
     {
       "row": 13,
-      "source_line": 221,
+      "source_line": 222,
       "feature": "Editor and command-adapter surfaces",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "editor docs, demos, bounded command adapters",
@@ -189,7 +189,7 @@
     },
     {
       "row": 14,
-      "source_line": 222,
+      "source_line": 223,
       "feature": "Review and validation surfaces",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "reviewer contracts, validation tools, review packages",
@@ -203,7 +203,7 @@
     },
     {
       "row": 15,
-      "source_line": 223,
+      "source_line": 224,
       "feature": "Task-bundle workflow",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "issue/task bundles and public execution records",
@@ -217,7 +217,7 @@
     },
     {
       "row": 16,
-      "source_line": 224,
+      "source_line": 225,
       "feature": "Agency, cognitive loop, and cognitive stack",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.86` agency/cognition feature package, demos, and review artifacts",
@@ -231,7 +231,7 @@
     },
     {
       "row": 17,
-      "source_line": 225,
+      "source_line": 226,
       "feature": "Fast/slow thinking and cognitive arbitration",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.86` feature docs and bounded proof package",
@@ -245,7 +245,7 @@
     },
     {
       "row": 18,
-      "source_line": 226,
+      "source_line": 227,
       "feature": "Bounded Godel loop",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.8` runtime artifacts, demos, experiment surfaces, `v0.89` experiment package",
@@ -259,7 +259,7 @@
     },
     {
       "row": 19,
-      "source_line": 227,
+      "source_line": 228,
       "feature": "Godel agents and Godel-Hadamard-Bayes algorithm",
       "canonical_status": "Partially implemented",
       "canonical_evidence": "`v0.8` bounded Godel loop, `v0.89` Godel experiment system, GHB execution/state-space-compression idea docs, reasoning-pattern substrate, ObsMem, trace, cognitive proof surfaces, and `docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md`",
@@ -273,7 +273,7 @@
     },
     {
       "row": 20,
-      "source_line": 228,
+      "source_line": 229,
       "feature": "ObsMem indexing, retrieval, and evidence-aware ranking",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.8` / `v0.87` proof surfaces plus `v0.89` D6 retrieval/ranking proof",
@@ -287,7 +287,7 @@
     },
     {
       "row": 21,
-      "source_line": 229,
+      "source_line": 230,
       "feature": "Shared ObsMem foundation",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.87` shared-memory docs and proof surfaces",
@@ -301,7 +301,7 @@
     },
     {
       "row": 22,
-      "source_line": 230,
+      "source_line": 231,
       "feature": "Trace validation, trace review, and trace-to-memory ingestion",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.87` trace schema/emission/artifact/review package and trace-ObsMem docs",
@@ -315,7 +315,7 @@
     },
     {
       "row": 23,
-      "source_line": 231,
+      "source_line": 232,
       "feature": "Bounded cognitive path",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.86` cognitive demo/artifact package",
@@ -329,7 +329,7 @@
     },
     {
       "row": 24,
-      "source_line": 232,
+      "source_line": 233,
       "feature": "Freedom Gate baseline",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.86` bounded cognitive proof path",
@@ -343,7 +343,7 @@
     },
     {
       "row": 25,
-      "source_line": 233,
+      "source_line": 234,
       "feature": "Freedom Gate v2",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89` judgment-boundary and gate proof surfaces",
@@ -357,7 +357,7 @@
     },
     {
       "row": 26,
-      "source_line": 234,
+      "source_line": 235,
       "feature": "Trace substrate",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.87` trace docs and reviewer-facing proof surfaces",
@@ -371,7 +371,7 @@
     },
     {
       "row": 27,
-      "source_line": 235,
+      "source_line": 236,
       "feature": "Operational skills substrate",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.87` skills/control-plane docs and operational demos",
@@ -385,7 +385,7 @@
     },
     {
       "row": 28,
-      "source_line": 236,
+      "source_line": 237,
       "feature": "Runtime environment and lifecycle completion",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.87.1` runtime docs, demos, and review package",
@@ -399,7 +399,7 @@
     },
     {
       "row": 29,
-      "source_line": 237,
+      "source_line": 238,
       "feature": "Execution boundaries and capability-aware local execution",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.87.1` runtime, local-model, and capability-aware execution docs/demos",
@@ -413,7 +413,7 @@
     },
     {
       "row": 30,
-      "source_line": 238,
+      "source_line": 239,
       "feature": "Local runtime resilience and Shepherd preservation",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.87.1` resilience and preservation docs/demos",
@@ -427,7 +427,7 @@
     },
     {
       "row": 31,
-      "source_line": 239,
+      "source_line": 240,
       "feature": "Chronosense / temporal substrate",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.88` feature package and review surfaces",
@@ -441,7 +441,7 @@
     },
     {
       "row": 32,
-      "source_line": 240,
+      "source_line": 241,
       "feature": "Temporal query, retrieval, identity semantics, and continuity hooks",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.88` temporal schema, retrieval, and continuity/identity feature docs",
@@ -455,7 +455,7 @@
     },
     {
       "row": 33,
-      "source_line": 241,
+      "source_line": 242,
       "feature": "Commitments, deadlines, and bounded temporal causality",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.88` feature docs and reviewer package",
@@ -469,7 +469,7 @@
     },
     {
       "row": 34,
-      "source_line": 242,
+      "source_line": 243,
       "feature": "Cost model, accounting primitives, and bounded economics hooks",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.88` cost-model feature docs and planning surfaces plus `docs/milestones/v0.91.7/features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md`",
@@ -483,7 +483,7 @@
     },
     {
       "row": 35,
-      "source_line": 243,
+      "source_line": 244,
       "feature": "PHI-style integration metrics",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.88` feature docs and review surfaces",
@@ -497,7 +497,7 @@
     },
     {
       "row": 36,
-      "source_line": 244,
+      "source_line": 245,
       "feature": "Instinct and bounded agency",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.88` feature docs, instinct review surface, Paper Sonata",
@@ -511,7 +511,7 @@
     },
     {
       "row": 37,
-      "source_line": 245,
+      "source_line": 246,
       "feature": "Paper Sonata public-facing proof surface",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`demo_v088_paper_sonata.sh` and milestone docs",
@@ -525,7 +525,7 @@
     },
     {
       "row": 38,
-      "source_line": 246,
+      "source_line": 247,
       "feature": "Deep-agents comparative proof",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`demo_v088_deep_agents_comparative_proof.sh` and `v0.89` follow-on demo docs",
@@ -539,7 +539,7 @@
     },
     {
       "row": 39,
-      "source_line": 247,
+      "source_line": 248,
       "feature": "AEE 1.0 convergence",
       "canonical_status": "Implemented baseline; subsystem closure explicitly pulled forward",
       "canonical_evidence": "`v0.89` `control_path/convergence.json`, D1 proof row, feature doc, `docs/milestones/v0.91.5/features/AEE_COMPLETION_TRANCHE_v0.91.5.md`, `docs/milestones/v0.91.5/features/V092_ACTIVATION_READINESS_v0.91.5.md`, and `docs/milestones/v0.91.6/features/AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md`",
@@ -553,7 +553,7 @@
     },
     {
       "row": 40,
-      "source_line": 248,
+      "source_line": 249,
       "feature": "Decision, action, and skill-governance surfaces",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89` and `v0.89.1` decision/action/skill docs, runtime/proof surfaces",
@@ -567,7 +567,7 @@
     },
     {
       "row": 41,
-      "source_line": 249,
+      "source_line": 250,
       "feature": "Delegation, refusal, and coordination contracts",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89.1` operational-skill and coordination package",
@@ -581,7 +581,7 @@
     },
     {
       "row": 42,
-      "source_line": 250,
+      "source_line": 251,
       "feature": "Provider-extension packaging and safe extension boundaries",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89.1` provider-extension package and proof surfaces",
@@ -595,7 +595,7 @@
     },
     {
       "row": 43,
-      "source_line": 251,
+      "source_line": 252,
       "feature": "Security, posture, and trust-under-adversary package",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89` security posture package plus `v0.89.1` adversarial-runtime proof surfaces",
@@ -609,7 +609,7 @@
     },
     {
       "row": 44,
-      "source_line": 252,
+      "source_line": 253,
       "feature": "Adversarial runtime, exploit/replay, and self-attack band",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89.1` issue wave and feature package",
@@ -623,7 +623,7 @@
     },
     {
       "row": 45,
-      "source_line": 253,
+      "source_line": 254,
       "feature": "Demo proof entry points and quality gate",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89.1` demo matrix, proof-entry work, quality gate, and release review surfaces",
@@ -637,7 +637,7 @@
     },
     {
       "row": 46,
-      "source_line": 254,
+      "source_line": 255,
       "feature": "Five-agent Hey Jude MIDI demo",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89.1` planning/proof surfaces and demo package",
@@ -651,7 +651,7 @@
     },
     {
       "row": 47,
-      "source_line": 255,
+      "source_line": 256,
       "feature": "arXiv paper writer and three-paper program",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.89.1` skills/publication package",
@@ -665,7 +665,7 @@
     },
     {
       "row": 48,
-      "source_line": 256,
+      "source_line": 257,
       "feature": "Long-lived supervisor, heartbeat, and cycle artifacts",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90` feature contracts, runtime surfaces, and stock-league demo package",
@@ -679,7 +679,7 @@
     },
     {
       "row": 49,
-      "source_line": 257,
+      "source_line": 258,
       "feature": "Stock-league long-lived demo family",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90` stock-league scaffold, recurring run, and proof artifacts",
@@ -693,7 +693,7 @@
     },
     {
       "row": 50,
-      "source_line": 258,
+      "source_line": 259,
       "feature": "Minimal status/inspection boundary",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90` trace/status issue, CLI/report surfaces, and review gate",
@@ -707,7 +707,7 @@
     },
     {
       "row": 51,
-      "source_line": 259,
+      "source_line": 260,
       "feature": "CodeFriend review showcase and architecture-document generation",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90` repo-review, diagram, product-report, and architecture-doc skill/demo package",
@@ -721,7 +721,7 @@
     },
     {
       "row": 52,
-      "source_line": 260,
+      "source_line": 261,
       "feature": "Coverage ratchet, test tracker, and quality tracking",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90` coverage/test tracker updates and quality-gate docs",
@@ -735,7 +735,7 @@
     },
     {
       "row": 53,
-      "source_line": 261,
+      "source_line": 262,
       "feature": "Rust refactoring tracker and evidence-driven maintenance",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90` refactoring tracker, ADR remediation, and follow-on maintenance planning",
@@ -749,7 +749,7 @@
     },
     {
       "row": 54,
-      "source_line": 262,
+      "source_line": 263,
       "feature": "Milestone compression and repo visibility prototypes",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90` compression and repo-visibility docs/proofs",
@@ -763,7 +763,7 @@
     },
     {
       "row": 55,
-      "source_line": 263,
+      "source_line": 264,
       "feature": "HTML milestone dashboard and compression reporting",
       "canonical_status": "MVP-scoped",
       "canonical_evidence": "`docs/milestones/v0.95/features/HTML_MILESTONE_DASHBOARD_AND_COMPRESSION_REPORTING_v0.95.md` plus the milestone-dashboard tooling baseline",
@@ -777,7 +777,7 @@
     },
     {
       "row": 56,
-      "source_line": 264,
+      "source_line": 265,
       "feature": "Runtime v2 foundation prototype",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90.1` feature contracts, Runtime v2 WPs, integrated demo, and proof packet",
@@ -791,11 +791,11 @@
     },
     {
       "row": 57,
-      "source_line": 265,
+      "source_line": 266,
       "feature": "CSM Observatory visibility and operator-report surfaces",
-      "canonical_status": "Implemented baseline; Runtime v3 live cutover unproven",
-      "canonical_evidence": "visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration, v0.90.3 redacted projections, multimode UI architecture, inhabited flagship demo, `docs/milestones/v0.91.5/features/DEMO_AND_UNITY_OBSERVATORY_READINESS_v0.91.5.md`, and `docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md`",
-      "canonical_next_target": "v0.91.8 #5590 must prove authenticated HTML Observatory consumption through configuration-driven Runtime v3 access; #4739/#4741/#5332 remain WP-14A Unity dispositions",
+      "canonical_status": "Implemented baseline with retained Runtime v3 parity proof",
+      "canonical_evidence": "visibility packet, static console, operator report, CLI bundle, command packet design, v0.90.2 operator report integration, v0.90.3 redacted projections, multimode UI architecture, inhabited flagship demo, `docs/milestones/v0.91.5/features/DEMO_AND_UNITY_OBSERVATORY_READINESS_v0.91.5.md`, `docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md`, v0.91.8 #5590, #5701/#5722 source-route hardening, and WP-16 issue-outcome audit",
+      "canonical_next_target": "#5590 proves authenticated HTML Observatory consumption through configuration-driven Runtime v3 access; WP-15 #5354 owns Unity proof issues #4739/#4741/#5332 independently of WP-14A; public cloud hosting remains unclaimed",
       "classification": "secure_access_observatory",
       "owner_issues": [
         5590
@@ -805,7 +805,7 @@
     },
     {
       "row": 58,
-      "source_line": 266,
+      "source_line": 267,
       "feature": "Runtime v2 hardening, recovery, quarantine, and expanded invariants",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90.2` implementation docs, proof packets, tests, and demo matrix",
@@ -819,7 +819,7 @@
     },
     {
       "row": 59,
-      "source_line": 267,
+      "source_line": 268,
       "feature": "First bounded CSM run",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`v0.90.2` integrated first-run demo, feature-proof coverage, CSM run packet, Observatory report",
@@ -833,7 +833,7 @@
     },
     {
       "row": 60,
-      "source_line": 268,
+      "source_line": 269,
       "feature": "Third-party review and review-quality gates",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "v0.90.1 WP-15A, v0.90.2 review-tail planning, review handoff packets, finding disposition",
@@ -847,7 +847,7 @@
     },
     {
       "row": 61,
-      "source_line": 269,
+      "source_line": 270,
       "feature": "ANRM / shepherd-model experiments",
       "canonical_status": "Partially implemented",
       "canonical_evidence": "v0.90.1 ANRM Gemma scaffold comparison and ten-trial results",
@@ -861,7 +861,7 @@
     },
     {
       "row": 62,
-      "source_line": 270,
+      "source_line": 271,
       "feature": "CSM Shepherd model and Gemma training path",
       "canonical_status": "MVP-scoped",
       "canonical_evidence": "`docs/milestones/v0.95/features/CSM_SHEPHERD_AND_GEMMA_TRAINING_PATH_v0.95.md` plus ANRM comparison/trace-dataset foundations",
@@ -875,7 +875,7 @@
     },
     {
       "row": 63,
-      "source_line": 271,
+      "source_line": 272,
       "feature": "Capability-testing evidence and Aptitude Atlas boundary",
       "canonical_status": "Post-MVP Aptitude Atlas productization; v0.95 evidence consumption only",
       "canonical_evidence": "capability/aptitude harness baseline and `docs/milestones/v0.95/features/APTITUDE_ATLAS_MODEL_EVALUATION_PLATFORM_v0.95.md`",
@@ -889,7 +889,7 @@
     },
     {
       "row": 64,
-      "source_line": 272,
+      "source_line": 273,
       "feature": "Governed tool calls and capability contracts",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.90.5` Governed Tools v1.0 planning, Universal Tool Schema, ADL Capability Contract, and tool-to-capability compiler design",
@@ -903,7 +903,7 @@
     },
     {
       "row": 65,
-      "source_line": 273,
+      "source_line": 274,
       "feature": "Cognitive Compression Cost instrumentation",
       "canonical_status": "Implemented first pass",
       "canonical_evidence": "CCC v0 fixture extractor, generated comparison report, validation command, metric draft, and milestone-compression planning",
@@ -917,7 +917,7 @@
     },
     {
       "row": 66,
-      "source_line": 274,
+      "source_line": 275,
       "feature": "Web-based code editor integration",
       "canonical_status": "MVP-scoped",
       "canonical_evidence": "`docs/milestones/v0.95/features/WEB_BASED_CODE_EDITOR_INTEGRATION_v0.95.md` plus the HTA editor-planning baseline",
@@ -931,11 +931,11 @@
     },
     {
       "row": 67,
-      "source_line": 275,
+      "source_line": 276,
       "feature": "Reasoning graph baseline",
-      "canonical_status": "Bounded Runtime v2 proof retained; Runtime v3 execution unproven; broader provenance MVP-scoped",
-      "canonical_evidence": "`docs/milestones/v0.94/features/REASONING_GRAPH_BASELINE_v0.94.md`, closed #4694-#4697 proof, and v0.91.8 #5592",
-      "canonical_next_target": "#5592 must preserve live graph/loop/adaptation behavior before Runtime v2 deletion; broader reasoning/provenance completion remains v0.94",
+      "canonical_status": "Bounded Runtime v2 proof retained; Runtime v3 parity proof retained; broader provenance MVP-scoped",
+      "canonical_evidence": "`docs/milestones/v0.94/features/REASONING_GRAPH_BASELINE_v0.94.md`, closed #4694-#4697 proof, v0.91.8 #5592, and WP-16 issue-outcome audit",
+      "canonical_next_target": "#5592 preserves the bounded live graph/loop/adaptation parity path; broader reasoning/provenance completion remains v0.94",
       "classification": "reasoning_adaptive_cognition",
       "owner_issues": [
         5592
@@ -945,7 +945,7 @@
     },
     {
       "row": 68,
-      "source_line": 276,
+      "source_line": 277,
       "feature": "Signed trace and trace query",
       "canonical_status": "MVP-scoped",
       "canonical_evidence": "`docs/milestones/v0.94/features/SIGNED_TRACE_AND_TRACE_QUERY_v0.94.md`",
@@ -959,11 +959,11 @@
     },
     {
       "row": 69,
-      "source_line": 277,
+      "source_line": 278,
       "feature": "Wellbeing, affect, kindness, moral cognition, humor",
-      "canonical_status": "Implemented Runtime v2 baseline; Runtime v3 affect control unproven",
-      "canonical_evidence": "`v0.91` feature docs, Runtime v2 proof surfaces, demo matrix, feature-proof coverage, release evidence, ADR 0016, `docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`, and v0.91.8 #5592",
-      "canonical_next_target": "#5592 must implement or explicitly disposition affect reasoning-control, preserve safe non-claims, and prove adversarial authority isolation before Runtime v2 deletion",
+      "canonical_status": "Implemented Runtime v2 baseline; bounded Runtime v3 parity disposition retained",
+      "canonical_evidence": "`v0.91` feature docs, Runtime v2 proof surfaces, demo matrix, feature-proof coverage, release evidence, ADR 0016, `docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`, v0.91.8 #5592, and WP-16 issue-outcome audit",
+      "canonical_next_target": "#5592 preserves affect reasoning-control as a bounded Runtime v3 parity surface with safe non-claims; subjective affect, consciousness, suffering, happiness, or unbounded self-improvement remain unclaimed",
       "classification": "reasoning_adaptive_cognition",
       "owner_issues": [
         5592
@@ -973,7 +973,7 @@
     },
     {
       "row": 70,
-      "source_line": 278,
+      "source_line": 279,
       "feature": "Secure Agent Communication and Invocation Protocol",
       "canonical_status": "Implemented baseline plus active hardening",
       "canonical_evidence": "v0.90.5 ACIP planning plus v0.91 secure local Agent Comms, A2A boundary docs, proof coverage, and ADR 0017",
@@ -987,7 +987,7 @@
     },
     {
       "row": 71,
-      "source_line": 279,
+      "source_line": 280,
       "feature": "Inhabited runtime readiness",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1` WBS, sprint plan, issue-wave YAML, readiness docs, demo matrix, feature index, and completed WP issue wave",
@@ -1001,7 +1001,7 @@
     },
     {
       "row": 72,
-      "source_line": 280,
+      "source_line": 281,
       "feature": "Runtime/polis architecture alignment",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1/features/RUNTIME_POLIS_ARCHITECTURE.md` plus landed docs/runtime alignment from closed `WP-02` / `#2824`",
@@ -1015,7 +1015,7 @@
     },
     {
       "row": 73,
-      "source_line": 281,
+      "source_line": 282,
       "feature": "Agent lifecycle state model",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1/features/AGENT_LIFECYCLE_STATE_MODEL.md` plus landed runtime/tests from closed `WP-03` / `#2825`",
@@ -1029,7 +1029,7 @@
     },
     {
       "row": 74,
-      "source_line": 282,
+      "source_line": 283,
       "feature": "CSM Observatory active agent runtime",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1/features/CSM_OBSERVATORY_ACTIVE_SURFACE.md` plus landed runtime/tests from closed `WP-04` / `#2826`",
@@ -1043,7 +1043,7 @@
     },
     {
       "row": 75,
-      "source_line": 283,
+      "source_line": 284,
       "feature": "Citizen standing and citizen state follow-on",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1/features/CITIZEN_STANDING_MODEL.md`, `docs/milestones/v0.91.1/features/CITIZEN_STATE_SUBSTRATE.md`, and landed runtime/fixture proof from closed `WP-05` / `#2827` and `WP-06` / `#2828`",
@@ -1057,7 +1057,7 @@
     },
     {
       "row": 76,
-      "source_line": 284,
+      "source_line": 285,
       "feature": "Memory, Theory of Mind, capability testing, intelligence metrics, governed learning, and ANRM/Gemma",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1/features/README.md` plus landed proof surfaces from closed `WP-07` through `WP-12` / `#2829` through `#2834`",
@@ -1071,7 +1071,7 @@
     },
     {
       "row": 77,
-      "source_line": 285,
+      "source_line": 286,
       "feature": "ACIP hardening and local encryption boundary",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1/features/ACIP_HARDENING.md` plus landed hardening/conformance work from closed `WP-13` / `#2835`",
@@ -1085,7 +1085,7 @@
     },
     {
       "row": 78,
-      "source_line": 286,
+      "source_line": 287,
       "feature": "A2A adapter boundary",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1/features/A2A_ADAPTER_BOUNDARY.md` and closed `WP-14` / `#2836`",
@@ -1099,7 +1099,7 @@
     },
     {
       "row": 79,
-      "source_line": 287,
+      "source_line": 288,
       "feature": "Runtime inhabitant proof",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.1/features/RUNTIME_INHABITANT_PROOF.md` and closed `WP-15` / `#2837`",
@@ -1113,7 +1113,7 @@
     },
     {
       "row": 80,
-      "source_line": 288,
+      "source_line": 289,
       "feature": "UTS + ACC multi-model benchmark and provider-native tool-call comparison",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/UTS_ACC_MULTI_MODEL_BENCHMARK.md` plus `docs/milestones/v0.91.2/review/uts_benchmark_evidence/`",
@@ -1127,7 +1127,7 @@
     },
     {
       "row": 81,
-      "source_line": 289,
+      "source_line": 290,
       "feature": "Runtime/test-cycle recovery and coverage ergonomics",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/RUNTIME_TEST_CYCLE_RECOVERY.md`, runtime recovery reports, coverage ergonomics report, and CI runtime budget docs",
@@ -1141,7 +1141,7 @@
     },
     {
       "row": 82,
-      "source_line": 290,
+      "source_line": 291,
       "feature": "CodeFriend repo-review product layer",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/CODEFRIEND_PRODUCTIZATION.md` plus existing review-product proof baseline",
@@ -1155,7 +1155,7 @@
     },
     {
       "row": 83,
-      "source_line": 291,
+      "source_line": 292,
       "feature": "Review heuristics and reviewer demo lane",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/REVIEW_HEURISTICS_AND_DEMOS.md`",
@@ -1169,7 +1169,7 @@
     },
     {
       "row": 84,
-      "source_line": 292,
+      "source_line": 293,
       "feature": "Google Workspace CMS bridge and Rust-native adapter boundary",
       "canonical_status": "Implemented baseline plus active hardening",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/GOOGLE_WORKSPACE_CMS_BRIDGE.md`",
@@ -1183,7 +1183,7 @@
     },
     {
       "row": 85,
-      "source_line": 293,
+      "source_line": 294,
       "feature": "Automated repository modernization and external refactoring integration",
       "canonical_status": "Implemented bounded packet",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/CODE_MODERNIZATION_DEMO.md` plus existing Moderne/OpenRewrite and code-modernization planning docs",
@@ -1197,7 +1197,7 @@
     },
     {
       "row": 86,
-      "source_line": 294,
+      "source_line": 295,
       "feature": "Generic speculative decoding runtime acceleration",
       "canonical_status": "Implemented evaluation packet",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/SPECULATIVE_DECODING_PROTOTYPE.md`, `docs/milestones/v0.91.2/review/speculative_decoding/speculative_decoding_prototype_packet.md`, and `docs/adr/0022-speculative-decoding-deterministic-commit-boundary.md`",
@@ -1211,7 +1211,7 @@
     },
     {
       "row": 87,
-      "source_line": 295,
+      "source_line": 296,
       "feature": "Repo visibility follow-on",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/REPO_VISIBILITY_FOLLOW_ON.md` plus the `v0.90` repo-visibility baseline",
@@ -1225,7 +1225,7 @@
     },
     {
       "row": 88,
-      "source_line": 296,
+      "source_line": 297,
       "feature": "Publication packet program and GHB paper lane",
       "canonical_status": "Implemented packet",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/PUBLICATION_PROGRAM.md` plus GHB paper lineage docs",
@@ -1239,7 +1239,7 @@
     },
     {
       "row": 89,
-      "source_line": 297,
+      "source_line": 298,
       "feature": "General-intelligence paper packet",
       "canonical_status": "Implemented packet",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/GENERAL_INTELLIGENCE_PAPER_PACKET.md`",
@@ -1253,7 +1253,7 @@
     },
     {
       "row": 90,
-      "source_line": 298,
+      "source_line": 299,
       "feature": "Rustdoc/doc cleanup",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/RUSTDOC_DOC_CLEANUP.md`",
@@ -1267,7 +1267,7 @@
     },
     {
       "row": 91,
-      "source_line": 299,
+      "source_line": 300,
       "feature": "Workflow guardrails",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.2/features/WORKFLOW_GUARDRAILS.md`",
@@ -1281,7 +1281,7 @@
     },
     {
       "row": 92,
-      "source_line": 300,
+      "source_line": 301,
       "feature": "Cognitive SDLC first slice and transition manifest",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.3/features/COGNITIVE_SDLC_FIRST_SLICE.md`, `docs/milestones/v0.91.3/features/COGNITIVE_TRANSITION_MANIFEST.md`, `docs/milestones/v0.91.3/features/CARD_LIFECYCLE_INTEGRATION.md`, `docs/milestones/v0.91.3/features/TRANSITION_DAG_AND_SHARD_COORDINATION.md`, `docs/milestones/v0.91.3/features/EVIDENCE_BUNDLE_AND_REVIEW_SYNTHESIS.md`, `docs/milestones/v0.91.3/features/GOVERNED_MERGE_READINESS_GATE.md`, `docs/milestones/v0.91.3/features/SRP_SOR_OBSMEM_HANDOFF.md`, and `docs/milestones/v0.91.3/features/FIVE_MINUTE_SPRINT_FIRST_PROOF.md`",
@@ -1295,7 +1295,7 @@
     },
     {
       "row": 93,
-      "source_line": 301,
+      "source_line": 302,
       "feature": "Cognitive SDLC default operation and five-minute-sprint repeatability",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.91.4/features/COGNITIVE_SDLC_DEFAULT_OPERATION.md`, `docs/milestones/v0.91.4/features/CSDL_VALIDATION_AND_ROUTING_HARDENING.md`, `docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md`, `docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md`, `docs/milestones/v0.91.4/features/EVIDENCE_CONVERGENCE_REVIEW_SYNTHESIS_AND_SIGNED_TRACE.md`, `docs/milestones/v0.91.4/features/MERGE_READINESS_AND_PR_GATE_HARDENING.md`, `docs/milestones/v0.91.4/features/OBSMEM_TRANSITION_MEMORY_INTEGRATION.md`, `docs/milestones/v0.91.4/features/SPRINT_CONDUCTOR_DEFAULT_CSDL_LANE.md`, `docs/milestones/v0.91.4/features/FIVE_MINUTE_SPRINT_REPEATABILITY.md`, `docs/milestones/v0.91.4/features/ACTIVE_ISSUE_MIGRATION_POLICY.md`, `docs/milestones/v0.91.4/features/PROCESS_DRIFT_REGRESSION_FIXTURES.md`, and `docs/planning/C_SDLC_PROMPT_TEMPLATE_EDITOR_TRANSITION_PLAN.md`",
@@ -1309,7 +1309,7 @@
     },
     {
       "row": 94,
-      "source_line": 302,
+      "source_line": 303,
       "feature": "Logging, observability, and OTel-compatible proof-loop readiness",
       "canonical_status": "Retained bounded prerequisite and consumer proof",
       "canonical_evidence": "`docs/milestones/v0.91.5/CONTROL_PLANE_OBSERVABILITY_CONTRACT_3609.md`, `docs/milestones/v0.91.5/SHARED_OBSERVABILITY_AND_OTEL_CONTRACT_3705.md`, `docs/milestones/v0.91.5/OPEN_TELEMETRY_INTEGRATION_BOUNDARY_3709.md`, closed `#4718`, retained Soak #2, and WP-09/WP-15 consumption packets",
@@ -1323,7 +1323,7 @@
     },
     {
       "row": 95,
-      "source_line": 303,
+      "source_line": 304,
       "feature": "Resilience, citizen persistence, and operational sleep/wake",
       "canonical_status": "Retained bounded integration proof",
       "canonical_evidence": "`docs/milestones/v0.91.5/features/AEE_COMPLETION_TRANCHE_v0.91.5.md`, `docs/milestones/v0.91.6/features/RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md`, closed `#4778`, closed `#4780`-`#4784`, and `docs/milestones/v0.91.7/review/V0917_RESILIENCE_INTEGRATION_MINI_SPRINT_4778.md`",
@@ -1337,7 +1337,7 @@
     },
     {
       "row": 96,
-      "source_line": 304,
+      "source_line": 305,
       "feature": "Public prompt records export, redaction, validation, and indexing",
       "canonical_status": "Required pre-v0.92 implementation/proof surface",
       "canonical_evidence": "local prompt-card authoring surface, public prompt-record export work, `docs/milestones/v0.91.5/features/PUBLIC_PROMPT_RECORDS_v0.91.5.md`, and `docs/milestones/v0.91.6/features/PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md`",
@@ -1351,7 +1351,7 @@
     },
     {
       "row": 97,
-      "source_line": 305,
+      "source_line": 306,
       "feature": "Provider/model reliability and multi-agent readiness",
       "canonical_status": "Retained bounded implementation/proof",
       "canonical_evidence": "Sprint 2/remediation proof packets, closed WP-05, provider mini-sprint packets, and scheduler/provider/local-agent review evidence",
@@ -1365,7 +1365,7 @@
     },
     {
       "row": 98,
-      "source_line": 306,
+      "source_line": 307,
       "feature": "Security readiness and Continuous Adversarial Verification",
       "canonical_status": "Retained bounded implementation/proof and review remediation",
       "canonical_evidence": "v0.91.7 WP-12 packets, closed `#4656`-`#4660`, and closed remediation `#5404`/`#5406`",
@@ -1379,7 +1379,7 @@
     },
     {
       "row": 99,
-      "source_line": 307,
+      "source_line": 308,
       "feature": "Curiosity Engine and Discovery Substrate",
       "canonical_status": "Bounded Runtime v2 cycle implemented/proven",
       "canonical_evidence": "closed `#4692`, `docs/milestones/v0.91.7/features/CURIOSITY_ENGINE_DISCOVERY_SUBSTRATE_v0.91.7.md`, and the WP-10 review packet",
@@ -1393,7 +1393,7 @@
     },
     {
       "row": 100,
-      "source_line": 308,
+      "source_line": 309,
       "feature": "Constructability Gate for shared ADL reality",
       "canonical_status": "Bounded Runtime v2 validator implemented/proven",
       "canonical_evidence": "closed `#4693`, `docs/milestones/v0.91.7/features/CONSTRUCTABILITY_GATE_v0.91.7.md`, and the WP-10 review packet",
@@ -1407,11 +1407,11 @@
     },
     {
       "row": 101,
-      "source_line": 309,
+      "source_line": 310,
       "feature": "Reasoning graph, loop runtime, and `adl.skill.v1`",
-      "canonical_status": "Bounded Runtime v2 implementation/proof retained; Runtime v3 parity required",
-      "canonical_evidence": "closed `#4694`-`#4697`, WP-11 review and cognitive-control evidence packets, follow-ons `#4912`, `#5096`, `#5136`, and v0.91.8 `#5592`",
-      "canonical_next_target": "Runtime v3 receives no parity credit from metadata or fixtures; #5592 must prove the live kernel path or block Runtime v2 deletion. Full adaptive-learning and final-standard convergence remain later work.",
+      "canonical_status": "Bounded Runtime v2 implementation/proof retained; Runtime v3 parity proof retained",
+      "canonical_evidence": "closed `#4694`-`#4697`, WP-11 review and cognitive-control evidence packets, follow-ons `#4912`, `#5096`, `#5136`, v0.91.8 `#5592`, and WP-16 issue-outcome audit",
+      "canonical_next_target": "Runtime v3 receives no parity credit from metadata or fixtures; #5592 supplies the bounded live kernel parity path. Full adaptive-learning and final-standard convergence remain later work.",
       "classification": "reasoning_adaptive_cognition",
       "owner_issues": [
         5592
@@ -1421,7 +1421,7 @@
     },
     {
       "row": 102,
-      "source_line": 310,
+      "source_line": 311,
       "feature": "ACP / cognitive profiles runtime surface",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md`",
@@ -1435,7 +1435,7 @@
     },
     {
       "row": 103,
-      "source_line": 311,
+      "source_line": 312,
       "feature": "ACIP binary schema and WebSocket carrier",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.91.6/features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md`, `docs/milestones/v0.91.7/features/ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md`, and `docs/milestones/v0.92/features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md`",
@@ -1449,7 +1449,7 @@
     },
     {
       "row": 104,
-      "source_line": 312,
+      "source_line": 313,
       "feature": "Identity, stable name, and continuity substrate",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.91.6/features/IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md`, `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`, and `docs/milestones/v0.92/features/CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md`",
@@ -1463,7 +1463,7 @@
     },
     {
       "row": 105,
-      "source_line": 313,
+      "source_line": 314,
       "feature": "Memory grounding, capability envelope, and birth witnesses/receipt",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`",
@@ -1477,7 +1477,7 @@
     },
     {
       "row": 106,
-      "source_line": 314,
+      "source_line": 315,
       "feature": "Memory Palace navigable context topology",
       "canonical_status": "Required v0.92 implementation/proof slice under development",
       "canonical_evidence": "`docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md` plus context-problem planning",
@@ -1491,7 +1491,7 @@
     },
     {
       "row": 107,
-      "source_line": 315,
+      "source_line": 316,
       "feature": "First true Gödel-agent birthday",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md` and `docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md`",
@@ -1505,7 +1505,7 @@
     },
     {
       "row": 108,
-      "source_line": 316,
+      "source_line": 317,
       "feature": "Constitutional citizenship, rights/duties, and governance review",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.93/features/CITIZENSHIP_RIGHTS_DUTIES_AND_SOCIAL_CONTRACT_v0.93.md` plus the `v0.93` citizenship/governance allocation plan",
@@ -1519,7 +1519,7 @@
     },
     {
       "row": 109,
-      "source_line": 317,
+      "source_line": 318,
       "feature": "Bounded Theory of Mind, relationship, reputation, and shared social memory boundary",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.93/features/THEORY_OF_MIND_AND_SOCIAL_COGNITION_v0.93.md` and `docs/milestones/v0.93/features/SOCIAL_RELATIONSHIP_REPUTATION_AND_SHARED_MEMORY_v0.93.md`",
@@ -1533,7 +1533,7 @@
     },
     {
       "row": 110,
-      "source_line": 318,
+      "source_line": 319,
       "feature": "Delegation, upstream delegation, IAM, standing transition, and challenge/appeal governance",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.93/features/DELEGATION_IAM_STANDING_AND_APPEAL_GOVERNANCE_v0.93.md` plus local upstream-delegation source planning",
@@ -1547,7 +1547,7 @@
     },
     {
       "row": 111,
-      "source_line": 319,
+      "source_line": 320,
       "feature": "Guilds and collective organization",
       "canonical_status": "MVP-scoped planned governance surface",
       "canonical_evidence": "`docs/milestones/v0.93/features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md`",
@@ -1561,7 +1561,7 @@
     },
     {
       "row": 112,
-      "source_line": 320,
+      "source_line": 321,
       "feature": "Enterprise security for the ADL polis",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.93/features/ENTERPRISE_SECURITY_v0.93.md`, `docs/milestones/v0.93/features/SECURITY_WP_S1_ZERO_TRUST_ARCHITECTURE_v0.93.md`, `docs/milestones/v0.93/features/SECURITY_WP_S2_POLICY_ENFORCEMENT_AUTHORIZATION_v0.93.md`, `docs/milestones/v0.93/features/SECURITY_WP_S3_SECRETS_KEYS_CRYPTOGRAPHIC_TRUST_v0.93.md`, `docs/milestones/v0.93/features/SECURITY_WP_S4_AUDIT_COMPLIANCE_INCIDENT_EVIDENCE_v0.93.md`, `docs/milestones/v0.93/features/SECURITY_WP_S5_ISOLATION_DATA_GOVERNANCE_PRIVACY_v0.93.md`, and `docs/milestones/v0.93/features/SECURITY_WP_S6_SECURITY_OPERATIONS_ADVERSARIAL_PROVENANCE_v0.93.md`",
@@ -1575,7 +1575,7 @@
     },
     {
       "row": 113,
-      "source_line": 321,
+      "source_line": 322,
       "feature": "Secure execution, policy, identity/auth, isolation, and provider-trust convergence",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.94/features/SECURE_EXECUTION_AND_TRUST_CONVERGENCE_v0.94.md` and the tracked `v0.94` milestone package",
@@ -1589,7 +1589,7 @@
     },
     {
       "row": 114,
-      "source_line": 322,
+      "source_line": 323,
       "feature": "Mental time travel / temporal self-projection",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.94/features/MENTAL_TIME_TRAVEL_v0.94.md` plus the `MTT-v1` source note",
@@ -1603,7 +1603,7 @@
     },
     {
       "row": 115,
-      "source_line": 323,
+      "source_line": 324,
       "feature": "Payments, settlement, economic agency, and `x402` / Lightning adapters",
       "canonical_status": "Planned",
       "canonical_evidence": "`docs/milestones/v0.94.1/features/PAYMENTS_SETTLEMENT_AND_X402_v0.94.1.md` and the tracked `v0.94.1` milestone package",
@@ -1617,7 +1617,7 @@
     },
     {
       "row": 116,
-      "source_line": 324,
+      "source_line": 325,
       "feature": "Bounded contract-market and resource-stewardship bridge",
       "canonical_status": "Implemented baseline",
       "canonical_evidence": "`docs/milestones/v0.90.4` contract-market docs, proof coverage, and demo matrix",
@@ -1631,7 +1631,7 @@
     },
     {
       "row": 117,
-      "source_line": 325,
+      "source_line": 326,
       "feature": "Distributed execution integration",
       "canonical_status": "Partially implemented; AEE/multi-agent boundary subset pulled forward",
       "canonical_evidence": "`docs/milestones/v0.95/features/DISTRIBUTED_EXECUTION_INTEGRATION_v0.95.md`, ADR 0003, cluster-execution groundwork docs, and `docs/milestones/v0.91.5/features/AEE_COMPLETION_TRANCHE_v0.91.5.md`",
@@ -1645,7 +1645,7 @@
     },
     {
       "row": 118,
-      "source_line": 326,
+      "source_line": 327,
       "feature": "CodeFriend v1 and portable adapter v2",
       "canonical_status": "MVP-scoped planned product proof",
       "canonical_evidence": "`docs/milestones/v0.95/features/CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md` plus tracked CodeFriend planning",
@@ -1659,7 +1659,7 @@
     },
     {
       "row": 119,
-      "source_line": 327,
+      "source_line": 328,
       "feature": "Capability-testing evidence consumption / Aptitude Atlas boundary",
       "canonical_status": "MVP-scoped evidence consumption; productization post-v0.95",
       "canonical_evidence": "capability-testing harness docs, local capability-testing planning, and `LB-046`",
@@ -1673,7 +1673,7 @@
     },
     {
       "row": 120,
-      "source_line": 328,
+      "source_line": 329,
       "feature": "Demo catalog and polished MVP walkthrough",
       "canonical_status": "Partially implemented",
       "canonical_evidence": "`docs/milestones/v0.95/features/DEMO_CATALOG_AND_MVP_WALKTHROUGH_v0.95.md` plus milestone demo matrices and reviewer packages",
@@ -1687,7 +1687,7 @@
     },
     {
       "row": 121,
-      "source_line": 329,
+      "source_line": 330,
       "feature": "Control-plane Rust migration / tooling hardening",
       "canonical_status": "Partially implemented",
       "canonical_evidence": "`docs/milestones/v0.95/features/CONTROL_PLANE_RUST_MIGRATION_AND_TOOLING_HARDENING_v0.95.md` and Python-elimination/tooling-hardening planning",
@@ -1701,7 +1701,7 @@
     },
     {
       "row": 122,
-      "source_line": 330,
+      "source_line": 331,
       "feature": "Zed integration",
       "canonical_status": "MVP-scoped decision",
       "canonical_evidence": "`docs/milestones/v0.95/features/ZED_INTEGRATION_v0.95.md` plus the v0.85 MVP-boundary/editor-planning notes",

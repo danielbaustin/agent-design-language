@@ -1,0 +1,8 @@
+{
+  "issue": 5733,
+  "expected_generation": 7,
+  "expected_digest": "454140855290f9972b544922234161eb2a8a125d199f1946263e52ee502ecbfd",
+  "claim_id": "claim-5733-demo-matrix-proof-coverage",
+  "actor": "codex:5733-execution",
+  "reason": "Recover stale review/publication after moving the #5733 validator into the docs review packet so the PR remains docs-only and skips broad coverage."
+}

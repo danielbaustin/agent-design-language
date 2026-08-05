@@ -1,0 +1,21 @@
+{
+  "issue": 5764,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "94fb22b27c64f28d1528c4c4e6c0decd721aeb4e7b500b59d096b65427e8830c",
+  "claim_id": "claim-5764-runtime-observatory-readiness",
+  "actor": "codex:5764-runtime-observatory-readiness",
+  "reason": "Record exact-head review fix for Runtime v3 Observatory WebSocket readiness state.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Fixed the Runtime v3 Observatory WebSocket path so stream snapshots do not overwrite /v1/ready truth with synthetic degraded readiness.",
+    "changes": [
+      "Cache Runtime v3 readiness after polling and reuse it when rendering Observatory WebSocket frames.",
+      "Fetch /v1/ready when directly opening the secure WebSocket stream so auto-connect has readiness truth.",
+      "Fallback WebSocket frames without a readiness payload now derive only observability readiness instead of claiming weather-degraded readiness."
+    ],
+    "artifacts": [
+      "demos/html-observatory/app.js"
+    ]
+  }
+}

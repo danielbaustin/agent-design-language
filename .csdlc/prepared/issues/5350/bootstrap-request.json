@@ -1,0 +1,154 @@
+{
+  "issue": 5350,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5350/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5350/diagram.mmd",
+  "design_reviewer": "codex:5350-preparation-review",
+  "design_approved": false,
+  "claim": {
+    "id": "claim-5350-v0918-wp11-shadow-parity-preparation",
+    "owner": "codex:5350-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784659713,
+    "expires_unix_seconds": 1785264513,
+    "heartbeat_unix_seconds": 1784659713,
+    "branch": "codex/5350-v0918-wp11-shadow-parity",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5350",
+      ".csdlc/locks/5350.lock",
+      ".csdlc/prepared/issues/5350"
+    ],
+    "purpose": "Prepare complete #5350 exact-revision shadow-parity cards and design; execution remains prohibited until WP-10, WP-10A live proof, and all Runtime parity inputs are terminal"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-11] Run exact-revision normalized shadow parity",
+    "slug": "v0918-wp11-exact-revision-normalized-shadow-parity",
+    "version": "v0.91.8",
+    "goal": "Compare pinned ADL v1 and ADL v2 behavior across the complete reviewed #5337 corpus, classify every mismatch, and bind current Runtime v3 and WP-10A live evidence without conflating their owners.",
+    "required_outcome": "One deterministic exact-revision parity packet verifies both subjects and all corpus evidence, reports every case and behavior, contains zero unclassified mismatches, binds all ten Runtime v3 proof groups plus terminal WP-10A live proof, and blocks acceptance, soak, cutover, and deletion on any unsupported, invalid, or regression result.",
+    "declared_scope": [
+      "exact immutable ADL v1 and ADL v2 subject identity manifests",
+      "complete #5337 25-case, 75-observation, 23-behavior corpus comparison",
+      "narrow #5337-declared normalization and deterministic equivalence/difference checks",
+      "complete mismatch register with reviewed dispositions and zero unclassified rows",
+      "Runtime v3 ten-group evidence overlay from #5591/#5592/#5589/#5590 plus #5341/#5349",
+      "WP-10A #5497 and live #5501 evidence binding",
+      "issue-local lifecycle, design, validation, review, and evidence contract"
+    ],
+    "authority_boundary": [
+      "#5337 owns the incumbent corpus and normalization contract; #5350 consumes but does not rewrite it",
+      "#5345 owns ADL v2 CLI and selector behavior; #5350 invokes exact installed binaries but owns no product behavior",
+      "#5497/#5501 own distributed-workcell live proof and #5591/#5592/#5589/#5590/#5341/#5349 own Runtime v3 parity evidence",
+      "#5361 is downstream Runtime v3 acceptance and consumes WP-11; it is not an execution prerequisite for WP-11",
+      "This preparation owns only issue-local C-SDLC paths and authorizes no parity run, product edit, publication, selector change, cutover, deletion, Runtime v2 change, AWS, or credentials"
+    ],
+    "operator_constraints": [
+      "Use installed typed C-SDLC v2 binaries only; no v1 wrappers, raw gh, AWS, or tracked main edits",
+      "Preserve the preparation-only claim until every direct dependency is merged, typed closed_out, retained by receipt, and ancestral to the comparison revision",
+      "Use the exact #5337 corpus and normalization rules without weakening exits, diagnostics, arrays, identities, signature verdicts, or sequential order",
+      "Use /Volumes/FastWork for build, temporary, and comparison output",
+      "Use no network or credentials during comparison and reject unknown command shapes",
+      "Run bounded preparation review now and two read-only exact-revision shadows before future publication"
+    ],
+    "task_boundary": "Prepare and later run exact-revision ADL v1/v2 shadow parity plus read-only Runtime/WP-10A evidence overlays; do not implement ADL, Runtime, C-SDLC, adapters, selector changes, cutover, deletion, or release work.",
+    "deliverables": [
+      "Exact subject/dependency identity manifest with source, binary, lock, corpus, selector, and receipt identities",
+      "Per-case and per-behavior parity matrix for all 25 cases, 75 v1 observations, and 23 behaviors",
+      "Equivalence/difference-group report and deterministic rerun proof",
+      "Mismatch register using only six declared dispositions with reviewed links for intentional differences",
+      "Runtime v3 ten-group evidence overlay and WP-10A live-proof binding",
+      "Unsupported-case and blocker register that fail-closes downstream gates",
+      "Dependency, COTS, scope, LoC, test-count, duration, exact-review, and no-network proof"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Both ADL subjects are pinned by exact source revision and executable SHA-256, and the v2 identity also binds selector generation, lock digest, and current-main ancestry",
+      "AC-2: The exact merged #5337 corpus bundle and all retained v1 evidence envelopes, portable stream hashes, repetitions, required fragments, and normalization derivations verify before comparison",
+      "AC-3: Every one of 25 cases, 23 behaviors, two equivalence groups, and one difference group has a deterministic v1/v2 result at the same accepted revision",
+      "AC-4: Normalization is limited to reviewed #5337 rules and cannot discard exits, arrays, diagnostics, identities, signature verdicts, sequential order, or a real semantic difference",
+      "AC-5: Every case has exactly one of exact_match, normalized_match, approved_intentional_difference, regression_blocker, unsupported_blocker, or evidence_invalid, with zero unknown or deferred rows",
+      "AC-6: Every approved intentional difference links a reviewed owner decision, rationale, replacement proof, risk, reviewer, and rollback impact; all other mismatches block",
+      "AC-7: Runtime v3 overlay binds exact terminal evidence for all ten proof groups from #5591/#5592/#5589/#5590/#5341/#5349 and grants no credit to fixture-, metadata-, library-, fixed-bootstrap-, degraded-, or Runtime-v2-reuse proof",
+      "AC-8: WP-10A overlay binds terminal #5497 convergence and live #5501 proof without inferring behavior from issue closure alone",
+      "AC-9: Required comparison, overlay, budget, strict-lint, dependency, test-count, deterministic rerun, no-network, and exact-review lanes all pass with no acceptance deferral",
+      "AC-10: WP-11 changes no product, Runtime v2, selector, default, cutover, deletion, AWS, credential, or publication state during preparation, and future completion authorizes only the #5361 acceptance input"
+    ],
+    "dependencies": [
+      "#5337 merged and typed closed_out with retained characterization corpus receipt and exact ancestry",
+      "WP-10 #5345 merged and typed closed_out after WP-04 through WP-09, with exact installed ADL v2 CLI and selector identity",
+      "WP-10A #5497 merged and typed closed_out with child #5501 live distributed-workcell proof merged and typed closed_out",
+      "Runtime parity #5591, #5592, #5589, and #5590 merged and typed closed_out with exact retained proof",
+      "Runtime adapters #5341 and #5349 merged and typed closed_out with exact retained proof",
+      "#5361 is downstream Runtime v3 acceptance that consumes WP-11 and grants no implementation authority to this preparation"
+    ],
+    "repo_inputs": [
+      "AGENTS.md",
+      "GitHub issue #5350 source prompt",
+      "docs/templates/prompts/current.json",
+      "docs/milestones/v0.91.8/WBS_v0.91.8.md",
+      "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+      "docs/milestones/v0.91.8/PARALLEL_EXECUTION_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+      "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+      "docs/milestones/v0.91.8/RUNTIME_V3_FUNCTIONAL_PARITY_PLAN_v0.91.8.md",
+      "docs/milestones/v0.91.8/runtime_v3_functional_parity_plan_v0.91.8.json",
+      "future merged adl-characterization/corpus/v1/corpus.yaml and observations/v1 from #5337",
+      "future terminal typed receipts and exact evidence from #5345/#5497/#5501/#5591/#5592/#5589/#5590/#5341/#5349"
+    ],
+    "non_goals": [
+      "Writing or modifying ADL v1, ADL v2, Runtime v2, Runtime v3, C-SDLC, adapters, CLI, selector, or provider product code",
+      "Changing the #5337 corpus or inventing new normalization during comparison",
+      "Executing network, provider, cloud, AWS, credential, remote, GPU, or production work",
+      "Publishing a PR, switching defaults, authorizing acceptance, soak, cutover, deletion, release, or v0.92 activation during preparation",
+      "Treating Runtime v3 evidence as part of the ADL v1/v2 corpus or treating issue closure as proof"
+    ],
+    "plan_summary": "Prepare the exact comparison contract now; after every named dependency is terminal, verify immutable subjects and the corpus, run the complete deterministic comparison, classify every mismatch, bind Runtime/WP-10A evidence, validate budgets and no-network truth, obtain two exact-revision reviews, and publish only the evidence packet.",
+    "steps": [
+      {"id":"S1","action":"Complete six typed cards, exact corpus/runtime/WP-10A design, diagram, preparation validator, COTS/budget/PVF contract, review, bind, doctor, commit, and push without product execution","acceptance_ids":["AC-1","AC-2","AC-7","AC-8","AC-9","AC-10"],"status":"pending"},
+      {"id":"S2","action":"After all dependency receipts and ancestry pass, capture immutable ADL v1/v2 and dependency identities and independently verify the corpus and retained evidence","acceptance_ids":["AC-1","AC-2","AC-10"],"status":"pending"},
+      {"id":"S3","action":"Run all corpus cases repeatedly, derive exact normalized comparison rows, enforce equivalence/difference groups, and classify every mismatch","acceptance_ids":["AC-3","AC-4","AC-5","AC-6"],"status":"pending"},
+      {"id":"S4","action":"Bind all ten Runtime proof groups and WP-10A live proof, enforce zero blockers/unclassified rows, budgets, deterministic rerun, strict lint, exact reviews, and publication readiness","acceptance_ids":["AC-7","AC-8","AC-9","AC-10"],"status":"pending"}
+    ],
+    "invariants": [
+      "The #5337 corpus is immutable input and every machine-authoritative case remains mandatory",
+      "Both subjects and every dependency proof are exact-revision and digest bound",
+      "Normalization never hides semantic, ordering, diagnostic, exit, or signature differences",
+      "No mismatch is silently ignored or deferred",
+      "Runtime and WP-10A overlays preserve their owners and cannot compensate for an ADL corpus blocker",
+      "Preparation changes issue-local lifecycle paths only and leaves main/product/Runtime v2 untouched"
+    ],
+    "risks": [
+      "A moving ADL v2 binary or selector can make a comparison irreproducible",
+      "Overbroad normalization can turn a regression into a false match",
+      "Intentional-difference language can become an unreviewed waiver",
+      "Runtime fixture or metadata evidence can be mistaken for live production-component parity",
+      "Issue closure can be mistaken for terminal typed proof and ancestry",
+      "A new comparator can duplicate the mature #5337 harness and grow unnecessary code"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "Any direct dependency is not merged, typed closed_out, retained by receipt, and ancestral to the comparison revision",
+      "Either executable, source revision, selector identity, lock digest, corpus bundle, or evidence envelope cannot be verified",
+      "A command shape, environment input, network route, credential, or normalization rule is undeclared",
+      "Any case, behavior, comparison group, Runtime proof group, WP-10A proof, or mismatch disposition is missing",
+      "A mismatch lacks an allowed reviewed disposition or any required lane would be deferred",
+      "Product, Runtime v2, default selector, AWS, cutover, deletion, or publication work would be required"
+    ],
+    "validation_lanes": [
+      {"lane":"preparation-contract","proof_role":"Validate six cards, design, inventory, exact dependency direction, preparation-only claim, budgets, PVF, no-deferral contract, and root/product safety","acceptance_ids":["AC-1","AC-2","AC-7","AC-8","AC-9","AC-10"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3000,"argv":["ruby",".csdlc/prepared/issues/5350/validate-preparation.rb"],"parallel_group":"preparation","defer_reason":null},
+      {"lane":"subject-and-corpus-verification","proof_role":"PLANNED-UNIMPLEMENTED: after typed implementation, verify both exact subjects, terminal dependency receipts/ancestry, corpus bundle, evidence envelopes, portable stream hashes, and command policy","acceptance_ids":["AC-1","AC-2","AC-10"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":3500,"argv":["bash",".csdlc/prepared/issues/5350/validate-parity.sh","subjects"],"parallel_group":"parity-local","defer_reason":"Execute only after every named dependency is merged and typed terminal; the fail-closed runner stub must first be replaced through typed implementation"},
+      {"lane":"exact-shadow-comparison","proof_role":"PLANNED-UNIMPLEMENTED: after typed implementation, run and compare every corpus case, behavior, repetition, equivalence group, and difference group with only reviewed normalization","acceptance_ids":["AC-3","AC-4","AC-5","AC-6"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":8000,"argv":["bash",".csdlc/prepared/issues/5350/validate-parity.sh","compare"],"parallel_group":"parity-local","defer_reason":"Execute only after every named dependency is merged and typed terminal; the fail-closed runner stub must first be replaced through typed implementation"},
+      {"lane":"runtime-workcell-overlay","proof_role":"PLANNED-UNIMPLEMENTED: after typed implementation, verify exact terminal Runtime ten-group and WP-10A live evidence, reject non-live credit, and preserve #5361 downstream direction","acceptance_ids":["AC-7","AC-8","AC-10"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":4000,"argv":["bash",".csdlc/prepared/issues/5350/validate-parity.sh","overlays"],"parallel_group":"parity-overlay","defer_reason":"Execute only after every named dependency is merged and typed terminal; the fail-closed runner stub must first be replaced through typed implementation"},
+      {"lane":"parity-complete","proof_role":"PLANNED-UNIMPLEMENTED: after typed implementation, enforce zero blockers/unclassified rows, strict lint, exact COTS and scope, 1500/2000 LoC budgets, 120-test ceiling, deterministic rerun, no network, and two exact-revision reviews","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8","AC-9","AC-10"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":12000,"argv":["bash",".csdlc/prepared/issues/5350/validate-parity.sh","complete"],"parallel_group":"parity-final","defer_reason":"Execute only after every named dependency is merged and typed terminal; the fail-closed runner stub must first be replaced through typed implementation"}
+    ],
+    "failure_policy": "Fail closed without parity credit, publication, acceptance, soak, cutover, or deletion on identity drift, invalid corpus/evidence, unknown command or normalization, missing case/group/overlay, unclassified mismatch, non-live Runtime credit, absent WP-10A proof, forbidden dependency, budget failure, or deferred acceptance proof.",
+    "review_prompts": [
+      "Are both subjects, the corpus, every dependency receipt, and all retained evidence bound to immutable exact identities with current-main ancestry?",
+      "Can any normalization, tokenization, comparison, or intentional-difference path hide a real semantic, ordering, diagnostic, exit, signature, or evidence-integrity mismatch?",
+      "Does the matrix cover every #5337 case/behavior/group and reject unknown, unsupported, invalid, or deferred rows?",
+      "Do Runtime and WP-10A overlays prove live owner-produced behavior without fixture, metadata, library-only, issue-closure, or Runtime-v2-reuse credit?",
+      "Are COTS reuse, scope, LoC/test/time budgets, no-network policy, exact reviews, and downstream gate effects fully enforced?"
+    ],
+    "review_scope": ".csdlc/issues/5350\n.csdlc/locks/5350.lock\n.csdlc/prepared/issues/5350"
+  }
+}

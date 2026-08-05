@@ -5,7 +5,8 @@
 - Product: ADL
 - Version: `v0.91.7`
 - Target release closeout date: `2026-07-20`
-- Tag: not assigned
+- Tag: `v0.91.7`
+- GitHub release: https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91.7
 
 ## How To Use
 

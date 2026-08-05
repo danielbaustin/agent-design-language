@@ -1,0 +1,75 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5789,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime][observatory] Make the HTML Observatory fully functional",
+    "slug": "runtime-v3-html-observatory-full-functionality",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "observatory-browser-smoke",
+          "proof_role": "Browser-level default, explicit Runtime v3, controls, links, export, and messaging proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 8000,
+          "argv": [
+            "bash",
+            "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+          ],
+          "parallel_group": "observatory-focused",
+          "defer_reason": null
+        },
+        {
+          "lane": "runtime-v3-observatory-focused",
+          "proof_role": "Runtime v3 readiness/feed/WebSocket/write-path regression proof",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 8000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "observatory"
+          ],
+          "parallel_group": "runtime-focused",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on stale retained data presented as live truth, ungoverned operator sends, hidden auth bypass, unresolved WebSocket/control contradiction, process-liveness mismatch, or validation that does not exercise the checked-in page.",
+      "design_ref": ".csdlc/prepared/issues/5789/design.md",
+      "design_digest": "3d0324231826480c8d72f2a7c03787b7c4746e123f83f559eadc67d21ffb4a91",
+      "diagram_ref": ".csdlc/prepared/issues/5789/diagram.mmd",
+      "diagram_digest": "fef525498931bb2ad265fd0c079f0b9f62147abba59a5871f3086148a18bcb87"
+    }
+  }
+}

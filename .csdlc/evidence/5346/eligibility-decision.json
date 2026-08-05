@@ -1,0 +1,11 @@
+{
+  "schema": "adl.wp13.deletion_eligibility_decision.v1",
+  "issue": 5346,
+  "eligible": true,
+  "deletion_executed": true,
+  "baseline_revision": "208fd23c15aa39915f581fe2db491071cb902e4d",
+  "execution_revision": "e9035ceffac9ea79f914371c33081f07861a2a2c",
+  "manifest": "docs/milestones/v0.91.8/evidence/wp13/5346-deletion-eligibility.v1.json",
+  "deleted_paths": 58,
+  "deleted_physical_loc": 46358
+}

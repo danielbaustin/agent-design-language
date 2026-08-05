@@ -1,0 +1,7 @@
+{
+  "issue": 5384,
+  "expected_generation": 1,
+  "expected_digest": "c387552d7c7e3d032ad6f604402cb7a77ed517ff625183de43767a7bc8b55bd0",
+  "claim_id": "claim-5384-v0918-wp14a-preparation-refresh",
+  "reviewer": "operator:daniel-wp13-deferral"
+}

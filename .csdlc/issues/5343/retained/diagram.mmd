@@ -1,0 +1,15 @@
+flowchart TD
+  A["#5344 merged and typed closed_out"] --> B{"Receipt, ancestry, and accepted soak/rollback handoff valid?"}
+  B -->|No| STOP["Stop before selector mutation"]
+  B -->|Yes| C["Verify #5345 selector and fresh-install receipt"]
+  C --> D["Snapshot exact prior selector bytes and v1 identity"]
+  D --> E["Locked compare-and-swap default switch"]
+  E --> F{"Re-read identity and fresh-install smoke pass?"}
+  F -->|No| R["Explicit rollback through same transaction"]
+  R --> V{"Exact prior bytes and v1 override restored?"}
+  V -->|No| BLOCK["Block closeout and WP-13"]
+  V -->|Yes| STOP
+  F -->|Yes| G["Prove explicit v1 override"]
+  G --> H["Open documented rollback window"]
+  H --> I["Retain exact-revision cutover packet"]
+  I --> J["WP-13 remains blocked until window and gates pass"]

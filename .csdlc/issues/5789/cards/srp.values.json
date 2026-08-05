@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5789,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime][observatory] Make the HTML Observatory fully functional",
+    "slug": "runtime-v3-html-observatory-full-functionality",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-runtime-kernel/tests/control.rs",
+      "review_revision": "git-blake3:2ca94d91435d0a02a2782c730ead577d1ebc21fa:dffa06ba107bc51299842b74c4c8805f899c920b81f866484ed43b4298df3417",
+      "reviewer": "subagent:019fc8d7-953f-7ce2-955a-6d37472ba725:Zeno",
+      "review_prompts": [
+        "Does the default Observatory route now use live Runtime v3 truth without hidden query parameters?",
+        "Are WebSocket, GET feed, retained fallback, and operator write states separated truthfully?",
+        "Can the operator communicate with agents through governed, auditable, fail-closed controls?",
+        "Do browser and CLI tests cover actual checked-in routes and negative cases?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Review scope is the post-publication rustfmt repair delta; prior exact-head review by Sartre covered the substantive Runtime v3 Observatory implementation at c060ef20927081c2547f58a845c6b2ba50c66504.",
+        "GitHub run 30839953140 was cancelled after adl-rust-fmt-clippy failed, so stale pending coverage and slow-proof jobs were stopped before the repaired head was published."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

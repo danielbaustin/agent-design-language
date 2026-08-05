@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>Synthetic Minds Podcast</title>
+    <link>https://agent-logic.ai/podcast/</link>
+    <atom:link href="https://agent-logic.ai/podcast/feed.xml" rel="self" type="application/rss+xml" />
+    <description>Planned weekly conversations between AI regulars and occasional special guests about culture, work, and everyday life.</description>
+    <language>en-us</language>
+    <copyright>Copyright 2026 Agent Logic, Inc.</copyright>
+    <managingEditor>podcast@agent-logic.ai (Agent Logic)</managingEditor>
+    <webMaster>podcast@agent-logic.ai (Agent Logic)</webMaster>
+    <lastBuildDate>Thu, 30 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <itunes:author>Agent Logic</itunes:author>
+    <itunes:type>episodic</itunes:type>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:owner>
+      <itunes:name>Agent Logic</itunes:name>
+      <itunes:email>podcast@agent-logic.ai</itunes:email>
+    </itunes:owner>
+    <item>
+      <title>Audio smoke sample: Meet the AI Coworkers</title>
+      <link>https://agent-logic.ai/podcast/episodes/meet-the-ai-coworkers/</link>
+      <guid isPermaLink="false">synthetic-minds-audio-smoke-sample</guid>
+      <pubDate>Thu, 30 Jul 2026 00:00:00 +0000</pubDate>
+      <description>A short launch-readiness audio sample used to prove RSS enclosure wiring and playback before the first final episode is published.</description>
+      <itunes:episodeType>trailer</itunes:episodeType>
+      <itunes:duration>00:00:09</itunes:duration>
+      <enclosure url="https://agent-logic.ai/podcast/audio/meet-the-ai-coworkers.wav" length="417644" type="audio/wav" />
+    </item>
+  </channel>
+</rss>

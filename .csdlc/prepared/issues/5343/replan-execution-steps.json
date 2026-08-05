@@ -1,0 +1,45 @@
+{
+  "issue": 5343,
+  "card": "spp",
+  "expected_generation": 4,
+  "expected_digest": "e6d175fd35924c0843fbbadfd431f8d001ab35e05d9f9a4fafabf2ef10cfddf7",
+  "claim_id": "claim-5343-v0918-wp12-reversible-default-switch-execution",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Align the execution plan with the accepted live merge, ancestry, and handoff gates while keeping receipts audit-only.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify the live #5344 and #5345 merged landing commits are ancestral to the exact execution revision and accept the exact #5344 cutover handoff; observe lifecycle receipts only as audit metadata",
+        "acceptance_ids": ["AC-1", "AC-2"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Fresh-install ADL v2 into an isolated issue evidence root, retain a byte-identical installed v1 executable, and verify both installation identities before mutation",
+        "acceptance_ids": ["AC-3", "AC-4", "AC-8"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Exercise malformed input, receipt, digest, compare-and-swap, lock interruption, and persistence failures while proving the prior selector remains byte-identical",
+        "acceptance_ids": ["AC-4", "AC-5", "AC-8"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Select and execute v2, roll back exact prior bytes and execute v1, then select and execute v2 as final default with a fourteen-day no-deletion rollback window",
+        "acceptance_ids": ["AC-3", "AC-5", "AC-6", "AC-7", "AC-9"],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Run one exact-revision review, publish through typed v2, shepherd required checks, merge, verify the integrated cutover evidence, and leave closeout nonblocking",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7", "AC-8", "AC-9"],
+        "status": "pending"
+      }
+    ]
+  },
+  "fail_after_backup": false
+}

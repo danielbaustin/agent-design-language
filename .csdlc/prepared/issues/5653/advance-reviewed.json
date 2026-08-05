@@ -1,0 +1,11 @@
+{
+  "issue": 5653,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "1a16b1fbb205147daa66f903ed33c69d162324e10639a56ee41a30d1e21e0a2f",
+  "claim_id": "claim-5653-readme-refresh",
+  "actor": "codex:5653-execution",
+  "reason": "Exact-head bounded review completed with no actionable findings.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"},
+  "fail_after_backup": false
+}

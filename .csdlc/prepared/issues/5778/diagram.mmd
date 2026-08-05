@@ -1,0 +1,13 @@
+flowchart LR
+  R["Final pre-merge record"] --> F["csdlc-finish"]
+  G["Live GitHub PR and issue"] --> F
+  A["Exact-head review and checks"] --> F
+  F --> Q{"Terminal remotely?"}
+  Q -->|"open and ready"| M["Expected-SHA merge"]
+  M --> G
+  Q -->|"merged"| T["Derived merged envelope"]
+  Q -->|"closed"| C["Derived closed envelope"]
+  Q -->|"not ready"| B["Stable blocker result; no mutation"]
+  T --> L["Claim logically released"]
+  C --> L
+  L --> N["No tracked post-merge diff or second PR"]

@@ -1,6 +1,6 @@
 ---
 name: adl_pr_cycle
-description: "Compatibility entrypoint for routing a tracked ADL issue through the independent C-SDLC v2 Rust lifecycle, from typed bootstrap through reviewable publication and closeout handoff."
+description: "Compatibility entrypoint for routing a tracked ADL issue through the independent C-SDLC v2 Rust lifecycle, from typed bootstrap through reviewable publication and terminal finish."
 ---
 
 # adl_pr_cycle
@@ -49,7 +49,7 @@ Authority and binaries:
 Hard guardrails:
 1) Deterministic state machine:
    preflight -> init -> bind -> design/plan -> implement -> validate -> review
-   -> publish -> shepherd -> closeout
+   -> publish -> shepherd -> finish -> cleanup
 2) Never work on `main`. Bind one issue to one branch/worktree before tracked
    implementation edits and keep the primary checkout clean.
 3) Do not invoke sunset v1 wrappers, prompt-template commands, or compatibility
@@ -98,18 +98,17 @@ Procedure:
      ancestry, staged paths, and validation evidence are current.
    - Hand the published PR to `csdlc-shepherd`; do not treat a draft or a green
      local check as merge proof.
-6) Closeout
-   - After the issue/PR reaches its authorized terminal state, run
-     `csdlc-closeout` and retain the observed revision, receipts, and terminal
-     transition. Stop and report if any dependency or external guardian blocks
-     the terminal transition.
+6) Finish and cleanup
+   - Run `csdlc-finish` to validate the exact reviewed green head and derive
+     terminal authority from live GitHub state. Run `csdlc-clean cleanup`
+     separately for the exact registered worktree.
 
 Required evidence/report:
 - `.csdlc/issues/<issue_num>/index.json` and its six card projections
 - `.git/csdlc-v2/requests/<issue_num>.json` for each typed operation
 - bound branch/worktree, exact revision, validation lanes and budgets
-- review assignment/result, publication receipt, shepherd observation, and
-  closeout receipt when those phases are reached
+- review assignment/result, publication evidence, shepherd observation, and
+  the derived terminal envelope when those phases are reached
 - one concise report containing inputs, changed tracked paths, commands/typed
   operations attempted, validation results, blockers, and exactly one next
   action
@@ -117,7 +116,7 @@ Required evidence/report:
 Stop boundaries:
 - `mode=suggest` stops after reporting the next typed operation.
 - `publish=false` stops after exact-head review and final validation.
-- `merge=false` stops before merge/closeout even when the PR is green.
+- `merge=false` stops before merge/finish even when the PR is green.
 - Any stale claim, stale revision, missing card, missing budget, failed proof,
   missing review, or ancestry drift is a blocker; preserve evidence and report
   the typed recovery operation instead of improvising.
@@ -136,5 +135,5 @@ Stop boundaries:
 
 Fail closed on invalid input, missing authority, stale claims or revisions,
 missing review truth, failed validation, publication drift, or incomplete
-closeout. Preserve the machine-readable error and report one typed recovery
+finish. Preserve the machine-readable error and report one typed recovery
 operation; do not silently fall back to a legacy command surface.

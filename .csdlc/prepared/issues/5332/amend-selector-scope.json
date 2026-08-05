@@ -1,0 +1,13 @@
+{
+  "issue": 5332,
+  "expected_generation": 1,
+  "expected_digest": "544e45490fa546733d0f3e4a0e680cde89ab7c257ed45fb2f3d3f439da5d7575",
+  "claim_id": "claim-5332-v0918-wp15-unity-ilpp-exec-prep",
+  "actor": "codex:issue-5332-execution-preparation",
+  "reason": "Reserve focused validation selector registration required by specialist readiness review",
+  "now_unix_seconds": 1784836000,
+  "add_protected_paths": [
+    "adl/config/validation_lane_selector.v0.91.6.json",
+    "adl/tools/test_select_validation_lanes.sh"
+  ]
+}

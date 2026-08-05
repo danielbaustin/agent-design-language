@@ -1,0 +1,12 @@
+flowchart LR
+  I["Issue #5670"] --> P["Path policy decides hosted coverage"]
+  P --> S1["Workspace coverage shard 1"]
+  P --> S2["Workspace coverage shard 2"]
+  P --> S3["Workspace coverage shard N"]
+  P --> R["Runtime coverage producer when required"]
+  S1 --> A["adl-coverage-hosted aggregation gate"]
+  S2 --> A
+  S3 --> A
+  R --> A
+  A --> G["Required authoritative coverage result"]
+

@@ -1,0 +1,16 @@
+flowchart LR
+    WP09["WP-09 merged interface freeze"] --> C["#5499 conductor"]
+    C --> T["#5498 task adapter"]
+    T --> D["#5500 dashboard"]
+    T --> R["#5502 convergence"]
+    D --> P["#5501 live proof"]
+    R --> P
+    P --> U["#5497 umbrella convergence"]
+
+    A["Typed claims"] -. ownership .-> C
+    A -. ownership .-> T
+    A -. ownership .-> D
+    A -. ownership .-> R
+    A -. ownership .-> P
+
+    E["Receipts: audit only"] -. non-blocking .-> U

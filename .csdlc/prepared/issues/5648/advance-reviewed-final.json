@@ -1,0 +1,11 @@
+{
+  "issue": 5648,
+  "card": "srp",
+  "expected_generation": 13,
+  "expected_digest": "e26536e6faa0e4cff8471c744c321991ec137a0f0b3c958deb6baef6e4623b07",
+  "claim_id": "claim-5648-operator-active-claim-revoke",
+  "actor": "codex:5648-execution",
+  "reason": "Final exact-head review is complete with no findings",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"},
+  "fail_after_backup": false
+}

@@ -4,7 +4,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use strum::{AsRefStr, Display, EnumIter, EnumString};
 
-use crate::cards::{CardKind, CardValues, FindingDisposition, FindingSeverity, ValidationResult};
+use crate::cards::{CardKind, CardValues, FindingDisposition, FindingSeverity};
 use crate::error::{ErrorCode, Result, V2Error};
 
 #[derive(
@@ -46,11 +46,6 @@ impl LifecyclePhase {
                 | (Self::Reviewed, Self::Implemented)
                 | (Self::Reviewed, Self::Published)
                 | (Self::Published, Self::Implemented)
-                | (Self::MergeReady, Self::Implemented)
-                | (Self::Published, Self::MergeReady)
-                | (Self::MergeReady, Self::Merged)
-                | (Self::MergeReady, Self::Published)
-                | (Self::Merged, Self::ClosedOut)
         )
     }
 }
@@ -166,89 +161,6 @@ pub struct TerminalReceipt {
     pub record: IssueRecord,
     pub cards: BTreeMap<CardKind, CardValues>,
     pub digest: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-pub struct ReconcileTerminalRequest {
-    pub issue: u64,
-    pub expected_initialization_digest: String,
-    pub expected_branch: String,
-    pub expected_worktree: String,
-    pub actor: String,
-    pub reason: String,
-    #[serde(default)]
-    pub follow_ups: Vec<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-pub struct TerminalDesignRepairRequest {
-    pub authority_issue: u64,
-    pub target_issue: u64,
-    pub expected_authority_generation: u64,
-    pub expected_authority_digest: String,
-    pub expected_target_generation: u64,
-    pub expected_target_digest: String,
-    pub expected_receipt_digest: String,
-    pub authority_claim_id: String,
-    pub actor: String,
-    pub reviewer: String,
-    pub source_design_path: String,
-    pub source_diagram_path: String,
-    pub expected_design_digest: String,
-    pub expected_diagram_digest: String,
-    #[serde(default)]
-    pub fail_after_stage: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-pub struct TerminalPlanStepRepairRequest {
-    pub authority_issue: u64,
-    pub target_issue: u64,
-    pub expected_authority_generation: u64,
-    pub expected_authority_digest: String,
-    pub expected_target_generation: u64,
-    pub expected_target_digest: String,
-    pub expected_receipt_digest: String,
-    pub authority_claim_id: String,
-    pub actor: String,
-    pub step_id: String,
-    #[serde(default)]
-    pub fail_after_stage: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-pub struct TerminalSorArtifactRepairRequest {
-    pub authority_issue: u64,
-    pub target_issue: u64,
-    pub expected_authority_generation: u64,
-    pub expected_authority_digest: String,
-    pub expected_target_generation: u64,
-    pub expected_target_digest: String,
-    pub expected_receipt_digest: String,
-    pub authority_claim_id: String,
-    pub actor: String,
-    pub stale_ref: String,
-    pub retained_ref: String,
-    pub expected_artifact_digest: String,
-    #[serde(default)]
-    pub fail_after_stage: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-pub struct TerminalSorValidationRepairRequest {
-    pub authority_issue: u64,
-    pub target_issue: u64,
-    pub expected_authority_generation: u64,
-    pub expected_authority_digest: String,
-    pub expected_target_generation: u64,
-    pub expected_target_digest: String,
-    pub expected_receipt_digest: String,
-    pub authority_claim_id: String,
-    pub actor: String,
-    pub expected_result: ValidationResult,
-    pub replacement_result: ValidationResult,
-    #[serde(default)]
-    pub fail_after_stage: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]

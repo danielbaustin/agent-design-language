@@ -1,0 +1,27 @@
+{
+  "issue": 5701,
+  "expected_generation": 19,
+  "expected_digest": "37555cb96ea4ddfed9cfcd209cc5f96135a7023195710d8d4ebd832a2287b14d",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "subagent:019fafbd-db23-7681-a979-4cc0bc68585d",
+  "evidence": {
+    "reviewer": "subagent:019fafbd-db23-7681-a979-4cc0bc68585d",
+    "scope": [
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "adl-runtime-kernel/tests/observatory.rs",
+      "adl-runtime-kernel/tests/openapi_contract.rs",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+      "adl/tools/validate_v0917_html_observatory.py",
+      "demos/v0.91.7/html-observatory/README.md",
+      "demos/v0.91.7/html-observatory/app.js",
+      "demos/v0.91.7/html-observatory/index.html",
+      "docs/api/runtime-v3/v1"
+    ],
+    "reviewed_revision": "git-blake3:c22b25248166c277e7319d5e37f7e873fab560cd:b3bed829103c2845f83a7152268824f9a3faf936f0bca51b766cc74b93eda0f0",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -14,11 +14,16 @@
 Current status: forward planning for the later `v0.92` birthday milestone,
 after the planned `v0.91.6` readiness tranche, `v0.91.7`
 implementation/proof tranche, and the new `v0.91.8` platform-acceptance bridge.
+The `v0.91.8` WP-16 quality gate has now merged at
+`2e9d2dd7c4260dcf6ec6af954b0eea97554212df`; v0.92 must consume that exact
+evidence after WP-17 documentation alignment and the remaining v0.91.8 review
+tail are complete.
 
 - Planning: candidate package refreshed during `v0.91.4` issue `#3434` and
   pre-v0.92 dependency added during `#3506`
 - Execution: not started
-- Validation: docs-readiness validation only
+- Validation: candidate-docs readiness plus upstream v0.91.8 WP-16 quality-gate
+  evidence as a prerequisite input; no v0.92 implementation validation yet
 - Release readiness: not applicable until `v0.92` executes
 
 v0.92 is not yet an active implementation milestone. It now has a candidate
@@ -27,8 +32,10 @@ must not be opened until `v0.92` begins. Its boundary was rechecked during the
 `v0.91.4` docs-preparation pass so it stays about identity and birth rather
 than absorbing economics, governed tools, or constitutional citizenship
 prematurely. It now depends on `v0.91.5` release-tail closeout plus the
-`v0.91.6` readiness tranche, `v0.91.7` implementation/proof tranche, and
-reviewed `v0.91.8` exact-revision platform handoff before opening.
+`v0.91.6` readiness tranche, `v0.91.7` implementation/proof tranche, merged
+`v0.91.8` WP-16 exact-revision quality-gate evidence, WP-17 documentation
+alignment, and the later reviewed `v0.91.8` exact-revision platform handoff
+before opening.
 
 ## Purpose
 
@@ -42,10 +49,11 @@ The first-birthday readiness source issue is
 That issue owns the launch packet and go/no-go readiness plan; this milestone
 package owns the canonical `docs/milestones/v0.92/` planning surface. Issue
 `#3377` remains the first-birthday readiness source issue, but `v0.92` WP-01
-must consume the full pre-`v0.92` readiness/proof sequence: `v0.91.5` release-tail
-truth, `v0.91.5` activation-test outputs, and the `v0.91.6` / `v0.91.7`
-readiness/proof tranches plus `v0.91.8` platform acceptance before opening the
-final issue wave.
+must consume the full pre-`v0.92` readiness/proof sequence: `v0.91.5`
+release-tail truth, `v0.91.5` activation-test outputs, the `v0.91.6` /
+`v0.91.7` readiness/proof tranches, merged `v0.91.8` WP-16 quality-gate
+evidence, WP-17 documentation alignment, and later platform handoff/review
+truth before opening the final issue wave.
 
 ## Milestone Role
 
@@ -58,6 +66,9 @@ v0.92 should establish:
 - capability envelope at birth
 - ACP / cognitive profiles as a bounded runtime profile surface grounded in
   memory, capability, continuity, ToM, and intelligence evidence
+- Adaptive Learning DAG planning as the queued post-loop-runtime path from
+  evaluation feedback to stateful adaptation and policy-governed reasoning
+  graph modification, without claiming full autonomous learning at birth
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
   optional WebSocket carrier proof as the transport-readiness slice that
   follows the v0.91/v0.91.1 ACIP baseline
@@ -120,8 +131,9 @@ v0.92 depends on:
   operator-scoped-out with evidence and approval, or blocked with evidence
   before birthday activation claims can execute
 - v0.91.8 platform acceptance for exact ADL v2, Runtime v3, C-SDLC v2,
-  selector/rollback, deletion, WP-14A child disposition, and v0.92 handoff
-  truth before birthday implementation opens
+  selector/rollback, deletion, WP-14A child disposition, WP-16 quality-gate
+  evidence, WP-17 documentation alignment, and v0.92 handoff truth before
+  birthday implementation opens
 
 ## Parallel Python Reduction Tranche
 
@@ -152,7 +164,7 @@ The likely `v0.92` tranche is:
 - [Runtime v2 And Birthday Boundary Roadmap](../../planning/ROADMAP_RUNTIME_V2_AND_BIRTHDAY_BOUNDARY.md):
   roadmap boundary for birthday semantics.
 - [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md):
-  activation bridge-consumption ledger for `#3780`.
+  activation bridge-consumption ledger for the v0.92 opening package.
 
 ## Scope Summary
 
@@ -165,6 +177,9 @@ The likely `v0.92` tranche is:
 - Memory Palace context-topology bridge.
 - Capability envelope.
 - ACP / cognitive profiles as a runtime-visible profile contract.
+- Adaptive Learning DAG planning and proof requirements, contingent on verified
+  v0.91.7 loop-runtime evidence and kept separate from the first-birthday
+  claim.
 - ACIP binary schema, public schema catalog, deterministic JSON projection, and
   mock/loopback WebSocket carrier proof.
 - Birth witnesses and receipt.
@@ -188,6 +203,8 @@ The likely `v0.92` tranche is:
 - v0.93 ACIP key lifecycle, encryption, signing, rotation, or revocation.
 - v0.94 signed/queryable trace completion.
 - Free-floating cognitive labels that are not grounded in evidence.
+- Full adaptive-learning implementation, autonomous graph mutation, or
+  learning-driven birthday claims not backed by policy and replay evidence.
 - Replacing v0.90.3 citizen-state/security work.
 - Replacing v0.91 moral trace or moral trajectory review.
 
@@ -207,6 +224,8 @@ The likely `v0.92` tranche is:
 - Feature plans: [features/README.md](features/README.md)
 - Activation bridge ledger:
   [V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md](V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md)
+- External first-birthday launch surface:
+  [external_launch/README.md](external_launch/README.md)
 - Memory Palace context topology:
   [MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md](features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md)
 - First-birthday launch packet:
@@ -218,6 +237,8 @@ The likely `v0.92` tranche is:
   [#3377](https://github.com/danielbaustin/agent-design-language/issues/3377)
 - ACP / cognitive profiles:
   [ACP_COGNITIVE_PROFILES_v0.92.md](features/ACP_COGNITIVE_PROFILES_v0.92.md)
+- Adaptive Learning DAG:
+  [ADAPTIVE_LEARNING_DAG_v0.92.md](features/ADAPTIVE_LEARNING_DAG_v0.92.md)
 - ACIP binary schema and WebSocket transport:
   [ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md](features/ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md)
 - Cross-polis continuity and migration planning:
@@ -238,11 +259,12 @@ Later WP planning should preserve the standard milestone rhythm:
 - WP-01: promote reviewed milestone docs and issue wave
 - WP-01 must consume the candidate issue wave, `v0.91.5` release-tail
   closeout, the activation-test map, the `v0.91.6` readiness tranche, the
-  `v0.91.7` implementation/proof tranche, and `#3377` readiness packet
-  rather than reconstructing the birthday plan from chat.
+  `v0.91.7` implementation/proof tranche, the merged `v0.91.8` WP-16
+  quality-gate evidence, WP-17 documentation alignment, and `#3377` readiness
+  packet rather than reconstructing the birthday plan from chat.
 - feature WPs: implement identity, continuity, memory grounding, capability,
-  ACP/cognitive profile, ACIP binary transport-readiness, witness, receipt, and
-  birthday-record surfaces
+  ACP/cognitive profile, Adaptive Learning DAG queue/proof planning, ACIP
+  binary transport-readiness, witness, receipt, and birthday-record surfaces
 - demo WP: build first-birthday proof demos and negative cases
 - quality/review WPs: validate docs, tests, demo evidence, and review packets
 - release WP: close the milestone under the normal ceremony pattern
@@ -252,9 +274,10 @@ The exact WP sequence is intentionally deferred until v0.92 planning is active.
 ## Demo and Validation Surface
 
 v0.92 demos should prove birthday behavior, negative cases, continuity,
-memory grounding, capability envelopes, ACP/cognitive-profile evidence, ACIP
-schema-public inspectability, and governance handoff. The candidate demo plan
-is tracked in [DEMO_MATRIX_v0.92.md](DEMO_MATRIX_v0.92.md).
+memory grounding, capability envelopes, ACP/cognitive-profile evidence,
+adaptive-learning boundary conditions, ACIP schema-public inspectability, and
+governance handoff. The candidate demo plan is tracked in
+[DEMO_MATRIX_v0.92.md](DEMO_MATRIX_v0.92.md).
 
 Validation for this planning package is structural only until v0.92 execution:
 planning-template validation, Markdown link checks, YAML parsing, and

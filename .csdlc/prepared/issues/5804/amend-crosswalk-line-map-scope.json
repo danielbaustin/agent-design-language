@@ -1,0 +1,12 @@
+{
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "add_protected_paths": [
+    ".csdlc/prepared/issues/5594/feature_decisions_5594.rb"
+  ],
+  "claim_id": "claim-5804-v0918-external-review-doc-readiness",
+  "expected_digest": "e6a15e858e441bf2bc14813d8c4b3f2b6144e77bcd9675531a1091e35e21dc4a",
+  "expected_generation": 0,
+  "issue": 5804,
+  "now_unix_seconds": 1785862778,
+  "reason": "Refresh the source-line-pinned feature decision map after the canonical feature table shifted by one line."
+}

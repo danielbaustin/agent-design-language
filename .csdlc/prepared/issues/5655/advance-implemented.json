@@ -1,0 +1,14 @@
+{
+  "issue": 5655,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "adc2aea3d25aff0dbb8d90d65d759b9752f6d9db3927885822425654266efc4d",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "reason": "Advance #5655 after implementation and proving validation have been recorded.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  },
+  "fail_after_backup": false
+}

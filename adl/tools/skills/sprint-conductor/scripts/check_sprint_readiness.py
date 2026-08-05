@@ -141,7 +141,7 @@ def next_skills_for_issue(result: dict[str, Any]) -> list[str]:
     if any(note.startswith('No local task bundle found') for note in notes):
         return ['pr-init']
     if any(note.startswith('Ambiguous local task bundles') for note in notes):
-        return ['workflow-conductor']
+        return ['pr-ready']
     return []
 
 

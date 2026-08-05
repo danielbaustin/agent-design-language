@@ -1,0 +1,22 @@
+{
+  "issue": 5384,
+  "base_branch": "main",
+  "branch": "codex/5384-v0918-wp14a-preparation-bound",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5384-v0918-wp14a-preparation-only",
+    "owner": "codex:5384-preparation-only",
+    "generation": 1,
+    "acquired_unix_seconds": 1784673029,
+    "expires_unix_seconds": 1785277829,
+    "heartbeat_unix_seconds": 1784673029,
+    "branch": "codex/5384-v0918-wp14a-preparation-bound",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5384",
+      ".csdlc/locks/5384.lock",
+      ".csdlc/prepared/issues/5384"
+    ],
+    "purpose": "Prepare and review #5384 lifecycle cards and issue-local gates only; product, Runtime, documentation, deployment, publication, and implementation writes remain unauthorized until every declared predecessor is merged, typed closed_out, receipted, and ancestral to current origin/main"
+  }
+}

@@ -1,8 +1,8 @@
 # v0.91.8 Parallel Execution Plan
 
-Status: planned. This document is a scheduling and readiness plan only. It
-does not execute v0.91.8 work, prove release readiness, or approve v0.92
-activation.
+Status: historical/current execution map. The parallel execution waves through
+WP-16 have been consumed by the WP-16 quality gate at `2e9d2dd7c`; release-tail
+work remains serial and does not approve v0.92 activation.
 
 Routing authority: GitHub milestone configuration is not currently configured
 as the operative gate for this package. The `version:v0.91.8` label plus the
@@ -22,25 +22,18 @@ them.
 
 ## Current Readiness Constraint
 
-WP-01 `#5594` is the active readiness authority and milestone sprint `#5595`
-is the single sprint umbrella. Closed `#5335` and `#5383` are historical
-planning inputs, not active WP-01 owners.
+WP-16 `#5351` is the current quality-gate authority. Its retained evidence
+records 67 audited issue outcomes, 0 unacceptable outcomes, and passing ADL v2,
+Runtime v3, and C-SDLC v2 lanes. Milestone sprint `#5595` remains the umbrella.
+Closed `#5335`, `#5383`, and opening WP-01 `#5594` are historical planning and
+readiness inputs.
 
-The checked core, acceptance, WP-10A, and provider issues do not currently have
-tracked `.csdlc/issues/<issue>/index.json` projections in the local planning
-surface for:
+The previously missing core, acceptance, WP-10A, and provider issue projections
+were prepared and executed through the milestone. WP-16 classifies their
+outcomes as working code, useful durable result, or partial/ambiguous evidence
+without recording any unacceptable outcome.
 
-`#5336`, `#5337`, `#5338`, `#5339`, `#5340`, `#5341`, `#5342`, `#5343`,
-`#5344`, `#5345`, `#5346`, `#5347`, `#5349`, `#5350`, `#5358`, `#5361`,
-`#5384`, `#5497`, `#5498`, `#5499`, `#5500`, `#5501`, `#5502`, `#5526`,
-`#5548`, `#5558`, `#5589`, `#5590`, `#5591`, and `#5592`.
-
-Therefore Wave 0 is not optional clerical setup. It is a real parallel
-card/readiness factory using active prompt templates and typed C-SDLC v2
-`init`/`validate` flows. Implementation is forbidden for each issue until its
-issue-specific SIP, STP, SPP, and VPP are ready and validated.
-
-WP-21A fails closed before publication if the canonical-document inventory
+WP-17 fails closed before publication if the canonical-document inventory
 detects a missing or contradictory v0.91.8 planning, architecture, review,
 release, handoff, routing, validation, or feature-doc surface.
 
@@ -107,9 +100,9 @@ Default shadow policy:
 - Docs-only or card-prep work may use no external shadow when the internal
   review is enough and the issue records that choice.
 
-## Wave 0: Readiness And Card Factory
+## Historical Wave 0: Readiness And Card Factory
 
-Run in parallel, but only for the next dependency wave and with typed v2
+This wave ran in parallel only for the next dependency wave and with typed v2
 authority:
 
 1. Initialize missing issue projections with active templates.
@@ -118,20 +111,18 @@ authority:
 4. Record dependencies, non-goals, proof lanes, and negative cases.
 5. Stop before implementation.
 
-Initial Wave 0 targets after WP-01 closes:
+Initial Wave 0 targets after WP-01 closed:
 
 - WP-02 `#5336` stale-worktree recovery; do not regenerate its unpublished cards
 - WP-03 `#5337`
 - C-SDLC acceptance sidecar `#5358`
 - Runtime v3 acceptance sidecar `#5361`
 
-Next Wave 0 targets are admitted only after the conductor verifies predecessor
-truth and WIP capacity.
+Later Wave 0 targets were admitted only after predecessor truth and WIP capacity
+were verified.
 
-After #5336 authority is integrated, prepare Runtime v3 Parity-A #5591. Only
-after Parity-A's ingress contract is reviewed may #5592, #5589, and #5590 be
-prepared or executed. Their capability lists do not by themselves prove
-disjoint writes; explicit protected-path manifests are required.
+Runtime v3 Parity-A #5591 preceded #5592, #5589, and #5590. Their retained
+proof is consumed by the WP-16 issue outcome audit and quality gate.
 
 ## Wave 1: Early Acceptance Lanes
 
@@ -142,11 +133,11 @@ defines acceptance criteria rather than implementing ADL core internals:
 - Runtime v3 acceptance lane: `#5361`
 
 They are parallel to early ADL core prep, but they cannot approve WP-14A or
-v0.92 handoff alone. Their outputs become acceptance inputs for WP-14A.
-C-SDLC acceptance preflight must inventory current defects `#5540`, `#5541`,
-`#5548`, and `#5558` without absorbing them into the acceptance issue. Runtime v3
-acceptance may start preflight early, but `#5361` closure consumes the live
-distributed workcell proof from `#5501`.
+v0.92 handoff alone. Their accepted revisions become WP-14A inputs.
+C-SDLC acceptance retains `#5540` and `#5541` repair history; current tooling
+defects `#5548` and `#5558` are owned by WP-20 `#5363` and do not block
+`#5358` or WP-14A. Runtime v3 acceptance may start preflight early, but `#5361`
+closure consumes the live distributed workcell proof from `#5501`.
 
 ## Wave 2: ADL Core Critical Path
 
@@ -211,8 +202,9 @@ Parity, soak, cutover, acceptance, and deletion are constrained:
 2. Runtime v3 acceptance `#5361`, consuming the four parity lanes and `#5501`.
 3. WP-12 soak `#5344` after closed `#5361` acceptance.
 4. WP-12 reversible default switch `#5343` after the soak proof.
-5. C-SDLC v2 acceptance `#5358`, after inventorying `#5540`, `#5541`,
-   `#5548`, and `#5558`, must close before deletion.
+5. C-SDLC v2 acceptance `#5358`, retaining `#5540` and `#5541` repair
+   history, must close before deletion. WP-20 owns `#5548` and `#5558`; they
+   do not block this acceptance or deletion gate.
 6. WP-13 deletion may execute in parallel only on disjoint manifests:
    - `#5346` final replaced ADL language compiler engine and CLI.
    - `#5347` externally owned incumbent ADL bands.
@@ -234,27 +226,29 @@ Fan-out candidates:
 - ADL v2 accepted/deployed exact revision.
 - Runtime v3 accepted/deployed exact revision.
 - C-SDLC v2 accepted/deployed exact revision.
-- v0.92 handoff ledger and activation map inputs.
-- Launch-readiness and Memory Palace sidecar inputs when their owners are
-  current.
 
 Convergence remains serialized under the conductor: one acceptance packet, one
 review synthesis, one integration queue, and one operator decision boundary.
 
+WP-21 `#5362` independently owns the v0.92 handoff ledger, activation map,
+launch-readiness, Memory Palace, identity/birthday, capability-envelope, and
+Adaptive Learning inputs after WP-14A accepts the platform.
+
 ## Wave 6: Release Tail
 
-WP-15 through WP-23 stay serial:
+WP-15 through WP-17 and the first WP-18 pass have completed their proof path.
+Residual coding may land before the final internal review, but the final WP-18
+second pass and WP-19 through WP-23 remain serial:
 
-1. WP-15 `#5354`: integrated demos.
-2. WP-16 `#5351`: integrated quality gate.
-3. WP-17 `#5360`: docs and release truth alignment.
-4. WP-18 `#5356`: internal milestone review.
-5. WP-19 `#5357`: independent external review.
-6. WP-20 `#5363`: remediation and release preflight.
-7. WP-21 `#5362`: feature list and v0.92 planning truth.
-8. WP-21A `#5355`: next-milestone closeout plan.
-9. WP-22 `#5359`: next-milestone planning review.
-10. WP-23 `#5348`: release ceremony and lifecycle closeout.
+1. WP-17 `#5360`: docs and release truth alignment (closed).
+2. WP-18 `#5356`: first internal milestone review (closed).
+3. WP-18 `#5791`: final internal second pass after residual coding.
+4. WP-19 `#5357`: independent external review.
+5. WP-20 `#5363`: remediation and release preflight.
+6. WP-21 `#5362`: feature list and v0.92 planning truth.
+7. WP-21A `#5355`: next-milestone closeout plan.
+8. WP-22 `#5359`: next-milestone planning review.
+9. WP-23 `#5348`: release ceremony and lifecycle closeout.
 
 Release-tail work is deliberately serial because each step consumes reviewed
 truth from the previous step.

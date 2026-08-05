@@ -1,0 +1,51 @@
+{
+  "schema": "adl.wp14a.direct_input_gate.v2",
+  "issue": 5384,
+  "base_ref": "origin/main",
+  "accepted_baseline_sha": "11151e0beab02b1667f6505b7f8992bfd47d2f8f",
+  "requirements": [
+    "live_issue_closed",
+    "pull_request_merged_with_green_required_checks",
+    "merged_revision_present_in_acceptance_baseline"
+  ],
+  "direct_inputs": [
+    {
+      "issue": 5358,
+      "role": "csdlc_v2_acceptance",
+      "pull_request": 5606,
+      "reviewed_head": "e048230245b1ad101c8056678123a2747faa4b60",
+      "merge_revision": "fc75f4fc697262f89f99461679a406be0b4b3775"
+    },
+    {
+      "issue": 5361,
+      "role": "runtime_v3_acceptance",
+      "pull_request": 5650,
+      "reviewed_head": "f7fc71421f4bcf70039b910c9b88b538bb111400",
+      "merge_revision": "f7258b07e9da414bfee518f0c89a76071bc03ee8"
+    },
+    {
+      "issue": 5344,
+      "role": "adl_v2_soak_and_rollback",
+      "pull_request": 5703,
+      "reviewed_head": "141dfa20ccc3753060687259ad933397331df9c7",
+      "merge_revision": "d4825d4be9ed14ed6060dd33cbdafe5eaa5efcd2"
+    },
+    {
+      "issue": 5343,
+      "role": "adl_v2_reversible_default_switch",
+      "pull_request": 5704,
+      "reviewed_head": "e4bbc988cad682cbb2ff8d24085e1a99bccec1ce",
+      "merge_revision": "e1b6a34e4763a79d1c40c641e64c0c061a0aa96c"
+    }
+  ],
+  "deferred_non_blocking": [
+    {
+      "issues": [
+        5346,
+        5347
+      ],
+      "execute_before": 5356,
+      "reason": "Operator scheduled final code deletion immediately before internal review."
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+{
+  "issue": 5107,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5107/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5107/diagram.mmd",
+  "design_reviewer": "operator:daniel",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5107-adaptive-learning-dag-queue",
+    "owner": "codex:5107-execution",
+    "generation": 0,
+    "acquired_unix_seconds": 1785531133,
+    "expires_unix_seconds": 1786135933,
+    "heartbeat_unix_seconds": 1785531133,
+    "branch": "codex/5107-v092-adaptive-learning-dag-queue",
+    "worktree": ".worktrees/adl-wp-5107",
+    "protected_paths": [
+      ".csdlc/issues/5107",
+      ".csdlc/locks/5107.lock",
+      ".csdlc/prepared/issues/5107",
+      ".csdlc/evidence/5107",
+      "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+      "docs/milestones/v0.92/features/README.md"
+    ],
+    "purpose": "Implement the reviewed #5107 Adaptive Learning DAG planning queue and v0.92 handoff without opening downstream implementation early"
+  },
+  "initial": {
+    "title": "[v0.91.8][WP-21][planning] Queue Adaptive Learning DAG work after loop runtime and platform deployment",
+    "slug": "v0-91-8-wp21-adaptive-learning-dag-queue",
+    "version": "v0.91.8",
+    "goal": "Publish a reviewed v0.92 Adaptive Learning DAG queue that consumes accepted platform authority, requalifies historical #5104 loop-runtime evidence only as input, and preserves the non-claim that adaptive learning and learning-driven graph mutation are not implemented.",
+    "required_outcome": "The v0.92 handoff names Adaptive Learning DAG prerequisites, consumed Runtime v3 and ADL contracts, policy boundaries, proof requirements, explicit blockers, and the ordered future work sequence without creating child implementation issues or claiming adaptive runtime behavior.",
+    "declared_scope": [
+      ".csdlc/prepared/issues/5107/PREPARATION_PACKET.md",
+      ".csdlc/prepared/issues/5107/design.md",
+      ".csdlc/prepared/issues/5107/diagram.mmd",
+      ".csdlc/prepared/issues/5107/bootstrap-request.json",
+      ".csdlc/prepared/issues/5107/validate_preparation.rb",
+      ".csdlc/issues/5107",
+      ".csdlc/evidence/5107",
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      "docs/milestones/v0.92/README.md",
+      "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+      "docs/milestones/v0.92/features/README.md"
+    ],
+    "authority_boundary": [
+      "Runtime v3 and accepted platform records are the current runtime authority; historical Runtime v2 or #5104 evidence is input only until requalified.",
+      "Prompt, Loop, Adaptive Loop, Reasoning Graph, and Adaptive Learning DAG remain distinct planning objects.",
+      "Learning-driven graph mutation requires future policy, state-delta, graph-delta, replay, review, and negative-test proof.",
+      "C-SDLC v2 owns issue, claim, validation, review, publication, and closeout truth.",
+      "#5107 cannot open child implementation issues, implement runtime code, claim adaptive learning deployment, or merge itself."
+    ],
+    "operator_constraints": [
+      "Work only in /Users/daniel/git/agent-design-language/.worktrees/adl-wp-5107 on branch codex/5107-v092-adaptive-learning-dag-queue.",
+      "Use installed typed C-SDLC v2 Rust binaries.",
+      "Never write primary main or /private/tmp.",
+      "Do not merge.",
+      "#5713 and #5733 remain deferred until after WP-21.",
+      "PR body must include Closes #5107."
+    ],
+    "task_boundary": "Implement the planning-doc queue and typed issue state for #5107 only; stop after a validated, reviewed, pushed, ready PR exists.",
+    "deliverables": [
+      "C-SDLC v2 issue state and six card projections for #5107.",
+      "Issue-local design, diagram, bootstrap request, and deterministic preparation validator.",
+      "v0.92 Adaptive Learning DAG feature record aligned to Runtime v3/current-platform authority.",
+      "v0.92 handoff entries distinguishing inherited evidence, unimplemented work, blockers, and the future sequence.",
+      "Exact-head validation, one GPT-5.5 review record, pushed branch, and ready PR with Closes #5107."
+    ],
+    "acceptance_criteria": [
+      "AC-1: WP-14A platform acceptance evidence for ADL v2, Runtime v3, and C-SDLC v2 is cited at exact revisions.",
+      "AC-2: #5104 is treated as historical input and must be requalified against current Runtime v3 contracts before reuse.",
+      "AC-3: Prompt, Loop, Adaptive Loop, Reasoning Graph, and Adaptive Learning DAG remain distinct.",
+      "AC-4: Learning-driven graph mutation is not inferred from bounded loop runtime.",
+      "AC-5: No child implementation issues are opened or requested by #5107.",
+      "AC-6: The queue names evaluation bindings, stateful adaptation, policy-governed graph modification, replay proof, and negative tests as later work.",
+      "AC-7: The issue reaches a reviewed PR handoff without merge."
+    ],
+    "dependencies": [
+      "WP-21 umbrella #5362",
+      "WP-14A #5384 platform acceptance",
+      "Runtime v3 acceptance/deployment #5361",
+      "Accepted ADL v2 plan and engine revision",
+      "C-SDLC v2 acceptance/deployment #5358",
+      "Retained #5104 loop-runtime evidence as historical input only",
+      "#5332 terminal projection commit fa39a8856dd5a23544831f8d2cdced1ffad492d8 on this branch"
+    ],
+    "repo_inputs": [
+      "https://github.com/danielbaustin/agent-design-language/issues/5107",
+      ".csdlc/prepared/issues/5107/PREPARATION_PACKET.md",
+      ".csdlc/prepared/issues/5107/design.md",
+      ".csdlc/prepared/issues/5107/diagram.mmd",
+      "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
+      "docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md"
+    ],
+    "non_goals": [
+      "Adaptive learning implementation.",
+      "Autonomous graph mutation or production learning behavior.",
+      "Consciousness, personhood, or production citizenship claims.",
+      "Runtime code, ADL product code, C-SDLC source, infrastructure, provider, AWS, deployment, or selector changes.",
+      "Child issue creation for later v0.92 work.",
+      "Merge, closeout, or unrelated #5713/#5733 execution."
+    ],
+    "plan_summary": "Repair #5107 typed state, tighten the v0.92 planning docs to the current Runtime v3/platform authority boundary, validate the deterministic queue contract, record exact-head review, and publish a ready PR without merge.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Initialize or repair #5107 typed C-SDLC state from the issue and current preparation packet.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-7"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Update v0.92 planning docs so the Adaptive Learning DAG queue cites current accepted inputs, explicit blockers, and non-claims.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run deterministic preparation validation and record actual proof.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Commit, record one exact-head GPT-5.5 review, fix actionable findings, push, and publish a ready PR.",
+        "acceptance_ids": ["AC-7"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Bounded loop runtime is not adaptive learning.",
+      "Learning-driven graph mutation is not implemented by #5107.",
+      "#5104 remains historical input until Runtime v3 requalification.",
+      "Future graph mutation must be policy governed, replayable, reviewed, and negative-tested.",
+      "No child implementation issues are opened by this issue.",
+      "Primary main and /private/tmp are not written."
+    ],
+    "risks": [
+      "Historical #5104 loop-runtime evidence could be overread as current adaptive learning proof.",
+      "Runtime v2 wording could drift against the accepted Runtime v3 authority boundary.",
+      "Queue language could accidentally imply implemented graph mutation or production learning.",
+      "A planning handoff could be mistaken for v0.92 implementation readiness."
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "The typed C-SDLC v2 record cannot be repaired without direct state mutation.",
+      "GitHub authentication or remote publication is unavailable after lawful retry.",
+      "Validation finds an overclaim that cannot be fixed within the declared documentation scope.",
+      "The work requires runtime/product implementation or child issue creation."
+    ],
+    "validation_lanes": [
+      {
+        "lane": "preparation-doc-contract",
+        "proof_role": "Prove the #5107 queue cites exact platform inputs, preserves the #5104 historical-input boundary, keeps graph-mutation non-claims, and does not request child implementation issues.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5107/validate_preparation.rb"],
+        "parallel_group": "planning-contract",
+        "defer_reason": null
+      }
+    ],
+    "failure_policy": "Fail closed on stale typed state, overclaims, missing exact input revisions, hidden implementation, child-issue creation, stale review, publication drift, or merge attempts.",
+    "review_prompts": [
+      "Does the queue cite accepted ADL v2, Runtime v3, C-SDLC v2, WP-14A, #5104, and #5332 inputs without turning them into adaptive-learning proof?",
+      "Are Prompt, Loop, Adaptive Loop, Reasoning Graph, and Adaptive Learning DAG kept distinct?",
+      "Does the plan require future policy-governed graph mutation, state-delta, graph-delta, replay, review, and negative-test evidence before implementation claims?",
+      "Are child implementation issues, runtime/product edits, #5713/#5733 execution, merge, and closeout excluded from #5107?",
+      "Is the PR ready to close #5107 as a reviewed queue/handoff rather than as runtime implementation?"
+    ],
+    "review_scope": "Review the exact #5107 queue/handoff revision across typed C-SDLC state, issue-local prepared artifacts, v0.92 planning docs, exact dependency revisions, #5104 historical-input handling, Runtime v3 authority wording, non-claims, validation proof, and PR publication readiness. Reject adaptive-learning implementation claims, learning-driven graph-mutation inference, child implementation issue creation, runtime/product edits, stale review, or merge/closeout claims."
+  }
+}

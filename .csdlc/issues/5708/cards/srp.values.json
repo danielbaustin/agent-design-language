@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5708,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][podcast][ui] Redesign Podcast Studio with Agent Logic MagicUI style",
+    "slug": "v0-91-8-podcast-ui-redesign-podcast-studio-agent-logic-style",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/tools/generate_podcast_studio_v2_packet.py\nadl/tools/run_v0913_proof_validation_lane.sh\nadl/tools/validate_podcast_studio_v2_packet.py\ndemos/v0.91.3/adl_podcast_studio_v2_episode_card.html\ndemos/v0.91.3/agent-logic-logo.png\ndocs/milestones/v0.91.3/review/podcast_studio_v2/ct_demo_004_audio_render_manifest.json\ndocs/milestones/v0.91.3/review/podcast_studio_v2/ct_demo_004_best_lines.md\ndocs/milestones/v0.91.3/review/podcast_studio_v2/ct_demo_004_episode_packet.md\ndocs/milestones/v0.91.3/review/podcast_studio_v2/ct_demo_004_host_lineup.md\ndocs/milestones/v0.91.3/review/podcast_studio_v2/ct_demo_004_topic_brief.md\ndocs/milestones/v0.91.3/review/podcast_studio_v2/ct_demo_004_transcript.md",
+      "review_revision": "git-blake3:af5bdea3770f6a42d729f9e32cff4a62433e191e:a340d2f048af0c827df00e89e7da374a0e79a06c83592511704612dbc3c0a622",
+      "reviewer": "codex-subagent:closeout-missing-records",
+      "review_prompts": [
+        "Does the exact Podcast Studio patch match the issue acceptance criteria?",
+        "Do generator, rendered HTML, validator, and packet artifacts agree while preserving non-claims?",
+        "Does the lifecycle evidence identify the exact merged head and PR?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The bounded review was performed during terminal recovery after merge; it does not replace the historical review timing recorded on PR #5709.",
+        "The merged redesign does not prove a public podcast route, published RSS, final playable audio, guest acceptance, or weekly cadence; those remain assigned to follow-up issue #5711."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

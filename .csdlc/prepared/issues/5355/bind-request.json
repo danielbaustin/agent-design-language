@@ -1,0 +1,23 @@
+{
+  "issue": 5355,
+  "base_branch": "main",
+  "branch": "codex/5355-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5355-v0918-preparation",
+    "owner": "codex:5355-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784754875,
+    "expires_unix_seconds": 1785359675,
+    "heartbeat_unix_seconds": 1784754875,
+    "branch": "codex/5355-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5355",
+      ".csdlc/locks/5355.lock",
+      ".csdlc/prepared/issues/5355",
+      ".csdlc/evidence/5355"
+    ],
+    "purpose": "Prepare #5355 WP-21A next-milestone closeout planning only; no execution until WP-21 #5362 is live-merged and ancestral"
+  }
+}

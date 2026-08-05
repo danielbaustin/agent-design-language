@@ -1,0 +1,174 @@
+# Validation Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5763
+
+Repository: danielbaustin/agent-design-language
+
+Card: vpp
+
+Status: ready
+
+## Summary
+
+Execute the smallest proving validation DAG.
+
+## Lane Inputs
+
+Design: .csdlc/issues/5763/retained/design.md
+
+Diagram: .csdlc/issues/5763/retained/diagram.mmd
+
+## Selected Lanes
+
+[
+  {
+    "lane": "feature-crosswalk",
+    "proof_role": "Prove current 122-row feature-list digest and crosswalk row parity",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 1000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5594/validate_feature_crosswalk.rb"
+    ],
+    "parallel_group": "local-docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "structured-planning",
+    "proof_role": "Prove existing v0.91.8 structured planning validators still pass",
+    "acceptance_ids": [
+      "AC-3"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 1000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5594/validate_structured_planning.rb"
+    ],
+    "parallel_group": "local-docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "local-links",
+    "proof_role": "Prove existing v0.91.8 local link validators still pass",
+    "acceptance_ids": [
+      "AC-3"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 1000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5594/validate_links.rb"
+    ],
+    "parallel_group": "local-docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "yaml-parse",
+    "proof_role": "Parse the v0.91.8 issue wave YAML after the digest repair",
+    "acceptance_ids": [
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 60,
+    "budget_tokens": 500,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5763/validate_yaml_parse.rb"
+    ],
+    "parallel_group": "local-docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "diff-hygiene",
+    "proof_role": "Prove tracked text changes have clean whitespace",
+    "acceptance_ids": [
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 60,
+    "budget_tokens": 500,
+    "argv": [
+      "bash",
+      ".csdlc/prepared/issues/5763/validate_diff_hygiene.sh"
+    ],
+    "parallel_group": "local-docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "exact-review",
+    "proof_role": "Record one bounded exact-head GPT-5.5 review before ready publication",
+    "acceptance_ids": [
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 300,
+    "budget_tokens": 4000,
+    "argv": [
+      "csdlc-review",
+      "record"
+    ],
+    "parallel_group": "local-docs",
+    "defer_reason": null
+  },
+  {
+    "lane": "ready-publication",
+    "proof_role": "Publish one ready PR whose body includes Closes #5763",
+    "acceptance_ids": [
+      "AC-6"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 1000,
+    "argv": [
+      "csdlc-publish",
+      "publish"
+    ],
+    "parallel_group": "local-docs",
+    "defer_reason": null
+  }
+]
+
+## Parallelization
+
+Only declared parallel groups may overlap.
+
+## Budgets
+
+Seconds: 1200
+
+Tokens: 10000
+
+## Commands
+
+- `ruby .csdlc/prepared/issues/5594/validate_feature_crosswalk.rb`
+- `ruby .csdlc/prepared/issues/5594/validate_structured_planning.rb`
+- `ruby .csdlc/prepared/issues/5594/validate_links.rb`
+- `ruby .csdlc/prepared/issues/5763/validate_yaml_parse.rb`
+- `bash .csdlc/prepared/issues/5763/validate_diff_hygiene.sh`
+- `csdlc-review record`
+- `csdlc-publish publish`
+
+## Failure Semantics
+
+Fail closed on stale digest evidence, validator weakening, row-count drift, protected-path collision, unrelated docs changes, failed focused validation, or actionable review findings.
+
+## Handoff
+
+Retain typed evidence before convergence.

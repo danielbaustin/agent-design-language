@@ -13,10 +13,11 @@ cd "$ROOT_DIR"
 
 echo "Running v0.87 control-plane demo..."
 ADL_OLLAMA_BIN="$ROOT_DIR/adl/tools/mock_ollama_v0_4.sh" \
-  bash adl/tools/pr.sh run adl/examples/v0-4-demo-deterministic-replay.adl.yaml \
+ADL_RUNS_ROOT="$RUNS_ROOT" \
+  adl-runtime run adl/examples/v0-4-demo-deterministic-replay.adl.yaml \
+    --run \
     --trace \
     --allow-unsigned \
-    --runs-root "$RUNS_ROOT" \
     --out "$STEP_OUT" \
     | tee "$OUT_DIR/run_log.txt"
 
@@ -45,4 +46,3 @@ echo "Demo proof surface:"
 echo "  $RUNS_ROOT/$RUN_ID/run.json"
 echo "  $RUNS_ROOT/$RUN_ID/run_status.json"
 echo "  $RUNS_ROOT/$RUN_ID/run_summary.json"
-

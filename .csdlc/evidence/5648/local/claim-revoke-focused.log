@@ -1,0 +1,197 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+
+running 3 tests
+test claim_revoke_fails_closed_for_stale_digest_and_missing_authority ... ok
+test claim_revoke_requires_unexpired_claim ... ok
+test claim_revoke_clears_unexpired_claim_with_operator_cas_audit ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 0.36s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.00s
+
+   Compiling csdlc-v2 v0.1.0 (/Volumes/FastWork/adl-csdlc-claim-revoke/csdlc-v2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.53s
+     Running unittests src/lib.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_v2-b83621dd56ebb12e)
+     Running unittests src/bin/csdlc-bind.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_bind-bcdcc1392416ac41)
+     Running unittests src/bin/csdlc-closeout.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_closeout-ec800457fbf31932)
+     Running unittests src/bin/csdlc-cutover.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_cutover-f2a8008f82158f9b)
+     Running unittests src/bin/csdlc-doctor.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_doctor-85216f6f5c86f2e3)
+     Running unittests src/bin/csdlc-edit.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_edit-0ee41a65d5f63517)
+     Running unittests src/bin/csdlc-eligibility.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_eligibility-a4fa3a497c5ac2b8)
+     Running unittests src/bin/csdlc-init.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_init-2ca64ab1e0d249a5)
+     Running unittests src/bin/csdlc-install.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_install-78801b70b25b903f)
+     Running unittests src/bin/csdlc-merge.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_merge-27deb5963afd0b91)
+     Running unittests src/bin/csdlc-pr-state.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_pr_state-e395424c2aa5d310)
+     Running unittests src/bin/csdlc-proof.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_proof-a3150b53d3b8fbe5)
+     Running unittests src/bin/csdlc-publish.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_publish-efc620baf5593aaa)
+     Running unittests src/bin/csdlc-review.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_review-2915e317bc7b33fb)
+     Running unittests src/bin/csdlc-schedule.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_schedule-45c62ea5d01d8a25)
+     Running unittests src/bin/csdlc-shadow.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_shadow-1541b8161a2f24b1)
+     Running unittests src/bin/csdlc-shepherd.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_shepherd-07ad1ea15555da83)
+     Running unittests src/bin/csdlc-soak.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_soak-16b7d8976a34ad0a)
+     Running unittests src/bin/csdlc-validate.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/csdlc_validate-3cc1012187f6e84b)
+     Running tests/card_identity.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/card_identity-90d593c88bd8871a)
+     Running tests/gate10a.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate10a-48727a559403a860)
+     Running tests/gate10b.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate10b-d14e7e34b72942cc)
+     Running tests/gate2.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate2-8cd6b533c3f99598)
+     Running tests/gate4.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate4-abeda5df3099093a)
+     Running tests/gate5.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate5-dba00e6a8038450f)
+     Running tests/gate6.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate6-1063ab4fe693ad8c)
+     Running tests/gate7.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate7-b7a71a188e294cb1)
+     Running tests/gate7_lifecycle.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate7_lifecycle-b93edfd09f9c05eb)
+     Running tests/gate7_terminal_design_repair_5487.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate7_terminal_design_repair_5487-85392b9db868cf55)
+     Running tests/gate7_terminal_sor_validation_repair_5613.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate7_terminal_sor_validation_repair_5613-b8c2eceedfce0c9e)
+     Running tests/gate8.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate8-c9d1b53c448360c4)
+     Running tests/gate9.rs (/Volumes/FastWork/adl-csdlc-claim-revoke-target/debug/deps/gate9-8ed42e7392ea705b)

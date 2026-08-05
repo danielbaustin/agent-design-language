@@ -1,0 +1,426 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5698,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "5c936af2d4303e52957cc506114cf14136f4282930d3072942d70ed5a4e1bfbb",
+  "phase": "closed_out",
+  "generation": 13,
+  "digest": "fcce582ade6567b6180940ebfa89c76b186d26af9d83a92e3558cd9cb8550201",
+  "claim": null,
+  "review_assignment": null,
+  "review": {
+    "reviewer": "provider:gemini-3.1-pro-preview",
+    "scope": [
+      "adl-runtime-kernel/Cargo.lock",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/durable_state.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/durable_state.rs",
+      "adl-runtime-kernel/tests/governed_operations.rs",
+      "adl-runtime-kernel/tests/guardian_soak.rs",
+      "adl-v2/Cargo.lock"
+    ],
+    "reviewed_revision": "git-blake3:89e162f79392a520678913cac7af47b6695a8d1a:e4f836330b00072bb8eb33d195876dcaf18298a1ff9b5d31be82123373a83eb5",
+    "findings": [],
+    "residual_risks": [
+      "Gemini exact-head CI repair review for 89e162f79392a520678913cac7af47b6695a8d1a returned PASS / no findings. It confirmed the guardian_soak IPv4 loopback repair preserves real socket proof and matches Runtime v3's IPv4-only control-plane contract."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5698,
+    "pull_request": 5707,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5707",
+    "base": "main",
+    "head": "codex/5698-runtime-v3-redb-state",
+    "revision": "git-blake3:23fd17288b4b3383ed4a2cf9288fc7499244b338:e3255700aee2f8bf9cc5ecf23244595e0db2502ff33242b97e6909d1d7e869e9",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5707,
+    "head_sha": "23fd17288b4b3383ed4a2cf9288fc7499244b338",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90670798617"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669821663"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767246"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767111"
+      },
+      {
+        "name": "adl-coverage-workspace-fast-hosted",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767697"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted (${{ matrix.shard }}/2)",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767051"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767472"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669201864"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669766307"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767374"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767580"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767658"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767391"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669767079"
+      },
+      {
+        "name": "adl-v2-standalone",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669766250"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/30479348927/job/90669766951"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5707,
+    "disposition": "merged",
+    "observed_sha": "23fd17288b4b3383ed4a2cf9288fc7499244b338",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5698.json",
+    "released_branch": "codex/5698-runtime-v3-redb-state",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/evidence/5698",
+      ".csdlc/issues/5698",
+      ".csdlc/locks/5698.lock",
+      ".csdlc/prepared/issues/5698",
+      "adl-runtime-kernel/Cargo.lock",
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/src/assembly.rs",
+      "adl-runtime-kernel/src/durable_state.rs",
+      "adl-runtime-kernel/src/governed_operations.rs",
+      "adl-runtime-kernel/src/lib.rs",
+      "adl-runtime-kernel/tests/assembly.rs",
+      "adl-runtime-kernel/tests/durable_state.rs",
+      "adl-runtime-kernel/tests/governed_operations.rs",
+      "adl-runtime-kernel/tests/guardian_soak.rs",
+      "adl-v2/Cargo.lock"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5698/retained/design.md",
+  "diagram_path": ".csdlc/issues/5698/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:issue-5698-body",
+      "revision": "084aef585bb574dba031ec98f033395692dcab7fc080cbf8fb8c35bda32cee9e"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "cc567ccabc008a2b402ae27262fc995e0fc698e4ccc1805af9cf690f4a9adcbc",
+      "rendered_digest": "3abd1383590e2f46d38ca4fdab887c2c1d181aeefe285c2718eb75028fe0464f",
+      "ast_digest": "afb0beb20cbc2fd79239c9e557998ab98fb2bef78a50c99090340f12849a540d"
+    },
+    "stp": {
+      "values_digest": "bd9395b7e748beded3cdce80609cc5b6fdf6155caba71ffde198373aaf1aed59",
+      "rendered_digest": "307578437b6a0e3b70dc6589d6bd2515719a2e6ede19e1cac71e3ae6ac5e035a",
+      "ast_digest": "ae04f7a2c522def21242a4e46c1c501aadc8085771f63052f9a8f7cb6285ccf9"
+    },
+    "spp": {
+      "values_digest": "e072bccc697189cda64c9c147d0956c83f69e1c88b8bc3fadc650345a5f557d3",
+      "rendered_digest": "6d706b8402c9c4c9b5da736073692f236026ef907611ea056b4cf3c9aeee5648",
+      "ast_digest": "6f55da7ff1ba3731fa396f02ad9431b1e6deed29f3065f0ecea02aa4fca74244"
+    },
+    "vpp": {
+      "values_digest": "6d6e6cc5aeb2b9c6053cb3635d2f6dc899613ed25622a9b11611425dd45d77d8",
+      "rendered_digest": "c74576a97dc8cd44ed77501fe6c0a8cad7f54d01c590770da3a320c503db0764",
+      "ast_digest": "7b2599066521d9ce7ebe921eb3e6f261f8bd6228753e66c4a55bf1d72745d3ef"
+    },
+    "srp": {
+      "values_digest": "cf319150568d959d4fce2f54dc032c03e776e6f346fcb93bb725d004cb327e51",
+      "rendered_digest": "050669436b7071205ba0841638d7593d006668bc5d4a66b57885661fb2a8b463",
+      "ast_digest": "7de3944e7bbd5b0209fa92305b2137d84b615535bf6bd8aaa89171ecc2d7f1f9"
+    },
+    "sor": {
+      "values_digest": "c9bd8cce667b1efca5a7099660e004e8dd56d9764078fb369d2e9ef170e0f9c6",
+      "rendered_digest": "0477d67bc7021f8893aebe29aefd14bbd1617d47ba2020c106ff1c6f2cee322e",
+      "ast_digest": "ebfdd584ed725316adf96b560f761b71a60c96abd61af64855bd204804f0de7c"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "provider:gemini-3.1-pro-preview",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "Recover stale #5698 review/publication truth after exact-head CI found an adl-v2 locked-standalone lockfile drift and a Runtime v3 guardian-soak startup mismatch that require bounded repair before republishing."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "provider:gemini-3.1-pro-preview",
+      "reason": "exact scoped review passed"
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "WP-12 #5344 is GitHub closed, typed closed_out, claim-free, and its retained terminal receipt releases the Runtime v3 paths needed by #5698; begin the scoped redb durable kernel-state implementation.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/Cargo.lock\",\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/src/assembly.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"adl-runtime-kernel/src/governed_operations.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/assembly.rs\",\"adl-runtime-kernel/tests/durable_state.rs\",\"adl-runtime-kernel/tests/governed_operations.rs\"],\"expected_owner\":\"codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24\",\"expected_purpose\":\"Prepare and coordinate #5698 redb durable state work; product implementation is blocked until active WP-12 #5344 releases or transfers overlapping Runtime v3 paths\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Prepare and coordinate #5698 redb durable state work; product implementation is blocked until active WP-12 #5344 releases or transfers overlapping Runtime v3 paths\",\"purpose\":\"Implement #5698 Runtime v3 durable kernel-state unification on redb: replace local adapter and governed-operation flat-file checkpoint/lifelog persistence with real redb-backed persistence, recovery, integrity, and fail-closed migration behavior.\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "atomically record execution, validation, and implemented phase",
+      "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "Record focused proof after the Gemini exact-head review finding was fixed by making redb sequence allocation atomic with row/head writes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-validate --root /Volumes/FastWork/adl-wp-5698 --request /Users/daniel/git/agent-design-language/.git/csdlc-v2/requests/5698.json\"],\"purpose\":\"Prove the real redb durable kernel-state migration after review remediation: durable_state 4/4 including concurrent sequence/head regression, assembly 9/9, governed_operations 28/28, strict all-target Clippy, and diff hygiene.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5698\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "provider:gemini-3.1-pro-preview",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "Recover stale #5698 review/publication truth after exact-head CI found an adl-v2 locked-standalone lockfile drift and a Runtime v3 guardian-soak startup mismatch that require bounded repair before republishing.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "Exact-head CI exposed that adding the redb dependency changed the workspace resolution used by the locked ADL v2 standalone lane; include only the lockfile needed to restore locked CI determinism.",
+      "operation": "{\"add_protected_paths\":[\"adl-v2/Cargo.lock\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "Record #5698 exact-head CI repair proof after fixing the adl-v2 locked standalone lockfile drift and verifying Runtime v3 fast locally with the repo-local Vector binary available as in CI.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash adl/tools/run_adl_v2_standalone.sh\",\"cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test assembly\",\"cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test durable_state\",\"cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --test governed_operations\",\"cargo clippy --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target --all-targets -- -D warnings\",\"cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --target-dir /Volumes/FastWork/adl-wp-5698/target\",\"git diff --check\"],\"purpose\":\"Prove the current #5698 PR repair: the adl-v2 standalone lane no longer fails on a stale Cargo.lock, the redb/state focused tests remain green, strict Runtime v3 Clippy is green, and the Runtime v3 fast lane including guardian_soak passes with Vector installed as CI does.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5698\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 7,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "Exact-head hosted Runtime v3 fast CI exposed a guardian_soak startup portability defect: localhost may resolve to IPv6 on Ubuntu while Runtime v3 intentionally supports IPv4 only. Include the narrow test path needed for the bounded CI repair.",
+      "operation": "{\"add_protected_paths\":[\"adl-runtime-kernel/tests/guardian_soak.rs\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "provider:gemini-3.1-pro-preview",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness_reconcile_metadata_only_published_revision"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:019fa9d0-7df0-7140-ad76-de97ae0f0c24",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:v0918-terminal-reconcile-wave",
+      "reason": "Materialize retained terminal authority for the complete v0.91.8 closed-issue closeout audit.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the authoritative terminal receipt into the dedicated v0.91.8 closeout branch during the exhaustive live-inventory sweep.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

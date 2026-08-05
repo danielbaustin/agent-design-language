@@ -1,0 +1,40 @@
+{
+  "schema": "adl.wp10a.live-workcell-manifest.v1",
+  "template": true,
+  "run_id": null,
+  "admitted_plan": {
+    "issue": 5499,
+    "revision": null,
+    "digest": null,
+    "review_ref": null
+  },
+  "negative_case": {
+    "kind": null,
+    "refused": false,
+    "evidence_ref": null,
+    "evidence_digest": null
+  },
+  "shards": [],
+  "dashboard": {
+    "source_issue": 5500,
+    "observation_ref": null,
+    "observation_digest": null,
+    "manual_assertions": false
+  },
+  "convergence": {
+    "source_issue": 5502,
+    "decision_ref": null,
+    "decision_digest": null
+  },
+  "baseline": {
+    "declared_work_digest": null,
+    "equivalence_review_ref": null,
+    "budget_seconds": 1800
+  },
+  "manifest_review": {
+    "reviewer": null,
+    "review_ref": null,
+    "reviewed_digest": null,
+    "result": null
+  }
+}

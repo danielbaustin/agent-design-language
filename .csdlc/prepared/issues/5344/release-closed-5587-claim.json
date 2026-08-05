@@ -1,0 +1,12 @@
+{
+  "issue": 5587,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5587-closed-release-recovery",
+  "expected_generation": 18,
+  "expected_digest": "7f8e0922a203226086caa515cd52d27166d94bbc78e1ecd3a5e0527cee16a2b7",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "GitHub issue #5587 is closed completed and PR #5626 is merged; release its stale product-path claim without waiting for or fabricating terminal closeout.",
+  "observed_issue_state": "closed",
+  "observed_issue": 5587,
+  "observation_source": "github://danielbaustin/agent-design-language/issues/5587"
+}

@@ -128,7 +128,7 @@ def status_for(classification: str) -> str:
 
 def handoff_for(classification: str) -> str:
     if classification == "actionable":
-        return "workflow-conductor"
+        return "normal_issue_execution"
     if classification == "blocked":
         return "operator-review"
     return "pr-closeout"

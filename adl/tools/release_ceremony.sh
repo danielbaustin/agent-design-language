@@ -37,7 +37,7 @@ Other options:
   --tag <tag>             Override tag name (default: same as --version)
   --target-branch <name>  Branch required for ceremony mutations (default: main)
   --allow-dirty           Skip the clean-worktree check
-  --skip-sor-gate         Skip adl/tools/check_milestone_closed_issue_sor_truth.sh (closed-issue bundle truth gate)
+  --skip-sor-gate         Explicitly bypass the typed local closeout gate
   -h, --help              Show this help
 
 Examples:
@@ -185,20 +185,53 @@ check_cargo_version() {
   fail "adl/Cargo.toml version mismatch: expected $expected, found $actual"
 }
 
-check_sor_gate() {
+run_csdlc_doctor() {
+  local issue="$1"
+  local installed="$ROOT/.adl/bin/csdlc-v2/csdlc-doctor"
+  if [[ -x "$installed" ]]; then
+    "$installed" --repo "$ROOT" --issue "$issue"
+    return
+  fi
+
+  require_cmd cargo
+  cargo run --quiet --locked --manifest-path "$ROOT/csdlc-v2/Cargo.toml" \
+    --bin csdlc-doctor -- --repo "$ROOT" --issue "$issue"
+}
+
+check_typed_closeout_gate() {
   if [[ "$SKIP_SOR_GATE" == "1" ]]; then
-    info "skipping closed-issue bundle truth gate by request"
+    info "skipping typed local closeout gate by explicit request"
     return 0
   fi
 
-  local checker="$ROOT/adl/tools/check_milestone_closed_issue_sor_truth.sh"
-  [[ -x "$checker" || -f "$checker" ]] || {
-    info "closed-issue bundle truth gate not present; skipping"
-    return 0
-  }
+  require_cmd python3
+  local issues
+  issues="$(python3 - "$ROOT" "$VERSION" <<'PY'
+import json
+import pathlib
+import sys
 
-  info "running closed-issue bundle truth gate for $VERSION"
-  bash "$checker" --version "$VERSION"
+root = pathlib.Path(sys.argv[1])
+version = sys.argv[2]
+issues = []
+for values_path in sorted((root / ".csdlc" / "issues").glob("*/cards/sip.values.json")):
+    values = json.loads(values_path.read_text())
+    identity = values.get("identity", {})
+    if identity.get("version") == version:
+        issues.append(int(identity["issue"]))
+print(" ".join(str(issue) for issue in issues))
+PY
+)"
+  [[ -n "$issues" ]] || fail "no typed C-SDLC records found for $VERSION; closeout truth is unproven"
+
+  info "running typed local closeout gate for $VERSION"
+  local issue report phase
+  for issue in $issues; do
+    report="$(run_csdlc_doctor "$issue")" || fail "csdlc-doctor rejected issue $issue"
+    phase="$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("phase") or "")' <<<"$report")" \
+      || fail "csdlc-doctor returned malformed JSON for issue $issue"
+    [[ "$phase" == "closed_out" ]] || fail "issue $issue is not closed_out (phase: ${phase:-unknown})"
+  done
 }
 
 print_plan() {
@@ -306,7 +339,7 @@ fi
 
 assert_branch
 check_cargo_version
-check_sor_gate
+check_typed_closeout_gate
 
 if [[ "$CREATE_TAG" == "1" ]]; then
   assert_tag_absent_local

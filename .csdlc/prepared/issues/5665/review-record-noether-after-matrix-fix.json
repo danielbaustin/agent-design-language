@@ -1,0 +1,59 @@
+{
+  "schema": "csdlc.review_record_request.v1",
+  "issue": 5665,
+  "expected_generation": 12,
+  "expected_digest": "b42f9d4cf24fc74e1a8ebad7909ea4ba130f8a994d474f0d2119a667a4565922",
+  "claim_id": "claim-5665-runtime-v3-wss-feature-proofs",
+  "actor": "codex:issue-5665-slot-1",
+  "evidence": {
+    "reviewer": "Noether",
+    "scope": [
+      "adl-runtime/src/runtime_api.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "adl-runtime/Cargo.toml",
+      "adl-runtime/Cargo.lock",
+      "adl/Cargo.lock",
+      "adl/src/bin/run_wp12_acip_websocket_transport_proof.rs",
+      "adl/src/bin/run_v0916_acip_aee_memory_integration.rs",
+      "adl/src/bin/run_v0916_integrated_runtime_soak.rs",
+      "adl/src/bin/run_v0916_runtime_failure_injection.rs",
+      "adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs",
+      "infra/runtime-v3/runtime-api-5665.toml",
+      "docs/milestones/v0.91.8/review/runtime/5665_feature_adapter_matrix.json",
+      ".csdlc/evidence/5665/runtime-v3-wss-focused.log",
+      ".csdlc/evidence/5665/runtime-v3-strict-clippy.log",
+      ".csdlc/evidence/5665/wp12-wrapper-tombstone-check.log",
+      ".csdlc/evidence/5665/runtime-v2-wrapper-tombstone-checks.log",
+      ".csdlc/evidence/5665/runtime-v3-loc-measurement.md",
+      ".csdlc/issues/5665/index.json"
+    ],
+    "reviewed_revision": "git-blake3:2cc0a99ec9027bd357cb5557a6859d4e3dddd16b:ffc5b5cb625a98c0847289d2cbe998b6b0a80d4580391b48d6d7073e2d1542c6",
+    "findings": [
+      {
+        "id": "P2-feature-matrix-proof-uses-test-local-subset",
+        "severity": "p2",
+        "summary": "The prior matrix proof gap is fixed: runtime_api_wss.rs now loads the committed #5665 matrix artifact, serves it through RuntimeApiService, compares the WSS feature_matrix response to the parsed artifact, and asserts the health/telemetry rows are present.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:2cc0a99ec9027bd357cb5557a6859d4e3dddd16b:ffc5b5cb625a98c0847289d2cbe998b6b0a80d4580391b48d6d7073e2d1542c6",
+        "route": null
+      },
+      {
+        "id": "P3-validation-record-command-mismatch",
+        "severity": "p3",
+        "summary": "The matrix-fix SOR validation record names the targeted runtime_api_wss argv, but the referenced evidence log contains the broader full adl-runtime test run. The proof is real, but the lifecycle argv and log should match.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Noether did not run tests during review. The committed log shows runtime_api_wss passing, strict Clippy evidence remains terse, and #5663/#5664 records remain absent from visible repo evidence."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

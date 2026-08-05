@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5655,
+  "expected_generation": 10,
+  "expected_digest": "74a218f1d373d22e2968712b559e71f7fc8cea03639e6f8a0e5d5bd3d7daacb5",
+  "claim_id": "claim-5655-csdlc-github-actions",
+  "actor": "codex:issue-5655-slot-1",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5655-csdlc-github-actions",
+  "title": "[v0.91.8][csdlc-v2] Add Rust GitHub action command surface",
+  "body": "Closes #5655\n\n## Summary\n- Add the Rust-only `csdlc-github` command with typed `run` and `schema` surfaces.\n- Add typed GitHub action request/result schemas for issue create/update/comment/close/read and PR state observation.\n- Enforce operation markers and exact post-mutation readback for issue create/comment/update/close, including exact updated body, labels, and assignees.\n- Add operator guidance for the repo-native C-SDLC v2 GitHub action surface.\n\n## Validation\n- `TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate_github_actions` passed 2/2.\n- `TMPDIR=/Volumes/FastWork/adl-builds/5655-tmp CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5655-csdlc-v2-target cargo test --locked --manifest-path csdlc-v2/Cargo.toml` passed, including `gate_github_actions` 2/2 and Doc-tests `csdlc_v2` 1/1.\n- `csdlc-doctor --repo . --issue 5655` passed at reviewed generation 10.\n- Boole exact-head read-only review was CLEAN for `7ea92d637fca550a7ef834ac89a96dba987579b3`; review guard is ready with no blockers on the metadata publication head.",
+  "draft": true,
+  "remote": "origin",
+  "token_file": "/Users/daniel/keys/github.token"
+}

@@ -1,0 +1,24 @@
+{
+  "issue": 5695,
+  "base_branch": "main",
+  "branch": "codex/5695-pr-state-mergeability",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5695-pr-state-mergeability",
+    "owner": "codex:issue-5695-pr-state-mergeability",
+    "generation": 0,
+    "acquired_unix_seconds": 1785113059,
+    "expires_unix_seconds": 1785717859,
+    "heartbeat_unix_seconds": 1785113059,
+    "branch": "codex/5695-pr-state-mergeability",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5695",
+      ".csdlc/issues/5695",
+      ".csdlc/locks/5695.lock",
+      ".csdlc/prepared/issues/5695",
+      "csdlc-v2/src/github.rs"
+    ],
+    "purpose": "Correct mergeability-state classification without widening merge authority"
+  }
+}

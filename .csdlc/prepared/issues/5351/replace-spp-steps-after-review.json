@@ -1,0 +1,19 @@
+{
+  "issue": 5351,
+  "card": "spp",
+  "expected_generation": 10,
+  "expected_digest": "604205b16842cc20dfafaeac6c983a8d40fc33bcd6aadf2ff2bc14ddf80a7bb9",
+  "claim_id": "claim-5351-v0918-wp16-quality-gate-preparation",
+  "actor": "codex:5351-execution",
+  "reason": "Align the operative handoff sequence with merge-gated WP-17 release and asynchronous closeout.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {"id":"S1","action":"Complete six cards, design, diagram, exact issue-local claim, COTS, budgets, PVF, executable gates, bounded review/fixes, typed bind, and doctor","acceptance_ids":["AC-1","AC-3","AC-6","AC-7","AC-8"],"status":"pending"},
+      {"id":"S2","action":"Verify #5354 is merged, typed closed_out, claim-free, retained-receipt-backed, and ancestral","acceptance_ids":["AC-1"],"status":"pending"},
+      {"id":"S3","action":"Run focused and integrated platform quality gates, retain exact evidence, route genuine blockers, merge their fixes, and rerun on the combined exact revision","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6","AC-7"],"status":"pending"},
+      {"id":"S4","action":"Fix exact-review findings, publish through typed v2, shepherd green CI, merge, verify the integrated identity, and release WP-17 immediately; perform typed closeout asynchronously","acceptance_ids":["AC-2","AC-3","AC-5","AC-6","AC-7","AC-8"],"status":"pending"}
+    ]
+  },
+  "fail_after_backup": false
+}

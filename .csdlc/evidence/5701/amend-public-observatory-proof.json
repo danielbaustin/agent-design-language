@@ -1,0 +1,13 @@
+{
+  "issue": 5701,
+  "expected_generation": 18,
+  "expected_digest": "20cdb91234ef93228460b23cf7a59bd5c02dce4ad72d4f6f4069bd602ac28782",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "now_unix_seconds": 1785359000,
+  "add_protected_paths": [
+    "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+    "adl/tools/validate_v0917_html_observatory.py"
+  ],
+  "reason": "The existing HTML Observatory proof encoded the removed read-token requirement. Updating the exact validator and focused proof is required to prevent false CI failures and prove public reads with optional authenticated writes."
+}

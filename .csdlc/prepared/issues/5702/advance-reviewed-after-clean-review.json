@@ -1,0 +1,13 @@
+{
+  "issue": 5702,
+  "card": "srp",
+  "expected_generation": 10,
+  "expected_digest": "9bbb1c9d53d459dd630bb03e85e94957d9a3bd3bc85b15bc9dd2eb9aadb0695f",
+  "claim_id": "claim-5702-podcast-launch-plan",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "advance #5702 after assigned exact-head review passed",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

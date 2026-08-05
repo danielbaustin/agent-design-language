@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5727,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][csdlc-v2][claims] Make released bound claims safely reacquirable",
+    "slug": "v0-91-8-csdlc-v2-claims-make-released-bound-claims-safely-reacquirable",
+    "version": "v0.91.8",
+    "generation": 16
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Allow a deliberately released or expired writer lease to be reacquired through a typed compare-and-swap operation without corrupting or rewinding lifecycle state.",
+      "required_outcome": "Dormant resumable records are truthful read-only state, typed reacquisition restores a validated non-overlapping writer claim, and all write operations remain fail-closed without a live covering claim.",
+      "declared_scope": [
+        "C-SDLC v2 claim lifecycle request and result contracts",
+        "csdlc-bind typed command surface",
+        "doctor classification for dormant nonterminal records",
+        "focused lifecycle and #5354 reproduction tests",
+        "issue-local lifecycle evidence"
+      ],
+      "authority_boundary": [
+        "GitHub issue #5727",
+        "C-SDLC v2 Rust lifecycle and store",
+        "existing claim collision and audit contracts"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use typed C-SDLC v2 binaries only.",
+        "Keep the primary checkout clean on main.",
+        "Perform all tracked implementation in /Volumes/FastWork/adl-wp-5727.",
+        "Do not weaken overlapping-writer collision checks.",
+        "Do not directly edit existing issue records or rewind lifecycle phases.",
+        "Do not execute WP-15 product or demo work."
+      ]
+    }
+  }
+}

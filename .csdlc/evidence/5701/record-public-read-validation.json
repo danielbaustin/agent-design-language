@@ -1,0 +1,22 @@
+{
+  "issue": 5701,
+  "card": "sor",
+  "expected_generation": 18,
+  "expected_digest": "8981e9457f072329cce60442a88b2044f3d1256fe2a8a22bdbbb4fdfb9f3eb63",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "Record the corrected public-read and authenticated-write Observatory validation at commit 3a7621861.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test-and-clippy",
+        "runtime-v3-public-observatory-suite"
+      ],
+      "purpose": "Prove anonymous runtime reads, optional WSS write login, signed control enforcement, credential revocation, API contract parity, and the separate HTML Observatory client.",
+      "outcome": "passed",
+      "evidence_ref": "Kernel control 21/21; Observatory WSS 6/6 including anonymous reads and authenticated signed write; OpenAPI contracts 6/6; strict all-target Clippy passed; HTML Observatory integrated proof passed; git diff --check passed; live Guardian served anonymous health, metrics, and Observatory HTTP on port 20997; browser showed live secure stream with 55 runtime events."
+    }
+  }
+}

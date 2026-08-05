@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5765,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][planning][github] Schedule Agent Logic account repository migration",
+    "slug": "v0-92-planning-github-agent-logic-account-repository-migration",
+    "version": "v0.92",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Add one bounded planning-only reference for the migration plan to the v0.92 issue-wave authority.",
+      "deliverables": [
+        "Canonical v0.92 YAML scheduling reference",
+        "Truthful Gate 0 prerequisite wording",
+        "Focused YAML and diff validation"
+      ],
+      "acceptance_criteria": [
+        "The YAML references .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+        "The entry names destination organization, owners, six candidates, billing/security confirmation, and asksifu exclusion as unresolved Gate 0 prerequisites",
+        "No transfer or approval claim is introduced",
+        "A bounded review confirms the edit is planning-only"
+      ],
+      "dependencies": [
+        ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md"
+      ],
+      "non_goals": [
+        "Organization creation",
+        "Billing or runner configuration",
+        "Repository transfer",
+        "Remote, Actions, Pages, DNS, secret, workflow, or permission changes"
+      ]
+    }
+  }
+}

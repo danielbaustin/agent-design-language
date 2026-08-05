@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.review_assignment_request.v1",
+  "issue": 5352,
+  "expected_generation": 7,
+  "expected_digest": "44a0fceba694cdb808eabe07e9af93bcf08e3c79ccdbb4812faaf34163dc3b22",
+  "claim_id": "claim-5352-v0918-final-handoff",
+  "reviewer": "Wegener",
+  "assigned_by": "codex:wp21-final-handoff",
+  "scope": [
+    ".csdlc/issues/5352",
+    ".csdlc/evidence/5352",
+    ".csdlc/prepared/issues/5352",
+    "adl/src/csm_runtime_api.rs",
+    "docs/milestones/v0.91.8/handoff"
+  ]
+}

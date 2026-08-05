@@ -110,7 +110,8 @@ cd "$ROOT_DIR"
 ADL_RUNTIME_ROOT="$RUNTIME_ROOT" \
 ADL_RUNS_ROOT="$RUNS_ROOT" \
 ADL_PROVIDER_INVOCATIONS_PATH="$INVOCATIONS" \
-  bash adl/tools/pr.sh run adl/examples/v0-88-real-multi-agent-tea-discussion.adl.yaml \
+  adl-runtime run adl/examples/v0-88-real-multi-agent-tea-discussion.adl.yaml \
+    --run \
     --trace \
     --allow-unsigned \
     --out "$STEP_OUT" \

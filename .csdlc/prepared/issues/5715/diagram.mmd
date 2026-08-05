@@ -1,0 +1,12 @@
+flowchart LR
+  Z["Operator design zip"] --> R["Immutable reference HTML/assets"]
+  R --> G["Podcast launch generator"]
+  G --> P["demos/podcast/index.html"]
+  G --> E["episode page"]
+  G --> F["RSS feed"]
+  A["#5711 audio artifact"] --> P
+  A --> E
+  A --> F
+  V["Podcast validation"] --> P
+  V --> E
+  V --> F

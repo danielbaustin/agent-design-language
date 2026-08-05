@@ -26,9 +26,6 @@ PRIMARY_BINARIES = {
 }
 
 SUPPORTED_SHIMS = {
-    "pr.sh": "Canonical agent-facing issue workflow wrapper; implementation owner may move but wrapper remains public workflow spine.",
-    "validate_structured_prompt.sh": "Compatibility shim over the direct structured-prompt validator binary.",
-    "lint_prompt_spec.sh": "Compatibility shim over the direct prompt-spec lint binary.",
 }
 
 REMOVE_CANDIDATES = {
@@ -40,7 +37,6 @@ PRIMARY_TOOL_SCRIPTS = {
     "run_owner_validation_lane.sh": "Primary focused owner-lane runner for bounded validation.",
     "run_pr_fast_test_lane.sh": "Primary focused PR-fast local test runner.",
     "check_coverage_impact.sh": "Primary local coverage-impact gate for risky changed files.",
-    "check_issue_metadata_parity.sh": "Primary metadata parity guard for issue records.",
 }
 
 HISTORICAL_EVIDENCE = [
@@ -64,40 +60,40 @@ HISTORICAL_EVIDENCE = [
 
 CORE_WORKFLOW_COMMANDS = [
     (
-        "adl/tools/pr.sh init <issue>",
+        "csdlc-install resolve",
         "core workflow command",
         "primary",
-        "Canonical issue bootstrap command in the current governed workflow spine.",
+        "Resolve the installed v2 generation selector before issue work.",
     ),
     (
-        "adl/tools/pr.sh doctor <issue>",
+        "csdlc-init --root <worktree> --request <bootstrap-request.json>",
         "core workflow command",
         "primary",
-        "Canonical readiness/doctor command for tracked issue work.",
+        "Atomically create the canonical issue record and six projections.",
     ),
     (
-        "adl/tools/pr.sh run <issue>",
+        "csdlc-bind --root <worktree> --request <bind-request.json>",
         "core workflow command",
         "primary",
-        "Canonical issue binding command for execution-time branch/worktree setup.",
+        "Bind the issue claim, branch, and worktree through typed argv.",
     ),
     (
-        "adl/tools/pr.sh ready <issue>",
+        "csdlc-validate --root <worktree> finalize --request <finalize-request.json>",
         "core workflow command",
         "primary",
-        "Canonical readiness classification command for tracked issue work.",
+        "Execute declared PVF proof and atomically record Implemented truth.",
     ),
     (
-        "adl/tools/pr.sh finish <issue>",
+        "csdlc-review record --request <review-request.json>",
         "core workflow command",
         "primary",
-        "Canonical finish/publication command for issue branches.",
+        "Record exact-head review truth before publication.",
     ),
     (
-        "adl/tools/pr.sh closeout <issue>",
+        "csdlc-publish publish --request <publication-request.json>",
         "core workflow command",
         "primary",
-        "Canonical closeout command after merge or no-PR resolution.",
+        "Publish one ready PR only after review and validation gates pass.",
     ),
     (
         "pr-janitor skill / janitor workflow",
@@ -106,10 +102,10 @@ CORE_WORKFLOW_COMMANDS = [
         "Canonical in-flight PR blocker routing surface once a PR has been published.",
     ),
     (
-        "adl-csdlc tooling prompt-template ...",
+        "csdlc-edit apply --request <edit-request.json>",
         "core workflow command",
         "primary",
-        "Primary direct prompt-template workflow surface after the small-binary split.",
+        "Typed prompt-card values edit surface after final v1 sunset.",
     ),
     (
         "adl-validate-structured-prompt --type <kind> --phase <phase> --input <card>",
@@ -161,7 +157,7 @@ def classify_tool_script(path: Path) -> tuple[str, str]:
 def classify_skill_dir(path: Path) -> tuple[str, str]:
     name = path.name
     if name in {
-        "workflow-conductor",
+        "csdlc-doctor",
         "pr-init",
         "pr-ready",
         "pr-run",

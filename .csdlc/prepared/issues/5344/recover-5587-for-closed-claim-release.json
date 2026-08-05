@@ -1,0 +1,8 @@
+{
+  "issue": 5587,
+  "expected_generation": 17,
+  "expected_digest": "6fc256bd57473e5f20bc44ca8343e137cb72fdaf4cdd39550eb38daa9fdd3071",
+  "claim_id": "claim-5587-closed-release-recovery",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "GitHub issue #5587 and PR #5626 are already closed and merged; recover stale reviewed lifecycle truth solely to use the supported closed-issue claim release without running or re-enabling the paused Drive mirror."
+}

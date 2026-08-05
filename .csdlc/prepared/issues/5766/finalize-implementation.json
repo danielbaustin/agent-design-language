@@ -1,0 +1,134 @@
+{
+  "schema": "csdlc.finalize_request.v1",
+  "issue": 5766,
+  "expected_generation": 3,
+  "expected_digest": "da013bd87ecec4edb4f76c139266614a75c1daa6e1afc86ddf20c9564b37a9a7",
+  "claim_id": "claim-5766-csm-runtime-endpoint-inventory",
+  "actor": "codex:issue-5766-runtime-endpoint-inventory",
+  "summary": "Reconciled the Runtime v3 CSM API advertised endpoint inventory with the mounted route constants, kept the broader local CSM dispatch inventory distinct, and added focused drift tests for both surfaces.",
+  "changes": [
+    "Made adl-runtime CSM_RUNTIME_API_ENDPOINTS an alias of CSM_RUNTIME_API_MOUNTED_ROUTES and routed the Axum router from the same path constants.",
+    "Kept /v1/ready out of the mounted Runtime v3 CSM API advertised endpoint list; the broader local dispatch surface remains unversioned /ready only.",
+    "Added a local CSM dispatch test that walks every advertised local endpoint and proves unknown routes report the supported endpoint set."
+  ],
+  "artifacts": [
+    "adl-runtime/src/runtime_api.rs",
+    "adl/src/csm_runtime_api.rs",
+    ".csdlc/evidence/5766"
+  ],
+  "execution": {
+    "manifest": {
+      "schema": "csdlc.pvf.manifest.v1",
+      "lanes": [
+        {
+          "id": "runtime-api-mounted-inventory",
+          "proof_role": "release_gate",
+          "purpose": "Prove the mounted Runtime v3 CSM API advertises exactly the mounted /v1 routes.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 2048,
+            "tokens": 0
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "runtime-endpoint-inventory",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "/Users/daniel/.cargo/bin/cargo",
+          "argv": [
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "runtime_api_contract_advertises_only_served_routes"
+          ],
+          "evidence": {
+            "max_log_bytes": 200000,
+            "redact_values": [],
+            "require_relative_paths": false
+          }
+        },
+        {
+          "id": "local-csm-dispatch-inventory",
+          "proof_role": "release_gate",
+          "purpose": "Prove every advertised local CSM dispatch endpoint resolves through runtime_api_response and unknown routes return supported endpoint metadata.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 2,
+            "memory_mib": 4096,
+            "tokens": 0
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "runtime-endpoint-inventory",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 600,
+          "executable": "/Users/daniel/.cargo/bin/cargo",
+          "argv": [
+            "test",
+            "--offline",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "runtime_api_advertised_endpoints_resolve_through_local_dispatch"
+          ],
+          "evidence": {
+            "max_log_bytes": 200000,
+            "redact_values": [],
+            "require_relative_paths": false
+          }
+        },
+        {
+          "id": "runtime-endpoint-diff-hygiene",
+          "proof_role": "release_gate",
+          "purpose": "Prove the bounded #5766 diff has no whitespace or patch-format defects.",
+          "determinism": "deterministic",
+          "resources": {
+            "cpu_units": 1,
+            "memory_mib": 512,
+            "tokens": 0
+          },
+          "credentials": [],
+          "network": "denied",
+          "dependencies": [],
+          "parallel_group": "runtime-endpoint-hygiene",
+          "release_gate": "required",
+          "execution": "local",
+          "timeout_seconds": 120,
+          "executable": "/opt/homebrew/bin/git",
+          "argv": [
+            "diff",
+            "--check"
+          ],
+          "evidence": {
+            "max_log_bytes": 200000,
+            "redact_values": [],
+            "require_relative_paths": true
+          }
+        }
+      ]
+    },
+    "selection": {
+      "requested_lanes": [
+        "runtime-api-mounted-inventory",
+        "local-csm-dispatch-inventory",
+        "runtime-endpoint-diff-hygiene"
+      ],
+      "allow_network": false,
+      "available_credentials": []
+    },
+    "budget": {
+      "max_parallel": 1,
+      "cpu_units": 2,
+      "memory_mib": 4096,
+      "tokens": 0
+    },
+    "root": "/Volumes/FastWork/adl-wp-5766",
+    "evidence_dir": "/Volumes/FastWork/adl-wp-5766/.csdlc/evidence/5766",
+    "cancellation_file": null
+  }
+}

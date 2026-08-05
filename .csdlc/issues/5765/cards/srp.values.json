@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5765,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][planning][github] Schedule Agent Logic account repository migration",
+    "slug": "v0-92-planning-github-agent-logic-account-repository-migration",
+    "version": "v0.92",
+    "generation": 10
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\n.csdlc/issues/5765\n.csdlc/prepared/issues/5765",
+      "review_revision": "git-blake3:cbd9cd0af076e70965443b90279ed5a6ce136ffc:5d06e9748d96851d4088861a5dfdd2d123d46520dd154b3b5e9cfc6b4c690224",
+      "reviewer": "subagent:review-5765b",
+      "review_prompts": [
+        "Does the reference preserve planning-only truth?",
+        "Are all Gate 0 prerequisites named?",
+        "Is asksifu explicitly excluded?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The source migration plan remains operator-local and unpublished under the ignored .adl/TBD boundary; the YAML marks that visibility explicitly."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

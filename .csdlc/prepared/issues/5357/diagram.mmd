@@ -1,0 +1,19 @@
+flowchart TD
+  P["Preparation: six cards and reviewed contracts"]
+  D["WP-18 #5356 merged + typed closed_out + receipt + ancestry"]
+  H["Canonical handoff (read-only)"]
+  C["Freeze tracked exact-revision corpus manifest"]
+  R["Record identity, controls, conflicts, prompt and dispatch receipt"]
+  X["Read-only external review"]
+  F["Findings first: evidence | inference | author decision"]
+  S["Typed internal synthesis and disposition"]
+  M["Serialized publication, merge, post-merge proof, closeout"]
+  W["Release WP-20 remediation"]
+  B["Fail closed; no dispatch or lifecycle authority"]
+  P --> D
+  D -->|pass| H
+  D -->|fail| B
+  H --> C --> R --> X --> F --> S --> M --> W
+  C -->|drift or unsafe input| B
+  R -->|identity or independence ambiguity| B
+  F -->|malformed or unsupported assertions| B

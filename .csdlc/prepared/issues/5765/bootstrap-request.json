@@ -1,0 +1,49 @@
+{
+  "issue": 5765,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5765/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5765/diagram.mmd",
+  "design_reviewer": "operator:5765",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5765-v092-account-migration-scheduling",
+    "owner": "codex:5765",
+    "generation": 0,
+    "acquired_unix_seconds": 1785784093,
+    "expires_unix_seconds": 1786388893,
+    "heartbeat_unix_seconds": 1785784093,
+    "branch": "codex/5765-v092-migration",
+    "worktree": ".worktrees/adl-5765-v092-migration",
+    "protected_paths": [
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      ".csdlc/issues/5765",
+      ".csdlc/prepared/issues/5765"
+    ],
+    "purpose": "Schedule the Agent Logic account repository migration as planning-only v0.92 work"
+  },
+  "initial": {
+    "title": "[v0.92][planning][github] Schedule Agent Logic account repository migration",
+    "slug": "v0-92-planning-github-agent-logic-account-repository-migration",
+    "version": "v0.92",
+    "goal": "Make the planning-only Agent Logic account repository migration visible in the canonical v0.92 issue-wave authority.",
+    "required_outcome": "The v0.92 planning authority contains one source-grounded reference to the migration plan and preserves all Gate 0 prerequisites and non-claims.",
+    "declared_scope": ["docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"],
+    "authority_boundary": ["Issue 5765 owns scheduling only", "The TBD migration plan remains the planning source", "No GitHub or repository mutation is authorized"],
+    "task_boundary": "Add one bounded planning-only reference for the migration plan to the v0.92 issue-wave authority.",
+    "deliverables": ["Canonical v0.92 YAML scheduling reference", "Truthful Gate 0 prerequisite wording", "Focused YAML and diff validation"],
+    "acceptance_criteria": ["The YAML references .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md", "The entry names destination organization, owners, six candidates, billing/security confirmation, and asksifu exclusion as unresolved Gate 0 prerequisites", "No transfer or approval claim is introduced", "A bounded review confirms the edit is planning-only"],
+    "dependencies": [".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md", "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"],
+    "repo_inputs": ["docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml", ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md"],
+    "non_goals": ["Organization creation", "Billing or runner configuration", "Repository transfer", "Remote, Actions, Pages, DNS, secret, workflow, or permission changes"],
+    "plan_summary": "Add the smallest source-grounded v0.92 planning reference, validate it, review it, and publish a PR without performing migration work.",
+    "steps": [{"id":"S1","action":"Add the bounded migration scheduling reference to the v0.92 issue-wave YAML","acceptance_ids":["AC-1","AC-2","AC-3"],"status":"pending"},{"id":"S2","action":"Run focused YAML/diff validation and exact-head review before publication","acceptance_ids":["AC-4"],"status":"pending"}],
+    "invariants": ["Planning-only status remains explicit", "asksifu is never a migration candidate", "Unknown sixth candidate blocks execution", "No tracked edit occurs on main"],
+    "risks": ["The TBD source plan is intentionally local and ignored; the YAML reference must remain truthful about that boundary"],
+    "planning_profile": "small",
+    "stop_conditions": ["Any request to transfer or configure GitHub", "Any need to edit files outside the declared scope", "Any work on main"],
+    "validation_lanes": [{"lane":"docs-planning-focused","proof_role":"Validate YAML structure, reference text, and diff scope","deterministic":true,"resource_profile":"small","parallel_group":"docs","budget_seconds":120,"budget_tokens":1000,"argv":["git","diff","--check"],"acceptance_ids":["AC-1","AC-2","AC-3","AC-4"]}],
+    "failure_policy": "Fail closed if the reference is missing, the scope widens, or the edit implies migration authorization.",
+    "review_prompts": ["Does the reference preserve planning-only truth?", "Are all Gate 0 prerequisites named?", "Is asksifu explicitly excluded?"],
+    "review_scope": "Only the v0.92 YAML scheduling reference and its direct wording."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "issue": 5362,
+  "base_branch": "main",
+  "branch": "codex/5362-v0918-preparation",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5362-v0918-preparation",
+    "owner": "codex:5362-preparation-owner",
+    "generation": 0,
+    "acquired_unix_seconds": 1784754875,
+    "expires_unix_seconds": 1785359675,
+    "heartbeat_unix_seconds": 1784754875,
+    "branch": "codex/5362-v0918-preparation",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5362",
+      ".csdlc/locks/5362.lock",
+      ".csdlc/prepared/issues/5362",
+      ".csdlc/evidence/5362"
+    ],
+    "purpose": "Prepare #5362 WP-21 feature-list and v0.92 planning truth only; no execution until WP-20 #5363 is live-merged and ancestral"
+  }
+}

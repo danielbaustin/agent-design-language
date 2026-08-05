@@ -1,0 +1,51 @@
+{
+  "issue": 5344,
+  "expected_generation": 17,
+  "expected_digest": "ee1167d25a6805819415fe223e318e1c1c6e7c46c7570ba09115eecc4a8f9360",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+  "evidence": {
+    "reviewer": "subagent:019fac6c-4d03-74e3-90a2-3c3f07ed609d",
+    "scope": [
+      ".csdlc/issues/5344",
+      ".csdlc/prepared/issues/5344",
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/test_ci_path_policy.sh"
+    ],
+    "reviewed_revision": "git-blake3:bf4e123ac967da193393c7ff5efdb1c21c951955:2ef1e23fe28721688dec6ff5133d5d2cae45432d3a53540f9cad67bd999adf8b",
+    "findings": [
+      {
+        "id": "F-5344-CI-1",
+        "severity": "p1",
+        "summary": "Line-oriented component splitting can hide a Windows-illegal suffix after an embedded newline.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5344-CI-2",
+        "severity": "p2",
+        "summary": "The regression does not cover spaces or an illegal component after an embedded newline.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5344-CI-3",
+        "severity": "p2",
+        "summary": "The SRP prompts remain stale selector questions instead of the bounded CI path-policy recovery scope.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true
+  }
+}

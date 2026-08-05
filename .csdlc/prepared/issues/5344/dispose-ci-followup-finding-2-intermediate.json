@@ -1,0 +1,14 @@
+{
+  "issue": 5344,
+  "card": "srp",
+  "expected_generation": 30,
+  "expected_digest": "e724d1aa383ced7517d1051c041fdcbe0740a84a409eb4337248868af571cd08",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Accept the stale SRP prompt projection only as an intermediate recovery state; immediately recover reviewed truth, replace the prompts, and require a final clean exact review before publication.",
+  "operation": {
+    "operation": "dispose_finding",
+    "finding_id": "F-5344-CI-FOLLOWUP-2",
+    "disposition": "accepted_risk"
+  }
+}

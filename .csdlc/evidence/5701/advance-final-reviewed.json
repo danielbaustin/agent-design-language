@@ -1,0 +1,14 @@
+{
+  "issue": 5701,
+  "card": "srp",
+  "expected_generation": 10,
+  "expected_digest": "9072cc757e4891a5ffdfb2a88de81937a0c48eeb3215c17c6c6473ca53a60fce",
+  "claim_id": "claim-5701-runtime-v3-openapi-contracts",
+  "actor": "codex:019fa9d0-3d42-7ed2-949c-3c6082e40a44",
+  "reason": "The final exact-head GPT-5.5 review passed with zero findings after all contract and security-boundary corrections.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  },
+  "fail_after_backup": false
+}

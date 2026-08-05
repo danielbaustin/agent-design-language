@@ -1,0 +1,20 @@
+{
+  "issue": 5344,
+  "card": "srp",
+  "expected_generation": 34,
+  "expected_digest": "d51fee0c029ce58bcdb0748475003bd9a4739d8e1c909305d9a360f67b70af50",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Correct the final CI follow-up review prompts after exact-head failures exposed stale guardian inventory and lease-listener startup-race proofs.",
+  "operation": {
+    "operation": "correct_review_prompts_after_recovery",
+    "values": [
+      "Does the Runtime v3 coverage mapping select every existing guardian unit and guardian_cli integration test without naming deleted tests?",
+      "Does the tooling-contract regression execute the mapper expression against the live nextest inventory and end with an explicit PASS marker?",
+      "Does the healthy-window test retry only the local authenticated lease-listener connection with a strict bound while leaving production Guardian behavior unchanged?",
+      "Does repeated exact execution prove the restart-budget test remains deterministic after the listener startup-race repair?",
+      "Was #5587 already GitHub merged and closed before its expired claim was recovered and released through supported typed routes without running or re-enabling the paused Drive mirror?",
+      "Do the SRP, SOR, audit, and exact review truthfully cover only this bounded CI follow-up?"
+    ]
+  }
+}

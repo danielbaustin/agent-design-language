@@ -1,0 +1,23 @@
+{
+  "issue": 5361,
+  "card": "stp",
+  "expected_generation": 5,
+  "expected_digest": "3ee4a90518545ac7d03a6af2178e8b18e3ab4d02676e8a5b376dabb943889703",
+  "claim_id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Align Runtime v3 acceptance dependencies with the canonical v0.91.8 shadow-parity gate",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "merged WP-01 #5594",
+      "Runtime v3 architecture authority #5336",
+      "Parity-A #5591 before Parity-B #5592, Parity-C #5589, and Parity-D #5590",
+      "ADL v2 Runtime adapter #5341",
+      "provider and tool adapter owner #5349",
+      "exact-revision shadow parity #5350 with every mismatch dispositioned",
+      "live multi-agent workcell proof #5501"
+    ]
+  },
+  "fail_after_backup": false
+}

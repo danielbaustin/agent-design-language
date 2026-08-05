@@ -1,0 +1,17 @@
+[package]
+name = "adl-workcell-convergence"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Pure deterministic workcell output convergence for ADL v2"
+
+[dependencies]
+adl-workcell-conductor = { path = "../adl-workcell-conductor" }
+blake3 = "=1.8.5"
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.151"
+thiserror = "=2.0.18"
+
+[lints.rust]
+unsafe_code = "forbid"

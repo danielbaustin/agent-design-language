@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5757,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5757-observatory-corrective",
+  "title": "[v0.91.8][observatory][security] Fix trusted-origin, rerender race, and shared-certificate proof",
+  "body": "## Summary\n\n- Restrict Runtime v3 Observatory browser API selection to the exact trusted `https://localhost:20997` origin before fetch, bearer login, or WSS construction.\n- Add monotonic generation guards across retained fallback, live polling, WSS messages, and stop/connect transitions so stale completions cannot overwrite newer operator intent.\n- Extend the integrated Observatory proof with trusted-origin negative cases, stale completion races, authenticated WSS control, and shared localhost certificate proof across ports 8765 and 20997.\n\n## Validation\n\n- `csdlc-validate finalize --request .csdlc/requests/5757-finalize.json`\n- `bash adl/tools/test_v0917_html_observatory_integrated_proof.sh`\n- `node --check demos/html-observatory/app.js`\n- `git diff --check`\n- `csdlc-review guard --request .csdlc/requests/5757-review-guard.json`\n\nCloses #5757\nCloses #5722",
+  "draft": false,
+  "revision": "git-blake3:043ef5b3a017f3a288dad825fa6c2a30f27c9ed0:dc1c1480b0056fe95b33faffd02ec8343a768917f29e447bedccb655285e9b69",
+  "commit_sha": "043ef5b3a017f3a288dad825fa6c2a30f27c9ed0"
+}

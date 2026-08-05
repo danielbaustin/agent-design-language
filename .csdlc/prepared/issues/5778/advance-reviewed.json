@@ -1,0 +1,13 @@
+{
+  "issue": 5778,
+  "card": "srp",
+  "expected_generation": 5,
+  "expected_digest": "bdbb6ba32fd2fc30c1651267c7f8e2e799a49aab6b6a8b3dbb9cde2721b60e68",
+  "claim_id": "claim-5778-derived-terminal-finish",
+  "actor": "codex:5778-implementation",
+  "reason": "Independent exact-head review passed after the sole live repository configuration blocker was provisioned.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

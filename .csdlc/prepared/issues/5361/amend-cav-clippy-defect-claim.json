@@ -1,0 +1,12 @@
+{
+  "issue": 5361,
+  "claim_id": "claim-5361-v0918-runtime-v3-acceptance-readiness",
+  "expected_generation": 9,
+  "expected_digest": "924e8a01c4fe529a213e5c36797e77168068f46faeca4f21da3aae90293efc6f",
+  "now_unix_seconds": 1784819364,
+  "actor": "codex:019f8f7c-b1ca-7642-85ed-0f423d4f9a3e",
+  "reason": "Strict acceptance Clippy exposed two test-only Runtime v3 CAV initializer defects; add only the bounded file required to fix that acceptance defect.",
+  "add_protected_paths": [
+    "adl-runtime/src/cav.rs"
+  ]
+}

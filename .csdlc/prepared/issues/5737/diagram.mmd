@@ -1,0 +1,10 @@
+flowchart LR
+  A["Scan issue records"] --> B["Claim matches active checkout?"]
+  B -->|No| C["Ignore stale projection for collision authority"]
+  B -->|Yes| D["Protected-path overlap?"]
+  D -->|No| E["Skip terminal receipt identity"]
+  D -->|Yes| F["Check terminal release"]
+  F -->|Terminal released| E
+  F -->|Live or invalid| G["Fail closed on collision or reconciliation"]
+  H["Dormant claim recovery"] --> I["Authority-only record commit"]
+  I --> J["Typed design reapproval"]

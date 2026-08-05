@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5713,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][runtime-v3][tls] Add stable rcgen local TLS bootstrap",
+    "slug": "runtime-v3-rcgen-local-tls",
+    "version": "v0.91.8",
+    "generation": 14
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-runtime/Cargo.toml\nadl-runtime/Cargo.lock\nadl-runtime/src/lib.rs\nadl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs\nadl-runtime/src/bin/adl-runtime-lifecycle-soak.rs\nadl-runtime/src/local_tls.rs\nadl-runtime/tests/local_tls.rs\ndocs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md\n.csdlc/evidence/5713\n.csdlc/issues/5713",
+      "review_revision": "git-blake3:00a261cb0c47ddcd6a2d42107f9ada74f3a62aea:f5bb750c78039327541f54205418d4db74c07a6b6fa2aab7d6c7f0e954741c66",
+      "reviewer": "subagent:gpt-5.5-sartre",
+      "review_prompts": [
+        "Does configuration fail closed unless TLS mode is explicitly managed_external or local_self_signed?",
+        "Can local bootstrap ever mutate externally managed certificate/key paths?",
+        "Does ordinary restart reuse the same certificate identity without regeneration?",
+        "Is replacement explicit and atomic with last-valid preservation on failure?",
+        "Do tests prove SANs, server-auth, rustls acceptance, restrictive permissions, and concurrent exclusion?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Native Windows execution remains a pre-merge integration residual because nessus.local did not resolve during pre-PR validation; the protected current-user-only DACL behavior is implemented and covered by a native-Windows-gated Rust test."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

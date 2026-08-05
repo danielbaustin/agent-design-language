@@ -1,0 +1,37 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "gemini-3.1-pro-preview",
+    "credential_ref": "env:GEMINI_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "model_ref": "gemini-3.1-pro-preview",
+    "provider_model_id": "gemini-3.1-pro-preview",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "review-time"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1785449840",
+      "duration_ms": 16474,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted provider text len=1604]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 16477,
+  "request_id": "wp14a-5384-exact-review-71e3b70b8",
+  "output_text": "PASS and blocker count 0.\n\n**Independent Reviewer Assessment:**\n\nBased on the provided source facts for ADL issue #5384 WP-14A at commit `71e3b70b8f7fd3f0ffca2c020eb78599fd115658`, the acceptance packet meets all criteria for a thin integrated release:\n\n1. **Coherent Deployable Baseline:** Yes. All constituent product updates (C-SDLC v2, Runtime v3, ADL v2 soak/rollback, ADL v2 reversible default) are successfully merged, and their accepted squashes are verified as strictly ancestral to the accepted baseline `11151e0beab02b1667f6505b7f8992bfd47d2f8f`.\n2. **Sufficiency of Proof:** Yes. The combination of matched pinned hashes for WP-12/Runtime retained evidence and zero-failure runs from repo-native validators (`adl-issue`, `adl-pr-validation`) is fully sufficient and truthful. Rerunning full endurance suites is unnecessary and correctly bypassed.\n3. **Boundaries and Claims:** Yes. The rollback boundary is strictly defined (ending 2026-08-12) with explicit safeguards (`deletion_authorized=false`). The acceptance explicitly isolates residuals (0.91.7 labeling, stale dependency projections) and avoids overclaiming unsupported implementations (AWS, GPU, Unity).\n4. **Deferred WP-13:** Yes. Deferring the WP-13 deletions (#5346/#5347) is safe, non-blocking for WP-14A, and logically consistent with the `deletion_authorized=false` parameter. It remains properly documented as a mandatory prerequisite for #5356.\n5. **Compactness:** Yes. The packet successfully scopes out product implementation and downstream lifecycle work, maintaining its integrity as an acceptance-only integration gate.",
+  "output_text_excerpt": "[redacted provider text len=1604]",
+  "artifact_ref": ".csdlc/evidence/5384/gemini-review/result.json",
+  "trace_ref": "provider_adapter.circuit_breaker"
+}

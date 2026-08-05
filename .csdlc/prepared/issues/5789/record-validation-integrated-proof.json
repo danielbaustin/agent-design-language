@@ -1,0 +1,22 @@
+{
+  "issue": 5789,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "094eacf3f73745e913ed42296afec4cd11041663fdde238caee5e41106cb434b",
+  "claim_id": "claim-5789-observatory-full-functionality",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Record the existing integrated HTML Observatory proof after it was updated to write #5789-local evidence and prove Runtime v3 default/signed-control truth.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/5789/adl-runtime-kernel-target",
+        "bash",
+        "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+      ],
+      "purpose": "Validate checked-in HTML/CSS/JS/README/config, retained Observatory evidence, Runtime v3 browser config, shared localhost certificate proof, Runtime v3 public read freshness, and Observatory WSS public-read/write-login behavior.",
+      "outcome": "passed",
+      "evidence_ref": ".csdlc/evidence/5789/shared-localhost-certificate/fingerprints.log"
+    }
+  }
+}

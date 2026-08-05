@@ -1,0 +1,59 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5362,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-21] Align feature list and v0.92 planning truth",
+    "slug": "v0918-wp21-feature-list-v092-planning-truth",
+    "version": "v0.91.8",
+    "generation": 13
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare lifecycle packet only; planning edits are future execution work.",
+      "deliverables": [
+        "generated six-card preparation packet",
+        "concise design and diagram",
+        "focused typed doctor validation"
+      ],
+      "acceptance_criteria": [
+        "AC-1: #5362 remains preparation-only with changes confined to .csdlc/issues/5362, .csdlc/prepared/issues/5362, .csdlc/evidence/5362, and .csdlc/locks/5362.lock",
+        "AC-2: future execution consumes #5352, #4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 as live CLOSED and current-main closed_out/merged evidence at the execution base",
+        "AC-3: feature-list and v0.92 planning seed work cites exact current-main evidence paths and keeps unsupported readiness, birthday, adaptive-learning, or implementation claims as blockers or non-claims",
+        "AC-4: preparation creates no PR, performs no work-package execution, mutates no predecessor or version:v0.92 issue, and touches no product implementation"
+      ],
+      "dependencies": [
+        "#5352 CLOSED/closed_out/merged on current origin/main as exact-revision v0.92 consumption handoff",
+        "#4758 CLOSED/closed_out/merged on current origin/main as launch readiness input",
+        "#4759 CLOSED/closed_out/merged on current origin/main as activation-map input",
+        "#4760 CLOSED/closed_out/merged on current origin/main as Memory Palace handoff input",
+        "#4761 CLOSED/closed_out/merged on current origin/main as capability-envelope input",
+        "#4762 CLOSED/closed_out/merged on current origin/main as birth-witness and receipt input",
+        "#4763 CLOSED/closed_out/merged on current origin/main as birthday-doc and external-launch input",
+        "#5007 CLOSED/closed_out/merged on current origin/main as Memory Palace ADR input",
+        "#5107 CLOSED/closed_out/merged on current origin/main as Adaptive Learning DAG queue input only"
+      ],
+      "repo_inputs": [
+        "issue #5362 live body",
+        "origin/main 8621b6f3b1b91d3ea290e16d07f80ec29afd4ece",
+        ".csdlc/evidence/5362/dependency-verification.v1.json",
+        "docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml",
+        "docs/milestones/v0.91.8/SPRINT_v0.91.8.md",
+        "docs/milestones/v0.91.8/QUALITY_GATE_v0.91.8.md",
+        "docs/milestones/v0.91.8/FEATURE_PROOF_COVERAGE_v0.91.8.md",
+        "docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md",
+        ".csdlc/issues/5352/index.json and .csdlc/evidence/5352/* on current main",
+        ".csdlc/issues/4758, #4759, #4760, #4761, #4762, #4763, #5007, and #5107 current-main records and evidence"
+      ],
+      "non_goals": [
+        "birthday implementation",
+        "feature-list edits during preparation",
+        "PR publication",
+        "receipt-gated execution"
+      ]
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5770,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "d7f092b1ce3e639f4acac6ae3928bff04864f7c31589cc53a007685b9be4c617",
+  "phase": "closed_out",
+  "generation": 1,
+  "digest": "ba1757a90e55100f0fee292087b57c1bf041f6ae69903d39cfaf0060d0d21065",
+  "claim": null,
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": {
+    "pull_request": 5772,
+    "disposition": "merged",
+    "observed_sha": "ecfe785f8d387777276ebb0b1c6ae4fac62091ee",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5770.json",
+    "released_branch": "",
+    "released_worktree": "",
+    "released_protected_paths": []
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5770/retained/design.md",
+  "diagram_path": ".csdlc/issues/5770/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019fbc07-3030-7150-a235-a6f0a8937350",
+      "revision": "0f0a85d0b78f95f7af19ff53c4896be514f6c1528de4916ad4ead5707c1577bf"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "6b25d98616656237683f6d382986a4b5579e4529c4adb633036643a15977a0f7",
+      "rendered_digest": "b5afd43547bff78079335e6d3aeeab1f4908857abc0f0b3ec30a07106caed7c9",
+      "ast_digest": "6218279a89718c3b8588e6098274a569e38e36b982ff53ecd47d651def407aea"
+    },
+    "stp": {
+      "values_digest": "a40deb83d2b407505aa8d2c8964cbbfaf371b671c29326cb7b64769ee903d351",
+      "rendered_digest": "e0fd72bb68f419e43a793c618bc9810d240bd83c8424a110d23b636d2a87747b",
+      "ast_digest": "f4649b4137c0ed333197296940fb1f6f984725e4d93dd079e841982c743ab03b"
+    },
+    "spp": {
+      "values_digest": "1c18f6e2526b0682684b259e4bfec0ded87c0fc09402f3fa7d3f04ce4486878e",
+      "rendered_digest": "1e66e241bc37df1a44df5481d4f25f011f2c523deadd39d91914a3c7f644067e",
+      "ast_digest": "19ba591394c686373218110826d46ee3f7c82a5f114807e3f1b216b09a0716fb"
+    },
+    "vpp": {
+      "values_digest": "3a1de6fd5778c1c07db05c6886a347634cee69c30debc5d1cdb5ca3a064fbaa0",
+      "rendered_digest": "944d89946c67f7550b71156b32bac29acfbbe51c2a428fd9ea8b948d5f9e3535",
+      "ast_digest": "e61ef52557ce93f1a7fa983173a38bee30d41de3de2dd051c8e5a44d6d2842ed"
+    },
+    "srp": {
+      "values_digest": "654a73e8d050d5a39f3bf4091b43ef775f5178dc7f34bad364a2fa0b7d352c39",
+      "rendered_digest": "632993c5789d085736cd1be37da4429130bdda382ebcb7747c6cfabd217b7738",
+      "ast_digest": "6ca15573b561c65b7e873d862d98d3d415b3d316c3328a7377682c8809f77519"
+    },
+    "sor": {
+      "values_digest": "ac35b47702326e1f82978d139899c6ce804f4ae623de5e576aedd5bc0cc26303",
+      "rendered_digest": "d47f98559194438ff284a762d28b0c4f1b037e0b5ce441dc8090eb911537d91a",
+      "ast_digest": "df524091e69d7122ec3cdd53d3504143ad862a81474ff52c3d67e939240239c4"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "closed_out",
+      "actor": "codex:019fbc07-3030-7150-a235-a6f0a8937350",
+      "reason": "Retain exact observed closure for issue #5770 through merged corrective PR #5772 without reconstructing unavailable lifecycle history."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 1,
+      "actor": "codex:019fbc07-3030-7150-a235-a6f0a8937350",
+      "reason": "Retain exact observed closure for issue #5770 through merged corrective PR #5772 without reconstructing unavailable lifecycle history.",
+      "operation": "recover_recordless_terminal"
+    }
+  ]
+}

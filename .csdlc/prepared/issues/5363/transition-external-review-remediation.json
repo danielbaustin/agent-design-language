@@ -1,0 +1,15 @@
+{
+  "issue": 5363,
+  "expected_generation": 2,
+  "expected_digest": "82b3a63e96f4170ba98603b3385899abd1facfc128685d1c4b61ae1286591b87",
+  "claim_id": "claim-5363-v0918-preparation",
+  "expected_owner": "codex:5363-preparation-owner",
+  "expected_purpose": "Prepare #5363 WP-20 release-tail remediation and preflight only; no implementation until WP-19 #5357 is live-merged and ancestral; verify #5548/#5558 merged evidence instead of treating them as open work",
+  "actor": "codex:wp20-5363-remediation-owner",
+  "purpose": "Execute #5363 WP-20 remediation for the operator-supplied blocked WP-19 external-review findings; retain the exact PDF, disposition every finding, correct bounded v0.91.8 documentation truth, and prepare truthful WP-19/WP-20 closeout evidence without claiming release approval.",
+  "reason": "Operator supplied ADL_v0.91.8_External_Review_Findings.pdf and directed WP-20 #5363 to resolve all findings and close WP-19/WP-20. The review returned blocked findings rather than approval, so WP-20 must execute bounded documentation remediation while preserving the no-release-approval truth.",
+  "now_unix_seconds": 1785866820,
+  "add_protected_paths": [
+    "docs/milestones/v0.91.8/review/wp19_closeout_5357"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 5558,
+  "card": "sor",
+  "expected_generation": 27,
+  "expected_digest": "180321d52827c02d581ccca75d6e87bd655c6b3fe7b0b43e4b7d7960a1cb36fe",
+  "claim_id": "claim-5558-corrective-1785570394",
+  "actor": "codex:5558-corrective",
+  "reason": "Advance the exact reviewed orphaned prompt-editor deletion with no actionable findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

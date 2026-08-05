@@ -1,0 +1,19 @@
+{
+  "issue": 5357,
+  "card": "spp",
+  "expected_generation": 7,
+  "expected_digest": "7f619b85853e6e57555c8b856f3df157f3d1d112dc886cefba3ee667c7a6d83f",
+  "claim_id": "claim-5357-v0918-wp19-review-readiness",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Replace the old issue-local preparation sequence with the active full documentation-readiness sequence.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {"id":"S1","action":"Reconcile current main, WP-17 inventory, first-pass review, residual coding, live #5791 ownership, and amend the exact non-overlapping #5357 document claim","acceptance_ids":["AC-1","AC-2","AC-7"],"status":"pending"},
+      {"id":"S2","action":"Audit and update every claimed canonical v0.91.8 review document and the undispatched external handoff; classify all remaining corpus documents as current or historical","acceptance_ids":["AC-2","AC-3","AC-6","AC-7"],"status":"pending"},
+      {"id":"S3","action":"Run exhaustive existence, link, YAML/JSON, stale-truth, redaction, diff, and typed validation; obtain one bounded exact-revision GPT-5.5 documentation review and fix findings","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"pending"},
+      {"id":"S4","action":"Commit and push the reviewed #5357 documentation candidate, then wait for #5791 merge, integrate current main, revalidate exact corpus truth, and leave Target Revision/digest unset until operator freeze","acceptance_ids":["AC-1","AC-2","AC-3","AC-8"],"status":"pending"}
+    ]
+  },
+  "fail_after_backup": false
+}

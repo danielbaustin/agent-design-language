@@ -1,0 +1,1 @@
+{"sequence":1,"generation":1,"actor":"codex:5748-terminal-recovery","reason":"Recover terminal authority for closed issue #5438 from exact merged PR #5462 evidence without reconstructing historical implementation, review, publication, readiness, or CI lifecycle.","operation":"recover_recordless_terminal"}

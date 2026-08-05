@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5719,
+  "expected_generation": 3,
+  "expected_digest": "74857505551f86a7725ff9186ef05c99ba2be34a241ceb6d5e23a1ecac5fe960",
+  "claim_id": "claim-5719-ci-coverage-page-policy",
+  "actor": "codex:5719-execution",
+  "repository": "danielbaustin/agent-design-language",
+  "remote": "origin",
+  "base": "main",
+  "head": "codex/5719-ci-coverage-page-policy",
+  "title": "[v0.91.8][ci][coverage] Avoid duplicate hosted coverage on podcast/demo page PRs",
+  "body": "Closes #5719\n\nFixes the #5716 coverage-selection regression by mapping podcast launch and studio demo surfaces into the focused `podcast_launch_packet` validation lane, then routing that lane through `ci_path_policy` without setting `coverage_required` or `full_coverage_required`.\n\nThe stable `adl-coverage-hosted` aggregator remains intact; this change prevents podcast/demo static PRs from scheduling both expensive hosted runtime and workspace producer coverage when no Rust/runtime/provider/tooling behavior changed.\n\nValidation:\n- `python3 -m json.tool adl/config/validation_lane_selector.v0.91.6.json`\n- `bash adl/tools/test_ci_path_policy.sh`\n- `bash adl/tools/test_ci_runtime_contracts.sh`\n- `git diff --check`\n- `csdlc-doctor --repo . --issue 5719`\n\nReview: Heisenberg read-only exact-head review at `b0f71eabb06945d5a7ad6147d7178586e3db86da` returned CLEAN.",
+  "draft": true,
+  "token_file": "/Users/daniel/keys/github.token"
+}

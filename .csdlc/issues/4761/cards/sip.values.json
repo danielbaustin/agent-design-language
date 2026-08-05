@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4761,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-14][capability-envelope] Prepare #4761 v0.92 capability envelope",
+    "slug": "v0918-wp14-capability-envelope-prep-4761",
+    "version": "v0.91.8",
+    "generation": 21
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare typed C-SDLC v2 state for later execution of the v0.92 capability envelope.",
+      "required_outcome": "A later execution session can bind this issue from the issue worktree and produce an evidence-backed capability envelope or an operator-approved blocker.",
+      "declared_scope": [
+        "Create minimal typed v2 issue state for #4761.",
+        "Preserve the capability-envelope concern from the existing task bundle.",
+        "Keep this session preparation-only."
+      ],
+      "authority_boundary": [
+        "Typed C-SDLC v2 artifacts are the preparation authority.",
+        "Legacy .adl task bundle is source context only.",
+        "Receipts are audit-only and non-blocking for this preparation pass."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "No implementation.",
+        "No PR, prep review, broad tests, raw gh, AWS, or root-main writes.",
+        "Use one issue-bound worktree under /Volumes/FastWork from origin/main."
+      ]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "issue": 5344,
+  "expected_generation": 25,
+  "expected_digest": "de68b2a34f12cc73fec44030aa579452015049a52869e580299095f4f450e641",
+  "claim_id": "claim-5344-v0918-wp12-soak-rollback-recovered",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact-head CI exposed a stale guardian inventory assertion and a lease-listener startup race in the authenticated healthy-window test; recover publication truth for bounded repair and one fresh exact review."
+}

@@ -1,0 +1,21 @@
+{
+  "issue": 5362,
+  "card": "spp",
+  "expected_generation": 3,
+  "expected_digest": "3eeccd22258824ef016443dd9363568f3b12223a933700b38e7f35d11c251470",
+  "claim_id": "claim-5362-v0918-preparation-20260804",
+  "actor": "codex:5362-preparation-owner",
+  "reason": "replace stale ancestry stop conditions with current-main evidence and non-claim gates",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "Any required WP-21 sidecar dependency is not live CLOSED at execution time",
+      "Any required dependency lacks current-main phase closed_out, publication observed_state merged, or a terminal receipt path",
+      "The execution base is not refreshed from current origin/main before consuming evidence",
+      "Feature-list disposition lacks an exact evidence path or owner-bound non-claim",
+      "v0.92 wording would overclaim birthday readiness, adaptive-learning implementation, or product implementation",
+      "The work would mutate predecessor issues, issue #5357, PR #5805, issue #5804, a version:v0.92 issue, or product implementation"
+    ]
+  }
+}

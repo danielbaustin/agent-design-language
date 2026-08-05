@@ -1,0 +1,24 @@
+{
+  "issue": 5498,
+  "expected_generation": 11,
+  "expected_digest": "caea375cd89157a623701fb42df573b0c68d51469f7acf558c594154604a7eda",
+  "claim_id": "claim-5498-v0918-wp10a-task-context-adapter-preparation",
+  "actor": "subagent:019f8c25-5bb5-7db2-965d-f9ccaa25f006",
+  "evidence": {
+    "reviewer": "subagent:019f8c25-5bb5-7db2-965d-f9ccaa25f006",
+    "scope": [
+      "adl-v2/Cargo.toml",
+      "adl-v2/Cargo.lock",
+      "adl-v2/crates/adl-workcell-task-adapter",
+      ".csdlc/issues/5498",
+      ".csdlc/prepared/issues/5498"
+    ],
+    "reviewed_revision": "git-blake3:2613fc998ee928a32befc2df2f11481c4949c838:5995b6a72fcba51e064870e592b9a8f72f4b0a917e6775de1904ffaf00f4682e",
+    "findings": [],
+    "residual_risks": [
+      "The adapter intentionally returns an indeterminate cached result after transport timeout because transport completion cannot be inferred safely."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

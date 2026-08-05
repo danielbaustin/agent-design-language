@@ -125,6 +125,14 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+cat >&2 <<'EOF'
+ERROR: demo_codex_ollama_operational_skills.sh is retired.
+Its standalone card-validation path depended on deleted v1 prompt wrappers and
+cannot truthfully be mapped onto issue-bound C-SDLC v2 validation. Use the typed
+csdlc-edit and csdlc-validate issue lifecycle instead.
+EOF
+exit 2
+
 mkdir -p "$ARTIFACT_ROOT"
 WORKSPACE="$ARTIFACT_ROOT/workspace"
 CODEX_HOME_DEMO="$ARTIFACT_ROOT/codex_home"
@@ -381,9 +389,6 @@ Task:
 - Stop after editing only those two files and summarize the changes briefly.
 EOF
 
-bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type stp --input "$STP_PATH" >/dev/null
-bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type sip --phase bootstrap --input "$SIP_PATH" >/dev/null
-
 CAPABILITY_JSON="$(resolve_model_capabilities)"
 NATIVE_TOOL_CALLING="$(printf '%s' "$CAPABILITY_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin)["capabilities"]["native_tool_calling"] else "false")')"
 SEMANTIC_TOOL_FALLBACK="$(printf '%s' "$CAPABILITY_JSON" | python3 -c 'import json,sys; print("true" if json.load(sys.stdin)["capabilities"]["semantic_tool_fallback"] else "false")')"
@@ -481,9 +486,6 @@ else
   fi
   run_semantic_tool_fallback
 fi
-
-bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type stp --input "$STP_PATH"
-bash "$ROOT_DIR/adl/tools/validate_structured_prompt.sh" --type sip --phase bootstrap --input "$SIP_PATH"
 
 printf '%s\n' "OK: local-model operational-skills demo completed via $EXECUTION_MODE"
 printf '%s\n' "Artifacts: $ARTIFACT_ROOT"

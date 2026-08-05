@@ -271,31 +271,7 @@ fn assignment_and_recording_update_index_and_srp_without_publication_side_effect
         !temp.path().join(".git/refs/remotes").exists(),
         "review created remote state"
     );
-    let reassigned = assign_review(
-        &store,
-        ReviewAssignmentRequest {
-            issue: 7,
-            expected_generation: reviewed.generation,
-            expected_digest: reviewed.digest,
-            claim_id: "claim".into(),
-            reviewer: "subagent".into(),
-            assigned_by: "agent".into(),
-            scope: vec!["src".into()],
-        },
-    )
-    .expect("reassign substantive revision");
-    assert!(reassigned.review.is_none());
-    assert!(
-        !evaluate_publication_review(
-            reassigned.review.as_ref(),
-            &reassigned
-                .review_assignment
-                .as_ref()
-                .expect("assignment")
-                .revision
-        )
-        .ready
-    );
+    assert_eq!(reviewed.phase, LifecyclePhase::Reviewed);
 }
 
 #[test]
@@ -409,23 +385,6 @@ fn metadata_only_changes_do_not_stale_a_clean_review() {
     assert!(
         evaluate_publication_review_in_repo(temp.path(), reviewed.review.as_ref(), &current).ready
     );
-    edit_issue(
-        &store,
-        EditRequest {
-            issue: 7,
-            card: CardKind::Sip,
-            expected_generation: reviewed.generation,
-            expected_digest: reviewed.digest,
-            claim_id: "claim".into(),
-            actor: "agent".into(),
-            reason: "enter reviewed phase".into(),
-            operation: SemanticOperation::AdvancePhase {
-                phase: LifecyclePhase::Reviewed,
-            },
-            fail_after_backup: false,
-        },
-    )
-    .expect("reviewed phase");
     let report = csdlc_v2::diagnose(&store, 7);
     assert!(!report
         .findings
@@ -498,23 +457,6 @@ fn reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview() {
         },
     )
     .expect("record review");
-    let reviewed = edit_issue(
-        &store,
-        EditRequest {
-            issue: 7,
-            card: CardKind::Sip,
-            expected_generation: reviewed.generation,
-            expected_digest: reviewed.digest.clone(),
-            claim_id: "claim".into(),
-            actor: "agent".into(),
-            reason: "enter reviewed phase".into(),
-            operation: SemanticOperation::AdvancePhase {
-                phase: LifecyclePhase::Reviewed,
-            },
-            fail_after_backup: false,
-        },
-    )
-    .expect("reviewed phase");
     std::fs::write(temp.path().join("docs/new-proof.md"), "proof\n").expect("dirty change");
     let report = csdlc_v2::diagnose(&store, 7);
     assert!(matches!(
@@ -835,23 +777,7 @@ fn doctor_accepts_committed_typed_metadata_after_review() {
         },
     )
     .expect("review");
-    edit_issue(
-        &store,
-        EditRequest {
-            issue: 7,
-            card: CardKind::Sip,
-            expected_generation: reviewed.generation,
-            expected_digest: reviewed.digest,
-            claim_id: "claim".into(),
-            actor: "agent".into(),
-            reason: "enter reviewed phase".into(),
-            operation: SemanticOperation::AdvancePhase {
-                phase: LifecyclePhase::Reviewed,
-            },
-            fail_after_backup: false,
-        },
-    )
-    .expect("reviewed phase");
+    assert_eq!(reviewed.phase, LifecyclePhase::Reviewed);
     std::fs::create_dir_all(temp.path().join(".csdlc/publication")).expect("publication");
     std::fs::write(temp.path().join(".csdlc/publication/7.intent.json"), "{}\n").expect("intent");
     git(temp.path(), &["add", ".csdlc/publication/7.intent.json"]);

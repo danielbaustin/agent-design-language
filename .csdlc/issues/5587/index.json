@@ -3,36 +3,14 @@
   "issue": 5587,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "a5944a332503136886e500c86d1c782c64846fad42b1a325ca4e5fe8e748f8d2",
-  "phase": "reviewed",
-  "generation": 17,
-  "digest": "d3142ef418bc7b908714f8aa5c3fb9348bd562da1d6974f4536dcbf5d5e8fd52",
-  "claim": {
-    "id": "claim-5587-google-drive-context-mirror",
-    "owner": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
-    "generation": 17,
-    "acquired_unix_seconds": 1784659080,
-    "expires_unix_seconds": 1784745480,
-    "heartbeat_unix_seconds": 1784659080,
-    "branch": "codex/5587-google-drive-context-mirror",
-    "worktree": ".",
-    "protected_paths": [
-      "adl/Cargo.toml",
-      "adl/src/adl_gws_context_mirror.rs",
-      "adl/src/adl_gws_drive_sync.rs",
-      "adl/src/adl_gws_native.rs",
-      "adl/src/bin/demo_adl_gws_context_mirror.rs",
-      "adl/tools/check_coverage_impact.sh",
-      "adl/tools/run_pr_fast_test_lane.sh",
-      "adl/tools/test_check_coverage_impact.sh",
-      "adl/tools/test_run_pr_fast_test_lane.sh",
-      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
-    ],
-    "purpose": "Make the ADL Google Drive context mirror work and verify content end to end"
-  },
+  "phase": "closed_out",
+  "generation": 26,
+  "digest": "a86168eb6e734872fd4fad5dcd131e0aa367f65bd9f570b198cd5cf16cbee1ac",
+  "claim": null,
   "review_assignment": {
     "reviewer": "codex-subagent:review_5587_exact_head",
-    "assigned_by": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
-    "revision": "git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854",
+    "assigned_by": "codex:5748-terminal-closeout",
+    "revision": "git-blake3:67acb4415e0e2ef1bade7328d19ecd26702788c8:69218d03a353410a7c5c5e03cc3d8499bed51feef15b2dda5674a025c53ee949",
     "scope": [
       "adl/Cargo.toml",
       "adl/src/adl_gws_context_mirror.rs",
@@ -60,57 +38,222 @@
       "adl/tools/test_run_pr_fast_test_lane.sh",
       "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
     ],
-    "reviewed_revision": "git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854",
+    "reviewed_revision": "git-blake3:67acb4415e0e2ef1bade7328d19ecd26702788c8:69218d03a353410a7c5c5e03cc3d8499bed51feef15b2dda5674a025c53ee949",
     "findings": [],
     "residual_risks": [
       "Native unattended credentials remain operator-managed outside the repository; the accepted live proof used the approved authenticated Drive connector.",
-      "GitHub CI must rerun against the strict-Clippy-clean published head."
+      "The recurring Google Drive mirror remains intentionally paused and this terminal closeout does not re-enable it."
     ],
     "completed": true,
-    "non_substantive_proof": null
+    "non_substantive_proof": {
+      "policy": "metadata_only_review_projection",
+      "from_revision": "git-blake3:97a6fe6e10b8d7b89dc13d01cdaac7dc17170050:aef968c237c59533ef426d45107820448b91abfcd88c65f841d4a4e47b984854",
+      "to_revision": "git-blake3:67acb4415e0e2ef1bade7328d19ecd26702788c8:69218d03a353410a7c5c5e03cc3d8499bed51feef15b2dda5674a025c53ee949",
+      "from_commit": "97a6fe6e10b8d7b89dc13d01cdaac7dc17170050",
+      "to_commit": "67acb4415e0e2ef1bade7328d19ecd26702788c8",
+      "changed_paths": [
+        ".csdlc/issues/5587/audit.jsonl",
+        ".csdlc/issues/5587/cards/sip.values.json",
+        ".csdlc/issues/5587/cards/sor.md",
+        ".csdlc/issues/5587/cards/sor.values.json",
+        ".csdlc/issues/5587/cards/spp.values.json",
+        ".csdlc/issues/5587/cards/srp.md",
+        ".csdlc/issues/5587/cards/srp.values.json",
+        ".csdlc/issues/5587/cards/stp.values.json",
+        ".csdlc/issues/5587/cards/vpp.values.json",
+        ".csdlc/issues/5587/index.json",
+        ".csdlc/prepared/issues/5587/advance-reviewed-clippy.json",
+        ".csdlc/prepared/issues/5587/reconcile-ready-clippy.json",
+        ".csdlc/prepared/issues/5587/review-assign-clippy.json",
+        ".csdlc/prepared/issues/5587/review-record-clippy.json",
+        ".csdlc/prepared/issues/5587/review-recover-clippy.json"
+      ]
+    }
   },
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5587,
+    "pull_request": 5626,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5626",
+    "base": "main",
+    "head": "codex/5587-google-drive-context-mirror",
+    "revision": "git-blake3:67acb4415e0e2ef1bade7328d19ecd26702788c8:69218d03a353410a7c5c5e03cc3d8499bed51feef15b2dda5674a025c53ee949",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5626,
+    "head_sha": "67acb4415e0e2ef1bade7328d19ecd26702788c8",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88961021236"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88963669117"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88963612375"
+      },
+      {
+        "name": "adl-coverage-runtime-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678570"
+      },
+      {
+        "name": "adl-coverage-workspace-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678641"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678669"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957623252"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957680116"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678557"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678598"
+      },
+      {
+        "name": "adl-slow-proof (1)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678691"
+      },
+      {
+        "name": "adl-slow-proof (2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678684"
+      },
+      {
+        "name": "adl-slow-proof (3)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678694"
+      },
+      {
+        "name": "adl-slow-proof (4)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678666"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957679757"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957678590"
+      },
+      {
+        "name": "csdlc-v2-standalone",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29930153275/job/88957679986"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5626,
+    "disposition": "merged",
+    "observed_sha": "67acb4415e0e2ef1bade7328d19ecd26702788c8",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5587.json",
+    "released_branch": "codex/5587-google-drive-context-mirror",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "adl/Cargo.toml",
+      "adl/src/adl_gws_context_mirror.rs",
+      "adl/src/adl_gws_drive_sync.rs",
+      "adl/src/adl_gws_native.rs",
+      "adl/src/bin/demo_adl_gws_context_mirror.rs",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "docs/tooling/ADL_GOOGLE_DRIVE_CONTEXT_MIRROR_RUNBOOK.md"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5587/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5587/diagram.mmd",
+  "design_path": ".csdlc/issues/5587/retained/design.md",
+  "diagram_path": ".csdlc/issues/5587/retained/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
-      "revision": "196bd587d9658475dab103e296fb196be3adb7428841932b3863c862741b8eb0"
+      "reviewer": "codex:5748-terminal-artifact-hygiene",
+      "revision": "ec76c9c8fa6de4828b2408759195fea8ec6f77b178ef815694d96effee17affe"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "531b32e4e8ad32ba5b3247add4c9124831f66704e939ced0d08a7d8e4c39073e",
+      "values_digest": "49c3119f856bddbc9beb55bc655b75e2b937f06f26507efa0203a78090f05c41",
       "rendered_digest": "867bf9115b60902dab9b8c648a00a25b8b7d36d855ebce19c4b82b0756b4cd6d",
       "ast_digest": "5db72db4a2e2230d6da78375077b0441985f175d427474e9370898dff43d3b14"
     },
     "stp": {
-      "values_digest": "94ab525eb5b76a75fca210ff88381b0d977cc7e547e1c68ee852c13b43d68879",
+      "values_digest": "747d37d5fe7372b743d94821be1c9ead7de82da786ba0f5ef5809fe72856c912",
       "rendered_digest": "be4864ed0f1e4bf50f8cf47d142659362982eb9d969f2e3fb446cd1c3b8f3933",
       "ast_digest": "55d986feaa9113104e8a50bf8198e19112d391f78ffab0a6add7545ca72f0634"
     },
     "spp": {
-      "values_digest": "df1353c3fe2de89e06741e5181a1e5e7d1542c4528234285d4f8dd202f7ae110",
-      "rendered_digest": "30e2dd52266eeca38592583b434c88b7f429a48ae0efdec52674f8960aeb459d",
-      "ast_digest": "88fd5c2643cc42d34449fa8c8969d9cbce11f70ca3d92f4e5d2dadede0ad3bcc"
+      "values_digest": "5a39f6feab7095004d1ee9847fb49ebf956b6783b3a6590eef598f94ba2fd2cb",
+      "rendered_digest": "d37fa5a9f2eaedd259f23e0c3a5fc91d6501135b9804f0dafe340d9b334c3365",
+      "ast_digest": "0d9e210ce8d2a4a21bc0a49a160a5907bec1a1a18cfb2fb26772a456ef908c59"
     },
     "vpp": {
-      "values_digest": "0e1e5d35720efb00a6441d579e1cf433d35345ef9a589e14f42294d744e8c998",
-      "rendered_digest": "b26cf896bc0c86323db9ff567aa3e55c51f27d20c4575ffac443f25548150a51",
-      "ast_digest": "3ea6c927b7b5fa4f25d17da1cf18c09d3ef3f104d77b593f40e3da9d8f802373"
+      "values_digest": "7a1dd8d29ba894d3b92a82487e38bab630fdf7c4b910b862204b744c7d5b5acf",
+      "rendered_digest": "d7ea4b3272c166009149b7adeaa3b18c2ce0101e8c91bc775cabfe6c8fa55337",
+      "ast_digest": "030b4daf51ca60354debfcf7aa2b53afc1f2180cc972f273a8fd0d992bfaa610"
     },
     "srp": {
-      "values_digest": "591a9a8300df5fe9a8954bb2117b715c1d7e13a5ba4d1fddbb4ce8bf3d895723",
-      "rendered_digest": "98de558e57695c5e598569574226113c2ca0ac5b533a679586ab43be5b927904",
-      "ast_digest": "39326df7690a54ebdac9eaa8a44eb66e229bb6125d184648b6b2223530da7abd"
+      "values_digest": "f9b5e381b746f7f9ef5ae3de3031af644802a183f31c04b08a9ffd996fc75e4f",
+      "rendered_digest": "435609bf4902f284b443606fe28c93de4845372fe43660ec3babf228abea98ec",
+      "ast_digest": "dc520b7eb15ba55b42b16b15ea8d4d32c371a910c6c317b0906091c5e471054d"
     },
     "sor": {
-      "values_digest": "36d29fefcf8dece28941c585ca5f3c4228b4cb72a561f8b2ce3311006af36143",
-      "rendered_digest": "a95b9e90e43f777c41a3f1905bd597c80ee6e0e39fbfffecfa2217e95557a624",
-      "ast_digest": "bffbf6d704482702714c1501877d920ce9316f0b709b9efe0ffcd294c05587a3"
+      "values_digest": "de3902d3cd080d235164a85abb0b6025d3868e82cfaabfd45d4aa9aadf2d5dff",
+      "rendered_digest": "cafaf0d59190c36b4aa7ebecc5ca3eab7c0212029f6eda238455ef9fed0edde9",
+      "ast_digest": "01662c004fe0377a3ea5635bb9382ae2542c9595559e41175ea56be37f9e1b57"
     }
   },
   "transitions": [
@@ -183,6 +326,55 @@
       "to": "reviewed",
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "Exact-head review of 97a6fe6e1 confirmed the byte-slice Clippy repair is behaviorally identical, and focused Clippy plus 11 context-mirror tests passed."
+    },
+    {
+      "sequence": 11,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 12,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "Refresh exact-head review truth for metadata-only lifecycle commits before merged PR reconciliation."
+    },
+    {
+      "sequence": 13,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "Exact-head review remains valid through the metadata-only projection commits at merged PR head 67acb4415e0e2ef1bade7328d19ecd26702788c8."
+    },
+    {
+      "sequence": 14,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 15,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 16,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 17,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -353,6 +545,83 @@
       "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
       "reason": "Exact-head review of 97a6fe6e1 confirmed the byte-slice Clippy repair is behaviorally identical, and focused Clippy plus 11 context-mirror tests passed.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 18,
+      "actor": "codex:019f5fb7-49dd-7c20-a4c2-bfc357306061",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "Recover the expired #5587 claim solely for merged terminal reconciliation and closeout. The recurring Drive mirror remains paused.",
+      "operation": "{\"previous_owner\":\"codex:019f5fb7-49dd-7c20-a4c2-bfc357306061\",\"observed_expiry_unix_seconds\":1784745480,\"recovery_actor\":\"codex:5748-terminal-closeout\",\"reason\":\"Recover the expired #5587 claim solely for merged terminal reconciliation and closeout. The recurring Drive mirror remains paused.\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "Refresh exact-head review truth for metadata-only lifecycle commits before merged PR reconciliation.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 19,
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 20,
+      "actor": "codex-subagent:review_5587_exact_head",
+      "reason": "atomically record assigned review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 30,
+      "generation": 21,
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "Exact-head review remains valid through the metadata-only projection commits at merged PR head 67acb4415e0e2ef1bade7328d19ecd26702788c8.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 31,
+      "generation": 22,
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 32,
+      "generation": 23,
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 33,
+      "generation": 24,
+      "actor": "codex:5748-terminal-closeout",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 34,
+      "generation": 25,
+      "actor": "codex:5748-terminal-recovery",
+      "reason": "Materialize the valid #5587 terminal receipt while preserving that the recurring Drive mirror remains paused.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 35,
+      "generation": 26,
+      "actor": "codex:019fb617-d22b-7252-975c-402d7d7aec46",
+      "reason": "typed terminal design repair authorized by issue 5748",
+      "operation": "repair_terminal_design"
     }
   ]
 }
