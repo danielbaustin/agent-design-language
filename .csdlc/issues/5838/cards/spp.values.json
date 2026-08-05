@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-18B] Provider-neutral multi-agent proof",
     "slug": "v0-92-wp-18b-provider-neutral-multi-agent-proof",
     "version": "v0.92",
-    "generation": 24
+    "generation": 28
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 9,
+      "plan_revision": 11,
       "summary": "Verify #5832, #5834, and #5836; select two real independently configured providers; run the identical scenario and retain redacted ACIP traces; execute malformed, denied, interrupted, unavailable, loss, and substitution cases; validate source/provider truth and review exact head.",
       "steps": [
         {
@@ -59,6 +59,18 @@
             "AC-5"
           ],
           "status": "pending"
+        },
+        {
+          "id": "S6",
+          "action": "Define and verify provider-proof rollback: remove only the harness and owned projection, retain redacted failures, and leave ACIP, credentials, and birthday behavior untouched.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
         }
       ],
       "affected_areas": [
@@ -88,7 +100,8 @@
       "stop_conditions": [
         "Fewer than two real compatible providers are available",
         "#5832/#5836 contracts are not landed",
-        "No safe redacted trace can prove semantic equivalence"
+        "No safe redacted trace can prove semantic equivalence",
+        "Rollback would expose credentials, delete redacted failure proof, or alter ACIP/birthday behavior."
       ],
       "replan_triggers": [
         "Provider capability or API contract changes",
@@ -96,7 +109,7 @@
         "A required platform lacks the provider tool"
       ],
       "design_ref": ".csdlc/prepared/issues/5838/design.md",
-      "design_digest": "c5bd59187f5f6cb350285cb74249a5c4bce79cba018b8387917fb18c8a3325c4",
+      "design_digest": "0295d4ea3cdf7ef7cb5de4412ea2d38386c4a77de2b7a60ae2932cdb5e657aa0",
       "diagram_ref": ".csdlc/prepared/issues/5838/diagram.mmd",
       "diagram_digest": "66b8593a65f5605cd6e903d1954da188a9dada0abb3d75d1b6b1324da92a4f29"
     }

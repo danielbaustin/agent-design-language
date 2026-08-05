@@ -16,7 +16,7 @@ Implement and prove WP-09 canonical identity records with stable labels, immutab
 
 ## Plan
 
-Revision 15
+Revision 16
 
 ## Steps
 
@@ -89,7 +89,7 @@ Revision 15
 
 .csdlc/prepared/issues/5826/design.md
 
-Digest: b023177cb9ce0b8f599c74f0014dcc96159b845d5ec2e5f19d9d5b5c0e3905e4
+Digest: 53a190501144dc14801ab53a2a627d04fdbc2111413d0d45b4e6f094d5b37d2e
 
 ## Diagram
 

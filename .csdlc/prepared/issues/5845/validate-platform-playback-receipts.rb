@@ -12,7 +12,11 @@ EXPECTED = {
   "macos-native" => ["adl/tools/record_podcast_native_playback.sh", "--platform", "macos"],
   "linux-native" => ["adl/tools/record_podcast_native_playback.sh", "--platform", "linux"],
   "desktop-chromium" => ["adl/tools/record_podcast_browser_playback.mjs", "--browser", "chromium"],
-  "ios-safari-device" => ["adl/tools/record_podcast_ios_safari_playback.sh", "--device-id-hash"]
+  "ios-safari-device" => [
+    "adl/tools/record_podcast_ios_safari_playback.sh",
+    "--device-id-hash-env", "ADL_IOS_DEVICE_ID_SHA256",
+    "--episode-url-env", "ADL_IOS_EPISODE_URL"
+  ]
 }.freeze
 
 def fail!(message)
@@ -39,6 +43,9 @@ else
   source_sha = source_arg
 end
 fail!("usage: #{$PROGRAM_NAME} <40-hex-source-sha|--source-sha-from-git-head> [receipt-dir]") unless source_sha&.match?(/\A[0-9a-f]{40}\z/) && ARGV.empty?
+head_sha, head_stderr, head_status = Open3.capture3("git", "rev-parse", "HEAD", chdir: ROOT.to_s)
+fail!("cannot resolve exact candidate HEAD: #{head_stderr.strip}") unless head_status.success?
+fail!("source SHA must equal exact candidate HEAD") unless source_sha == head_sha.strip
 
 dir = ROOT.join(receipt_dir).cleanpath
 fail!("receipt directory must be within platform evidence root") unless dir == PLATFORM_ROOT || dir.to_s.start_with?(PLATFORM_ROOT.to_s + File::SEPARATOR)
@@ -62,6 +69,7 @@ receipts.each do |receipt_path|
 
   argv = payload["argv"]
   fail!("#{receipt_path}: argv must be a nonempty string array") unless argv.is_a?(Array) && argv.all? { |value| value.is_a?(String) && !value.empty? }
+  fail!("#{receipt_path}: argv contains an unresolved placeholder") if argv.any? { |value| value.include?("<") || value.include?(">") }
   expected_argv.each { |token| fail!("#{receipt_path}: argv missing #{token}") unless argv.include?(token) }
 
   runner = payload["runner"]

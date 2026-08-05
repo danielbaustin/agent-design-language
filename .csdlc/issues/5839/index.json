@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "10b57804d863de9ac5cda1e29dd5aeee90e4b00bd8f1569549bc8a878b5c5d6c",
   "phase": "bound",
-  "generation": 24,
-  "digest": "0f79cba29f33ab3652d228e1949429fd4cb334c88d78a42abd4c04ea2e2b69a9",
+  "generation": 28,
+  "digest": "bc4100b2fa7a3f99a1b7a175df0c7b4f8cba6f09885738d11d84c66ffee1d4df",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5839/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "f39a2a1ce50ea4d83618c7d0601e3934c3db1d68b13cfeba723688e3219d203c"
+      "reviewer": "codex:5860-birthday-publication-final-design-review",
+      "revision": "482c4c062636a7b1e19def3e19a73fc548a808681f178ec1606456b64f38a82c"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "c0602035a1b5d79bd2faf450da648bd2cf1ad5d268c9f8084ce4311fd3de3e19",
+      "values_digest": "9fb56231a85d05266c3109824c35839dfb67a31516578065807828cecf514774",
       "rendered_digest": "88f5f1d3c57353d3d011ae5c5fbfe66ba50df2c03352e3f67dcec0e0da303684",
       "ast_digest": "a9dbc727e263b5035d18037f45f9351999beb8d56e0805573394665b1f7f6dfd"
     },
     "stp": {
-      "values_digest": "8c7035048583e780adb1a85d5d73d34b93e9151e2139e671015896bbbbfb3d0f",
+      "values_digest": "82d8154aa5b1ee9592c8d0a375f2623369a71aef1c55ce1faf420616dd0ffd58",
       "rendered_digest": "b6a780b5f628f3d0625ea83e95aa9907cc3b38a463baf6ef3ff5e809e71cb082",
       "ast_digest": "a7cb6c40d14307ed4d08e5b5e345237a259f244f8d1ad15521919bdf1fe625b8"
     },
     "spp": {
-      "values_digest": "6e71b15158e575b9117d21a914d8a64f68a731d364c7479f71421b75891c6f54",
-      "rendered_digest": "93e6f77257ffa365bd530a5b39673b5ee74d858a3af5c82ed1cd9ef1662f9bbe",
-      "ast_digest": "6c1071a0f0b89cc2a1a4462514dbb33f38816b94b57c913684b757a7f8b03c97"
+      "values_digest": "4100794ecf0320b143d9e8ba268a9920a8e145cfe8c2071c2cf0f8940ed6e2af",
+      "rendered_digest": "a4b6fe1a3286ad4d5d511e79463fd6d5b7fc5d06328dd3f003c1094a0e587519",
+      "ast_digest": "2bbadb4a66dc2fcea87c5a4a04ee14a7d862adfd57904b4c903b69a3518281fb"
     },
     "vpp": {
-      "values_digest": "fe7dee369c804ced9fecc8bcf7bb2d4033275cb33294c33db3c0bb198bb834c2",
+      "values_digest": "b97a4c489c99adfc08aaafbd76858029a7faad8e8795569b3d379e88ece52d78",
       "rendered_digest": "098ccfeb33726daf260b7372b6af9e85671ed325ecfdfe0b7f2cb51f3590125f",
       "ast_digest": "fc4baafaac9ec2ef173fc4d1b1bc88fea3c5a92c0f3243400da5b87bdb5385cb"
     },
     "srp": {
-      "values_digest": "16cac58f4af3d08c30cca727602f7d8379a8006ad4ea0f68609b5751dc037b13",
+      "values_digest": "9db2610c6eb644655e9ee5816a600a65145583b88b28dbcfb5e597da2804c523",
       "rendered_digest": "1ba628e8a13f4d92eb6cb2adea05136d85f96d239d48caa5d10698ae326124f8",
       "ast_digest": "797664cb3acec61fcabcd329021db6bfcec0b8da2df735a399e444e351b81a07"
     },
     "sor": {
-      "values_digest": "8d795e13cfa10eeb9dbe54a7fe690a281dc2a2c2e4952af09d1e400ec0bf5caf",
+      "values_digest": "d2be9f515f6ac8ceeaa6856f631bc036da7fe3c397a18f3f3160f2aa14bd9ade",
       "rendered_digest": "d829c572fae3ca6425298b5e8895b59ced47f8d7c4f18114a0e936cede751417",
       "ast_digest": "84b8dcf3c18a0f039f1665cdde6bcae35da4a42984f3a4505cacbdfb7175612a"
     }
@@ -300,6 +300,48 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5839-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 24,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Reacquire the released preparation claim for assigned execution-readiness repairs.",
+      "operation": "{\"branch\":\"codex/5860-birthday-publication-repair\",\"claim_id\":\"claim-5839-v092-birthday-publication-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-publication-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5839\",\".csdlc/prepared/issues/5839\",\".csdlc/evidence/5839\",\".csdlc/locks/5839.lock\"],\"purpose\":\"Assigned Birthday/publication execution-readiness repair only; no product implementation, live GitHub mutation, aggregate-manifest mutation, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 25,
+      "actor": "codex:5860-birthday-publication-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 36,
+      "generation": 26,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Add the explicit issue-scoped rollback step required for execution readiness.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5834, #5835, and the v0.93 allocation/owner\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Inventory exact v0.92 evidence and author the row-level handoff map\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Update ADR 0033 planning and unresolved decisions without acceptance\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run completeness, path, redaction, and forbidden-inference checks\",\"acceptance_ids\":[\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head producer/consumer review\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Define and verify handoff rollback: restore the owned ADR plan, retain the rejected evidence map, and leave accepted v0.92 proof and v0.93 allocation unchanged.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 37,
+      "generation": 27,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Fail closed when the bounded rollback contract cannot be preserved.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"No v0.93 allocation/owner exists\",\"#5834 or #5835 is not accepted\",\"A required source cannot be safely projected\",\"Rollback would mutate accepted v0.92 evidence, fabricate a v0.93 allocation, or grant governance authority.\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 28,
+      "actor": "codex:5860-birthday-publication-final-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 39,
+      "generation": 28,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
+      "operation": "{\"claim_id\":\"claim-5839-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
     }
   ]
 }

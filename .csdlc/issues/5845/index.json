@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "62cfffa47d080caf69fa1b1d20e49542e7f455d7c847aae132ae93191d1913fd",
   "phase": "bound",
-  "generation": 32,
-  "digest": "b69aed32a7f4098a4e16c775d9ec4f74d8e4e97fbd6202ca230dc5c643f38208",
+  "generation": 41,
+  "digest": "4c8005ba4953ac4456a938dedfe15942ddf8367720b48b887c0ab2646c090d46",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5845/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "00b84250de2974fd61befd1b2b122a7c749a17fb7615e4f2c8ec19e00dfe264a"
+      "reviewer": "codex:5860-birthday-publication-final-design-review",
+      "revision": "e577c1d95f46d4de635fce4f2afc6d5697cde482e44599380b9b15698a73715f"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "101a4a695e1497b3952d8060a5cafa237f5ba56a7d6917b1b8c3fe8648e5a3ff",
+      "values_digest": "53c4f88e3d252c0ff3e0bb6b6f51b1d387dc9432526aefa84d3301e561771fed",
       "rendered_digest": "6404ed059784ae16bb1ddf0594e48c6834b7272f82bfacbfb2883e1fe7d75f6b",
       "ast_digest": "82b54069472e970a520197f3752ed83b93ad00cad4394a3940e60b24e268e29d"
     },
     "stp": {
-      "values_digest": "947a06b97d6a99fdb9e1b9985e61b27e9557cf96c02d8322f6dd2ae5d09eba57",
+      "values_digest": "c00ef341f1592eee22c944e2293b32f374e52b73223f8e3b2c0ff3990a14445a",
       "rendered_digest": "ddcb9be2d795a2f4a1fd7441eaed975b890b9891cd5386a4248367997c2e61a4",
       "ast_digest": "1aa5c3754e51b7cbaafe8b13053bfff94e8148250b1efe3064fab28e194b2ed5"
     },
     "spp": {
-      "values_digest": "21c2967a72cc0e7b05992acf824753dc62c54b067f3e5cba0185245d76d0879c",
-      "rendered_digest": "b37de138ce6ecf653e15ab193562913c8d516a00ff2203788eb56418102c38a2",
-      "ast_digest": "7dca7626ccb42ebc87ab3365320625e408ee155d8bf61c4dbe8bab96d5fa54c3"
+      "values_digest": "3e56716d84fb851a1c3dea7ba245e38f9f79174c0dd9fb57d518aec3b6bc9605",
+      "rendered_digest": "75a0e3a68c28cc7efca27b2fdd9a8a46738d5372efbe3cad41b1a52932e39c9a",
+      "ast_digest": "ed00f5662067a705d71b845db3f67792210265240994cd8d849d59e245ae52de"
     },
     "vpp": {
-      "values_digest": "e47a8c0956aa5829c29ab4facd29684786d366e98fec1438290ed06ac5b664c1",
-      "rendered_digest": "0dcea4c3cb4ebc469e125583c5f6eac9de4900db2e2cb84c4af45c65b02e170e",
-      "ast_digest": "585fd42a104e08956c945e4cba0fdd5e68637b16f3fb2b6295d7eaeec55f8add"
+      "values_digest": "2f2f1b2aa8076f9a94cbaf785b692a8e9ff9f45c4179dc3ac0bc4566755a3a76",
+      "rendered_digest": "9de5e560cb50c6ef82995b5694d71f7e5e9b79249fceae9fba6ab89aa33a473d",
+      "ast_digest": "a15d410a922dd6dcc036b8b21f965de851cb721594a3de99f0fda32260464150"
     },
     "srp": {
-      "values_digest": "ed1c0c53ea34259adf6bc330a0dfb7f01f30c625872f11889616f9cf12395497",
+      "values_digest": "94fe84a6c71a0bda3520b5bfb53910e5493bd012af49cd1ba3fe836e6036c6d9",
       "rendered_digest": "66584b02c22d0bbd0817ef755e84c0fd40420199f03ce8fe7b33a5b7b8a75a9f",
       "ast_digest": "f5b2ec19198beddd171eda9407d02c311e89b54ced36ac7aaead57db2f9f06a0"
     },
     "sor": {
-      "values_digest": "3f14c7f28dbf1d7d14a336e047a045ed3c70bab638f7f65d62a35e7d927e0ca4",
+      "values_digest": "314649bc85af7fdc34221173911e0579f2862d11073c211c83c004078f511c35",
       "rendered_digest": "b6559a50b406e113d4bdecd7b46d6236777db7e3bd028391abdfeba5acae375d",
       "ast_digest": "63307f804d1711e04428b4b653b5230947299d891caf3ed6bdf972e7f4042d49"
     }
@@ -384,6 +384,97 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Ownership normalization is complete; release the temporary claim.",
       "operation": "{\"claim_id\":\"claim-5845-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 46,
+      "generation": 32,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Reacquire the released preparation claim for assigned execution-readiness repairs.",
+      "operation": "{\"branch\":\"codex/5860-birthday-publication-repair\",\"claim_id\":\"claim-5845-v092-birthday-publication-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-publication-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5845\",\".csdlc/prepared/issues/5845\",\".csdlc/evidence/5845\",\".csdlc/locks/5845.lock\"],\"purpose\":\"Assigned Birthday/publication execution-readiness repair only; no product implementation, live GitHub mutation, aggregate-manifest mutation, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 47,
+      "generation": 33,
+      "actor": "codex:5860-birthday-publication-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 48,
+      "generation": 34,
+      "actor": "codex:5860-birthday-publication-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 49,
+      "generation": 35,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Add the explicit issue-scoped rollback step required for execution readiness.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5819, #3223/#3256, route/storage authority, and budget 10 x 2-hour/24,000-token source-and-script waves\",\"acceptance_ids\":[\"AC-1\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Budget 10 x 2.5-hour/18,000-token production waves for generation, editing, and mastered audio\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Budget 10 x 1.5-hour/14,000-token packaging waves for transcripts, notes, artwork, metadata, manifests, and RSS enclosures\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Budget 10 x 1.5-hour/10,000-token listen-review and revision waves, including consent and redaction review\",\"acceptance_ids\":[\"AC-2\",\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Implement the three owned playback producers and emit source-bound receipts for macOS, Linux, desktop Chromium, and physical-device iOS Safari\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Run digest-recomputing receipt validation, resolve feed-wide consistency and exact-head editorial/audio review, and keep publication gated\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S7\",\"action\":\"Define and verify podcast rollback: restore feed/readiness records, remove only issue-owned packages and producers, retain QA evidence, and perform no deployment or publication action.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-2\",\"AC-3\",\"AC-5\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 50,
+      "generation": 36,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Fail closed when the bounded rollback contract cannot be preserved.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Route/storage or binary-artifact policy is unresolved\",\"Required consent or source rights are unavailable\",\"Audio QA cannot produce deterministic manifests\",\"A credential would need to enter tracked evidence\",\"Rollback would delete upstream production proof, mutate consent, or require feed deployment/publication.\"]}"
+    },
+    {
+      "sequence": 51,
+      "generation": 37,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Make the operative estimate summary include the integration reserve inside the approved aggregate.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Run ten 7.5-hour/64,000-token episode waves plus a separately scheduled 5-hour/60,000-token integration wave inside the fixed 80-agent-hour/700,000-token aggregate; five parallel owners produce complete reviewed packages and stop before deployment or publication.\",\"operation\":\"replan\",\"previous_value\":\"Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 agent-hours and 700,000 tokens aggregate), covering source/script work, audio production, transcript/show notes/artwork/metadata, listen review, revisions, validation, feed-wide consistency, and platform playback; five parallel owners target 20-30 hours wall-clock and stop before deployment or publication.\"}"
+    },
+    {
+      "sequence": 52,
+      "generation": 38,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Allocate the integration reserve explicitly inside the existing execution estimate.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5819, #3223/#3256, route/storage authority, and budget 10 x 1.75-hour/21,000-token source-and-script waves\",\"acceptance_ids\":[\"AC-1\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Budget 10 x 2.25-hour/16,000-token production waves for generation, editing, and mastered audio\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Budget 10 x 1.5-hour/13,000-token packaging waves for transcripts, notes, artwork, metadata, manifests, and RSS enclosures\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Budget 10 x 1.5-hour/10,000-token listen-review and revision waves, including consent and redaction review\",\"acceptance_ids\":[\"AC-2\",\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Budget 10 x 30-minute/4,000-token machine-validation waves and implement the three owned playback producers\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Use the allocated 5-hour/60,000-token integration wave for feed consistency, digest-recomputed platform playback, exact-head review, and final revisions\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S7\",\"action\":\"Define and verify podcast rollback: restore feed/readiness records, remove only issue-owned packages and producers, retain QA evidence, and perform no deployment or publication action.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-2\",\"AC-3\",\"AC-5\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 53,
+      "generation": 39,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Make the physical-iOS lane executable and align it with the validator environment contract.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"wp24a-package-positive\",\"proof_role\":\"Prove all ten packages, final audio manifests, and feed records are complete and internally consistent.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":8000,\"argv\":[\"env\",\"TMPDIR=.csdlc/evidence/5845/tmp\",\"bash\",\"adl/tools/test_podcast_launch_packet.sh\",\"--ten-episode-positive\"],\"parallel_group\":\"podcast\",\"defer_reason\":null},{\"lane\":\"wp24a-package-negative\",\"proof_role\":\"Reject missing or silent audio, digest and metadata mismatch, local feed paths, draft guests, unsafe text, and publication overclaims.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":8000,\"argv\":[\"env\",\"TMPDIR=.csdlc/evidence/5845/tmp\",\"bash\",\"adl/tools/test_podcast_launch_packet.sh\",\"--ten-episode-negative\"],\"parallel_group\":\"podcast\",\"defer_reason\":null},{\"lane\":\"wp24a-macos-playback\",\"proof_role\":\"Produce a non-synthetic macOS native playback receipt and capture bound to the exact candidate HEAD.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/record_podcast_native_playback.sh\",\"--platform\",\"macos\",\"--source-sha-from-git-head\",\"--episode\",\"demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3\",\"--evidence-dir\",\".csdlc/evidence/5845/platform/macos-native\"],\"parallel_group\":\"platform-native\",\"defer_reason\":\"Required on a native macOS runner; unavailable runner blocks review readiness.\"},{\"lane\":\"wp24a-linux-playback\",\"proof_role\":\"Produce a non-synthetic Linux native playback receipt and capture bound to the exact candidate HEAD.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/record_podcast_native_playback.sh\",\"--platform\",\"linux\",\"--source-sha-from-git-head\",\"--episode\",\"demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3\",\"--evidence-dir\",\".csdlc/evidence/5845/platform/linux-native\"],\"parallel_group\":\"platform-native\",\"defer_reason\":\"Required on a native Linux runner; unavailable runner blocks review readiness.\"},{\"lane\":\"wp24a-desktop-chromium-playback\",\"proof_role\":\"Produce a desktop Chromium playback receipt and capture bound to the exact candidate HEAD and loopback episode route.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":5000,\"argv\":[\"node\",\"adl/tools/record_podcast_browser_playback.mjs\",\"--browser\",\"chromium\",\"--source-sha-from-git-head\",\"--episode-url\",\"http://127.0.0.1:4173/podcast/episodes/001/episode.mp3\",\"--evidence-dir\",\".csdlc/evidence/5845/platform/desktop-chromium\"],\"parallel_group\":\"platform-browser\",\"defer_reason\":\"Required with desktop Chromium and the bounded loopback fixture; absence blocks review readiness.\"},{\"lane\":\"wp24a-ios-safari-playback\",\"proof_role\":\"Produce a physical-device iOS Safari playback receipt at exact candidate HEAD using the required ADL_IOS_DEVICE_ID_SHA256 and ADL_IOS_EPISODE_URL environment contracts; retain only the hashed device identity.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1800,\"budget_tokens\":8000,\"argv\":[\"bash\",\"adl/tools/record_podcast_ios_safari_playback.sh\",\"--source-sha-from-git-head\",\"--device-id-hash-env\",\"ADL_IOS_DEVICE_ID_SHA256\",\"--episode-url-env\",\"ADL_IOS_EPISODE_URL\",\"--evidence-dir\",\".csdlc/evidence/5845/platform/ios-safari-device\"],\"parallel_group\":\"platform-browser\",\"defer_reason\":\"Required on a physical iOS Safari device with ADL_IOS_DEVICE_ID_SHA256 and a device-reachable ADL_IOS_EPISODE_URL set by the operator; missing or simulator-only proof blocks review readiness.\"},{\"lane\":\"wp24a-platform-receipt-binding\",\"proof_role\":\"Recompute canonical receipt payload, media, and capture SHA-256 bindings and require all four exact platform identities at candidate HEAD.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb\",\"--source-sha-from-git-head\"],\"parallel_group\":\"platform-verify\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 54,
+      "generation": 40,
+      "actor": "codex:5860-birthday-publication-final-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 55,
+      "generation": 40,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
+      "operation": "{\"claim_id\":\"claim-5845-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
+    },
+    {
+      "sequence": 56,
+      "generation": 40,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Reacquire the released preparation claim to remove the final literal iOS host placeholder from the issue-local design.",
+      "operation": "{\"branch\":\"codex/5860-birthday-publication-repair\",\"claim_id\":\"claim-5845-v092-birthday-publication-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-publication-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5845\",\".csdlc/prepared/issues/5845\",\".csdlc/evidence/5845\",\".csdlc/locks/5845.lock\"],\"purpose\":\"Assigned Birthday/publication execution-readiness repair only; no product implementation, live GitHub mutation, aggregate-manifest mutation, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 57,
+      "generation": 41,
+      "actor": "codex:5860-birthday-publication-final-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 58,
+      "generation": 41,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Release the temporary preparation claim after final iOS environment-contract design approval.",
+      "operation": "{\"claim_id\":\"claim-5845-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
     }
   ]
 }

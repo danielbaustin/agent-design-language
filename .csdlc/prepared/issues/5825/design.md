@@ -12,6 +12,7 @@ Define the deterministic WP-08 birth decision consumed by the Birthday sprint. T
 - `adl-runtime-kernel/tests/fixtures/birthday`
 - `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`
 - `.csdlc/prepared/issues/5825/validate-native-receipts.rb`
+- `.csdlc/prepared/issues/5825/produce-native-receipt.rb`
 - `.csdlc/evidence/5825`
 
 ## Read-Only Inputs
@@ -63,7 +64,7 @@ WP-01/#5817 and WP-02A/#5801 must be terminally proven before execution. WP-01B/
 
 ## Validation And Rollback
 
-Focused tests must invoke the exact `birthday` integration-test target, assert that at least one test ran, and prove one valid packet plus every table-driven disqualifier and missing-evidence case. A claim-boundary scan rejects personhood, consciousness, production citizenship, governance, migration, and transport overclaims. Native Linux CI and a retained native macOS receipt must bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before portability is claimed. Rollback removes the new module/fixtures and restores the feature doc without altering historical evidence.
+Focused tests must invoke the exact `birthday` integration-test target, assert that at least one test ran, and prove one valid packet plus every table-driven disqualifier and missing-evidence case. A claim-boundary scan rejects personhood, consciousness, production citizenship, governance, migration, and transport overclaims. The issue-local native producer must run that exact target on native GitHub Actions macOS and Linux jobs at the exact candidate HEAD, emit a hashed source manifest, preserve the complete nextest log, and require the test to write a canonical semantic-output artifact. The independent validator recomputes every digest, parses a positive test count from the retained log, validates workflow/run/job identity, and requires byte-identical semantic outputs; an ancestral or source-equivalent SHA is not accepted. Rollback removes the new module/fixtures and restores the feature doc without altering historical evidence.
 
 ## Non-Goals
 

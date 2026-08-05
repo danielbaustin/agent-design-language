@@ -30,8 +30,8 @@ Deliver only the WP-12 capability envelope contract, validation fixtures, and ex
 5. Unknown or stale provider/model evidence, undeclared tools/skills, authority escalation, omitted limits, secret-like content, private paths, and host paths fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5829 without claiming completion of downstream Birthday work.
-8. Before claim acquisition, require the canonical wave row and live issue to add WP-08/#5825 so all dependency surfaces exactly match. WP-12's adl-runtime-kernel/src/lib.rs registration claim and edit must also wait until WP-11/#5828 has landed and released that path.
-9. The exact capability_envelope nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
+8. WP-08/#5825 and WP-09/#5826 are terminal before execution, and the serialized adl-runtime-kernel/src/lib.rs registration waits for WP-11/#5828 to land and release that path.
+9. The exact capability_envelope nextest target runs a positive test count on native GitHub Actions macOS and Linux at exact candidate HEAD; issue-local producers retain hashed source manifests, complete command logs, and canonical semantic outputs, and independent validation recomputes every digest and requires semantic equivalence.
 
 ## Dependencies
 

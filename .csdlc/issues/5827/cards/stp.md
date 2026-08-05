@@ -30,7 +30,7 @@ Deliver only the WP-10 multi-cycle continuity chain, fixtures, validator, and re
 5. Missing predecessor, root substitution, discontinuous or reordered cycles, duplicate cycles, forged witness, copied state, private paths, and host paths fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5827 without claiming completion of downstream Birthday work.
-8. The exact birthday_continuity nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
+8. The exact birthday_continuity nextest target runs a positive test count on native GitHub Actions macOS and Linux at exact candidate HEAD; issue-local producers retain hashed source manifests, complete command logs, and canonical semantic outputs, and independent validation recomputes every digest and requires semantic equivalence.
 
 ## Dependencies
 

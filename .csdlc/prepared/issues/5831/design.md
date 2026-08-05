@@ -12,6 +12,7 @@ Implement WP-13A's evaluated, policy-governed graph-change path in current Runti
 - `adl-runtime-kernel/tests/fixtures/adaptive_learning`
 - `docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md`
 - `.csdlc/prepared/issues/5831/validate-native-receipts.rb`
+- `.csdlc/prepared/issues/5831/produce-native-receipt.rb`
 - `.csdlc/evidence/5831`
 
 ## Read-Only Inputs
@@ -63,7 +64,7 @@ WP-01/#5817, WP-13/#5830, merged #5104 semantics, and current Runtime v3 qualifi
 
 ## Validation And Rollback
 
-The exact `adaptive_learning` Runtime v3 integration-test target must run a nonzero count proving accepted/rejected mutation, deterministic replay, forged/substituted history rejection, invalid graph bindings, discontinuous resume, recurrence bounds, missing evidence, unauthorized mutation, and rollback mismatch. The lane uses `adl-runtime-kernel/Cargo.toml`, not `adl/Cargo.toml`. Native Linux CI and a retained native macOS receipt bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before portability is claimed. Rollback replays the recorded inverse or restores prior graph/state hashes without deleting rejected proposal history.
+The exact `adaptive_learning` Runtime v3 integration-test target must run a nonzero count proving accepted/rejected mutation, deterministic replay, forged/substituted history rejection, invalid graph bindings, discontinuous resume, recurrence bounds, missing evidence, unauthorized mutation, and rollback mismatch. The lane uses `adl-runtime-kernel/Cargo.toml`, not `adl/Cargo.toml`. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback replays the recorded inverse or restores prior graph/state hashes without deleting rejected proposal history.
 
 ## Non-Goals
 

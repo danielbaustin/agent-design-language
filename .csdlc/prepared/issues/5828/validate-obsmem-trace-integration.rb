@@ -45,16 +45,6 @@ def tree_digest(root, relative)
   digest.hexdigest
 end
 
-def source_revision_valid?(root, source_sha, protected_paths)
-  return false unless /\A[0-9a-f]{40}\z/.match?(source_sha.to_s)
-  _, commit_status = Open3.capture2e("git", "cat-file", "-e", "#{source_sha}^{commit}", chdir: root.to_s)
-  return false unless commit_status.success?
-  _, ancestor_status = Open3.capture2e("git", "merge-base", "--is-ancestor", source_sha, "HEAD", chdir: root.to_s)
-  return false unless ancestor_status.success?
-  _, diff_status = Open3.capture2e("git", "diff", "--quiet", source_sha, "HEAD", "--", *protected_paths, chdir: root.to_s)
-  diff_status.success?
-end
-
 fail!("usage: validate-obsmem-trace-integration.rb RECEIPT.json") unless ARGV.length == 1
 root_output, status = Open3.capture2("git", "rev-parse", "--show-toplevel")
 fail!("cannot resolve repository root") unless status.success?
@@ -68,12 +58,7 @@ receipt = JSON.parse(receipt_path.read)
 fail!("status must be passed") unless receipt["status"] == "passed"
 tests_run = Integer(receipt["tests_run"], exception: false)
 fail!("tests_run must be positive") unless tests_run&.positive?
-source_paths = AUTHORITY_PATHS + [
-  "adl-runtime-kernel/Cargo.toml", "adl-runtime-kernel/src/lib.rs",
-  "adl-runtime-kernel/src/memory_palace.rs", "adl-runtime-kernel/tests/memory_palace.rs",
-  FIXTURE_PATH, "docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md"
-]
-fail!("exact source_sha is absent, non-ancestral, or stale for owned and authority paths") unless source_revision_valid?(root, receipt["source_sha"], source_paths)
+fail!("source_sha must equal exact candidate HEAD") unless receipt["source_sha"] == head
 fail!("argv does not match the declared exact test") unless receipt["argv"] == EXPECTED_ARGV
 fail!("runner_identity is required") unless receipt["runner_identity"].is_a?(String) && !receipt["runner_identity"].strip.empty?
 fail!("trace_id is required") unless receipt["trace_id"].is_a?(String) && !receipt["trace_id"].strip.empty?

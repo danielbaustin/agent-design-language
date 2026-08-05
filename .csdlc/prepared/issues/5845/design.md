@@ -76,7 +76,9 @@ paths. They are product-validation deliverables, not publication tools:
 - desktop Chromium playback:
   `node adl/tools/record_podcast_browser_playback.mjs --browser chromium --source-sha <sha> --episode-url <loopback-url> --evidence-dir .csdlc/evidence/5845/platform/desktop-chromium`
 - physical-device iOS Safari playback:
-  `bash adl/tools/record_podcast_ios_safari_playback.sh --source-sha <sha> --device-id-hash <sha256> --episode-url <device-reachable-url> --evidence-dir .csdlc/evidence/5845/platform/ios-safari-device`
+  require `ADL_IOS_DEVICE_ID_SHA256` to contain the real hashed device identity
+  and `ADL_IOS_EPISODE_URL` to contain the real device-reachable episode URL,
+  then run `bash adl/tools/record_podcast_ios_safari_playback.sh --source-sha-from-git-head --device-id-hash-env ADL_IOS_DEVICE_ID_SHA256 --episode-url-env ADL_IOS_EPISODE_URL --evidence-dir .csdlc/evidence/5845/platform/ios-safari-device`
 
 Each producer must capture one complete playback of the canonical episode,
 write its capture artifact below the named evidence directory, and emit a
@@ -113,17 +115,20 @@ fields without the bound files, command, and digests are not proof.
 
 ## Production Wave Budget
 
-The ten episodes are ten full production waves. Each episode budgets 8
-agent-hours and 70,000 model tokens: 2 hours and 24,000 tokens for source work
-and the final script; 2.5 hours and 18,000 tokens for generation, editing, and
-audio mastering; 1.5 hours and 14,000 tokens for transcript, show notes,
-artwork, metadata, and enclosure data; 1.5 hours and 10,000 tokens for listen
-review and revisions; and 30 minutes and 4,000 tokens for machine validation
-and packaging. The aggregate is 80 agent-hours and 700,000 tokens. With five
-independent episode owners, allow 16-24 hours wall-clock plus 4-6 hours for
-feed-wide consistency, platform playback, exact-head review, and final
-revisions. Budget exhaustion blocks the episode instead of permitting smoke
-audio, draft metadata, or skipped listen review.
+The ten episodes are ten full production waves. Each episode budgets 7.5
+agent-hours and 64,000 model tokens: 1.75 hours and 21,000 tokens for source
+work and the final script; 2.25 hours and 16,000 tokens for generation,
+editing, and audio mastering; 1.5 hours and 13,000 tokens for transcript, show
+notes, artwork, metadata, and enclosure data; 1.5 hours and 10,000 tokens for
+listen review and revisions; and 30 minutes and 4,000 tokens for machine
+validation and packaging. A separately scheduled integration wave uses the
+remaining 5 agent-hours and 60,000 tokens for feed-wide consistency, platform
+playback, exact-head review, and final revisions. The truthful aggregate
+remains 80 agent-hours and 700,000 tokens; the integration reserve is allocated
+inside, not added beyond, that total. With five independent episode owners,
+allow 16-24 hours wall-clock plus up to 5 hours for integration. Budget
+exhaustion blocks the episode instead of permitting smoke audio, draft metadata,
+or skipped listen review.
 
 ## Negative And Platform Lanes
 
@@ -133,6 +138,14 @@ audio, draft metadata, or skipped listen review.
 - Feed data must reject local paths, draft episodes, unstable GUIDs, missing enclosure bytes, and MIME/duration mismatch.
 - macOS and Linux validators must agree; browser playback includes desktop and iOS Safari evidence where required.
 - Tests set `TMPDIR` inside `.csdlc/evidence/5845/`; no system temporary directory is used.
+
+## Rollback
+
+Restore the previous feed and launch-readiness records, remove only episode
+packages and playback producers introduced by this issue, and retain rejected
+audio, redaction, consent, metadata, and playback reports under issue evidence.
+Rollback must not delete upstream Podcast Studio proof, mutate guest consent
+records, deploy feed changes, or claim publication.
 
 ## Non-Goals
 

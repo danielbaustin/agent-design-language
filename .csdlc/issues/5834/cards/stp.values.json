@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-16] Birthday review packet",
     "slug": "v0-92-wp-16-birthday-review-packet",
     "version": "v0.92",
-    "generation": 40
+    "generation": 46
   },
   "status": "ready",
   "content": {
@@ -28,7 +28,7 @@
         "Missing, stale, contradictory, nonterminal, unreviewed, duplicate-digest, private-path, personhood, citizenship, consciousness, governance, or publication-ready inputs produce named blocked failure.",
         "One bounded exact-head SRP review records no unresolved actionable findings.",
         "The implementation PR targets the intended base and includes Closes #5834 without claiming completion of downstream Birthday work.",
-        "Before claim acquisition, require the canonical wave row and live issue to add WP-13A/#5831 so all dependency surfaces exactly match."
+        "WP-08/#5825 through WP-15/#5833, including WP-13A/#5831 and WP-14/#5832, are terminal with exact-head evidence before packet assembly."
       ],
       "dependencies": [
         "WP-08 / issue #5825 terminal proof",

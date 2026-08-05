@@ -48,11 +48,18 @@ The packet inventories exact revisions and digests for WP-08 birth contract, WP-
 
 ## Dependencies And Invariants
 
-WP-08 through WP-15, including WP-13A/#5831, WP-14/#5832, and WP-15/#5833, must satisfy sprint gate 4 and exact-head evidence checks. The canonical wave row and live issue must add WP-13A before execution so they exactly match this stricter card contract. One source digest appears once; private evidence is represented by approved redacted projections; presentation surfaces cannot replace canonical proof.
+WP-08 through WP-15, including WP-13A/#5831, WP-14/#5832, and WP-15/#5833, must satisfy sprint gate 4 and exact-head evidence checks. One source digest appears once; private evidence is represented by approved redacted projections; presentation surfaces cannot replace canonical proof.
 
-## Validation And Rollback
+## Validation
 
-`validate-review-packet.rb` parses the schema and packet, recomputes every referenced digest, requires the exact WP-08 through WP-15 roster including WP-13A and WP-14, resolves every repo-relative link, and rejects missing or nonterminal proof. Its negative lane mutates one fixture at a time to prove stale revision, contradictory status, private-path leakage, personhood/citizenship/consciousness claims, and unauthorized publication-ready language fail closed. Rollback removes only the assembled packet/schema/validator and restores the WP-16-owned demo-matrix link.
+`validate-review-packet.rb` parses the schema and packet, recomputes every referenced digest, requires the exact WP-08 through WP-15 roster including WP-13A and WP-14, resolves every repo-relative link, and rejects missing or nonterminal proof. Its negative lane mutates one fixture at a time to prove stale revision, contradictory status, private-path leakage, personhood/citizenship/consciousness claims, and unauthorized publication-ready language fail closed.
+
+## Rollback
+
+Remove only the assembled review packet, evidence index, schema, and validator,
+then restore the WP-16-owned demo-matrix link. Preserve all rejected packet
+fixtures and validation findings under issue evidence; never modify child
+proof, rewrite terminal state, or promote a blocked dependency during rollback.
 
 ## Non-Goals
 

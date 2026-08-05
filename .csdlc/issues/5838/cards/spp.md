@@ -16,7 +16,7 @@ Verify #5832, #5834, and #5836; select two real independently configured provide
 
 ## Plan
 
-Revision 9
+Revision 11
 
 ## Steps
 
@@ -64,6 +64,18 @@ Revision 9
       "AC-5"
     ],
     "status": "pending"
+  },
+  {
+    "id": "S6",
+    "action": "Define and verify provider-proof rollback: remove only the harness and owned projection, retain redacted failures, and leave ACIP, credentials, and birthday behavior untouched.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "pending"
   }
 ]
 
@@ -92,7 +104,7 @@ Revision 9
 
 .csdlc/prepared/issues/5838/design.md
 
-Digest: c5bd59187f5f6cb350285cb74249a5c4bce79cba018b8387917fb18c8a3325c4
+Digest: 0295d4ea3cdf7ef7cb5de4412ea2d38386c4a77de2b7a60ae2932cdb5e657aa0
 
 ## Diagram
 
@@ -105,6 +117,7 @@ Digest: 66b8593a65f5605cd6e903d1954da188a9dada0abb3d75d1b6b1324da92a4f29
 - Fewer than two real compatible providers are available
 - #5832/#5836 contracts are not landed
 - No safe redacted trace can prove semantic equivalence
+- Rollback would expose credentials, delete redacted failure proof, or alter ACIP/birthday behavior.
 
 ## Handoff
 

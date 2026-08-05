@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
     "slug": "v0-92-wp-24a-podcast-studio-first-ten-episodes",
     "version": "v0.92",
-    "generation": 32
+    "generation": 41
   },
   "status": "ready",
   "content": {
@@ -136,7 +136,7 @@
         },
         {
           "lane": "wp24a-ios-safari-playback",
-          "proof_role": "Produce a physical-device iOS Safari playback receipt and capture using only a hashed device identity, bound to the exact candidate HEAD.",
+          "proof_role": "Produce a physical-device iOS Safari playback receipt at exact candidate HEAD using the required ADL_IOS_DEVICE_ID_SHA256 and ADL_IOS_EPISODE_URL environment contracts; retain only the hashed device identity.",
           "acceptance_ids": [
             "AC-2",
             "AC-5"
@@ -151,13 +151,13 @@
             "--source-sha-from-git-head",
             "--device-id-hash-env",
             "ADL_IOS_DEVICE_ID_SHA256",
-            "--episode-url",
-            "http://<device-reachable-host>:4173/podcast/episodes/001/episode.mp3",
+            "--episode-url-env",
+            "ADL_IOS_EPISODE_URL",
             "--evidence-dir",
             ".csdlc/evidence/5845/platform/ios-safari-device"
           ],
           "parallel_group": "platform-browser",
-          "defer_reason": "Required on a physical iOS Safari device; simulator-only or missing device proof blocks review readiness."
+          "defer_reason": "Required on a physical iOS Safari device with ADL_IOS_DEVICE_ID_SHA256 and a device-reachable ADL_IOS_EPISODE_URL set by the operator; missing or simulator-only proof blocks review readiness."
         },
         {
           "lane": "wp24a-platform-receipt-binding",
@@ -183,7 +183,7 @@
       "planned_validation_tokens": 80000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5845/design.md",
-      "design_digest": "00b84250de2974fd61befd1b2b122a7c749a17fb7615e4f2c8ec19e00dfe264a",
+      "design_digest": "e577c1d95f46d4de635fce4f2afc6d5697cde482e44599380b9b15698a73715f",
       "diagram_ref": ".csdlc/prepared/issues/5845/diagram.mmd",
       "diagram_digest": "f93e767ad01814319f03d67e71121eeca0bbbaf725dbabb2e0997aaf7f37ccce"
     }

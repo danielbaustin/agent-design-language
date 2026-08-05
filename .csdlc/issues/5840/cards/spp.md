@@ -16,7 +16,7 @@ Verify dependency revisions; correct stale WP-20 ownership while preserving WP-2
 
 ## Plan
 
-Revision 9
+Revision 11
 
 ## Steps
 
@@ -62,6 +62,18 @@ Revision 9
       "AC-5"
     ],
     "status": "pending"
+  },
+  {
+    "id": "S6",
+    "action": "Define and verify proof-index rollback: restore owned matrix, coverage, and ledger revisions while retaining rejected reports and leaving child proof immutable.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "pending"
   }
 ]
 
@@ -90,7 +102,7 @@ Revision 9
 
 .csdlc/prepared/issues/5840/design.md
 
-Digest: 401d537577b2defef3a31a71b8933295d6a7880f549fd4d591ddaefa41387f49
+Digest: 84ab3b83975c621c82aaaf889ec94cb99871ebf4f01b232d64325bb8196cd5dd
 
 ## Diagram
 
@@ -103,6 +115,7 @@ Digest: 57f3fcc1a7b7aac2e97794d4e761093a49874adc02355f69436b4811bb6538e2
 - A required dependency lacks accepted exact-revision evidence
 - WP-20 ownership cannot be reconciled without changing the live wave
 - A claimed artifact cannot be independently inspected
+- Rollback would alter child proof or promote planned, blocked, failed, or uncovered rows.
 
 ## Handoff
 

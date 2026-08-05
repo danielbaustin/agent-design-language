@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-24] Ten-article launch series",
     "slug": "v0-92-wp-24-ten-article-launch-series",
     "version": "v0.92",
-    "generation": 29
+    "generation": 36
   },
   "status": "ready",
   "content": {
@@ -77,7 +77,7 @@
       "planned_validation_tokens": 60000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5844/design.md",
-      "design_digest": "8519fa31485b2594b8c17867d97cd034b140c15ed8869e76acc2c89fc50def32",
+      "design_digest": "e86b30babe31424f9a42a6b1cfb82ffc572d24a6c503d463f4eecbf6cd977d86",
       "diagram_ref": ".csdlc/prepared/issues/5844/diagram.mmd",
       "diagram_digest": "fd443e63c054166e3e4c71db483681f52038f49cafe19a5a5353a8cbb24673a1"
     }

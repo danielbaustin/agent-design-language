@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
     "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
     "version": "v0.92",
-    "generation": 37
+    "generation": 42
   },
   "status": "ready",
   "content": {
@@ -69,23 +69,71 @@
           "defer_reason": null
         },
         {
-          "lane": "memory_palace-native-platform-receipts",
-          "proof_role": "Recompute and bind exact HEAD, exact test argv, nonzero test count, fixture-tree digest, output digest, runner identity, and native artifact digest for macOS and Linux; require byte-identical semantic output.",
+          "lane": "memory_palace-macos-native-ci-producer",
+          "proof_role": "Run the issue-local receipt producer on a native GitHub Actions macos runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-9"
+          ],
+          "deterministic": false,
+          "resource_profile": "medium",
+          "budget_seconds": 240,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5828/produce-native-receipt.rb",
+            "--platform",
+            "macos",
+            "--receipt",
+            ".csdlc/evidence/5828/native-platform/macos.json",
+            "--semantic-output",
+            ".csdlc/evidence/5828/native-platform/macos-semantic.json"
+          ],
+          "parallel_group": "5828-native-produce",
+          "defer_reason": "Required on a native GitHub Actions macos runner; missing CI proof blocks portability and review readiness."
+        },
+        {
+          "lane": "memory_palace-linux-native-ci-producer",
+          "proof_role": "Run the issue-local receipt producer on a native GitHub Actions linux runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-9"
+          ],
+          "deterministic": false,
+          "resource_profile": "medium",
+          "budget_seconds": 240,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5828/produce-native-receipt.rb",
+            "--platform",
+            "linux",
+            "--receipt",
+            ".csdlc/evidence/5828/native-platform/linux.json",
+            "--semantic-output",
+            ".csdlc/evidence/5828/native-platform/linux-semantic.json"
+          ],
+          "parallel_group": "5828-native-produce",
+          "defer_reason": "Required on a native GitHub Actions linux runner; missing CI proof blocks portability and review readiness."
+        },
+        {
+          "lane": "memory_palace-native-ci-receipt-verification",
+          "proof_role": "Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD.",
           "acceptance_ids": [
             "AC-4",
             "AC-9"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 30,
-          "budget_tokens": 1000,
+          "budget_seconds": 60,
+          "budget_tokens": 1500,
           "argv": [
             "ruby",
             ".csdlc/prepared/issues/5828/validate-native-receipts.rb",
             ".csdlc/evidence/5828/native-platform/macos.json",
             ".csdlc/evidence/5828/native-platform/linux.json"
           ],
-          "parallel_group": "5828-platform",
+          "parallel_group": "5828-native-verify",
           "defer_reason": null
         }
       ],
@@ -93,7 +141,7 @@
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5828/design.md",
-      "design_digest": "1fd04b872c9d7a811a1d39b57542551ab8beffb9663751437e099459a5c78d29",
+      "design_digest": "697eef7df266877fdf108cfe33b3d0dc91a166e5d0c54b167cbc34b3058980ea",
       "diagram_ref": ".csdlc/prepared/issues/5828/diagram.mmd",
       "diagram_digest": "ff82b0bec69f0e9368d20aff4022d0a5506a8040000a27f8a1991dece282ff8b"
     }

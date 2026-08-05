@@ -16,7 +16,7 @@ Verify #5825-#5830 and #5832-#5834; bind to landed schemas; implement the positi
 
 ## Plan
 
-Revision 12
+Revision 14
 
 ## Steps
 
@@ -72,6 +72,19 @@ Revision 12
       "AC-6"
     ],
     "status": "pending"
+  },
+  {
+    "id": "S7",
+    "action": "Define and verify demo rollback: remove the harness and owned projections, restore D1-D6, and retain failed packets without rewriting Runtime birthday evidence.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
+    ],
+    "status": "pending"
   }
 ]
 
@@ -100,7 +113,7 @@ Revision 12
 
 .csdlc/prepared/issues/5836/design.md
 
-Digest: 82f1ec1056c927fdf4eaa15fe2c03fb791dc62bf8e1945f378f7a5718e321d50
+Digest: d45b304f65477d6f3ea8535a0f01981434dd86ff1b7007faa1fb9e56717cef68
 
 ## Diagram
 
@@ -113,6 +126,7 @@ Digest: 039549736c17a86e37d74217aa9f5d20dade32c3a9e12e92c43a9975fd8d1a03
 - Any required dependency is unlanded
 - No integrated Runtime entrypoint can emit the packet
 - A required negative cannot be distinguished within issue scope
+- Rollback would delete Runtime-produced proof, dependency evidence, or failed/incomplete packets.
 
 ## Handoff
 

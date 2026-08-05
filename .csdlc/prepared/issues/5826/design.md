@@ -12,6 +12,7 @@ Define the WP-09 identity record from `docs/milestones/v0.92/features/IDENTITY_S
 - `adl-runtime-kernel/tests/fixtures/birthday_identity`
 - `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`
 - `.csdlc/prepared/issues/5826/validate-native-receipts.rb`
+- `.csdlc/prepared/issues/5826/produce-native-receipt.rb`
 - `.csdlc/evidence/5826`
 
 ## Read-Only Inputs
@@ -78,7 +79,7 @@ WP-08/#5825 must be terminal before implementation; prior citizen-state lineage 
 
 ## Validation And Rollback
 
-The exact `birthday_identity` integration-test target must run a nonzero test count covering canonical records, deterministic ordering, missing roots, alias collision, provenance mismatch, substituted continuity heads, and private-path disclosure. Native Linux CI and a retained native macOS receipt bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest when portability is claimed. Rollback removes the v0.92 record/fixtures while retaining prior lineage primitives and WP-08 outputs.
+The exact `birthday_identity` integration-test target must run a nonzero test count covering canonical records, deterministic ordering, missing roots, alias collision, provenance mismatch, substituted continuity heads, and private-path disclosure. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes the v0.92 record/fixtures while retaining prior lineage primitives and WP-08 outputs.
 
 ## Non-Goals
 

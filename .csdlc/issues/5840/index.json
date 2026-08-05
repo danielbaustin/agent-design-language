@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1df5691bbbeab4d20e6be89d00ec42c2dd2f6a44809f68e64dce6d6fea447e90",
   "phase": "bound",
-  "generation": 24,
-  "digest": "1b4b17e76fca320cdc28983d1da09bab04778acbaaaaad27b928bf68d55a8ae5",
+  "generation": 28,
+  "digest": "458b0ff71c182de218d3fbf60b51d353f92a2ca54b8a280a18307733f75a867d",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5840/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "401d537577b2defef3a31a71b8933295d6a7880f549fd4d591ddaefa41387f49"
+      "reviewer": "codex:5860-birthday-publication-final-design-review",
+      "revision": "84ab3b83975c621c82aaaf889ec94cb99871ebf4f01b232d64325bb8196cd5dd"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "999d92e82b2893fdf6cd73b825696fd8e7163f96503de350f47ed97899081dc7",
+      "values_digest": "91ee61de604209f9db16c4b0ff0eaa42081a3bab0aa6e1fea10290a72fca0691",
       "rendered_digest": "4721c3cd735e1ef5d94f73aec8474e4a79d3b6c6624f19ca66374c1a101b8852",
       "ast_digest": "0eb414faa79f813dee84591f77f538a533bae4823d6f4550cd4ecde025063a66"
     },
     "stp": {
-      "values_digest": "b35eb341570f7e71995cad301505b089ec10b9f34f88b1f1efeac09fbb432c0b",
+      "values_digest": "2ce298340ae26576e65652ab77ec560c226a87ffe18b848de75e1c03296c8fcc",
       "rendered_digest": "89710059108f1b71ef76d9c18a4f0b5e006e5d12bbf9963d50948fd57abda541",
       "ast_digest": "58ad82e0415338ea91183d54b9f52a856d327d3a6999f2078704119b79bc9db2"
     },
     "spp": {
-      "values_digest": "b8860a99f5384c8d3bd2b575775504a9190f6aac2e145972621f386efb4de7ec",
-      "rendered_digest": "c2bc959215d6fd8a3a523306c1c1fab81bbaa7749d9870a69f68ded4ed425ef1",
-      "ast_digest": "aed2461c906a85ffe3e21f0c26e10f1797b7ae00257c49b542699e484bc470bd"
+      "values_digest": "356e2afab01b465bb996f3e9d59503853c0c2d51b49e42012e9237c25313342f",
+      "rendered_digest": "50a77a3fea405fc8647e2d6b59b0bae5ec980f278498c5bbeedae8bee97c2d77",
+      "ast_digest": "aa36882234a981583af1c6ae63389420ba5a8fbcb8c0424ce9fa9ec6d596727f"
     },
     "vpp": {
-      "values_digest": "125bd51523cfb3648ec571b338884c33139c9cfa60aeabae2ff6edc2ba12bac0",
+      "values_digest": "53fb4195fa78745829f8319f9211365e6d4f9998a42265d887b67913d470e25e",
       "rendered_digest": "4c27593e0cce44ee08ddc1a5068192498ca56799c7d749f3b5f164bc18bfed02",
       "ast_digest": "307b384dd95e4211aaa4f566ee94849ec11a388558c1446c1def859bfaa4c113"
     },
     "srp": {
-      "values_digest": "b1e821bd4a99fc31757bd2f1bf7adc6cda13b728af73d0a260f1410b586b49d1",
+      "values_digest": "ccceba0a4f1abcd0fbdf0be8a7e82867890aac8c50493ffbcabd858b4354fb96",
       "rendered_digest": "282625afcf4ab5da59a183a825e93a67d1ba4bc6f2b4a096e5e01aa438cdd9cf",
       "ast_digest": "14459b3bc69cdd00631d7aa3eb18fd3d8299e55c490a34fb10f8d0b3202d640a"
     },
     "sor": {
-      "values_digest": "e53079e9d024244407a77d685f3fa7945cfa9d02f8747cbebc1500bb05396d59",
+      "values_digest": "9fa7d618bc22454db49334942415f41b86b64938760c4ac6a0454625fd6a19e4",
       "rendered_digest": "aa681a63d290b05cb1fc8d1e229f1cdbdd6be71ad82c28717c625a69e559d924",
       "ast_digest": "7f81899c6a5095949519bd8e356c956f00810d47612f084f66e20d4f8320c033"
     }
@@ -300,6 +300,48 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5840-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 24,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Reacquire the released preparation claim for assigned execution-readiness repairs.",
+      "operation": "{\"branch\":\"codex/5860-birthday-publication-repair\",\"claim_id\":\"claim-5840-v092-birthday-publication-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-publication-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5840\",\".csdlc/prepared/issues/5840\",\".csdlc/evidence/5840\",\".csdlc/locks/5840.lock\"],\"purpose\":\"Assigned Birthday/publication execution-readiness repair only; no product implementation, live GitHub mutation, aggregate-manifest mutation, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 25,
+      "actor": "codex:5860-birthday-publication-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 36,
+      "generation": 26,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Add the explicit issue-scoped rollback step required for execution readiness.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5836, #5837, #5838, and #5839 at accepted exact revisions\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Reconcile matrix, coverage, activation, and AEE index rows\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Correct WP-20 ownership while preserving WP-21/WP-21A\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Implement and run positive, negative, and platform coverage checks\",\"acceptance_ids\":[\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head proof-index review\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Define and verify proof-index rollback: restore owned matrix, coverage, and ledger revisions while retaining rejected reports and leaving child proof immutable.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 37,
+      "generation": 27,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Fail closed when the bounded rollback contract cannot be preserved.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"A required dependency lacks accepted exact-revision evidence\",\"WP-20 ownership cannot be reconciled without changing the live wave\",\"A claimed artifact cannot be independently inspected\",\"Rollback would alter child proof or promote planned, blocked, failed, or uncovered rows.\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 28,
+      "actor": "codex:5860-birthday-publication-final-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 39,
+      "generation": 28,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
+      "operation": "{\"claim_id\":\"claim-5840-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
     }
   ]
 }

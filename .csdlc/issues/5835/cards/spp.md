@@ -16,7 +16,7 @@ Verify #5826, #5827, and #5834; reconcile landed schemas; author the transfer ma
 
 ## Plan
 
-Revision 9
+Revision 11
 
 ## Steps
 
@@ -64,6 +64,18 @@ Revision 9
       "AC-5"
     ],
     "status": "pending"
+  },
+  {
+    "id": "S6",
+    "action": "Define and verify documentation rollback: restore owned continuity-transfer docs while retaining rejected matrices and leaving identity, transport, and governance evidence unchanged.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-3",
+      "AC-2",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "pending"
   }
 ]
 
@@ -92,7 +104,7 @@ Revision 9
 
 .csdlc/prepared/issues/5835/design.md
 
-Digest: 2d55588405f0f58c47150e7359b8204b3d42d3db19a82b642a4a43cb08f451a2
+Digest: bf576c7f347cee6306685cc8fdfb11f926be8f7b7320da70f42c8faa674c1353
 
 ## Diagram
 
@@ -105,6 +117,7 @@ Digest: 0a3ab8f4a8150b92ec738750c11ea59db723de5e8bdd6d4a18052b93ae7e632b
 - Any dependency is not current and accepted
 - Required schema or evidence path is absent
 - The design cannot preserve lineage or redaction without widening scope
+- Rollback cannot restore owned documentation without relabeling unresolved transfer evidence.
 
 ## Handoff
 

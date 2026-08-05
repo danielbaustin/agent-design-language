@@ -98,6 +98,14 @@ capability envelope. Every negative case must produce a typed rejection reason.
   not enter retained or reviewer-facing artifacts.
 - Interrupted execution must leave an explicit failed/incomplete packet.
 
+## Rollback
+
+Remove the v0.92 demo harness and its owned launch-copy projections, restore
+the prior D1-D6 rows, and retain all failed/incomplete packets and validation
+logs under issue evidence. Rollback must not delete dependency artifacts,
+rewrite Runtime-produced birthday records, or promote a historical fixture to
+positive proof.
+
 ## Non-Goals
 
 - Observatory or Unity consumer integration (#5837).

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1bed306513e72500abe5d143e2ec479191780e44a02561af7742f761bc958f89",
   "phase": "bound",
-  "generation": 42,
-  "digest": "e6719ea4cf4071cc9d0ffdd587590fe52c331efb50b271a73164624e920463d1",
+  "generation": 47,
+  "digest": "cdc0c59b5dcf576edc7f87e56471f46b1b8f541483501dee925935aa796cfc60",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5826/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "b023177cb9ce0b8f599c74f0014dcc96159b845d5ec2e5f19d9d5b5c0e3905e4"
+      "reviewer": "codex:5860-birthday-publication-final-design-review",
+      "revision": "53a190501144dc14801ab53a2a627d04fdbc2111413d0d45b4e6f094d5b37d2e"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "9d46791243b19669afa5fc0eb018650c1c5db31cfcc3b4413ed895ddb25167d2",
+      "values_digest": "a96a1084ead1687d72e9d99efe4284962190faad6cba16f72eb77be66d7712e9",
       "rendered_digest": "4d6883dc887631fca3e3cc56735a43aa8d4e52499d6a201bdb17b9872178282b",
       "ast_digest": "9f49fdd6b50b3ed26db9a41e22370c5568a5d071bec8fef8b05e8c5251fd9c6d"
     },
     "stp": {
-      "values_digest": "54162a1b264df4f2c6f2153b67f06c1d7aa85070622b9439455c3078d316dc98",
-      "rendered_digest": "014a0571ccbf49ba7859000273a776a8eb81760aec0d4ed8a8554d05a0b39477",
-      "ast_digest": "0566f0aa1441ef7867fab7913acdb59a068a44900867fa726b713b9d84965106"
+      "values_digest": "6d1dd464cf6de669cf1cce01d49fca2df6a45b1f88aa35d50917a43eefad01cc",
+      "rendered_digest": "3f3295be0def022de32df4e069c949b2d588214c7440de52603ef21115b883f6",
+      "ast_digest": "29238666ae341873bf753b14a92c0b07ac5c3b1c9f132794acd1cc52529a2cf4"
     },
     "spp": {
-      "values_digest": "f927fd0dcc91a172c77152d7f0493839323a881af3b1328425abb16486994051",
-      "rendered_digest": "29372a52155b5164560dfa3ee6f6ee82e1a0b9561ccc5a9a1f189a442b508bf6",
-      "ast_digest": "f81979a86c0f1977e19ce4e4f046ff34325b3aa2b0a05378d7d261fc308cd384"
+      "values_digest": "8fb7d214685a3eaffa0259d8e4385d7d587c67c02cae16f281c69732c6ca92e7",
+      "rendered_digest": "f2a1e368c9d512e3aa1af9d7c50dfc34c1aee7d733455cb413c737aa09132a29",
+      "ast_digest": "c7594dd94f4fddb0dbe31c610274d349f5e64aba1068d5f1df4f17a6e7feb900"
     },
     "vpp": {
-      "values_digest": "81610013e65591060201376a3a69264118ed416708bf101af594327c82a43a26",
-      "rendered_digest": "33d441bbd61020396576b16becd3c80716018484e54b8c022092991d391eb2c4",
-      "ast_digest": "cd3269b564fb214e731337bd29c4a6eb9cabb9335cf7d572158e841fd88070cd"
+      "values_digest": "dbec4bc98b9e9cda4e6c137bcaab955f916a14979391bc697e7a584dd21d4400",
+      "rendered_digest": "ff948713e1f0c166a8c0e223c319360106deb01073fc5225b1071c51fe908795",
+      "ast_digest": "f4850dc36a244b4d04d7032395ebc17150572a7aa0730dbfb1755e9c1a163399"
     },
     "srp": {
-      "values_digest": "6e6b130d3d8ee11ed447c0b2870d00d5b32216522d3536de26e7437ea9ff79f4",
+      "values_digest": "03d876c9d0f391d689b000c24657d20a5f1c58768f8ab526940f65ad4cc345a5",
       "rendered_digest": "f0e9b963f02bbd8867ff6ecc4de02958433c3ddfaaf01c327402594a46d267dc",
       "ast_digest": "65f6b23f51b9fa521a69b132fb0c73f834514dcf3ee2be2ebd378966acae6071"
     },
     "sor": {
-      "values_digest": "2b977abd7066f6a82878bfb005fc0af7c3a703e2ce96f5bbb751385e82eea2e9",
+      "values_digest": "ddcc968722a43a19a4feb08866afc21e1eefd6599cb9298bafeed9a89b060001",
       "rendered_digest": "73285c147df2070352a736b49dc7cc813558574b83098912c14f34893ea55a9a",
       "ast_digest": "bfc21804e100d80c16cdcb8e3e07b883c104866725478b9e1cc69a392af6a002"
     }
@@ -454,6 +454,55 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5826-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 56,
+      "generation": 42,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Reacquire the released preparation claim for assigned execution-readiness repairs.",
+      "operation": "{\"branch\":\"codex/5860-birthday-publication-repair\",\"claim_id\":\"claim-5826-v092-birthday-publication-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-publication-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5826\",\".csdlc/prepared/issues/5826\",\".csdlc/evidence/5826\",\".csdlc/locks/5826.lock\"],\"purpose\":\"Assigned Birthday/publication execution-readiness repair only; no product implementation, live GitHub mutation, aggregate-manifest mutation, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 57,
+      "generation": 43,
+      "actor": "codex:5860-birthday-publication-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 58,
+      "generation": 44,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Replace self-attested platform receipts with exact-head native CI producers and independent digest/provenance validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"birthday_identity-runtime-v3\",\"proof_role\":\"Run the exact Runtime v3 integration target and fail when the selected target contains no tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"birthday_identity\",\"--no-tests=fail\",\"--status-level\",\"all\"],\"parallel_group\":\"5826-core\",\"defer_reason\":null},{\"lane\":\"birthday_identity-macos-native-ci-producer\",\"proof_role\":\"Run the issue-local receipt producer on a native GitHub Actions macos runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":240,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5826/produce-native-receipt.rb\",\"--platform\",\"macos\",\"--receipt\",\".csdlc/evidence/5826/native-platform/macos.json\",\"--semantic-output\",\".csdlc/evidence/5826/native-platform/macos-semantic.json\"],\"parallel_group\":\"5826-native-produce\",\"defer_reason\":\"Required on a native GitHub Actions macos runner; missing CI proof blocks portability and review readiness.\"},{\"lane\":\"birthday_identity-linux-native-ci-producer\",\"proof_role\":\"Run the issue-local receipt producer on a native GitHub Actions linux runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":240,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5826/produce-native-receipt.rb\",\"--platform\",\"linux\",\"--receipt\",\".csdlc/evidence/5826/native-platform/linux.json\",\"--semantic-output\",\".csdlc/evidence/5826/native-platform/linux-semantic.json\"],\"parallel_group\":\"5826-native-produce\",\"defer_reason\":\"Required on a native GitHub Actions linux runner; missing CI proof blocks portability and review readiness.\"},{\"lane\":\"birthday_identity-native-ci-receipt-verification\",\"proof_role\":\"Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD.\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1500,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5826/validate-native-receipts.rb\",\".csdlc/evidence/5826/native-platform/macos.json\",\".csdlc/evidence/5826/native-platform/linux.json\"],\"parallel_group\":\"5826-native-verify\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 59,
+      "generation": 45,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Align the operative plan with the exact issue-local native CI producer path.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/birthday_identity.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/birthday_identity.rs\",\"adl-runtime-kernel/tests/fixtures/birthday_identity\",\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\".csdlc/prepared/issues/5826/validate-native-receipts.rb\",\".csdlc/evidence/5826\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-birthday-kernel-registration-v1\\\",\\\"paths\\\":[\\\"adl-runtime-kernel/src/lib.rs\\\"],\\\"issues\\\":[5825,5826,5827,5828,5829,5830,5831,5833],\\\"order\\\":[5825,5826,5827,5828,5829,5830,5831,5833]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-identity-feature-doc-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\\\"],\\\"issues\\\":[5826,5827],\\\"order\\\":[5826,5827]}\",\".csdlc/prepared/issues/5826/produce-native-receipt.rb\"]}"
+    },
+    {
+      "sequence": 60,
+      "generation": 46,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Require exact-head native CI producer evidence and remove obsolete dependency-repair instructions.",
+      "operation": "{\"operation\":\"replace_acceptance_criteria\",\"values\":[\"The WP-09 record deterministically binds stable name, identity root, aliases, origin evidence, continuity head, provenance, and redaction policy while rejecting ambiguous or substituted identity.\",\"WP-08/#5825 terminal proof and current lineage authority are verified before implementation begins.\",\"Implementation is confined to adl-runtime-kernel/src/birthday_identity.rs, lib.rs module registration, tests/birthday_identity.rs, tests/fixtures/birthday_identity/, the identity feature contract, and .csdlc/evidence/5826/.\",\"Canonical serialization, root derivation, and alias ordering replay identically and are retained at the exact reviewed revision.\",\"Empty roots, alias collision, provenance mismatch, substituted continuity, raw private state, and absolute or path-unsafe references fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5826 without claiming completion of downstream Birthday work.\",\"The exact birthday_identity nextest target runs a positive test count on native GitHub Actions macOS and Linux at exact candidate HEAD; issue-local producers retain hashed source manifests, complete command logs, and canonical semantic outputs, and independent validation recomputes every digest and requires semantic equivalence.\"]}"
+    },
+    {
+      "sequence": 61,
+      "generation": 47,
+      "actor": "codex:5860-birthday-publication-final-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 62,
+      "generation": 47,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
+      "operation": "{\"claim_id\":\"claim-5826-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
     }
   ]
 }

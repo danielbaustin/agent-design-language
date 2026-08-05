@@ -12,6 +12,7 @@ Implement the WP-10 continuity record defined by `docs/milestones/v0.92/features
 - `adl-runtime-kernel/tests/fixtures/birthday_continuity`
 - `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`
 - `.csdlc/prepared/issues/5827/validate-native-receipts.rb`
+- `.csdlc/prepared/issues/5827/produce-native-receipt.rb`
 - `.csdlc/evidence/5827`
 
 ## Read-Only Inputs
@@ -78,7 +79,7 @@ WP-09/#5826 must be terminal. Existing private-state lineage and wake evidence r
 
 ## Validation And Rollback
 
-The exact `birthday_continuity` integration-test target must run a nonzero test count proving a two-or-more-cycle chain, deterministic head derivation, substitution/discontinuity/duplicate/reordered/missing-evidence failures, and copied-state rejection. Native Linux CI and a retained native macOS receipt must bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before cross-platform output equivalence is claimed. Rollback removes the new continuity layer without rewriting predecessor evidence.
+The exact `birthday_continuity` integration-test target must run a nonzero test count proving a two-or-more-cycle chain, deterministic head derivation, substitution/discontinuity/duplicate/reordered/missing-evidence failures, and copied-state rejection. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes the new continuity layer without rewriting predecessor evidence.
 
 ## Non-Goals
 

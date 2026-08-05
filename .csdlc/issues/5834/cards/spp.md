@@ -16,7 +16,7 @@ Assemble and prove WP-16's exact-digest reviewer packet with complete child evid
 
 ## Plan
 
-Revision 15
+Revision 18
 
 ## Steps
 
@@ -62,6 +62,21 @@ Revision 15
       "AC-8"
     ],
     "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Define and verify packet rollback: remove only WP-16 packet surfaces, restore the owned demo-matrix link, and retain rejected evidence without mutating child proof.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-1",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7",
+      "AC-8"
+    ],
+    "status": "pending"
   }
 ]
 
@@ -89,7 +104,7 @@ Revision 15
 
 .csdlc/prepared/issues/5834/design.md
 
-Digest: 32a673ea781e96b489cc8be1878fd200d89d6de6213f8e79da28c104e1e916c3
+Digest: 62170aad99c6535960642361e9c5f51dd217c80dbb9b77793d6d6b7f4829ea5c
 
 ## Diagram
 
@@ -102,7 +117,7 @@ Digest: 8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224
 - Any required child lacks terminal exact-head evidence.
 - A packet link or digest cannot be validated reproducibly.
 - Assembly requires editing shared milestone or release authority outside WP-16.
-- The canonical wave row or live issue does not include the required WP-13A/#5831 dependency.
+- Rollback cannot preserve rejected packet evidence without changing child proof or terminal state.
 
 ## Handoff
 

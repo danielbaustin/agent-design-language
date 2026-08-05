@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "2f8a9edc733d36518cfdfe54639ecbf45210e8028e1a884bf5e25a2d1d52408c",
   "phase": "bound",
-  "generation": 40,
-  "digest": "a928375965a26336cbfdb55ffc0db100a002186a1e4dd8dde026a2e06525f411",
+  "generation": 46,
+  "digest": "1a34631eb6242a3e5f093308405380393e6f4d95b793aa34af56d473a2a3991a",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5834/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "32a673ea781e96b489cc8be1878fd200d89d6de6213f8e79da28c104e1e916c3"
+      "reviewer": "codex:5860-birthday-publication-final-design-review",
+      "revision": "62170aad99c6535960642361e9c5f51dd217c80dbb9b77793d6d6b7f4829ea5c"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "e3286443bb5a294f449eff90ca1479a437ef2cc24d3f5efd20439980ed709d58",
+      "values_digest": "b9c9a10444316a77ccb06fae6555dd64aa2706db34b26d12b9b78fd0de57eeb6",
       "rendered_digest": "75fcd7a9ca988fb75b97169b64a72b3a7bcdb5b033e0ae15536b2cffa73ff6c6",
       "ast_digest": "725fd3bcdf422bf6c8117264e314f2fd76083afc31e9d67608c1aa8fbdac63f6"
     },
     "stp": {
-      "values_digest": "218c4786f46f2c8abbcbc5e5a652897be742a5f938e4b2103a216063e8ba66c5",
-      "rendered_digest": "6c42988bbc8a0f8835f11c38e04a09a24a67f758afdb53959987edf6d1229512",
-      "ast_digest": "262ddf31e5fb6d64ce53b5d2d61cc03547573861cf9cdf05d3ed6f3b0ed8dbfd"
+      "values_digest": "b8e09d67ab122aabe4745e6e28ad03021ab599b7c8cbdc2b8beaf2afa7fcd6a4",
+      "rendered_digest": "8827b3a7cdd999e4beeb34f4a4acc83e599697915de0c15b2ff7c602e4476e88",
+      "ast_digest": "7df437a7adc6cf8269fbc8198fbc546a30dbbf6372d1579e4468bd0aa104747c"
     },
     "spp": {
-      "values_digest": "5911f8485693d4efc417b567a1f220df733347453cd50372525d0e0f9c47cfc3",
-      "rendered_digest": "37987938b64923fb7f4c8357fae7d094d6b66ce3f9331d8adb50ea60cb96e8a1",
-      "ast_digest": "4858ed1dad8cec080ba163042667bf4b75d11b2b7e38eb9bce6c6c1cb0a1390f"
+      "values_digest": "218dfe2385182c4c7b6c8afe6a4d804bf80cf01ea5e1399997c4fc47af6cb377",
+      "rendered_digest": "0355d8c714d8ed0b1913e653e2177c508e97f15ff2c4c379ff1240e4d8880832",
+      "ast_digest": "9e79364dd9ff2c09249a397ab6afad2ac562deaf015bdb22a40abb021359af4c"
     },
     "vpp": {
-      "values_digest": "3345c0485b373aaabb0d4a90692aaae5def6c7730271b379670e669a45b87fff",
+      "values_digest": "d310b9e97932f1140beecae9d237ab221313db668dd3b05699ad0831fa03d7cb",
       "rendered_digest": "6dae26196c319a4ec05c1310a4c27386026e2fdc83b8f81c93e42923c2276d5f",
       "ast_digest": "94313b2ce41116a592ca567638d094444183bc250356bb0bb6ed76ed4f37c04b"
     },
     "srp": {
-      "values_digest": "655f1aa2676e0d0b41000e8eba3d1b83f29f85dd0a3039cc109f9a42fb819a15",
+      "values_digest": "2e13d126392ab9e4a3114e06de82530e8791a995c283093011b8f3a5f7f8b20e",
       "rendered_digest": "17190932d0bba5d9191d53a975465fddac37eb89830aaaa38ebd756d964599a3",
       "ast_digest": "137e5f2ec6e6c6f2da3c450deb1eebac5ae35339e1bd543c1dfc7d6abc733269"
     },
     "sor": {
-      "values_digest": "190aa12487630e03d3c914ed38e5008c84b22ad987a6c69ba4ef5a830e99ade7",
+      "values_digest": "cfc48e7ba256cd1778f9723a126bc54546398d394195a87eb3c85ab90acff49e",
       "rendered_digest": "9c5f2b3c80e1c6fef456129710248d984e21f19b8959152442c897af648beca7",
       "ast_digest": "1e76b8e18e111f25a6ef160b34eb5df0a73d783efe16a58ce5209f6e8b6697a4"
     }
@@ -440,6 +440,62 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5834-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 54,
+      "generation": 40,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Reacquire the released preparation claim for assigned execution-readiness repairs.",
+      "operation": "{\"branch\":\"codex/5860-birthday-publication-repair\",\"claim_id\":\"claim-5834-v092-birthday-publication-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-publication-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5834\",\".csdlc/prepared/issues/5834\",\".csdlc/evidence/5834\",\".csdlc/locks/5834.lock\"],\"purpose\":\"Assigned Birthday/publication execution-readiness repair only; no product implementation, live GitHub mutation, aggregate-manifest mutation, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 55,
+      "generation": 41,
+      "actor": "codex:5860-birthday-publication-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 56,
+      "generation": 42,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Add the explicit issue-scoped rollback step required for execution readiness.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Reconcile the stricter WP-13A dependency and verify exact terminal/reviewed evidence for the complete WP-08 through WP-15 roster.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Assemble the named Markdown packet, evidence JSON, schema, and deterministic issue-local validator without manufacturing missing proof.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run schema/link/digest/uniqueness/completeness proof and missing/stale/contradictory/private/overclaim negative fixtures.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5834 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Define and verify packet rollback: remove only WP-16 packet surfaces, restore the owned demo-matrix link, and retain rejected evidence without mutating child proof.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-1\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 57,
+      "generation": 43,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Fail closed when the bounded rollback contract cannot be preserved.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any required child lacks terminal exact-head evidence.\",\"A packet link or digest cannot be validated reproducibly.\",\"Assembly requires editing shared milestone or release authority outside WP-16.\",\"The canonical wave row or live issue does not include the required WP-13A/#5831 dependency.\",\"Rollback cannot preserve rejected packet evidence without changing child proof or terminal state.\"]}"
+    },
+    {
+      "sequence": 58,
+      "generation": 44,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Remove superseded dependency-repair prose while preserving the current execution gate.",
+      "operation": "{\"operation\":\"replace_acceptance_criteria\",\"values\":[\"The WP-16 packet inventories one canonical exact revision/digest for every required WP-08 through WP-15 proof, negative report, caveat, reviewer question, redacted projection, and public non-claim.\",\"All issues #5825 through #5833, including #5831 and #5832, satisfy sprint gate 4 terminal and exact-head evidence requirements before assembly.\",\"Implementation is confined to the named WP-16 review packet Markdown, evidence JSON, schema, issue-local validator, WP-16 demo-matrix row, and .csdlc/evidence/5834/.\",\"Schema, link, digest, uniqueness, and completeness validation is reproducible and retained at the exact reviewed revision.\",\"Missing, stale, contradictory, nonterminal, unreviewed, duplicate-digest, private-path, personhood, citizenship, consciousness, governance, or publication-ready inputs produce named blocked failure.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5834 without claiming completion of downstream Birthday work.\",\"WP-08/#5825 through WP-15/#5833, including WP-13A/#5831 and WP-14/#5832, are terminal with exact-head evidence before packet assembly.\"]}"
+    },
+    {
+      "sequence": 59,
+      "generation": 45,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Remove superseded dependency-repair prose while preserving the current execution gate.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any required child lacks terminal exact-head evidence.\",\"A packet link or digest cannot be validated reproducibly.\",\"Assembly requires editing shared milestone or release authority outside WP-16.\",\"Rollback cannot preserve rejected packet evidence without changing child proof or terminal state.\"]}"
+    },
+    {
+      "sequence": 60,
+      "generation": 46,
+      "actor": "codex:5860-birthday-publication-final-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 61,
+      "generation": 46,
+      "actor": "codex:5860-birthday-publication-repair",
+      "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
+      "operation": "{\"claim_id\":\"claim-5834-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
     }
   ]
 }

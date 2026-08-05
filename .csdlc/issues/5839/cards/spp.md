@@ -16,7 +16,7 @@ Verify #5834, #5835, and the v0.93 allocation; inventory exact accepted artifact
 
 ## Plan
 
-Revision 9
+Revision 11
 
 ## Steps
 
@@ -62,6 +62,18 @@ Revision 9
       "AC-5"
     ],
     "status": "pending"
+  },
+  {
+    "id": "S6",
+    "action": "Define and verify handoff rollback: restore the owned ADR plan, retain the rejected evidence map, and leave accepted v0.92 proof and v0.93 allocation unchanged.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "pending"
   }
 ]
 
@@ -90,7 +102,7 @@ Revision 9
 
 .csdlc/prepared/issues/5839/design.md
 
-Digest: f39a2a1ce50ea4d83618c7d0601e3934c3db1d68b13cfeba723688e3219d203c
+Digest: 482c4c062636a7b1e19def3e19a73fc548a808681f178ec1606456b64f38a82c
 
 ## Diagram
 
@@ -103,6 +115,7 @@ Digest: 6b99d2a8f3fe9e3cb9e6d79e173dbf3833884262ae15d3fe86cc4bce9568d699
 - No v0.93 allocation/owner exists
 - #5834 or #5835 is not accepted
 - A required source cannot be safely projected
+- Rollback would mutate accepted v0.92 evidence, fabricate a v0.93 allocation, or grant governance authority.
 
 ## Handoff
 

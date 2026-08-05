@@ -144,7 +144,7 @@ Diagram: .csdlc/prepared/issues/5845/diagram.mmd
   },
   {
     "lane": "wp24a-ios-safari-playback",
-    "proof_role": "Produce a physical-device iOS Safari playback receipt and capture using only a hashed device identity, bound to the exact candidate HEAD.",
+    "proof_role": "Produce a physical-device iOS Safari playback receipt at exact candidate HEAD using the required ADL_IOS_DEVICE_ID_SHA256 and ADL_IOS_EPISODE_URL environment contracts; retain only the hashed device identity.",
     "acceptance_ids": [
       "AC-2",
       "AC-5"
@@ -159,13 +159,13 @@ Diagram: .csdlc/prepared/issues/5845/diagram.mmd
       "--source-sha-from-git-head",
       "--device-id-hash-env",
       "ADL_IOS_DEVICE_ID_SHA256",
-      "--episode-url",
-      "http://<device-reachable-host>:4173/podcast/episodes/001/episode.mp3",
+      "--episode-url-env",
+      "ADL_IOS_EPISODE_URL",
       "--evidence-dir",
       ".csdlc/evidence/5845/platform/ios-safari-device"
     ],
     "parallel_group": "platform-browser",
-    "defer_reason": "Required on a physical iOS Safari device; simulator-only or missing device proof blocks review readiness."
+    "defer_reason": "Required on a physical iOS Safari device with ADL_IOS_DEVICE_ID_SHA256 and a device-reachable ADL_IOS_EPISODE_URL set by the operator; missing or simulator-only proof blocks review readiness."
   },
   {
     "lane": "wp24a-platform-receipt-binding",
@@ -205,7 +205,7 @@ Tokens: 80000
 - `bash adl/tools/record_podcast_native_playback.sh --platform macos --source-sha-from-git-head --episode demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/macos-native`
 - `bash adl/tools/record_podcast_native_playback.sh --platform linux --source-sha-from-git-head --episode demos/podcast/episodes/001-meet-the-ai-coworkers/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/linux-native`
 - `node adl/tools/record_podcast_browser_playback.mjs --browser chromium --source-sha-from-git-head --episode-url http://127.0.0.1:4173/podcast/episodes/001/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/desktop-chromium`
-- `bash adl/tools/record_podcast_ios_safari_playback.sh --source-sha-from-git-head --device-id-hash-env ADL_IOS_DEVICE_ID_SHA256 --episode-url http://<device-reachable-host>:4173/podcast/episodes/001/episode.mp3 --evidence-dir .csdlc/evidence/5845/platform/ios-safari-device`
+- `bash adl/tools/record_podcast_ios_safari_playback.sh --source-sha-from-git-head --device-id-hash-env ADL_IOS_DEVICE_ID_SHA256 --episode-url-env ADL_IOS_EPISODE_URL --evidence-dir .csdlc/evidence/5845/platform/ios-safari-device`
 - `ruby .csdlc/prepared/issues/5845/validate-platform-playback-receipts.rb --source-sha-from-git-head`
 
 ## Failure Semantics

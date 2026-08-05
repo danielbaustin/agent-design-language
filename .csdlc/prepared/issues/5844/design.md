@@ -62,15 +62,18 @@ gated by #5843 and operator publication authority.
 ## Production Wave Budget
 
 The ten articles are ten bounded production waves, not one two-hour writing
-task. Each article wave budgets 4 hours and 74,000 model tokens: 60 minutes and
-20,000 tokens for source-packet research, 90 minutes and 30,000 tokens for the
-complete draft, 45 minutes and 12,000 tokens for editorial/claim review, 30
-minutes and 8,000 tokens for revisions, and 15 minutes and 4,000 tokens for
-validation and packaging. The aggregate effort budget is 40 agent-hours and
-740,000 tokens. With five non-overlapping article owners, allow 8-12 hours of
-parallel drafting plus 4-6 hours for cross-series review, revisions, final
-validation, and #5843 reconciliation. A wave that exhausts its budget stops for
-re-estimation rather than producing an outline or half-reviewed article.
+task. Each article wave budgets 3.5 hours and 68,000 model tokens: 50 minutes
+and 18,000 tokens for source-packet research, 80 minutes and 28,000 tokens for
+the complete draft, 40 minutes and 10,000 tokens for editorial/claim review,
+25 minutes and 8,000 tokens for revisions, and 15 minutes and 4,000 tokens for
+validation and packaging. A separately scheduled cross-series integration wave
+uses the remaining 5 agent-hours and 60,000 tokens for arc review, revisions,
+final validation, and #5843 reconciliation. The truthful aggregate remains 40
+agent-hours and 740,000 tokens; the integration reserve is allocated inside,
+not added beyond, that total. With five non-overlapping article owners, allow
+8-12 hours of parallel drafting plus up to 5 hours for integration. A wave that
+exhausts its allocation stops for re-estimation rather than producing an
+outline or half-reviewed article.
 
 ## Negative Cases
 
@@ -79,6 +82,14 @@ re-estimation rather than producing an outline or half-reviewed article.
 - Historical evidence cannot be written as current delivery truth.
 - Birthday, governance, provider, security, or release claims must stay within accepted evidence.
 - No upload, scheduling, or publication occurs without operator authorization.
+
+## Rollback
+
+Restore the prior publication disposition and series matrix, and remove only
+the ten owned article packets introduced by this issue. Preserve source
+packets, editorial findings, and rejection reports under issue evidence;
+never delete cited upstream evidence or publish, unpublish, or reschedule
+external content as part of repository rollback.
 
 ## Non-Goals
 

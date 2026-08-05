@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
     "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
     "version": "v0.92",
-    "generation": 37
+    "generation": 42
   },
   "status": "ready",
   "content": {
@@ -29,7 +29,7 @@
         "One bounded exact-head SRP review records no unresolved actionable findings.",
         "The implementation PR targets the intended base and includes Closes #5828 without claiming completion of downstream Birthday work.",
         "The retained obsmem-trace-integration-receipt.json recomputes and binds exact digests for adl/src/obsmem_contract/models.rs, Runtime v3 observability/proof authorities, fixture inputs, trace ID, citation IDs, and Runtime v3 output.",
-        "The exact memory_palace nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
+        "The exact memory_palace nextest target runs a positive test count on native GitHub Actions macOS and Linux at exact candidate HEAD; issue-local producers retain hashed source manifests, complete command logs, and canonical semantic outputs, and independent validation recomputes every digest and requires semantic equivalence."
       ],
       "dependencies": [
         "WP-09 / issue #5826 terminal proof",

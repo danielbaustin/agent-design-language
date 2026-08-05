@@ -12,6 +12,7 @@ Define WP-12's birthday-consumable provider, model, tool, skill, authority, and 
 - `adl-runtime-kernel/tests/fixtures/capability_envelope`
 - `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`
 - `.csdlc/prepared/issues/5829/validate-native-receipts.rb`
+- `.csdlc/prepared/issues/5829/produce-native-receipt.rb`
 - `.csdlc/evidence/5829`
 
 ## Read-Only Inputs
@@ -74,11 +75,11 @@ Each envelope binds identity root and evidence revision to explicit provider/mod
 
 ## Dependencies And Invariants
 
-WP-08/#5825 and WP-09/#5826 must be terminal, and #4761 evidence must remain verifiable. The canonical wave row and live issue must add WP-08 before execution so they exactly match this stricter card contract. The `lib.rs` registration claim is additionally serialized after WP-11/#5828 integration; this is a write-collision gate, not a semantic substitution for WP-08 or WP-09. Capability is descriptive and bounded; it does not grant authority, prove invocation, expose credentials, or imply unlimited capacity.
+WP-08/#5825 and WP-09/#5826 must be terminal, and #4761 evidence must remain verifiable. The `lib.rs` registration claim is additionally serialized after WP-11/#5828 integration; this is a write-collision gate, not a semantic substitution for WP-08 or WP-09. Capability is descriptive and bounded; it does not grant authority, prove invocation, expose credentials, or imply unlimited capacity.
 
 ## Validation And Rollback
 
-The exact `capability_envelope` integration-test target must run a nonzero count proving complete deterministic envelopes and stale-provenance, unsupported-provider/model, unauthorized-capability, omitted-limit, secret-like-content, and path-portability failures. Native Linux CI and a retained native macOS receipt bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before portability is claimed. Rollback removes the v0.92 envelope while preserving #4761 evidence unchanged.
+The exact `capability_envelope` integration-test target must run a nonzero count proving complete deterministic envelopes and stale-provenance, unsupported-provider/model, unauthorized-capability, omitted-limit, secret-like-content, and path-portability failures. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes the v0.92 envelope while preserving #4761 evidence unchanged.
 
 ## Non-Goals
 

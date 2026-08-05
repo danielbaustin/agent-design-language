@@ -84,6 +84,14 @@ bounded packet rather than relabeling planning prose as proof.
 - Credentialed/provider lanes record availability and redaction without embedding secrets.
 - A lifecycle receipt, old demo, or fixture cannot substitute for current feature proof.
 
+## Rollback
+
+Restore the previous demo matrix, feature coverage table, and activation
+ledger, remove the new artifact index and validator changes, and retain the
+rejected coverage report under issue evidence. Rollback must not alter child
+proof artifacts or convert uncovered, failed, blocked, or planned rows into
+accepted exact-revision proof.
+
 ## Non-Goals
 
 - Implementing feature behavior or rerouting ownership from child issues.

@@ -61,6 +61,15 @@ the Runtime or unrelated agents.
   ACIP operations, and result semantics may not silently diverge.
 - Linux/macOS differences in provider tooling must be recorded in the matrix.
 
+## Rollback
+
+Remove only the provider-neutral harness, scenario packet, and owned feature
+projection, then restore the prior documentation revision. Preserve redacted
+provider receipts and failure logs under issue evidence, revoke no external
+credentials, and leave the ACIP and birthday implementations untouched.
+Rollback cannot convert provider unavailability or semantic divergence into a
+passing fixture result.
+
 ## Non-Goals
 
 - Requiring every provider or identical text/token usage.

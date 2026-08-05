@@ -30,7 +30,7 @@ Deliver only the WP-13A Runtime v3 adaptive-learning graph path, focused integra
 5. Missing/forged evidence, substituted state, invalid graph binding, discontinuous resume, unbounded recurrence, unauthorized mutation, rejected-proposal mutation, and rollback mismatch fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5831 without claiming completion of downstream Birthday work.
-8. The exact adaptive_learning nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
+8. The exact adaptive_learning nextest target runs a positive test count on native GitHub Actions macOS and Linux at exact candidate HEAD; issue-local producers retain hashed source manifests, complete command logs, and canonical semantic outputs, and independent validation recomputes every digest and requires semantic equivalence.
 
 ## Dependencies
 

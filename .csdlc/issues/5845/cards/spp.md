@@ -12,18 +12,18 @@ Status: ready
 
 ## Summary
 
-Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 agent-hours and 700,000 tokens aggregate), covering source/script work, audio production, transcript/show notes/artwork/metadata, listen review, revisions, validation, feed-wide consistency, and platform playback; five parallel owners target 20-30 hours wall-clock and stop before deployment or publication.
+Run ten 7.5-hour/64,000-token episode waves plus a separately scheduled 5-hour/60,000-token integration wave inside the fixed 80-agent-hour/700,000-token aggregate; five parallel owners produce complete reviewed packages and stop before deployment or publication.
 
 ## Plan
 
-Revision 15
+Revision 19
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5819, #3223/#3256, route/storage authority, and budget 10 x 2-hour/24,000-token source-and-script waves",
+    "action": "Verify #5819, #3223/#3256, route/storage authority, and budget 10 x 1.75-hour/21,000-token source-and-script waves",
     "acceptance_ids": [
       "AC-1",
       "AC-4"
@@ -32,7 +32,7 @@ Revision 15
   },
   {
     "id": "S2",
-    "action": "Budget 10 x 2.5-hour/18,000-token production waves for generation, editing, and mastered audio",
+    "action": "Budget 10 x 2.25-hour/16,000-token production waves for generation, editing, and mastered audio",
     "acceptance_ids": [
       "AC-1",
       "AC-2"
@@ -41,7 +41,7 @@ Revision 15
   },
   {
     "id": "S3",
-    "action": "Budget 10 x 1.5-hour/14,000-token packaging waves for transcripts, notes, artwork, metadata, manifests, and RSS enclosures",
+    "action": "Budget 10 x 1.5-hour/13,000-token packaging waves for transcripts, notes, artwork, metadata, manifests, and RSS enclosures",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -61,7 +61,7 @@ Revision 15
   },
   {
     "id": "S5",
-    "action": "Implement the three owned playback producers and emit source-bound receipts for macOS, Linux, desktop Chromium, and physical-device iOS Safari",
+    "action": "Budget 10 x 30-minute/4,000-token machine-validation waves and implement the three owned playback producers",
     "acceptance_ids": [
       "AC-2",
       "AC-5"
@@ -70,8 +70,20 @@ Revision 15
   },
   {
     "id": "S6",
-    "action": "Run digest-recomputing receipt validation, resolve feed-wide consistency and exact-head editorial/audio review, and keep publication gated",
+    "action": "Use the allocated 5-hour/60,000-token integration wave for feed consistency, digest-recomputed platform playback, exact-head review, and final revisions",
     "acceptance_ids": [
+      "AC-3",
+      "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S7",
+    "action": "Define and verify podcast rollback: restore feed/readiness records, remove only issue-owned packages and producers, retain QA evidence, and perform no deployment or publication action.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4",
+      "AC-2",
       "AC-3",
       "AC-5"
     ],
@@ -106,7 +118,7 @@ Revision 15
 
 .csdlc/prepared/issues/5845/design.md
 
-Digest: 00b84250de2974fd61befd1b2b122a7c749a17fb7615e4f2c8ec19e00dfe264a
+Digest: e577c1d95f46d4de635fce4f2afc6d5697cde482e44599380b9b15698a73715f
 
 ## Diagram
 
@@ -120,6 +132,7 @@ Digest: f93e767ad01814319f03d67e71121eeca0bbbaf725dbabb2e0997aaf7f37ccce
 - Required consent or source rights are unavailable
 - Audio QA cannot produce deterministic manifests
 - A credential would need to enter tracked evidence
+- Rollback would delete upstream production proof, mutate consent, or require feed deployment/publication.
 
 ## Handoff
 

@@ -56,23 +56,71 @@ Diagram: .csdlc/prepared/issues/5831/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "adaptive_learning-native-platform-receipts",
-    "proof_role": "Recompute and bind exact HEAD, exact test argv, nonzero test count, fixture-tree digest, output digest, runner identity, and native artifact digest for macOS and Linux; require byte-identical semantic output.",
+    "lane": "adaptive_learning-macos-native-ci-producer",
+    "proof_role": "Run the issue-local receipt producer on a native GitHub Actions macos runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-8"
+    ],
+    "deterministic": false,
+    "resource_profile": "medium",
+    "budget_seconds": 240,
+    "budget_tokens": 2000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5831/produce-native-receipt.rb",
+      "--platform",
+      "macos",
+      "--receipt",
+      ".csdlc/evidence/5831/native-platform/macos.json",
+      "--semantic-output",
+      ".csdlc/evidence/5831/native-platform/macos-semantic.json"
+    ],
+    "parallel_group": "5831-native-produce",
+    "defer_reason": "Required on a native GitHub Actions macos runner; missing CI proof blocks portability and review readiness."
+  },
+  {
+    "lane": "adaptive_learning-linux-native-ci-producer",
+    "proof_role": "Run the issue-local receipt producer on a native GitHub Actions linux runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-8"
+    ],
+    "deterministic": false,
+    "resource_profile": "medium",
+    "budget_seconds": 240,
+    "budget_tokens": 2000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5831/produce-native-receipt.rb",
+      "--platform",
+      "linux",
+      "--receipt",
+      ".csdlc/evidence/5831/native-platform/linux.json",
+      "--semantic-output",
+      ".csdlc/evidence/5831/native-platform/linux-semantic.json"
+    ],
+    "parallel_group": "5831-native-produce",
+    "defer_reason": "Required on a native GitHub Actions linux runner; missing CI proof blocks portability and review readiness."
+  },
+  {
+    "lane": "adaptive_learning-native-ci-receipt-verification",
+    "proof_role": "Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD.",
     "acceptance_ids": [
       "AC-4",
       "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 30,
-    "budget_tokens": 1000,
+    "budget_seconds": 60,
+    "budget_tokens": 1500,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5831/validate-native-receipts.rb",
       ".csdlc/evidence/5831/native-platform/macos.json",
       ".csdlc/evidence/5831/native-platform/linux.json"
     ],
-    "parallel_group": "5831-platform",
+    "parallel_group": "5831-native-verify",
     "defer_reason": null
   }
 ]
@@ -90,6 +138,8 @@ Tokens: 50000
 ## Commands
 
 - `cargo nextest run --manifest-path adl-runtime-kernel/Cargo.toml --test adaptive_learning --no-tests=fail --status-level all`
+- `ruby .csdlc/prepared/issues/5831/produce-native-receipt.rb --platform macos --receipt .csdlc/evidence/5831/native-platform/macos.json --semantic-output .csdlc/evidence/5831/native-platform/macos-semantic.json`
+- `ruby .csdlc/prepared/issues/5831/produce-native-receipt.rb --platform linux --receipt .csdlc/evidence/5831/native-platform/linux.json --semantic-output .csdlc/evidence/5831/native-platform/linux-semantic.json`
 - `ruby .csdlc/prepared/issues/5831/validate-native-receipts.rb .csdlc/evidence/5831/native-platform/macos.json .csdlc/evidence/5831/native-platform/linux.json`
 
 ## Failure Semantics

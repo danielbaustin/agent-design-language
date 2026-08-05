@@ -16,7 +16,7 @@ Implement and prove WP-12 canonical capability envelopes with explicit providers
 
 ## Plan
 
-Revision 23
+Revision 25
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 23
 
 .csdlc/prepared/issues/5829/design.md
 
-Digest: 67fb062b32fd18344a0e924536a43eab01bfe58c422ed2065228c2115f5e1605
+Digest: 186ceac72b256612758f121177c944d42c80f610f6a22242760d3aeca3e890d4
 
 ## Diagram
 
@@ -103,7 +103,6 @@ Digest: 78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a
 - WP-08/#5825, WP-09/#5826, or #4761 evidence is stale or unverifiable.
 - Execution requires provider-adapter or credential changes outside the exact declared paths.
 - Secret-like data or unbounded authority cannot be excluded.
-- The canonical wave row or live issue does not include the required WP-08/#5825 dependency.
 - WP-11/#5828 has not landed and released adl-runtime-kernel/src/lib.rs before the WP-12 registration claim.
 
 ## Handoff

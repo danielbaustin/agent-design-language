@@ -22,94 +22,124 @@ def fail!(message)
   exit 1
 end
 
-def repo_file(root, value, label)
-  fail!("#{label} must be a nonempty repository-relative path") unless value.is_a?(String) && !value.empty?
-  path = Pathname.new(value)
-  fail!("#{label} must be repository-relative") if path.absolute? || path.each_filename.include?("..")
+def canonical_json(value)
+  case value
+  when Hash
+    "{" + value.keys.sort.map { |key| "#{JSON.generate(key)}:#{canonical_json(value.fetch(key))}" }.join(",") + "}"
+  when Array
+    "[" + value.map { |entry| canonical_json(entry) }.join(",") + "]"
+  else
+    JSON.generate(value)
+  end
+end
+
+def repo_file(root, value, label, required_prefix: nil)
+  path = Pathname.new(value.to_s)
+  fail!("#{label} must be repository-relative") if value.to_s.empty? || path.absolute? || path.each_filename.include?("..")
   absolute = root.join(path).cleanpath
   fail!("#{label} escapes repository root") unless absolute.to_s.start_with?("#{root}/")
+  fail!("#{label} escapes required evidence directory") if required_prefix && !absolute.to_s.start_with?("#{root.join(required_prefix).cleanpath}/")
   fail!("#{label} does not exist: #{value}") unless absolute.file?
   absolute
 end
 
-def tree_digest(root, relative)
-  directory = root.join(relative)
-  fail!("fixture directory does not exist: #{relative}") unless directory.directory?
-  files = Dir.glob(directory.join("**", "*").to_s).select { |path| File.file?(path) }.sort
-  fail!("fixture directory is empty: #{relative}") if files.empty?
-  digest = Digest::SHA256.new
-  files.each do |file|
-    rel = Pathname.new(file).relative_path_from(root).to_s
-    digest << rel << "\0" << Digest::SHA256.file(file).hexdigest << "\n"
-  end
-  digest.hexdigest
+def source_paths(test_target, feature_path)
+  [
+    "adl-runtime-kernel/Cargo.toml",
+    "adl-runtime-kernel/src/lib.rs",
+    "adl-runtime-kernel/src/#{test_target}.rs",
+    "adl-runtime-kernel/tests/#{test_target}.rs",
+    "adl-runtime-kernel/tests/fixtures/#{test_target}",
+    feature_path
+  ]
 end
 
-def source_revision_valid?(root, source_sha, protected_paths)
-  return false unless /\A[0-9a-f]{40}\z/.match?(source_sha.to_s)
-  _, commit_status = Open3.capture2e("git", "cat-file", "-e", "#{source_sha}^{commit}", chdir: root.to_s)
-  return false unless commit_status.success?
-  _, ancestor_status = Open3.capture2e("git", "merge-base", "--is-ancestor", source_sha, "HEAD", chdir: root.to_s)
-  return false unless ancestor_status.success?
-  _, diff_status = Open3.capture2e("git", "diff", "--quiet", source_sha, "HEAD", "--", *protected_paths, chdir: root.to_s)
-  diff_status.success?
+def source_manifest(root, paths)
+  paths.flat_map do |relative|
+    absolute = root.join(relative)
+    files = absolute.directory? ? Dir.glob(absolute.join("**", "*").to_s).select { |path| File.file?(path) }.sort : [absolute.to_s]
+    fail!("source contract path is absent: #{relative}") if files.empty? || files.any? { |path| !File.file?(path) }
+    files.map do |file|
+      rel = Pathname.new(file).relative_path_from(root).to_s
+      { "path" => rel, "sha256" => Digest::SHA256.file(file).hexdigest }
+    end
+  end.sort_by { |row| row.fetch("path") }
 end
 
 issue = File.basename(File.dirname(__FILE__)).to_i
 test_target, feature_path = ISSUE_CONFIG.fetch(issue) { fail!("unsupported issue-local validator path") }
-fixture_path = "adl-runtime-kernel/tests/fixtures/#{test_target}"
 fail!("expected exactly two receipt paths") unless ARGV.length == 2
 
-root_output, status = Open3.capture2("git", "rev-parse", "--show-toplevel")
-fail!("cannot resolve repository root") unless status.success?
-root = Pathname.new(root_output.strip).realpath
-head_output, head_status = Open3.capture2("git", "rev-parse", "HEAD", chdir: root.to_s)
+root_text, root_status = Open3.capture2("git", "rev-parse", "--show-toplevel")
+fail!("cannot resolve repository root") unless root_status.success?
+root = Pathname.new(root_text.strip).realpath
+head_text, head_status = Open3.capture2("git", "rev-parse", "HEAD", chdir: root.to_s)
 fail!("cannot resolve exact HEAD") unless head_status.success?
-head = head_output.strip
+head = head_text.strip
 
-expected_argv = [
+producer_path = ".csdlc/prepared/issues/#{issue}/produce-native-receipt.rb"
+producer_digest = Digest::SHA256.file(root.join(producer_path)).hexdigest
+expected_test_argv = [
   "cargo", "nextest", "run", "--manifest-path", "adl-runtime-kernel/Cargo.toml",
   "--test", test_target, "--no-tests=fail", "--status-level", "all"
 ]
-expected_fixture_digest = tree_digest(root, fixture_path)
+expected_manifest = source_manifest(root, source_paths(test_target, feature_path))
+evidence_prefix = ".csdlc/evidence/#{issue}/native-platform"
 required_hex = /\A[0-9a-f]{64}\z/
 
-receipts = ARGV.map do |receipt_path|
-  path = repo_file(root, receipt_path, "receipt path")
-  JSON.parse(path.read)
+receipts = ARGV.map do |receipt_relative|
+  receipt_file = repo_file(root, receipt_relative, "receipt", required_prefix: evidence_prefix)
+  receipt = JSON.parse(receipt_file.read)
+  fail!("receipt schema mismatch") unless receipt["schema"] == "adl.native_ci_receipt.v1"
+  payload = receipt["payload"]
+  fail!("receipt payload must be an object") unless payload.is_a?(Hash)
+  fail!("receipt payload digest mismatch") unless receipt["payload_sha256"] == Digest::SHA256.hexdigest(canonical_json(payload))
+  payload
 rescue JSON::ParserError => error
   fail!("invalid receipt JSON: #{error.message}")
 end
 
-fail!("native receipts must cover exactly linux and macos") unless receipts.map { |r| r["platform"] }.sort == %w[linux macos]
-fail!("native receipts must bind one exact source_sha") unless receipts.map { |r| r["source_sha"] }.uniq.one?
-
+fail!("native receipts must cover exactly linux and macos") unless receipts.map { |receipt| receipt["platform"] }.sort == %w[linux macos]
 receipts.each do |receipt|
   platform = receipt.fetch("platform")
-  fail!("#{platform}: status must be passed") unless receipt["status"] == "passed"
-  tests_run = Integer(receipt["tests_run"], exception: false)
-  fail!("#{platform}: tests_run must be positive") unless tests_run&.positive?
-  source_paths = [
-    "adl-runtime-kernel/Cargo.toml", "adl-runtime-kernel/src/lib.rs",
-    "adl-runtime-kernel/src/#{test_target}.rs", "adl-runtime-kernel/tests/#{test_target}.rs",
-    fixture_path, feature_path
+  fail!("#{platform}: source_sha must equal exact candidate HEAD") unless receipt["source_sha"] == head
+  fail!("#{platform}: producer path mismatch") unless receipt["producer_path"] == producer_path
+  fail!("#{platform}: producer digest mismatch") unless receipt["producer_sha256"] == producer_digest
+  expected_producer_argv = [
+    "ruby", producer_path, "--platform", platform, "--receipt",
+    ".csdlc/evidence/#{issue}/native-platform/#{platform}.json", "--semantic-output",
+    ".csdlc/evidence/#{issue}/native-platform/#{platform}-semantic.json"
   ]
-  fail!("#{platform}: exact source_sha is absent, non-ancestral, or stale for owned source paths") unless source_revision_valid?(root, receipt["source_sha"], source_paths)
-  fail!("#{platform}: argv does not match the declared exact test") unless receipt["argv"] == expected_argv
-  fail!("#{platform}: fixture_path mismatch") unless receipt["fixture_path"] == fixture_path
-  fail!("#{platform}: fixture digest mismatch") unless receipt["fixture_digest"] == expected_fixture_digest
-  fail!("#{platform}: runner_identity is required") unless receipt["runner_identity"].is_a?(String) && !receipt["runner_identity"].strip.empty?
+  fail!("#{platform}: producer argv mismatch") unless receipt["producer_argv"] == expected_producer_argv
+  fail!("#{platform}: test argv mismatch") unless receipt["test_argv"] == expected_test_argv
+  expected_semantic_path = ".csdlc/evidence/#{issue}/native-platform/#{platform}-semantic.json"
+  fail!("#{platform}: semantic-output environment mismatch") unless receipt["test_environment"] == { "ADL_NATIVE_SEMANTIC_OUTPUT" => expected_semantic_path }
+  fail!("#{platform}: status must be passed") unless receipt["status"] == "passed"
 
-  output = repo_file(root, receipt["output_path"], "#{platform} output_path")
-  output_digest = Digest::SHA256.file(output).hexdigest
-  fail!("#{platform}: invalid output_digest") unless required_hex.match?(receipt["output_digest"].to_s)
-  fail!("#{platform}: output digest mismatch") unless receipt["output_digest"] == output_digest
+  runner = receipt["runner"]
+  fail!("#{platform}: runner must be an object") unless runner.is_a?(Hash)
+  fail!("#{platform}: runner provider mismatch") unless runner["provider"] == "github_actions"
+  %w[repository workflow_ref run_id run_attempt job os architecture].each do |field|
+    fail!("#{platform}: runner #{field} is required") unless runner[field].is_a?(String) && !runner[field].strip.empty?
+  end
+  fail!("#{platform}: repository mismatch") unless runner["repository"] == "danielbaustin/agent-design-language"
+  fail!("#{platform}: native OS mismatch") unless runner["os"] == (platform == "macos" ? "Darwin" : "Linux")
 
-  artifact = repo_file(root, receipt["native_artifact_path"], "#{platform} native_artifact_path")
-  artifact_digest = Digest::SHA256.file(artifact).hexdigest
-  fail!("#{platform}: invalid native_artifact_digest") unless required_hex.match?(receipt["native_artifact_digest"].to_s)
-  fail!("#{platform}: native artifact digest mismatch") unless receipt["native_artifact_digest"] == artifact_digest
+  command_output = repo_file(root, receipt["command_output_path"], "#{platform} command output", required_prefix: evidence_prefix)
+  fail!("#{platform}: command output digest mismatch") unless required_hex.match?(receipt["command_output_sha256"].to_s) && receipt["command_output_sha256"] == Digest::SHA256.file(command_output).hexdigest
+  summary = command_output.read.match(/(?<count>\d+)\s+tests?\s+run:/)
+  fail!("#{platform}: command output lacks a positive test summary") unless summary && summary[:count].to_i.positive?
+  fail!("#{platform}: tests_run disagrees with command output") unless receipt["tests_run"] == summary[:count].to_i
+
+  semantic_output = repo_file(root, receipt["semantic_output_path"], "#{platform} semantic output", required_prefix: evidence_prefix)
+  fail!("#{platform}: semantic path mismatch") unless receipt["semantic_output_path"] == expected_semantic_path
+  fail!("#{platform}: semantic output digest mismatch") unless required_hex.match?(receipt["semantic_output_sha256"].to_s) && receipt["semantic_output_sha256"] == Digest::SHA256.file(semantic_output).hexdigest
+
+  manifest_file = repo_file(root, receipt["source_manifest_path"], "#{platform} source manifest", required_prefix: evidence_prefix)
+  fail!("#{platform}: source manifest digest mismatch") unless required_hex.match?(receipt["source_manifest_sha256"].to_s) && receipt["source_manifest_sha256"] == Digest::SHA256.file(manifest_file).hexdigest
+  parsed_manifest = JSON.parse(manifest_file.read)
+  fail!("#{platform}: source manifest does not match candidate HEAD files") unless parsed_manifest == expected_manifest
 end
 
-fail!("platform outputs differ") unless receipts.map { |r| r["output_digest"] }.uniq.one?
-puts JSON.generate(issue: issue, status: "passed", reviewed_head: head, source_sha: receipts.first["source_sha"], fixture_digest: expected_fixture_digest, platforms: %w[linux macos])
+fail!("native semantic outputs differ") unless receipts.map { |receipt| receipt["semantic_output_sha256"] }.uniq.one?
+puts JSON.generate(issue: issue, status: "passed", reviewed_head: head, platforms: %w[linux macos], semantic_output_sha256: receipts.first["semantic_output_sha256"])

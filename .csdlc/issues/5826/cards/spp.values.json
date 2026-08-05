@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-09] Stable name and identity architecture",
     "slug": "v0-92-wp-09-stable-name-and-identity-architecture",
     "version": "v0.92",
-    "generation": 42
+    "generation": 47
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 15,
+      "plan_revision": 16,
       "summary": "Implement and prove WP-09 canonical identity records with stable labels, immutable root authority, provenance, and redaction-safe negative handling.",
       "steps": [
         {
@@ -68,7 +68,8 @@
         ".csdlc/prepared/issues/5826/validate-native-receipts.rb",
         ".csdlc/evidence/5826",
         "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-identity-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\"],\"issues\":[5826,5827],\"order\":[5826,5827]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-identity-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\"],\"issues\":[5826,5827],\"order\":[5826,5827]}",
+        ".csdlc/prepared/issues/5826/produce-native-receipt.rb"
       ],
       "invariants": [
         "Stable name never substitutes for identity root authority.",
@@ -96,7 +97,7 @@
         "Review finds an unmodeled alias or provenance ambiguity."
       ],
       "design_ref": ".csdlc/prepared/issues/5826/design.md",
-      "design_digest": "b023177cb9ce0b8f599c74f0014dcc96159b845d5ec2e5f19d9d5b5c0e3905e4",
+      "design_digest": "53a190501144dc14801ab53a2a627d04fdbc2111413d0d45b4e6f094d5b37d2e",
       "diagram_ref": ".csdlc/prepared/issues/5826/diagram.mmd",
       "diagram_digest": "d5cc198edc4895057317ca54fe8aa3c676496c00d23ba4718aa88f17ac266f58"
     }

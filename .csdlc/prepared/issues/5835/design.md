@@ -59,6 +59,14 @@ and do not authorize transfer of raw private state.
 - Fail closed if prose implies production migration, federation, citizenship,
   or cross-polis key lifecycle.
 
+## Rollback
+
+Revert only the new transfer-design note and the bounded edits to the owned
+feature note. Restore the previous documentation revision, retain the rejected
+transfer matrix and validation report under issue evidence, and leave every
+identity, continuity, birthday, transport, and v0.93 governance artifact
+unchanged. Rollback must not relabel an unresolved transfer as admissible.
+
 ## Non-Goals
 
 - Runtime, storage, network, or migration implementation.

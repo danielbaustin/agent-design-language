@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-18] First birthday demo",
     "slug": "v0-92-wp-18-first-birthday-demo",
     "version": "v0.92",
-    "generation": 33
+    "generation": 37
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 12,
+      "plan_revision": 14,
       "summary": "Verify #5825-#5830 and #5832-#5834; bind to landed schemas; implement the positive Runtime harness and negative matrix; run replay, redaction, separate native macOS and Linux, and interruption proof; reconcile the two canonical launch documents; validate a fail-closed publication-gate checklist; update D1-D6 only from accepted evidence; then review exact head.",
       "steps": [
         {
@@ -67,6 +67,19 @@
             "AC-6"
           ],
           "status": "pending"
+        },
+        {
+          "id": "S7",
+          "action": "Define and verify demo rollback: remove the harness and owned projections, restore D1-D6, and retain failed packets without rewriting Runtime birthday evidence.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
         }
       ],
       "affected_areas": [
@@ -100,7 +113,8 @@
       "stop_conditions": [
         "Any required dependency is unlanded",
         "No integrated Runtime entrypoint can emit the packet",
-        "A required negative cannot be distinguished within issue scope"
+        "A required negative cannot be distinguished within issue scope",
+        "Rollback would delete Runtime-produced proof, dependency evidence, or failed/incomplete packets."
       ],
       "replan_triggers": [
         "Landed birthday packet schema changes",
@@ -108,7 +122,7 @@
         "Required platform lane changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5836/design.md",
-      "design_digest": "82f1ec1056c927fdf4eaa15fe2c03fb791dc62bf8e1945f378f7a5718e321d50",
+      "design_digest": "d45b304f65477d6f3ea8535a0f01981434dd86ff1b7007faa1fb9e56717cef68",
       "diagram_ref": ".csdlc/prepared/issues/5836/diagram.mmd",
       "diagram_digest": "039549736c17a86e37d74217aa9f5d20dade32c3a9e12e92c43a9975fd8d1a03"
     }

@@ -56,6 +56,14 @@ v0.92 evidence remains explicit and blocks the dependent governance use.
 - Cross-polis continuity planning does not establish migration authority.
 - Proposed ADR text does not become accepted architecture by inclusion.
 
+## Rollback
+
+Remove the new governance evidence map and restore only the owned ADR-plan
+revision. Preserve the rejected map and validation findings under issue
+evidence, leave accepted v0.92 artifacts immutable, and do not withdraw,
+replace, or fabricate the allocated v0.93 consumer. Rollback restores planning
+state only; it grants no governance authority.
+
 ## Non-Goals
 
 - Implementing v0.93 governance or constitutional citizenship.

@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 60
+    "generation": 66
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 23,
+      "plan_revision": 25,
       "summary": "Implement and prove WP-12 canonical capability envelopes with explicit providers, tools, skills, grants, denials, limits, provenance, and secret-safe failure handling.",
       "steps": [
         {
@@ -69,7 +69,8 @@
         ".csdlc/prepared/issues/5829/validate-native-receipts.rb",
         ".csdlc/evidence/5829",
         "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-memory-capability-witness-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\"],\"issues\":[5829,5833],\"order\":[5829,5833]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-memory-capability-witness-feature-doc-v1\",\"paths\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\"],\"issues\":[5829,5833],\"order\":[5829,5833]}",
+        ".csdlc/prepared/issues/5829/produce-native-receipt.rb"
       ],
       "invariants": [
         "Capability description never grants authority or proves invocation.",
@@ -90,7 +91,6 @@
         "WP-08/#5825, WP-09/#5826, or #4761 evidence is stale or unverifiable.",
         "Execution requires provider-adapter or credential changes outside the exact declared paths.",
         "Secret-like data or unbounded authority cannot be excluded.",
-        "The canonical wave row or live issue does not include the required WP-08/#5825 dependency.",
         "WP-11/#5828 has not landed and released adl-runtime-kernel/src/lib.rs before the WP-12 registration claim."
       ],
       "replan_triggers": [
@@ -99,7 +99,7 @@
         "Review identifies an undeclared authority or resource dimension."
       ],
       "design_ref": ".csdlc/prepared/issues/5829/design.md",
-      "design_digest": "67fb062b32fd18344a0e924536a43eab01bfe58c422ed2065228c2115f5e1605",
+      "design_digest": "186ceac72b256612758f121177c944d42c80f610f6a22242760d3aeca3e890d4",
       "diagram_ref": ".csdlc/prepared/issues/5829/diagram.mmd",
       "diagram_digest": "78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a"
     }

@@ -12,6 +12,7 @@ Define WP-15 Runtime v3 witness and receipt contracts from `docs/milestones/v0.9
 - `adl-runtime-kernel/tests/fixtures/birth_witness`
 - `docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`
 - `.csdlc/prepared/issues/5833/validate-native-receipts.rb`
+- `.csdlc/prepared/issues/5833/produce-native-receipt.rb`
 - `.csdlc/evidence/5833`
 
 ## Read-Only Inputs
@@ -74,11 +75,11 @@ Witnesses must be distinct where policy requires, bind the exact birthday candid
 
 ## Dependencies And Invariants
 
-WP-09/#5826 through WP-13/#5830 must be terminal as required by sprint gate 3, and #4762 evidence remains an input rather than current birth proof. The canonical wave row and live issue must add WP-13 before execution so they exactly match this stricter card contract. Receipts are review surfaces, not authority substitutes.
+WP-09/#5826 through WP-13/#5830 must be terminal as required by sprint gate 3, and #4762 evidence remains an input rather than current birth proof. Receipts are review surfaces, not authority substitutes.
 
 ## Validation And Rollback
 
-The exact `birth_witness` Runtime v3 integration-test target must run a nonzero count proving valid witness sets, deterministic receipts, and equivocation, duplicate identity, stale digest, missing authority, forged integrity ref, redaction leakage, and premature-birth rejection. Native Linux CI and a retained native macOS receipt bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before portability is claimed. Rollback removes new schemas while retaining #4762 and all emitted audit evidence unchanged.
+The exact `birth_witness` Runtime v3 integration-test target must run a nonzero count proving valid witness sets, deterministic receipts, and equivocation, duplicate identity, stale digest, missing authority, forged integrity ref, redaction leakage, and premature-birth rejection. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes new schemas while retaining #4762 and all emitted audit evidence unchanged.
 
 ## Non-Goals
 

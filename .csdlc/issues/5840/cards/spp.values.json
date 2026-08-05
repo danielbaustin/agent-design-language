@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-20] Demo matrix, AEE proof, and proof coverage",
     "slug": "v0-92-wp-20-demo-matrix-aee-proof-and-proof-coverage",
     "version": "v0.92",
-    "generation": 24
+    "generation": 28
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 9,
+      "plan_revision": 11,
       "summary": "Verify dependency revisions; correct stale WP-20 ownership while preserving WP-21/WP-21A; replace candidate rows only with accepted exact-revision evidence; build the AEE artifact index; add fail-closed coverage validation; resolve exact-head review.",
       "steps": [
         {
@@ -57,6 +57,18 @@
             "AC-5"
           ],
           "status": "pending"
+        },
+        {
+          "id": "S6",
+          "action": "Define and verify proof-index rollback: restore owned matrix, coverage, and ledger revisions while retaining rejected reports and leaving child proof immutable.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
         }
       ],
       "affected_areas": [
@@ -88,7 +100,8 @@
       "stop_conditions": [
         "A required dependency lacks accepted exact-revision evidence",
         "WP-20 ownership cannot be reconciled without changing the live wave",
-        "A claimed artifact cannot be independently inspected"
+        "A claimed artifact cannot be independently inspected",
+        "Rollback would alter child proof or promote planned, blocked, failed, or uncovered rows."
       ],
       "replan_triggers": [
         "A dependency revision changes",
@@ -96,7 +109,7 @@
         "Quality-gate or proof-status vocabulary changes"
       ],
       "design_ref": ".csdlc/prepared/issues/5840/design.md",
-      "design_digest": "401d537577b2defef3a31a71b8933295d6a7880f549fd4d591ddaefa41387f49",
+      "design_digest": "84ab3b83975c621c82aaaf889ec94cb99871ebf4f01b232d64325bb8196cd5dd",
       "diagram_ref": ".csdlc/prepared/issues/5840/diagram.mmd",
       "diagram_digest": "57f3fcc1a7b7aac2e97794d4e761093a49874adc02355f69436b4811bb6538e2"
     }

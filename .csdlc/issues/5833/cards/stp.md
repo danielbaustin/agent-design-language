@@ -30,8 +30,8 @@ Deliver only WP-15 witness and receipt schemas, validators, fixtures, security/p
 5. Missing, duplicate, stale, forged, equivocal, unauthorized, candidate-mismatched, redaction-leaking witnesses and premature birth claims fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5833 without claiming completion of downstream Birthday work.
-8. Before claim acquisition, require the canonical wave row and live issue to add WP-13/#5830 so all dependency surfaces exactly match.
-9. The exact birth_witness nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
+8. WP-09/#5826 through WP-13/#5830 are terminal before execution, including the declared shared-path serialization gates.
+9. The exact birth_witness nextest target runs a positive test count on native GitHub Actions macOS and Linux at exact candidate HEAD; issue-local producers retain hashed source manifests, complete command logs, and canonical semantic outputs, and independent validation recomputes every digest and requires semantic equivalence.
 
 ## Dependencies
 

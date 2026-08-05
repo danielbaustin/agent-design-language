@@ -31,7 +31,7 @@ Extend only the existing Memory Palace and long-lived-agent slice, fixtures, tes
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5828 without claiming completion of downstream Birthday work.
 8. The retained obsmem-trace-integration-receipt.json recomputes and binds exact digests for adl/src/obsmem_contract/models.rs, Runtime v3 observability/proof authorities, fixture inputs, trace ID, citation IDs, and Runtime v3 output.
-9. The exact memory_palace nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
+9. The exact memory_palace nextest target runs a positive test count on native GitHub Actions macOS and Linux at exact candidate HEAD; issue-local producers retain hashed source manifests, complete command logs, and canonical semantic outputs, and independent validation recomputes every digest and requires semantic equivalence.
 
 ## Dependencies
 

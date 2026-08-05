@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-17] Migration and cross-polis continuity planning",
     "slug": "v0-92-wp-17-migration-and-cross-polis-continuity-planning",
     "version": "v0.92",
-    "generation": 24
+    "generation": 28
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 9,
+      "plan_revision": 11,
       "summary": "Verify #5826, #5827, and #5834; reconcile landed schemas; author the transfer matrix and WP-04 boundary; validate links, redaction, copied-state rejection, and forbidden production claims; then obtain exact-head review.",
       "steps": [
         {
@@ -59,6 +59,18 @@
             "AC-5"
           ],
           "status": "pending"
+        },
+        {
+          "id": "S6",
+          "action": "Define and verify documentation rollback: restore owned continuity-transfer docs while retaining rejected matrices and leaving identity, transport, and governance evidence unchanged.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-2",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
         }
       ],
       "affected_areas": [
@@ -85,7 +97,8 @@
       "stop_conditions": [
         "Any dependency is not current and accepted",
         "Required schema or evidence path is absent",
-        "The design cannot preserve lineage or redaction without widening scope"
+        "The design cannot preserve lineage or redaction without widening scope",
+        "Rollback cannot restore owned documentation without relabeling unresolved transfer evidence."
       ],
       "replan_triggers": [
         "Landed identity/continuity schema changes field names",
@@ -93,7 +106,7 @@
         "v0.93 allocation requires a different handoff shape"
       ],
       "design_ref": ".csdlc/prepared/issues/5835/design.md",
-      "design_digest": "2d55588405f0f58c47150e7359b8204b3d42d3db19a82b642a4a43cb08f451a2",
+      "design_digest": "bf576c7f347cee6306685cc8fdfb11f926be8f7b7320da70f42c8faa674c1353",
       "diagram_ref": ".csdlc/prepared/issues/5835/diagram.mmd",
       "diagram_digest": "0a3ab8f4a8150b92ec738750c11ea59db723de5e8bdd6d4a18052b93ae7e632b"
     }

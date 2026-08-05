@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 42
+    "generation": 47
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 16,
+      "plan_revision": 17,
       "summary": "Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accepted and rejected paths, deterministic replay, bounded Runtime v3 integration, and rollback history.",
       "steps": [
         {
@@ -67,7 +67,8 @@
         "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
         ".csdlc/prepared/issues/5831/validate-native-receipts.rb",
         ".csdlc/evidence/5831",
-        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}"
+        "SERIALIZATION_GATE {\"schema\":\"csdlc.serialization_gate.v1\",\"id\":\"v092-birthday-kernel-registration-v1\",\"paths\":[\"adl-runtime-kernel/src/lib.rs\"],\"issues\":[5825,5826,5827,5828,5829,5830,5831,5833],\"order\":[5825,5826,5827,5828,5829,5830,5831,5833]}",
+        ".csdlc/prepared/issues/5831/produce-native-receipt.rb"
       ],
       "invariants": [
         "Missing evidence never becomes feedback and rejected proposals never mutate state or graph.",
@@ -96,7 +97,7 @@
         "Review finds mutation before policy decision or an incomplete durable-history edge."
       ],
       "design_ref": ".csdlc/prepared/issues/5831/design.md",
-      "design_digest": "af3c40d75a9003d7a4de354b771c18a954844573ef1a05f037f61dd2f21fa8e9",
+      "design_digest": "f82c7a3282a3ff4344045c4af4be1eb54f26f778334b6fa94171dc01276f3b6e",
       "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",
       "diagram_digest": "859dbad5aa913e1a5f65375bd3b1ea19e42c33ed9c4c5d264053d6763a54d057"
     }

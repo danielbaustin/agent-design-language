@@ -30,7 +30,7 @@ Deliver only the WP-13 ACP schema, update semantics, fixtures, validator, privac
 5. Stale or forbidden evidence, identity mismatch, unexplained mutation, private-state leakage, unsupported labels, reputation, standing, rights, diagnosis, personhood, and consciousness inferences fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5830 without claiming completion of downstream Birthday work.
-8. The exact cognitive_profile nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
+8. The exact cognitive_profile nextest target runs a positive test count on native GitHub Actions macOS and Linux at exact candidate HEAD; issue-local producers retain hashed source manifests, complete command logs, and canonical semantic outputs, and independent validation recomputes every digest and requires semantic equivalence.
 
 ## Dependencies
 

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-08] Birthday contract and negative cases",
     "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
     "version": "v0.92",
-    "generation": 55
+    "generation": 60
   },
   "status": "ready",
   "content": {
@@ -48,23 +48,71 @@
           "defer_reason": null
         },
         {
-          "lane": "birthday-native-platform-receipts",
-          "proof_role": "Recompute and bind exact HEAD, exact test argv, nonzero test count, fixture-tree digest, output digest, runner identity, and native artifact digest for macOS and Linux; require byte-identical semantic output.",
+          "lane": "birthday-macos-native-ci-producer",
+          "proof_role": "Run the issue-local receipt producer on a native GitHub Actions macos runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-8"
+          ],
+          "deterministic": false,
+          "resource_profile": "medium",
+          "budget_seconds": 240,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5825/produce-native-receipt.rb",
+            "--platform",
+            "macos",
+            "--receipt",
+            ".csdlc/evidence/5825/native-platform/macos.json",
+            "--semantic-output",
+            ".csdlc/evidence/5825/native-platform/macos-semantic.json"
+          ],
+          "parallel_group": "5825-native-produce",
+          "defer_reason": "Required on a native GitHub Actions macos runner; missing CI proof blocks portability and review readiness."
+        },
+        {
+          "lane": "birthday-linux-native-ci-producer",
+          "proof_role": "Run the issue-local receipt producer on a native GitHub Actions linux runner at exact candidate HEAD and retain the complete nextest log, source manifest, and canonical semantic output.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-8"
+          ],
+          "deterministic": false,
+          "resource_profile": "medium",
+          "budget_seconds": 240,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5825/produce-native-receipt.rb",
+            "--platform",
+            "linux",
+            "--receipt",
+            ".csdlc/evidence/5825/native-platform/linux.json",
+            "--semantic-output",
+            ".csdlc/evidence/5825/native-platform/linux-semantic.json"
+          ],
+          "parallel_group": "5825-native-produce",
+          "defer_reason": "Required on a native GitHub Actions linux runner; missing CI proof blocks portability and review readiness."
+        },
+        {
+          "lane": "birthday-native-ci-receipt-verification",
+          "proof_role": "Independently recompute producer, source-manifest, command-log, and semantic-output digests; parse a positive test count; verify GitHub Actions provenance; and require macOS/Linux semantic equivalence at exact candidate HEAD.",
           "acceptance_ids": [
             "AC-4",
             "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 30,
-          "budget_tokens": 1000,
+          "budget_seconds": 60,
+          "budget_tokens": 1500,
           "argv": [
             "ruby",
             ".csdlc/prepared/issues/5825/validate-native-receipts.rb",
             ".csdlc/evidence/5825/native-platform/macos.json",
             ".csdlc/evidence/5825/native-platform/linux.json"
           ],
-          "parallel_group": "5825-platform",
+          "parallel_group": "5825-native-verify",
           "defer_reason": null
         }
       ],
@@ -72,7 +120,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5825/design.md",
-      "design_digest": "27dc5783c0ce3b5bd30096310436d9ad4081aa0731bac53a0848881804730fbc",
+      "design_digest": "8e2add832a4f060967b714c1c3f0d776b5b0d5098ed5bd8f4f4cb0ae07164ec1",
       "diagram_ref": ".csdlc/prepared/issues/5825/diagram.mmd",
       "diagram_digest": "af3ccfe3d575efcd6afdf4b661f1a73ffef8cd1ac35a93da986e2d10d55ed3a9"
     }

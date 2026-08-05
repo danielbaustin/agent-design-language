@@ -12,6 +12,7 @@ Define WP-13's bounded ACP profile in current Runtime v3 authority from `docs/mi
 - `adl-runtime-kernel/tests/fixtures/cognitive_profile`
 - `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md`
 - `.csdlc/prepared/issues/5830/validate-native-receipts.rb`
+- `.csdlc/prepared/issues/5830/produce-native-receipt.rb`
 - `.csdlc/evidence/5830`
 
 ## Read-Only Inputs
@@ -63,7 +64,7 @@ WP-10/#5827, WP-11/#5828, and WP-12/#5829 must be terminal; the v0.91.1 ToM/inte
 
 ## Validation And Rollback
 
-The exact `cognitive_profile` Runtime v3 integration-test target must run a nonzero count proving canonical records, revision linkage, unsupported-label rejection, stale evidence, root mismatch, forbidden paths, redaction failure, and reputation/standing non-inference. Native Linux CI and a retained native macOS receipt bind the exact source SHA, test argv, fixture-tree digest, output digest, runner identity, and recomputed native artifact digest before portability is claimed. Rollback removes the v0.92 profile layer without mutating source evidence.
+The exact `cognitive_profile` Runtime v3 integration-test target must run a nonzero count proving canonical records, revision linkage, unsupported-label rejection, stale evidence, root mismatch, forbidden paths, redaction failure, and reputation/standing non-inference. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes the v0.92 profile layer without mutating source evidence.
 
 ## Non-Goals
 
