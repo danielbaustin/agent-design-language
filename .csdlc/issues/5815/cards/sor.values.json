@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
     "slug": "v0-92-wp-01a-github-final-agent-logic-repository-migration-plan",
     "version": "v0.92",
-    "generation": 4
+    "generation": 5
   },
   "status": "pre_phase",
   "content": {
@@ -37,8 +37,8 @@
           "evidence_ref": "Focused validation passed: no whitespace errors; Gemini route google/gemini-3.1-pro-preview returned status ok; all required repositories, exclusions, website cutover, GHCR, LFS, and OIDC topics are present; typed doctor passed with no findings."
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
+      "integration_state": "pr_open",
+      "publication_state": "ready",
       "merge_state": "not_merged",
       "closeout_state": "not_started",
       "follow_ups": []

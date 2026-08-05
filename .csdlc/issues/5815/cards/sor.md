@@ -44,11 +44,11 @@ Finalized the executable migration plan for five repositories moving to the Agen
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
