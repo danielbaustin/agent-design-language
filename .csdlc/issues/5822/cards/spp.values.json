@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction",
     "slug": "v0-92-wp-05-c-sdlc-estimation-and-cycle-time-reduction",
     "version": "v0.92",
-    "generation": 21
+    "generation": 22
   },
   "status": "ready",
   "content": {
@@ -96,7 +96,7 @@
         "Backtests fail to outperform or calibrate against static and historical baselines"
       ],
       "design_ref": ".csdlc/prepared/issues/5822/design.md",
-      "design_digest": "82eb3dc3ba007174824a8739cd39afc5a34bafa1894534507990f16b74c9a29b",
+      "design_digest": "1fb585dc1452f78f2623a3eb82f4aaf91f65aebac399d9d56f1567dcb44814e2",
       "diagram_ref": ".csdlc/prepared/issues/5822/diagram.mmd",
       "diagram_digest": "360aefdd9d98f37c36836af1445244e6295fda65ce9b41c418b8d8161d17b2eb"
     }

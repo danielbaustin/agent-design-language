@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-06] Remote validation/build runner",
     "slug": "v0-92-wp-06-remote-validation-build-runner",
     "version": "v0.92",
-    "generation": 20
+    "generation": 21
   },
   "status": "ready",
   "content": {
@@ -102,7 +102,7 @@
         "Live Windows proof is unavailable and must remain explicitly fixture-qualified"
       ],
       "design_ref": ".csdlc/prepared/issues/5823/design.md",
-      "design_digest": "632fd39231ba5046dff28b107e5903f65e4406f77d0a20f4e6ea5a36e19c17be",
+      "design_digest": "dd89e0a0349f0f944b463b081ebe7f79ff6a56072073f50a47b1dd72ebc45762",
       "diagram_ref": ".csdlc/prepared/issues/5823/diagram.mmd",
       "diagram_digest": "24b36a7dc64ffb0ae6f13c33c638f96389ffb5b4711ac2e8027a2606508b73ca"
     }

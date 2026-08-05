@@ -65,6 +65,18 @@ organization-owner decision and does not count as automatic restoration of
 teams, assignments, packages, Pages, secrets, or external integrations. The
 complete verification gate reruns before the wave resumes.
 
+## Rollback
+
+Stop the migration wave at the current repository boundary and leave every
+unstarted repository at its source owner. For an already transferred
+repository, repair the destination in place first; transfer-back is permitted
+only with explicit organization-owner authority and must be followed by full
+rehydration and verification of teams, collaborators, assignees, OIDC,
+webhooks, GitHub Apps, Pages, packages, LFS, and secret/variable names and
+scopes. Preserve the before/after manifests, timestamps, and failed gate
+receipts, and do not resume until the complete issue-local migration validator
+passes for the restored state.
+
 ## Proof Design
 
 Retain gate receipts, before/after manifest digests, exact HEADs, assignee

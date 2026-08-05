@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02A] CI and coverage reliability",
     "slug": "v0-92-wp-02-ci-and-coverage-reliability",
     "version": "v0.92",
-    "generation": 22
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -102,7 +102,7 @@
         "A platform contract exposes a path or shell portability gap"
       ],
       "design_ref": ".csdlc/prepared/issues/5801/design.md",
-      "design_digest": "4cdfecb24d801e921caab5c32f46c9ec23350195458b02b75e9848360ae6c18d",
+      "design_digest": "2f832db4fe0e6fc90b9a532f824eddda7e298100573fe3ed9499231e1bda6eeb",
       "diagram_ref": ".csdlc/prepared/issues/5801/diagram.mmd",
       "diagram_digest": "38d2b37695ebf0a973ad18715373b5388f65f5eb6d61f68fafb821966de2ecb2"
     }

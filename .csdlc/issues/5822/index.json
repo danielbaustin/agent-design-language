@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b476d2b9dfcbc719a2efb87fbffe14fcb7df6263bcbaecc1a27a64c5c4c1e798",
   "phase": "bound",
-  "generation": 21,
-  "digest": "5e878904f2bfec588ec5a5e80a02bb1d54e3d0960ed4c51fd510d65d636c8ce0",
+  "generation": 22,
+  "digest": "3b65529e91ad7cf741f165691bfd856cc7fb339650cb799d0bc14bcdccc470e0",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5822/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-readiness-repair-design-review",
-      "revision": "82eb3dc3ba007174824a8739cd39afc5a34bafa1894534507990f16b74c9a29b"
+      "reviewer": "codex:5860-foundation-rollback-followup-design-review",
+      "revision": "1fb585dc1452f78f2623a3eb82f4aaf91f65aebac399d9d56f1567dcb44814e2"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "5aa230e913b3c7348ce2949326830e033b0499d55c5f6dadcee3a07346be561f",
+      "values_digest": "f6e9f207c0b8b8e0b662c53796198efc055a780aac5ca4bb766a6914ec177896",
       "rendered_digest": "a2e05d299c61fb87347a0c7e4217da58dcd8ffcdb615f1dc0aac4438c3bebd79",
       "ast_digest": "98e306b57fa7f5865499191708ed16b077317e9e8f9018041ed11757b0f78e2f"
     },
     "stp": {
-      "values_digest": "5074d4ffb2f9eeddad607bb7a076d8d322f1ab6508dd997e4ce84bf69a452889",
+      "values_digest": "de8f4b6284f4c830f0d393c44b9137c3588a155fad302b5acefbcce75a9fdb36",
       "rendered_digest": "b5ea1948c8b04f65c7e6fe5a5709ae0c27e3efa3a9f4d68ea4c2a2eb83d64586",
       "ast_digest": "aa359ab54626c9f0787a862efa22ec899c7bf5a73f630127203541e458cb9ada"
     },
     "spp": {
-      "values_digest": "52ba59defec13f346585df7bb84d17fa7adbc18f2947409d27e0b4accddfdba4",
-      "rendered_digest": "97c7188a51d893d6047748bc7ddf235d1fffa32f4eef1bf1327ae4f856af95d1",
-      "ast_digest": "4c41ba5175df012bfbf1ac92a6124be9723e6543840d131152b9496f9540b232"
+      "values_digest": "d965e3b26a1aa56491a5ff49d3954f9f79b43fe7ff9c65d2d509ff08d214ae69",
+      "rendered_digest": "cd4946c4bfa668a1a91503b9d0f08c0580c86aefe13a328a6e883e99f08e2d3b",
+      "ast_digest": "5240479fecb1591c6b0d9e3666164fb388a8ead31ab0e840feaa6b0aa807b351"
     },
     "vpp": {
-      "values_digest": "6d3d3b7813ffa63e4a287448212f14039d07aa508158d8663574d7b1446dae7b",
+      "values_digest": "20cdae741e64ec0b81350806f18586a91530851277ce6f71ae7fef9d4dc024bd",
       "rendered_digest": "b5c9f1109eb92758ae4d584feaed93929e2a63b2c6f3cf2299e2a2263e614f45",
       "ast_digest": "2a57b64e87e65cb60059e4a14343acb120dbd5df9d67f9b69edb0a33d890ff02"
     },
     "srp": {
-      "values_digest": "c943f0683b4d9246ea2ab1de242d908dcb777d56654c4af16ff1ae2d1f9aa945",
+      "values_digest": "38dd5816da780700a1042220f561bb069d708fc18d4088a335dfdb9b02dbc6a1",
       "rendered_digest": "69ab3feab354c989fbe6922f1f8b04f2a39e07b6831180b12f22fbee71eceb58",
       "ast_digest": "6cac5cde4b2319c579dc8d5b66b951bda0ab8ea548ce7d91f55a755f5c0a3a80"
     },
     "sor": {
-      "values_digest": "30fc5d0fce6d6c254a325d0fc35c211967adf491aea37f12d5a36ca8fe599cfd",
+      "values_digest": "17bb60a8c8830db798f2effa4fcedec4a4c606a92e0b189b4ab2abf0cc184837",
       "rendered_digest": "350a21346b3268c5d96b108284fe5ca27520ed7417790180d5cb3e56e0754fbe",
       "ast_digest": "ae340b59eeb81d8a04dbd8dd632b73c8a311492d9edc837dc8291b95a4200968"
     }
@@ -293,6 +293,27 @@
       "actor": "codex:5860-foundation-readiness-repair",
       "reason": "Release issue #5822 temporary readiness-repair claim after typed regeneration, design approval, and focused validation; execution must reacquire just-in-time authority.",
       "operation": "{\"claim_id\":\"claim-5822-foundation-readiness-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness-repair\"}"
+    },
+    {
+      "sequence": 33,
+      "generation": 21,
+      "actor": "codex:5860-foundation-rollback-followup",
+      "reason": "Acquire issue #5822 only to add the mandatory exact rollback section for parent #5860 execution readiness.",
+      "operation": "{\"branch\":\"codex/5860-foundation-rollback-followup\",\"claim_id\":\"claim-5822-foundation-rollback-followup\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-rollback-followup\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5822\",\".csdlc/issues/5822\",\".csdlc/locks/5822.lock\",\".csdlc/prepared/issues/5822\"],\"purpose\":\"Add and approve the issue-specific rollback section without product implementation or aggregate mutation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 22,
+      "actor": "codex:5860-foundation-rollback-followup-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 35,
+      "generation": 22,
+      "actor": "codex:5860-foundation-rollback-followup",
+      "reason": "Release issue #5822 rollback-follow-up claim after typed design reapproval and focused validation; execution must reacquire just-in-time authority.",
+      "operation": "{\"claim_id\":\"claim-5822-foundation-rollback-followup\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-foundation-rollback-followup\",\"previous_owner\":\"codex:5860-foundation-rollback-followup\"}"
     }
   ]
 }

@@ -46,11 +46,19 @@ correction.
 - Stop if current source no longer contains the two reported warnings or if a
   focused test exposes any semantic change.
 
-## Rollback And Proof
+## Rollback
 
-Rollback is the two-line revert. Completion requires focused unit tests that
-assert both defaults and unsafe-artifact rejection, `cargo fmt --check`, the
-exact Clippy command with `-D warnings`, diff hygiene, and bounded review.
+Revert exactly the two eager-default substitutions in
+`adl/src/csm_freedom_gate.rs`; do not restore unrelated formatting or generated
+files. Then rerun the focused Freedom Gate tests and the production-binary
+Clippy command with warnings denied to prove the original fail-closed defaults
+and unsafe-artifact rejection remain intact.
+
+## Proof
+
+Completion requires focused unit tests that assert both defaults and
+unsafe-artifact rejection, `cargo fmt --check`, the exact Clippy command with
+`-D warnings`, diff hygiene, and bounded review.
 ## Owned Paths
 
 - `adl/src/csm_freedom_gate.rs`

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
     "slug": "v0-92-wp-01a-agent-logic-github-organization-repository-migration",
     "version": "v0.92",
-    "generation": 22
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -79,7 +79,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5819/design.md",
-      "design_digest": "8b0274aaa86de1e8c88c242584199f5daccec2b96730f9448d844ef33d8f33de",
+      "design_digest": "2d7445037b1d3a4909ae3015173a89c17842054186fde492cab4fbeb71d25290",
       "diagram_ref": ".csdlc/prepared/issues/5819/diagram.mmd",
       "diagram_digest": "204d0f3b1c0bcb0a1821d0253e340cb71a0f802ace72f599bcca643f8bb3bf4b"
     }

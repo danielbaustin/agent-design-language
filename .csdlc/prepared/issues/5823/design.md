@@ -42,16 +42,22 @@ contains repo-relative paths and redacts host/user paths and credentials.
 5. Retain failure, interruption, unreachable-provider, stale-revision,
    malformed-result, path-leakage, and cleanup-negative evidence.
 
-## Invariants, Non-Goals, And Rollback
+## Invariants And Non-Goals
 
 - Remote speed or provisioning is not validation proof.
 - A remote result cannot claim a different revision or command profile.
 - Network failure never makes local validation unavailable.
 - No always-on fleet, broad CI migration, credential export, or provider lock-in
   is authorized.
-- Rollback disables provider adapters and preserves the local command profile
-  plus all retained results; remote cleanup must still complete or report a
-  blocker.
+
+## Rollback
+
+Disable the portable provider adapters and restore the unchanged local command
+profile as the sole execution path. Cancel or clean up every remote job and
+temporary resource, preserving request/result receipts and failure evidence;
+incomplete cleanup remains a blocker rather than a successful rollback. Rerun
+the local no-network fallback, provenance-mismatch, redaction, and platform
+matrix contracts before remote execution can be re-enabled.
 
 ## Proof Design
 

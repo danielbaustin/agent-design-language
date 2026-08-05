@@ -1,0 +1,11 @@
+{
+  "issue": 5819,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5819-foundation-rollback-followup",
+  "expected_generation": 23,
+  "expected_digest": "1acfbfb9d1f3758960c11adb692422fd1541edf9b3c4f5b0c8a1fe9a5372bc99",
+  "now_unix_seconds": 1785957600,
+  "actor": "codex:5860-foundation-rollback-followup",
+  "operator_authority": "operator:daniel-issue-5860-foundation-rollback-followup",
+  "reason": "Release issue #5819 rollback-follow-up claim after typed design reapproval and focused validation; execution must reacquire just-in-time authority."
+}

@@ -1,0 +1,25 @@
+{
+  "issue": 5819,
+  "expected_generation": 22,
+  "expected_digest": "04b8f3b57e3dc139cf606e752aae9414c3f4b21a4c8ef367f709750ee600d3ca",
+  "now_unix_seconds": 1785957397,
+  "actor": "codex:5860-foundation-rollback-followup",
+  "reason": "Acquire issue #5819 only to add the mandatory exact rollback section for parent #5860 execution readiness.",
+  "replacement": {
+    "id": "claim-5819-foundation-rollback-followup",
+    "owner": "codex:5860-foundation-rollback-followup",
+    "generation": 22,
+    "acquired_unix_seconds": 1785957397,
+    "expires_unix_seconds": 1786043797,
+    "heartbeat_unix_seconds": 1785957397,
+    "branch": "codex/5860-foundation-rollback-followup",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5819",
+      ".csdlc/issues/5819",
+      ".csdlc/locks/5819.lock",
+      ".csdlc/prepared/issues/5819"
+    ],
+    "purpose": "Add and approve the issue-specific rollback section without product implementation or aggregate mutation"
+  }
+}

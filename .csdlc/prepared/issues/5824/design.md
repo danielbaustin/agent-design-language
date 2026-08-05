@@ -43,11 +43,18 @@ not evidence because they may select zero or unrelated tests.
 - No template redesign, durable wire-format replacement, generic form-engine
   rewrite, or revival of sunset v1 commands is authorized.
 
-## Rollback And Proof
+## Rollback
 
-Rollback restores the previous internal representation without changing stored
-cards. Proof includes the inventory, enum parse/display/serde round trips,
-schema parity, editor allowed-value parity, Markdown import/render stability,
+Revert the enum-backed internal representation, parser/schema/editor wiring,
+and related tests while leaving every stored card and durable wire value
+unchanged. Restore the previous string-backed behavior only at the owned code
+paths, then rerun Markdown import/render stability, schema parity, and typed
+card round trips to prove rollback does not corrupt or rewrite existing cards.
+
+## Proof
+
+Proof includes the inventory, enum parse/display/serde round trips, schema
+parity, editor allowed-value parity, Markdown import/render stability,
 invalid-value negatives, and a no-duplicate-work disposition for every audited
 field. The inventory validator derives the finite enum/type denominator from
 the current `cards.rs` and `model.rs` authorities and requires an exact one-row

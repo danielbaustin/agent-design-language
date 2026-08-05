@@ -59,6 +59,17 @@ That packet names repository-relative prompt, response, and topology artifact
 paths. The issue-local validator recomputes each SHA-256 digest and verifies the
 topology file's Git blob at the exact 40-hex reviewed revision. Free-standing
 digest strings or an untracked model response do not satisfy the review gate.
+
+## Rollback
+
+Revert only the issue-owned CI workflow and lane scripts to the last green
+revision, restoring the prior test-selection and authoritative-coverage
+behavior as one atomic change. Preserve the failed candidate's logs, topology
+packet, and exact revision as evidence; do not relabel a failed or partial lane
+as successful. Before resuming, rerun both owned CI contract tests, the
+authoritative coverage contract, and diff hygiene against the restored
+revision.
+
 ## Owned Paths
 
 - `.github/workflows/ci.yaml`

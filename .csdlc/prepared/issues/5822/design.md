@@ -59,14 +59,20 @@ nextest with `--no-tests=fail`; substring filters are not acceptable proof.
 - Stop if joined provenance is ambiguous, the estimator leaks target actuals,
   or workflow simplification weakens a lifecycle gate.
 
-## Rollback And Proof
+## Rollback
 
-The candidate estimator and simplified path remain feature-bounded until
-backtests and workflow comparisons pass. Rollback restores static profiles and
-the existing v2 route without data loss. Proof covers deterministic schemas,
-unknown/schema-drift negatives, cohort leakage rejection, forecast stability,
-non-enforcement, typed card round trips, closeout comparison, and measured
-cycle-time improvement.
+Disable the candidate estimator and simplified path, remove their registration
+from `csdlc-v2/src/lib.rs`, and restore the existing static profiles and typed
+v2 route without deleting historical estimates or timing evidence. Rerun typed
+card round trips and the existing route's focused contracts before resuming so
+rollback cannot weaken a lifecycle gate or silently change stored cards.
+
+## Proof
+
+The candidate remains feature-bounded until backtests and workflow comparisons
+pass. Proof covers deterministic schemas, unknown/schema-drift negatives,
+cohort leakage rejection, forecast stability, non-enforcement, typed card round
+trips, closeout comparison, and measured cycle-time improvement.
 ## Owned Paths
 
 - `csdlc-v2/src/estimation.rs`

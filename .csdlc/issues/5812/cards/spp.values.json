@@ -7,7 +7,7 @@
     "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
     "slug": "v0-92-freedom-gate-clippy-cleanliness",
     "version": "v0.92",
-    "generation": 11
+    "generation": 12
   },
   "status": "ready",
   "content": {
@@ -81,7 +81,7 @@
         "The named production binary no longer compiles the affected module"
       ],
       "design_ref": ".csdlc/prepared/issues/5812/design.md",
-      "design_digest": "7bbd50aebd6c4750274fe99ba0f88d09b983b534e61f9c5e1daa20dfbcbab802",
+      "design_digest": "0a611d194b8257e832d8ad4d89a11f1395eda3ec4b7ec581afb9d4cc57ab81d3",
       "diagram_ref": ".csdlc/prepared/issues/5812/diagram.mmd",
       "diagram_digest": "ecc400f15bce3baa144b59854cd774554bc04d7e8747d44fecb4093ad83cbc82"
     }

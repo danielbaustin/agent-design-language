@@ -1,0 +1,7 @@
+{
+  "issue": 5812,
+  "expected_generation": 11,
+  "expected_digest": "2e727e1874ff071ae244e81d3377b0ecd23197c6d62e2913aadb041ff52a3150",
+  "claim_id": "claim-5812-foundation-rollback-followup",
+  "reviewer": "codex:5860-foundation-rollback-followup-design-review"
+}

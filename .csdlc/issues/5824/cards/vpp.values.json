@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-07] Prompt-card enum typing",
     "slug": "v0-92-wp-07-prompt-card-enum-typing",
     "version": "v0.92",
-    "generation": 22
+    "generation": 23
   },
   "status": "ready",
   "content": {
@@ -87,7 +87,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5824/design.md",
-      "design_digest": "91992407053e44a669eb7c3c5c67c1e92ecbd482e63d6fffeebc21d12d4922a0",
+      "design_digest": "d121563fd852950c2b62b0f48f5d217034d7288eec5a55b9598a5215ad1c99cd",
       "diagram_ref": ".csdlc/prepared/issues/5824/diagram.mmd",
       "diagram_digest": "5846fe328a23646041deee2956de2d777e77a496fc82d707f3976361df4c5249"
     }
