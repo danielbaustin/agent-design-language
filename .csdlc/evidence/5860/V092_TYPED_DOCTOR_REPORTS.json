@@ -1,0 +1,621 @@
+{
+  "schema": "adl.v092.child-doctor-reports.v1",
+  "interpretation": "design-ready handoff; execution remains dependency-gated and requires just-in-time claim reacquisition",
+  "reports": [
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5786,
+      "status": "block",
+      "phase": "bound",
+      "generation": 8,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5795,
+      "status": "block",
+      "phase": "bound",
+      "generation": 21,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5800,
+      "status": "block",
+      "phase": "bound",
+      "generation": 36,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5801,
+      "status": "block",
+      "phase": "bound",
+      "generation": 17,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5812,
+      "status": "block",
+      "phase": "bound",
+      "generation": 6,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5818,
+      "status": "block",
+      "phase": "bound",
+      "generation": 17,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5819,
+      "status": "block",
+      "phase": "bound",
+      "generation": 17,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5820,
+      "status": "block",
+      "phase": "bound",
+      "generation": 19,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5821,
+      "status": "block",
+      "phase": "bound",
+      "generation": 31,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5822,
+      "status": "block",
+      "phase": "bound",
+      "generation": 15,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5823,
+      "status": "block",
+      "phase": "bound",
+      "generation": 17,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5824,
+      "status": "block",
+      "phase": "bound",
+      "generation": 15,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5825,
+      "status": "block",
+      "phase": "bound",
+      "generation": 44,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5826,
+      "status": "block",
+      "phase": "bound",
+      "generation": 35,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5827,
+      "status": "block",
+      "phase": "bound",
+      "generation": 34,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5828,
+      "status": "block",
+      "phase": "bound",
+      "generation": 30,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5829,
+      "status": "block",
+      "phase": "bound",
+      "generation": 34,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5830,
+      "status": "block",
+      "phase": "bound",
+      "generation": 32,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5831,
+      "status": "block",
+      "phase": "bound",
+      "generation": 31,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5832,
+      "status": "block",
+      "phase": "bound",
+      "generation": 19,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5833,
+      "status": "block",
+      "phase": "bound",
+      "generation": 30,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5834,
+      "status": "block",
+      "phase": "bound",
+      "generation": 30,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5835,
+      "status": "block",
+      "phase": "bound",
+      "generation": 22,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5836,
+      "status": "block",
+      "phase": "bound",
+      "generation": 31,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5837,
+      "status": "block",
+      "phase": "bound",
+      "generation": 21,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5838,
+      "status": "block",
+      "phase": "bound",
+      "generation": 22,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5839,
+      "status": "block",
+      "phase": "bound",
+      "generation": 22,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5840,
+      "status": "block",
+      "phase": "bound",
+      "generation": 22,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5841,
+      "status": "block",
+      "phase": "bound",
+      "generation": 11,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5842,
+      "status": "block",
+      "phase": "bound",
+      "generation": 10,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5843,
+      "status": "block",
+      "phase": "bound",
+      "generation": 10,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5844,
+      "status": "block",
+      "phase": "bound",
+      "generation": 25,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5845,
+      "status": "block",
+      "phase": "bound",
+      "generation": 24,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5846,
+      "status": "block",
+      "phase": "bound",
+      "generation": 10,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5847,
+      "status": "block",
+      "phase": "bound",
+      "generation": 10,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5848,
+      "status": "block",
+      "phase": "bound",
+      "generation": 10,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5849,
+      "status": "block",
+      "phase": "bound",
+      "generation": 8,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5850,
+      "status": "block",
+      "phase": "bound",
+      "generation": 8,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5851,
+      "status": "block",
+      "phase": "bound",
+      "generation": 8,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5852,
+      "status": "block",
+      "phase": "bound",
+      "generation": 10,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5853,
+      "status": "block",
+      "phase": "bound",
+      "generation": 8,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    }
+  ]
+}
