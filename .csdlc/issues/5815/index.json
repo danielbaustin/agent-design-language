@@ -3,13 +3,13 @@
   "issue": 5815,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "437e850172eac49ea547a7e7f93eabcf5e576beab8f1ae452afe3033b8d593f7",
-  "phase": "implemented",
-  "generation": 3,
-  "digest": "123631f751b08ecefb401afcba90081fef002c4d00ac129f7689e2719e1ab37a",
+  "phase": "reviewed",
+  "generation": 4,
+  "digest": "5f3fb3bad2df1ce94d5702c501d5bf0a2308267cb3f04ba6e1ce33fc1677b213",
   "claim": {
     "id": "claim-5815-v092-final-repo-migration-plan",
     "owner": "codex:5815",
-    "generation": 3,
+    "generation": 4,
     "acquired_unix_seconds": 1785909450,
     "expires_unix_seconds": 1786514250,
     "heartbeat_unix_seconds": 1785909450,
@@ -23,8 +23,33 @@
     ],
     "purpose": "Finalize and independently review the Agent Logic repository migration runbook"
   },
-  "review_assignment": null,
-  "review": null,
+  "review_assignment": {
+    "reviewer": "subagent:019fd086-c81e-7681-819f-d56be320e0c5",
+    "assigned_by": "codex:5815",
+    "revision": "git-blake3:b9c3a1e226cbed16104d3b5afa40dfdaab0b826e:e947ea91173dd2f49272b4e2445673a44d6e0178367906267716119c4e1445f7",
+    "scope": [
+      ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+      ".csdlc/evidence/5815",
+      ".csdlc/issues/5815",
+      ".csdlc/prepared/issues/5815"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019fd086-c81e-7681-819f-d56be320e0c5",
+    "scope": [
+      ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+      ".csdlc/evidence/5815",
+      ".csdlc/issues/5815",
+      ".csdlc/prepared/issues/5815"
+    ],
+    "reviewed_revision": "git-blake3:b9c3a1e226cbed16104d3b5afa40dfdaab0b826e:e947ea91173dd2f49272b4e2445673a44d6e0178367906267716119c4e1445f7",
+    "findings": [],
+    "residual_risks": [
+      "Live GitHub transfer readiness and agent-logic.ai deployed links remain execution-time checks; this issue finalizes the plan and performs no repository transfer."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -39,32 +64,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "2bbfcdf1414eac0cfad495fbae60984f77b40865f9e8c0f17974866f55c6f62d",
+      "values_digest": "79f0171950d002d3b18822fad81c1d583560dd9b2cc4820b9f1e4dcefc83f7ee",
       "rendered_digest": "3e1780985e4c1b3b14fed754d81574833c9f90b0b62fb41373f978760c674acd",
       "ast_digest": "d0ec809eea40b56b9597b21774110e3833d8111ed28263d0318fded6a9304da4"
     },
     "stp": {
-      "values_digest": "f14c449ae54ddfe72dc675c00eaa7fc1be884cb5e1e261a6b8d7d109d641ca74",
+      "values_digest": "ee9e0f593250ce570362453b97033597aa1673114a65ad0465628990d878986f",
       "rendered_digest": "6f94cd20fdad8e1963f5a8e50fcaffd683b09bc367072aa8e75ec2f7d9a0fb50",
       "ast_digest": "9b997272963e38e676be457ee4bd64695990569712e76d3ac37e29a70795ad79"
     },
     "spp": {
-      "values_digest": "2eb7339b1a88751b932dbee4fc1c4943c3ac4253b75642ca1efb3584c400def1",
+      "values_digest": "e52976c994aa7f6e75026c602e8dfefb11081c0e93402e54dae5c4446c58f421",
       "rendered_digest": "708e9f8352f551a169e6c33039433a174facb64b3668d9aaa9d6b3d41e6a536e",
       "ast_digest": "0ac6547ffb9107c9ea5770f06070d7f6b4347c97663504c582c8efc526b9dc0c"
     },
     "vpp": {
-      "values_digest": "d47e6de7bb8cfa673aedc450be6d7b3cab29a9935eda095e2bdaf13131ab10b4",
+      "values_digest": "13b5cc6c6bff973a43543ac755d33d3f84bf92d0f80898584ed79ff27f15f8ee",
       "rendered_digest": "b2a9a3173c1573b5bca6f9e1ee5d3e19bd9763db1b6f57710e9abb3984855669",
       "ast_digest": "c412fcebe152fbab17d6c81b569c614e13fff3a897066f7825dce4253081144e"
     },
     "srp": {
-      "values_digest": "b9e03ccfeb048c12aff57232697f8c4bc2c3b716fd0c30f640bd01c1efdf940e",
-      "rendered_digest": "5aeca59b9cd5cc61725817c0f4e9fac5f59074c3030d4a9114caec605dd4bb5b",
-      "ast_digest": "913f53d3c798c1bc2810fe645cc8876308325b69b95c35bf10dff8d6ea87428a"
+      "values_digest": "9ebd5f932b50a40fd8266716de1ece890f55eb7037888972e18c5fc4355f0d69",
+      "rendered_digest": "a4f45a0e3f7411e86536d131673b9d902c49ab5a696868ba3bfd0c07df06e74f",
+      "ast_digest": "fb05975be42d150b26f80c8faa45dfc31b479065d96630c2587e899a61586e9c"
     },
     "sor": {
-      "values_digest": "ef5999479a1e89230db2001feb67c4f3a0edbbbe7bb9c23ffa222df35368557e",
+      "values_digest": "cebae19cadfa331738fb75d7c2b14675c451a2465bb5e62ef334e6d9a139c34e",
       "rendered_digest": "e284138b578981023bcc7acb091325e2eea003aeae46365c87428000ea0688cd",
       "ast_digest": "5dc58a799cd855df5d20406042c8a36dc700a68ea2224b0e866a010df915b61f"
     }
@@ -90,6 +115,13 @@
       "to": "implemented",
       "actor": "codex:5815",
       "reason": "The final migration runbook and review evidence are implemented and validated."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "subagent:019fd086-c81e-7681-819f-d56be320e0c5",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -127,6 +159,20 @@
       "actor": "codex:5815",
       "reason": "The final migration runbook and review evidence are implemented and validated.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:5815",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "subagent:019fd086-c81e-7681-819f-d56be320e0c5",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }

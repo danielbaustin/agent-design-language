@@ -1,0 +1,14 @@
+{
+  "issue": 5815,
+  "expected_generation": 3,
+  "expected_digest": "123631f751b08ecefb401afcba90081fef002c4d00ac129f7689e2719e1ab37a",
+  "claim_id": "claim-5815-v092-final-repo-migration-plan",
+  "reviewer": "subagent:019fd086-c81e-7681-819f-d56be320e0c5",
+  "assigned_by": "codex:5815",
+  "scope": [
+    ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+    ".csdlc/evidence/5815",
+    ".csdlc/issues/5815",
+    ".csdlc/prepared/issues/5815"
+  ]
+}

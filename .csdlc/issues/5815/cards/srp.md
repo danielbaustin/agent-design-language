@@ -12,7 +12,10 @@ Status: pre_phase
 
 ## Scope
 
-Only the final migration plan and issue-local evidence.
+.adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
+.csdlc/evidence/5815
+.csdlc/issues/5815
+.csdlc/prepared/issues/5815
 
 ## Prompts
 
@@ -31,12 +34,12 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Live GitHub transfer readiness and agent-logic.ai deployed links remain execution-time checks; this issue finalizes the plan and performs no repository transfer.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:b9c3a1e226cbed16104d3b5afa40dfdaab0b826e:e947ea91173dd2f49272b4e2445673a44d6e0178367906267716119c4e1445f7")
 
-Reviewer: None
+Reviewer: Some("subagent:019fd086-c81e-7681-819f-d56be320e0c5")
 
-Result: pre_review
+Result: pass

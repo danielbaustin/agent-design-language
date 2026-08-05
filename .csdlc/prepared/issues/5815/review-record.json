@@ -1,0 +1,23 @@
+{
+  "issue": 5815,
+  "expected_generation": 3,
+  "expected_digest": "ea92ad42549e2a79a0ffaededc312e080194df008000c2b18d6c8863f1d3ec5f",
+  "claim_id": "claim-5815-v092-final-repo-migration-plan",
+  "actor": "subagent:019fd086-c81e-7681-819f-d56be320e0c5",
+  "evidence": {
+    "completed": true,
+    "reviewer": "subagent:019fd086-c81e-7681-819f-d56be320e0c5",
+    "reviewed_revision": "git-blake3:b9c3a1e226cbed16104d3b5afa40dfdaab0b826e:e947ea91173dd2f49272b4e2445673a44d6e0178367906267716119c4e1445f7",
+    "scope": [
+      ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+      ".csdlc/evidence/5815",
+      ".csdlc/issues/5815",
+      ".csdlc/prepared/issues/5815"
+    ],
+    "findings": [],
+    "residual_risks": [
+      "Live GitHub transfer readiness and agent-logic.ai deployed links remain execution-time checks; this issue finalizes the plan and performs no repository transfer."
+    ],
+    "non_substantive_proof": null
+  }
+}

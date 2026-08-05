@@ -7,15 +7,15 @@
     "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
     "slug": "v0-92-wp-01a-github-final-agent-logic-repository-migration-plan",
     "version": "v0.92",
-    "generation": 3
+    "generation": 4
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Only the final migration plan and issue-local evidence.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md\n.csdlc/evidence/5815\n.csdlc/issues/5815\n.csdlc/prepared/issues/5815",
+      "review_revision": "git-blake3:b9c3a1e226cbed16104d3b5afa40dfdaab0b826e:e947ea91173dd2f49272b4e2445673a44d6e0178367906267716119c4e1445f7",
+      "reviewer": "subagent:019fd086-c81e-7681-819f-d56be320e0c5",
       "review_prompts": [
         "Does the runbook reflect current GitHub inventory and exclusions?",
         "Are transfer-specific GitHub risks and verification gates complete?",
@@ -23,8 +23,10 @@
         "Can the runbook be simplified without weakening safety?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Live GitHub transfer readiness and agent-logic.ai deployed links remain execution-time checks; this issue finalizes the plan and performs no repository transfer."
+      ],
+      "review_result": "pass"
     }
   }
 }
