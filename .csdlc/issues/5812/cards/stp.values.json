@@ -7,7 +7,7 @@
     "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
     "slug": "v0-92-freedom-gate-clippy-cleanliness",
     "version": "v0.92",
-    "generation": 0
+    "generation": 4
   },
   "status": "ready",
   "content": {
@@ -19,13 +19,13 @@
         "Focused test, formatting, Clippy, and diff-hygiene evidence"
       ],
       "acceptance_criteria": [
-        "Both unnecessary lazy-evaluation warnings are removed",
-        "The executor_requires_gate_decision default remains true",
-        "The unmediated_execution_allowed default remains false",
-        "Focused Freedom Gate tests pass",
-        "The named production-binary Clippy command passes with -D warnings",
-        "Formatting and diff hygiene pass with no unrelated changes",
-        "One exact-revision review has no unresolved actionable findings"
+        "Both unnecessary lazy-evaluation warnings are removed by changing only the two reported default expressions",
+        "executor_requires_gate_decision still defaults to true",
+        "unmediated_execution_allowed still defaults to false",
+        "Focused csm_freedom_gate tests, including unsafe retained-artifact rejection, pass",
+        "The adl-gws-context-mirror production binary passes Clippy with warnings denied",
+        "Cargo formatting and diff hygiene pass with no Cargo.toml, Cargo.lock, dependency, Google Drive, or unrelated source changes",
+        "One exact-revision bounded review has no unresolved actionable findings"
       ],
       "dependencies": [
         "WP-01",

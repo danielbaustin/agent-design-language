@@ -12,28 +12,29 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify organization gates, transfer exactly five repositories serially with assignee-aware manifests and zero unexplained drift, execute the ADL website/integration cutover last, prove exclusions, and retain a reviewed final report.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify organization readiness, plan lineage, exact scope, and per-repository assignee-aware manifests",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1",
+      "AC-2",
+      "AC-6"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Transfer and verify each repository serially, stopping on any unexplained drift",
     "acceptance_ids": [
-      "AC-1",
       "AC-3",
       "AC-4"
     ],
@@ -41,9 +42,11 @@ Revision 1
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Complete the ADL and website cutover, negative controls, final report, and exact-revision review",
     "acceptance_ids": [
-      "AC-5"
+      "AC-5",
+      "AC-6",
+      "AC-7"
     ],
     "status": "pending"
   }
@@ -51,15 +54,19 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Transfer one repository at a time and pass verification before continuing
+- Preserve repository name, visibility, default branch, and exact history
+- Record secret names and scopes only, never values
+- Use redirects only as temporary compatibility
+- asksifu remains personal and Horust is untouched
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Assignee loses eligibility after organization transfer
+- Packages, OIDC, Pages, or integrations retain old-owner coupling
+- Fork-network or destination-name conflict blocks transfer
+- Transfer-back fails to restore organization-owned settings
+- Concurrent publication changes the manifest during a window
 
 ## Estimates
 
@@ -73,19 +80,22 @@ Revision 1
 
 .csdlc/prepared/issues/5819/design.md
 
-Digest: 1bda7d724dd7ce9e15a2853d409e8da3d1bbab76fcf3347ef8b73a387484947f
+Digest: 0f509a4269de24b7f78958acc43dd121f141d1c5bfa97a5b94f5ffed47ee0593
 
 ## Diagram
 
 .csdlc/prepared/issues/5819/diagram.mmd
 
-Digest: d834fda68f489a52483faf2430ee30db34815f04184ac6f663467fee4ab4356d
+Digest: 204d0f3b1c0bcb0a1821d0253e340cb71a0f802ace72f599bcca643f8bb3bf4b
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- WP-01B or #5815 plan lineage is not current
+- Destination owner, billing, recovery, or security gate is incomplete
+- Before-manifest drift is unexplained
+- An assignee lacks membership and an approved reassignment plan
+- Any transferred repository fails Gate 4 verification
+- A secret value appears in retained evidence
 
 ## Handoff
 

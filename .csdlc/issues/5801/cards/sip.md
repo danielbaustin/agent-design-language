@@ -20,14 +20,19 @@ reliable focused and slow test routing, coverage aggregation, and platform parit
 
 ## Scope
 
-- Issue 5801 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- .github/workflows/ci.yaml lane graph, concurrency, required checks, and coverage aggregation
+- adl/tools/ci_path_policy.sh and path/PVF classification contracts
+- adl/tools/run_pr_fast_test_lane.sh, run_pr_fast_coverage_lane.sh, run_authoritative_coverage_lane.sh, and check_coverage_impact.sh
+- Focused contract tests under adl/tools/test_ci_path_policy.sh, test_ci_runtime_contracts.sh, test_check_coverage_impact.sh, and related runner tests
+- csdlc-v2 exact-head metadata-lineage behavior where required to prevent needless source revalidation
+- .csdlc/issues/5801, .csdlc/prepared/issues/5801, and .csdlc/evidence/5801
 
 ## Authority
 
-- Issue 5801 owns only WP-02A: CI and coverage reliability
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Issue 5801 owns deterministic CI/PVF lane selection, coverage deduplication, stale-run cancellation, and bounded metadata-lineage reuse
+- Source and product exact-head validation remains authoritative
+- WP-02 owns repository migration and WP-02B owns runner-size experimentation
+- No AWS, branch-protection weakening, check-name churn, or test deletion is authorized
 
 ## Assumptions
 

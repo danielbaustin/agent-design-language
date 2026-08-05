@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01B] Canonical documentation and version activation",
     "slug": "v0-92-wp-01b-canonical-documentation-and-version-activation",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "pre_phase",
   "content": {
@@ -17,9 +17,10 @@
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-01B scope?"
+        "Does the inventory cover every authoritative current surface and distinguish historical records?",
+        "Do current docs and versions say v0.92 is active without claiming planned work complete?",
+        "Are Cargo metadata, links, structured files, and generated artifacts consistent?",
+        "Did the change remain within WP-01B and preserve historical evidence?"
       ],
       "findings": [],
       "residual_risk": [],

@@ -16,9 +16,10 @@ WP-02A issue 5801, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-02A scope?
+- Does every change class map deterministically to a truthful PVF and release-gate role?
+- Can any substantive or unknown source change escape exact-head proof or coverage?
+- Are coverage aggregation, stale-run cancellation, metadata-lineage reuse, and required checks fail-closed?
+- Do platform fixtures and the final exact-head CI result support the claimed boundary?
 
 ## Findings
 

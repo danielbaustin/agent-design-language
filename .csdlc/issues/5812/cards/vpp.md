@@ -24,13 +24,34 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
 
 [
   {
-    "lane": "freedom-gate-clippy",
-    "proof_role": "Prove the exact defaults and named production binary are behaviorally correct and Clippy-clean with warnings denied.",
+    "lane": "freedom-gate-module-tests",
+    "proof_role": "Prove both defaults and unsafe retained-artifact rejection remain behaviorally unchanged.",
     "acceptance_ids": [
-      "AC-1",
       "AC-2",
       "AC-3",
-      "AC-4",
+      "AC-4"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 450,
+    "budget_tokens": 2000,
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "--lib",
+      "csm_freedom_gate::tests"
+    ],
+    "parallel_group": "rust",
+    "defer_reason": null
+  },
+  {
+    "lane": "freedom-gate-clippy",
+    "proof_role": "Reproduce and eliminate the exact production-binary warnings with warnings denied.",
+    "acceptance_ids": [
+      "AC-1",
       "AC-5"
     ],
     "deterministic": true,
@@ -53,8 +74,30 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "diff-hygiene",
-    "proof_role": "Reject unrelated whitespace changes and support exact-head review.",
+    "lane": "rust-format",
+    "proof_role": "Reject unintended Rust formatting churn.",
+    "acceptance_ids": [
+      "AC-6"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 500,
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "parallel_group": "issue-local",
+    "defer_reason": null
+  },
+  {
+    "lane": "scope-negative-and-diff",
+    "proof_role": "Reject lockfile, dependency, Google Drive, or unrelated source changes and support exact-revision review.",
     "acceptance_ids": [
       "AC-6",
       "AC-7"
@@ -85,7 +128,9 @@ Tokens: 10000
 
 ## Commands
 
+- `cargo test --locked --manifest-path adl/Cargo.toml --lib csm_freedom_gate::tests`
 - `cargo clippy --locked --manifest-path adl/Cargo.toml --bin adl-gws-context-mirror -- -D warnings`
+- `cargo fmt --manifest-path adl/Cargo.toml --all -- --check`
 - `git diff --check`
 
 ## Failure Semantics

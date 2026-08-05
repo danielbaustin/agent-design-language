@@ -20,15 +20,19 @@ historical-delivery audit and only the proven remaining enum/schema correction
 
 ## Scope
 
-- Issue 5824 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/workflow_tooling/planning/V0917_PROMPT_CARD_ENUM_TYPING_PLAN.md
+- Audit of restricted current C-SDLC v2 card fields across csdlc-v2/src/cards.rs, model.rs, schema.rs, store.rs, and markdown.rs
+- Mapping of stored strings, Rust types, parser/formatter, serde/schema, editor operations, validators, Markdown importer/renderer, and tests
+- At most the smallest coherent finite_gap enum family proven by the audit
+- Typed round trips, schema parity, editor allowed-value parity, invalid-value negatives, and no-duplicate-work evidence
+- .csdlc/issues/5824, .csdlc/prepared/issues/5824, and .csdlc/evidence/5824
 
 ## Authority
 
-- Issue 5824 owns only WP-07: Prompt-card enum typing
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Current independent C-SDLC v2 types and tracked prompt schemas are authoritative
+- Sunset v1 prompt editors and old plans are historical comparison inputs only
+- Only a proven finite current-v2 gap may change code
+- Extensible lane, provenance, source-classification, and policy identifiers remain strings
+- Durable Markdown and values JSON remain stable unless a separately versioned template migration is authorized
 
 ## Assumptions
 

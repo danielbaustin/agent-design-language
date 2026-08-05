@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01B] Canonical documentation and version activation",
     "slug": "v0-92-wp-01b-canonical-documentation-and-version-activation",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "ready",
   "content": {
@@ -16,19 +16,83 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-01b",
-          "proof_role": "canonical-surface inventory, link and version parity checks, Cargo metadata, and focused documentation review",
+          "lane": "canonical-inventory-contract",
+          "proof_role": "Validate the retained inventory has unique paths, allowed dispositions, owners, and complete current-surface coverage.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "ruby",
+            "-rjson",
+            "-e",
+            "p='.csdlc/evidence/5818/canonical-surface-inventory.json'; rows=JSON.parse(File.read(p)); abort('empty inventory') unless rows.is_a?(Array)&&!rows.empty?; allowed=%w[update already_current historical_preserve not_authoritative]; abort('invalid inventory') unless rows.all?{|r| r['path'].to_s!=''&&allowed.include?(r['disposition'])&&r['owner'].to_s!=''}; abort('duplicate path') unless rows.map{|r|r['path']}.uniq.length==rows.length"
+          ],
+          "parallel_group": "docs-contract",
+          "defer_reason": null
+        },
+        {
+          "lane": "version-and-structure-parity",
+          "proof_role": "Prove Cargo metadata, current version parity, and structured YAML/JSON/Markdown entrypoints are consistent.",
+          "acceptance_ids": [
+            "AC-2",
             "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-5",
+            "AC-6"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 1200,
-          "budget_tokens": 10000,
+          "budget_seconds": 600,
+          "budget_tokens": 3000,
+          "argv": [
+            "cargo",
+            "metadata",
+            "--locked",
+            "--format-version",
+            "1"
+          ],
+          "parallel_group": "metadata",
+          "defer_reason": null
+        },
+        {
+          "lane": "historical-preservation-negative",
+          "proof_role": "Reject edits that rewrite historical milestone, release, review, migration, or evidence claims.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "git",
+            "diff",
+            "--exit-code",
+            "origin/main",
+            "--",
+            "docs/milestones/v0.91.8",
+            "docs/releases",
+            ".csdlc/evidence"
+          ],
+          "parallel_group": "negative",
+          "defer_reason": null
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Reject whitespace errors and support exact-revision bounded review.",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 500,
           "argv": [
             "git",
             "diff",
@@ -42,9 +106,9 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5818/design.md",
-      "design_digest": "79cfb382f24ea48c1427a73b108423978d0a1db99ac2d74d66668becddccf4e0",
+      "design_digest": "99e1b12457133a819381491865811286cafd3d5fa45563f790569e0970e1183a",
       "diagram_ref": ".csdlc/prepared/issues/5818/diagram.mmd",
-      "diagram_digest": "ef434e023917cd923187771e63bd314d5e45f5582b28b34813f892e41bc39dcc"
+      "diagram_digest": "031adc526b6fb3e7420d6f84f360751febe5858232cbb45d62cdb50c059ad1a9"
     }
   }
 }

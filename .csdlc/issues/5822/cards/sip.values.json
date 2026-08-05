@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction",
     "slug": "v0-92-wp-05-c-sdlc-estimation-and-cycle-time-reduction",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "ready",
   "content": {
@@ -16,15 +16,17 @@
       "goal": "Complete WP-05: C-SDLC estimation and cycle-time reduction.",
       "required_outcome": "measured estimation, reconnection, and simplified lifecycle path",
       "declared_scope": [
-        "Issue 5822 implementation paths to be narrowed during preparation",
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md",
-        ".adl/docs/TBD/CSDLC_V2_SESSION_ESTIMATION_RECONNECTION_PLAN.md",
-        ".adl/docs/TBD/workflow_tooling/planning/SPRINT_CYCLE_TIME_REDUCTION_PLAN.md"
+        "csdlc-v2 typed observation, forecast, outcome, schema, card-reference, and closeout comparison surfaces",
+        "csdlc-v2/src/cards.rs static PlanningProfile estimates retained as explicit fallback",
+        "Historical session telemetry and deterministic predictor scripts under adl/tools/skills/sprint-conductor/scripts as migration inputs only",
+        "Issue-local joined fixture corpus, backtests, cycle-time baseline, candidate comparison, and operator workflow proof",
+        ".csdlc/issues/5822, .csdlc/prepared/issues/5822, and .csdlc/evidence/5822"
       ],
       "authority_boundary": [
-        "Issue 5822 owns only WP-05: C-SDLC estimation and cycle-time reduction",
-        "Adjacent v0.92 work packages retain their own implementation and proof authority"
+        "Independent csdlc-v2 binaries and schemas own current estimation integration",
+        "Historical v1 sprint-conductor scripts are source evidence only and are not restored as lifecycle commands",
+        "Estimates are advisory and cannot stop work or change lifecycle truth",
+        "WP-02A owns the stable CI substrate and WP-07 consumes the resulting typed-card boundary"
       ],
       "initial_assumptions": [],
       "operator_constraints": [

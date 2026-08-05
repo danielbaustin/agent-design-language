@@ -20,13 +20,10 @@ A complete, reversible control-versus-candidate experiment with retained measure
 
 ## Scope
 
-- .adl/docs/TBD/POST_GITHUB_MIGRATION_BUILD_ACCELERATION_EXPERIMENT_PLAN.md
-- .github/workflows/ci.yaml
-- docs/tooling/BUILD_PLATFORM_BENCHMARKS.md
-- docs/tooling/VALIDATION_PLATFORM_ROUTING.md
-- .csdlc/issues/5853
-- .csdlc/prepared/issues/5853
-- .csdlc/evidence/5853
+- .github/workflows/ci.yaml selected runner routing only
+- docs/tooling/BUILD_PLATFORM_BENCHMARKS.md and docs/tooling/VALIDATION_PLATFORM_ROUTING.md
+- .csdlc/prepared/issues/5853/design.md and validate-experiment.rb
+- .csdlc/issues/5853 and .csdlc/evidence/5853 eligibility, manifest, trials, parity, decision, and final-state artifacts
 
 ## Authority
 

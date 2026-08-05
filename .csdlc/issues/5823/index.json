@@ -3,9 +3,9 @@
   "issue": 5823,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "7c3bcca3a89242a98791c5d0a2391d199e3e2a088e3fa577d270275ae22c2571",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "70a87d9723eea38f33d70e82136c40ee2aac835b66e44e622ed15fb83e81e7d5",
+  "phase": "bound",
+  "generation": 15,
+  "digest": "22e2947dd1c3696924b30d844b3143764f1df67a8bb4920de684c700f04b9d02",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5823/design.md",
   "diagram_path": ".csdlc/prepared/issues/5823/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-foundation-design-review",
+      "revision": "95946a208ce7fca949dbbe9423e7708e4658a7f22d987d2e5cd135b3bf531534"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "8e592565d51d67b54d590265c22a0d44edb42bc22125c00cad55e9bd9293a984",
-      "rendered_digest": "6318dacea208eff67cd3ed0f929686e88fe93c525a7326b3412f64652b294016",
-      "ast_digest": "b41bb724fbe77bdf158eb73681664e8386d18f52aa51127722deec5e7e9abbf6"
+      "values_digest": "14abe3fd31b8373cd3a3e62073c7a1fb7d5addef0e69d6dc9fad54910ab13e2b",
+      "rendered_digest": "3a521d5361568d36e6e58f2b1548dbe24b6deedb254c5106942ee132edda129d",
+      "ast_digest": "c753f60486959e5674018050c5085ce087467ae6c749eefa4ed399b678129b0c"
     },
     "stp": {
-      "values_digest": "61d7487336d263a6571f9d7bf851fc680536ffceda594d54601bf7917ae2d696",
-      "rendered_digest": "40fe5472b5ecea72785857bddf4b7d5928ad6366effaa47d12b506b82e64ef5f",
-      "ast_digest": "f420b1b0a833e64e8da028b63cd3ed091ed536cb91418ab23cefd36994689c17"
+      "values_digest": "85fddb4eb621a5df5513a4e648a4160ea2ddd5fe87a5c9712091507902f43c4d",
+      "rendered_digest": "81f10cde5a18696fd632178780075b2e29c94448a7cf29f417462a06882c3c5b",
+      "ast_digest": "33ea4f31db594349079ee1711ec417e28962e942e44795150ad446f53a473fe4"
     },
     "spp": {
-      "values_digest": "3d82460081a71f5b7423646f383ff491946eaa9ca1d498f53f37f38bd782b9b2",
-      "rendered_digest": "fe9034ff4d3827a8fad6a74055eee6236cff5b00b24427c81baa26cee93ce979",
-      "ast_digest": "0bbf7a2aff9ee37fc412c4d122c2d76193f5178bd38caf573dbb7ac0e5abddc5"
+      "values_digest": "4d288b7435293fbcd04e25e53c5b1b6fb8cb11d6f60d14cdd201cd18b4af24c0",
+      "rendered_digest": "a47c1eba568c4dbde2078ab7a253d8f1a50a431e2234d57fdaea9e79a26515dc",
+      "ast_digest": "2440d51a6a3dd545c5375e10619227ba625d3d9eecb194c69c4c62949e94ad4a"
     },
     "vpp": {
-      "values_digest": "15bc99666ed268242b8acdea7cd1146e87cbe9bed96ea4d69c40db6a279f0b40",
-      "rendered_digest": "e9111f2aa3510d36f1df6c5bb7f141531096480a8d451eeb61a3f7455c1d7967",
-      "ast_digest": "034f2768d34c604013d41f4c4e3373afa05efbdd2234b19803369f777eafb82a"
+      "values_digest": "1d67837cd2b0558abb619f8a8bd98780159097cf12f5e1fcbc13650b4d612018",
+      "rendered_digest": "29d51d761b9233004cfcc6aa56444787783092e36260442ad639a1c0a6e741db",
+      "ast_digest": "a841f9c40eba5c7010ae4131a1e35cf6f568cb6c4ee926f50b47247e38961904"
     },
     "srp": {
-      "values_digest": "5024f2f4d157ba04bc63ab10510cd50e9f626722e1385bb6a1932df99f6ddc90",
-      "rendered_digest": "073c95270e3c7da7c6e6b1fe7e39d06093b40f9486ea68590bbdf947b72cd82c",
-      "ast_digest": "0ccaded2767efa450d88203d813830c89719dbdb210b7a57d7f535805d18c125"
+      "values_digest": "e86ec36f018cf6f650e6f8341ae4f20d5fb5a89ae55486d937d89833eba7fa99",
+      "rendered_digest": "d75b392680f254c5218c7ac6d47f1f0dab88c8d5975c5f9dcc312a58048cc045",
+      "ast_digest": "fa8a9f100c7618edbbdd6de56dbf5ca70b1f4dfe33d7cccf069ed303d921ba71"
     },
     "sor": {
-      "values_digest": "ef46802f60876df021358ec3ffd3e185ad3532b8907aee356930e528164a3a5a",
+      "values_digest": "42c45390e9eba97df695cfe6df7017efc5bad69d5734851940f6d96b22f0eb29",
       "rendered_digest": "918dde528a114bce7b991e20381cf7cd3f7c83daf40a3822786b937728ef41d3",
       "ast_digest": "d44360186e739b1c36a6a1fd09a920ea5520e8b6f6203480950507a0168fb57c"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,132 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5823-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness\",\"claim_id\":\"claim-5823-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5823\",\".csdlc/issues/5823\",\".csdlc/locks/5823.lock\",\".csdlc/prepared/issues/5823\"],\"purpose\":\"Prepare issue 5823 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-foundation-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace the placeholder WP-06 scope with exact portable runner and adapter surfaces.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Provider-neutral typed validation request, result, provenance, artifact, timeout, cancellation, cleanup, and fallback contracts\",\"Existing provider adapters in tools/aws_remote_validation, adl/tools/run_aws_spot_remote_validation_lane.sh, and adl/tools/run_nessus_remote_validation.sh\",\"Local no-network execution of the same declared command profile\",\"Linux remote, local macOS, and Windows path/quoting or approved live-runner proof\",\"Issue-local portable fixtures and redacted evidence under .csdlc/evidence/5823\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-06 provider and local-fallback authority.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5823 owns the provider-neutral runner contract and bounded adapter integration\",\"Existing AWS and Nessus tools remain provider-specific adapters\",\"Local validation remains authoritative and usable without network availability\",\"AWS runs require explicit authorization and the agent-logic-admin business profile\",\"No credential values or arbitrary secret payloads enter requests or evidence\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-06 deliverables concrete.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Typed portable request/result schema with exact revision, profile digest, platform, artifact, redaction, timeout, and cleanup fields\",\"Fail-closed local, Nessus, and AWS adapter selection\",\"No-network same-profile local fallback\",\"Repo-relative redacted logs, artifact digests, and machine-readable summaries\",\"Linux, macOS, Windows, timeout, cancellation, unreachable-provider, stale-revision, malformed-result, and cleanup proof\",\"Operator runbook and rollback boundary\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Retain exact WP-02A dependency.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-02A issue #5801 complete with stable local command profiles and CI/PVF semantics\",\"Existing Nessus and AWS remote validation evidence and wrappers remain available as adapter inputs\",\"Agent Logic business AWS profile verified before any authorized AWS live lane\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Use tracked WP-06 source inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\".csdlc/prepared/issues/5823/design.md\",\"tools/aws_remote_validation/Cargo.toml\",\"tools/aws_remote_validation/src/aws_remote_validation.rs\",\"tools/aws_remote_validation/src/bin/adl_aws_remote_validation.rs\",\"adl/tools/run_aws_spot_remote_validation_lane.sh\",\"adl/tools/test_run_aws_spot_remote_validation_lane.sh\",\"adl/tools/run_nessus_remote_validation.sh\",\"adl/tools/test_run_nessus_remote_validation.sh\",\"docs/tooling/REMOTE_BUILD_HOW_TO.md\",\"docs/milestones/v0.91.7/review/V0917_WP06_BUILD_THROUGHPUT_VALIDATION_COST_REDUCTION_4633.md\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-06 non-goals exact.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Always-on runner fleet or broad CI migration\",\"Provider-specific behavior as the portable contract\",\"Remote speed, provisioning, or cache state as validation proof\",\"Credential export or arbitrary remote shell payloads\",\"Local validation dependency on network availability\",\"Unapproved AWS, personal-account, or paid execution\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic WP-06 plan summary.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Extract a provider-neutral exact-revision request/result contract over current adapters, add deterministic provenance, artifacts, redaction, timeout, cleanup, and no-network fallback, then prove Linux, macOS, Windows, and failure boundaries.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Declare WP-06 affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"Portable remote validation request and result model\",\"Local, Nessus, and AWS adapter selection\",\"Exact revision and command-profile provenance\",\"Artifact collection, logging, redaction, timeout, cancellation, and cleanup\",\"No-network fallback and platform compatibility\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-06 invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Remote and local execution use the same declared command profile\",\"A result cannot claim a different revision, adapter, or profile digest\",\"Network failure does not disable local validation\",\"Machine JSON remains on stdout and human adl_event diagnostics on stderr\",\"Durable evidence uses repo-relative paths and no credential values\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-06 risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Provider adapters diverge in exit, artifact, or cleanup semantics\",\"Remote mutable state or cache masks revision drift\",\"Windows quoting or path rules corrupt the command profile\",\"Network interruption leaves paid resources running\",\"Logs leak host paths or credentials\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-06 stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-02A command profile or proof semantics are unstable\",\"Exact revision or profile digest cannot be verified remotely\",\"Provider cleanup cannot reach or prove a terminal state\",\"No-network fallback differs from the declared profile\",\"Credential or host-path leakage appears in durable evidence\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-06 replanning triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"An adapter cannot express the common request/result contract\",\"A platform requires a distinct quoting or artifact transport contract\",\"AWS or Nessus authorization and availability changes\",\"Live Windows proof is unavailable and must remain explicitly fixture-qualified\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic WP-06 acceptance, plan, and lanes.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"A typed portable request identifies exact revision, command profile digest, environment allowlist, resource and budget, artifact policy, timeout, and fallback\",\"A typed result identifies adapter, platform, exact revision, profile digest, timing, exit, artifact digests, redaction, cleanup, and fallback outcome\",\"Local, Nessus, and AWS adapters preserve one request/result contract and fail closed on unsupported or ambiguous selection\",\"Network or provider failure runs or explicitly offers the same-profile local fallback without claiming remote proof\",\"Stale revision, malformed result, timeout, cancellation, unreachable provider, path leakage, and incomplete cleanup are rejected or retained as blockers\",\"Linux remote, local macOS, and Windows path/quoting or approved live-runner proof is retained with truthful fixture/live qualification\",\"Machine output, adl_event diagnostics, secrets, paths, provenance, and artifacts obey the repository observability and privacy boundary\",\"Focused adapter, negative, platform, no-network, diff, and exact-revision review proof passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Define typed portable request/result, provenance, redaction, cleanup, and local-fallback contracts\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Integrate local, Nessus, and AWS adapters with fail-closed selection, timeout, cancellation, artifacts, and fallback\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run Linux, macOS, Windows, no-network, failure, cleanup, and exact-revision review proof\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"portable-runner-contract\",\"proof_role\":\"Prove typed request/result round trips, exact revision and profile binding, adapter selection, artifacts, redaction, timeout, and cleanup semantics.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"tools/aws_remote_validation/Cargo.toml\"],\"parallel_group\":\"runner-contract\",\"defer_reason\":null},{\"lane\":\"aws-adapter-negative\",\"proof_role\":\"Exercise unreachable provider, stale revision, malformed output, timeout, cancellation, redaction, and cleanup failures without a live paid run.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_run_aws_spot_remote_validation_lane.sh\"],\"parallel_group\":\"adapter-fixtures\",\"defer_reason\":null},{\"lane\":\"nessus-and-local-fallback\",\"proof_role\":\"Prove the existing owned-runner adapter and same-profile local/no-network fallback contract.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_run_nessus_remote_validation.sh\"],\"parallel_group\":\"adapter-fixtures\",\"defer_reason\":null},{\"lane\":\"platform-contract-matrix\",\"proof_role\":\"Retain Linux remote, local macOS, and Windows path/quoting outcomes with explicit live or fixture qualification.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":6000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"r=JSON.parse(File.read('.csdlc/evidence/5823/platform-matrix.json')); %w[linux macos windows].each{|p| x=r[p]||abort(\\\"missing #{p}\\\"); abort(\\\"unqualified #{p}\\\") unless %w[live fixture blocked_with_evidence].include?(x['qualification'])}\"],\"parallel_group\":\"platform\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-06 review prompts issue-specific.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Do all adapters preserve one exact-revision request/result and artifact contract?\",\"Can network, timeout, cancellation, malformed output, or cleanup failure produce false success?\",\"Does local no-network fallback remain equivalent and available?\",\"Are Linux, macOS, Windows, observability, redaction, credential, and AWS-account boundaries truthful?\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5823-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]
 }

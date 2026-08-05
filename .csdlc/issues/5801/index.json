@@ -3,9 +3,9 @@
   "issue": 5801,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d161c9886615d203d6b83404683281ca21b58925bbbf7d1f8e8339098c2ef07b",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "7155d8691d388f2155a83eae28e7442b6bc6fd5698d497519d3d6357de4f392b",
+  "phase": "bound",
+  "generation": 15,
+  "digest": "159d9ed28f60e9154dc1edffb97085f3713aad3ca181e9b4d0b77e2ffe01f19f",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5801/design.md",
   "diagram_path": ".csdlc/prepared/issues/5801/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-foundation-design-review",
+      "revision": "c80718ee74f652704495d26bba6ab1a5682564ed5a7fcc7a7d6c05a60b47e977"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "2c7587ec02dc987b9c9de268b5b8dc5801e840a479e2c1ad606a875c3b14f083",
-      "rendered_digest": "8fd6059a2e6f1fed39aa60005dd352796ea02962385ad70f51f7866c06bb2532",
-      "ast_digest": "87b8f9e84f5f9dea080dc172af912077db9122e22b58f3647c48579cc078a166"
+      "values_digest": "c0d3b0b2b5563f1ac8195e3faaccee150ef0b771c902c9e1751331611b179c85",
+      "rendered_digest": "657fd9d5f272245476015fc6c7996cf3c879bea80c113a649a095df5f2d870c4",
+      "ast_digest": "e87314878eb145d12ee48dee595db92db566fa77e4d91fb5746e1e6c546a64e3"
     },
     "stp": {
-      "values_digest": "dee6c8797dd7485ee6e54d4b4cc7f0f5dd1a346089f017bdbd0b68d518b06924",
-      "rendered_digest": "9861c1488260497bb8e4d80d5405253c6a3addaa321f45248997ff530482fc4b",
-      "ast_digest": "b0df69e2ec0978da2c431be8a34d13b8f46a5436ffeff789285c3b2df4a733ff"
+      "values_digest": "82369c73439098b36febfceca1c6d39a44e4526884b5fa13e7f9894c22fab386",
+      "rendered_digest": "c6e1788a580308dc2b65d18c5227af1e33b40c035fcdc36168e54638f8da482b",
+      "ast_digest": "29b4f536fef1dad62cb9ae3a238935d12900db1451535bf2cd960623c1bc940f"
     },
     "spp": {
-      "values_digest": "5b751da15a13ed2d200b4c7227d6283dea18ea8731063c5147879bbc2e55bcd2",
-      "rendered_digest": "565924a0e2f34d9ebc2886778045c0225f3e058929dad4b1208beea773941deb",
-      "ast_digest": "21849c642b3d8ab12f6140f55feb25f94e82c570423c152e63c57f273440832f"
+      "values_digest": "6826c920aac8c25f4e708c4d829aade940b58f66bb3ddc7291dd04b0970702fa",
+      "rendered_digest": "00b63d4fa3c77286a41821ab211ec02ace8d63bd6f31079e82ab754fe1208e6c",
+      "ast_digest": "a9bfe11a960017a784c8fe79e08c61c3cfb65f3d44d728b3e6270467f15d6168"
     },
     "vpp": {
-      "values_digest": "0293753d51b8729352aeb19584b6d4f2d7f7777987ff406bf1dc7514db50a03c",
-      "rendered_digest": "69741dfff4248abe7e04e8aa0c0cecdd2017d91d86a40612ab23c3ff915de57d",
-      "ast_digest": "296db3ffa17782638af36866ab1e790ce6502201b94b4a7653c5b09eb2c297c0"
+      "values_digest": "0a7b0b5c485a58192bea2ab23fe5a58226db34141c8eecd0051cca69df6f0a88",
+      "rendered_digest": "21d78c388edd19b08296f8931e68ed36fba39586a4c2d080ee907098887f8776",
+      "ast_digest": "ea72667b9eb3a96becf5ae3b3ae552f5a5ecdfca6da0b934308c5e06924c036e"
     },
     "srp": {
-      "values_digest": "9f8a5107dfb9888e8a3e66807d9f50325297f516577d6a9934ffaab777614d43",
-      "rendered_digest": "09755cc774f88b9b5c4229f7641fa89b41d8b6463a52ff2f4a99fb656adb4e10",
-      "ast_digest": "0c057cd8a41152408ab4d5f14a8fbca004617b3b3555f52b460797ded4592f49"
+      "values_digest": "8efcfb79dab02818ffccf054b93b1ddbb3a5a0535e3f776ac826f3c3e0c2e8c0",
+      "rendered_digest": "bfa2844b186a214901b2166fe826c9f490ac70e1a20c76d3b788e5270b4b388f",
+      "ast_digest": "3624c633f28a9bf2de7d0b7eda4c1a63698aaabc372467a25545a996dd8db923"
     },
     "sor": {
-      "values_digest": "e72c3680b298c1682c66d84d5ae9f1dfbbc3977027b50adfc205a69b35150fc7",
+      "values_digest": "f20d4edb58152dd2aad928b2f5622b149e29dded46ae32cb7b3f099c1ed13e68",
       "rendered_digest": "014507d61b21b426b14a44883b044863dab9590297ae704f65ce363803f7459b",
       "ast_digest": "2543e6a3a620c7d2ff382d35157473896b403f624ce7f3d53b57df629afcb3b2"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,132 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness\",\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5801\",\".csdlc/issues/5801\",\".csdlc/locks/5801.lock\",\".csdlc/prepared/issues/5801\"],\"purpose\":\"Prepare issue 5801 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-foundation-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace the placeholder CI scope with exact workflow and policy surfaces.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\".github/workflows/ci.yaml lane graph, concurrency, required checks, and coverage aggregation\",\"adl/tools/ci_path_policy.sh and path/PVF classification contracts\",\"adl/tools/run_pr_fast_test_lane.sh, run_pr_fast_coverage_lane.sh, run_authoritative_coverage_lane.sh, and check_coverage_impact.sh\",\"Focused contract tests under adl/tools/test_ci_path_policy.sh, test_ci_runtime_contracts.sh, test_check_coverage_impact.sh, and related runner tests\",\"csdlc-v2 exact-head metadata-lineage behavior where required to prevent needless source revalidation\",\".csdlc/issues/5801, .csdlc/prepared/issues/5801, and .csdlc/evidence/5801\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-02A authority and safety boundary.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5801 owns deterministic CI/PVF lane selection, coverage deduplication, stale-run cancellation, and bounded metadata-lineage reuse\",\"Source and product exact-head validation remains authoritative\",\"WP-02 owns repository migration and WP-02B owns runner-size experimentation\",\"No AWS, branch-protection weakening, check-name churn, or test deletion is authorized\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make CI deliverables concrete.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Retained current-topology review packet and actionable finding disposition\",\"Single deterministic change-class to PVF/CI lane map\",\"Separated focused and slow test routing with unknown and mixed changes failing to stronger proof\",\"Nonduplicated coverage authority with complete shard provenance and one aggregation gate\",\"Typed metadata-only source-proof reuse boundary\",\"Stale-run cancellation and final-state required-check regressions\",\"Linux, macOS, and Windows-facing path/platform contract evidence\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Retain exact WP-02 dependency.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-02 issue #5819 repository migration verified\",\"Destination GitHub Actions, required checks, permissions, caches, and branch protections inventoried\",\"Current exact-head C-SDLC v2 publication and finish contracts remain authoritative\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Use tracked CI source inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\".github/workflows/ci.yaml\",\"adl/tools/ci_path_policy.sh\",\"adl/tools/test_ci_path_policy.sh\",\"adl/tools/test_ci_runtime_contracts.sh\",\"adl/tools/check_coverage_impact.sh\",\"adl/tools/test_check_coverage_impact.sh\",\"adl/tools/run_pr_fast_test_lane.sh\",\"adl/tools/run_pr_fast_coverage_lane.sh\",\"adl/tools/run_authoritative_coverage_lane.sh\",\"csdlc-v2/src/finish.rs\",\"csdlc-v2/tests/gate_finish.rs\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make CI non-goals exact.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Weakening source or product exact-head validation\",\"Changing required-check names or branch protection to obtain a speedup\",\"Deleting tests or lowering coverage thresholds\",\"AWS or runner-size experimentation\",\"Broad workflow rewrite without compatibility and rollback proof\",\"v0.91.8 release-tail expansion\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic CI plan summary.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Review the current topology, centralize deterministic path/PVF classification, deduplicate heavy and coverage lanes, preserve exact-head source safety, bound metadata-only reuse, prove stale-run behavior, and validate platform contracts.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Declare CI affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"GitHub Actions CI job graph and concurrency\",\"Path policy and PVF lane classification\",\"Fast, slow, runtime, demo, and coverage runners\",\"Coverage shard provenance and aggregation\",\"C-SDLC v2 metadata-only exact-head lineage\",\"CI policy documentation and focused contract tests\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record CI invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Unknown or mixed source changes select the stronger proving lane\",\"Source/product exact-head review and merge evidence is never reused across substantive drift\",\"Each PR class runs one authoritative coverage topology\",\"Required-check names and branch protection remain stable\",\"Machine-readable outputs and adl_event stderr separation remain intact\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record CI risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"A docs or metadata classifier accidentally suppresses source proof\",\"Coverage shards duplicate work or aggregate different revisions\",\"Cancellation hides a missing final required state\",\"Metadata lineage accepts substantive or renamed source drift\",\"Platform-specific path handling diverges\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record CI stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-02 destination CI state is not stable\",\"A proposed route weakens required source proof\",\"Required-check identity or branch protection must change\",\"Unknown path classification would default to less proof\",\"Coverage artifacts cannot prove one exact revision and authority\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record CI replanning triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"GitHub Actions or branch-protection topology changes after migration\",\"Current coverage authority or shard count changes\",\"C-SDLC v2 exact-head metadata-lineage semantics change\",\"A platform contract exposes a path or shell portability gap\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic CI acceptance, plan, and validation lanes.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"A retained review packet maps current CI, coverage, and lifecycle-publication findings to bounded dispositions\",\"One deterministic policy classifies docs/review, lifecycle metadata, tooling, ordinary source, runtime-critical, unknown, and mixed changes into explicit PVF lanes\",\"Focused and slow test families are separated and unknown changes fail to the stronger proving lane\",\"Coverage runs once per PR class with complete exact-SHA shard provenance and one authoritative aggregation gate\",\"Metadata-only reconciliation reuses source proof only under typed unchanged-source lineage while substantive drift retains exact-head validation\",\"Superseded runs cancel without converting a cancelled or missing final required state into success\",\"Focused policy, coverage, lifecycle-lineage, Linux/macOS/Windows contract, and exact-head CI proof passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Retain the topology review and define the single deterministic change-class and PVF lane map\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement focused/slow routing, coverage deduplication, metadata-lineage reuse, and cancellation safety\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run policy, coverage, lifecycle, platform, and exact-head integration proof and resolve bounded review\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"ci-path-policy-contract\",\"proof_role\":\"Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"ci-runtime-and-coverage-contract\",\"proof_role\":\"Prove workflow graph, stale-run behavior, one coverage authority, shard provenance, and aggregation semantics.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"coverage-impact-negative\",\"proof_role\":\"Reject unmapped or insufficient source coverage and prevent broad basename fallback.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_check_coverage_impact.sh\"],\"parallel_group\":\"coverage\",\"defer_reason\":null},{\"lane\":\"metadata-lineage-negative\",\"proof_role\":\"Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head source drift.\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate_finish\",\"metadata\"],\"parallel_group\":\"lifecycle\",\"defer_reason\":null},{\"lane\":\"exact-head-ci-platform\",\"proof_role\":\"GitHub required checks prove the final exact head on the migrated Linux-hosted CI substrate while contract fixtures cover macOS and Windows boundaries.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":10000,\"argv\":[\"gh\",\"pr\",\"checks\",\"--watch\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace and unintended policy-surface churn.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make CI review prompts issue-specific.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every change class map deterministically to a truthful PVF and release-gate role?\",\"Can any substantive or unknown source change escape exact-head proof or coverage?\",\"Are coverage aggregation, stale-run cancellation, metadata-lineage reuse, and required checks fail-closed?\",\"Do platform fixtures and the final exact-head CI result support the claimed boundary?\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]
 }

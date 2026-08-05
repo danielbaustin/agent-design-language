@@ -1,2 +1,11 @@
-flowchart LR
-  I["Issue 5819"] --> D["Design required"]
+flowchart TD
+  G["Organization, owner, billing, and security gates"] --> M["Exact five-repository manifest"]
+  M --> B["Before-manifest and assignee gate"]
+  B --> T["Owner-authorized transfer"]
+  T --> V["Destination and integration verification"]
+  V --> D{"Unexplained drift?"}
+  D -->|Yes| S["Stop wave and repair in place"]
+  D -->|No| X{"More repositories?"}
+  X -->|Yes| B
+  X -->|No| N["asksifu and Horust negative controls"]
+  N --> R["Final migration report and review"]

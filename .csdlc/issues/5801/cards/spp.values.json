@@ -7,52 +7,72 @@
     "title": "[v0.92][WP-02A] CI and coverage reliability",
     "slug": "v0-92-wp-02-ci-and-coverage-reliability",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 8,
+      "summary": "Review the current topology, centralize deterministic path/PVF classification, deduplicate heavy and coverage lanes, preserve exact-head source safety, bound metadata-only reuse, prove stale-run behavior, and validate platform contracts.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Retain the topology review and define the single deterministic change-class and PVF lane map",
           "acceptance_ids": [
+            "AC-1",
             "AC-2"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Implement focused/slow routing, coverage deduplication, metadata-lineage reuse, and cancellation safety",
           "acceptance_ids": [
-            "AC-1",
+            "AC-2",
             "AC-3",
-            "AC-4"
+            "AC-4",
+            "AC-5",
+            "AC-6"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "action": "Run policy, coverage, lifecycle, platform, and exact-head integration proof and resolve bounded review",
           "acceptance_ids": [
-            "AC-5"
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "GitHub Actions CI job graph and concurrency",
+        "Path policy and PVF lane classification",
+        "Fast, slow, runtime, demo, and coverage runners",
+        "Coverage shard provenance and aggregation",
+        "C-SDLC v2 metadata-only exact-head lineage",
+        "CI policy documentation and focused contract tests"
+      ],
       "invariants": [
-        "No tracked work on main",
-        "No scope absorption across work packages",
-        "Evidence claims remain exact-revision and source-grounded"
+        "Unknown or mixed source changes select the stronger proving lane",
+        "Source/product exact-head review and merge evidence is never reused across substantive drift",
+        "Each PR class runs one authoritative coverage topology",
+        "Required-check names and branch protection remain stable",
+        "Machine-readable outputs and adl_event stderr separation remain intact"
       ],
       "risks": [
-        "Dependency drift",
-        "Scope overlap",
-        "Insufficient real-behavior proof"
+        "A docs or metadata classifier accidentally suppresses source proof",
+        "Coverage shards duplicate work or aggregate different revisions",
+        "Cancellation hides a missing final required state",
+        "Metadata lineage accepts substantive or renamed source drift",
+        "Platform-specific path handling diverges"
       ],
       "execution_estimates": {
         "elapsed_seconds": 21600,
@@ -60,15 +80,22 @@
         "validation_seconds": 3600
       },
       "stop_conditions": [
-        "Protected-path collision",
-        "Contradictory dependency evidence",
-        "Required proof cannot be produced within issue scope"
+        "WP-02 destination CI state is not stable",
+        "A proposed route weakens required source proof",
+        "Required-check identity or branch protection must change",
+        "Unknown path classification would default to less proof",
+        "Coverage artifacts cannot prove one exact revision and authority"
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "GitHub Actions or branch-protection topology changes after migration",
+        "Current coverage authority or shard count changes",
+        "C-SDLC v2 exact-head metadata-lineage semantics change",
+        "A platform contract exposes a path or shell portability gap"
+      ],
       "design_ref": ".csdlc/prepared/issues/5801/design.md",
-      "design_digest": "1b0420b4b96beb25204b112adc3e7914e79b1ae4dc5f26c06a676be75a4fedfe",
+      "design_digest": "c80718ee74f652704495d26bba6ab1a5682564ed5a7fcc7a7d6c05a60b47e977",
       "diagram_ref": ".csdlc/prepared/issues/5801/diagram.mmd",
-      "diagram_digest": "6f5405e1aee1975ec02b11337005bc4404c4bd458b594093ebf9596c65c59e27"
+      "diagram_digest": "38d2b37695ebf0a973ad18715373b5388f65f5eb6d61f68fafb821966de2ecb2"
     }
   }
 }

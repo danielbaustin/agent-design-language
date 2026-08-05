@@ -3,9 +3,9 @@
   "issue": 5819,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8f38743f59dd814a09097b78e17331ac66a04b30cc584dab53d682d1e1d4ea34",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "8b0dfc47e4d72d737af3ce440a106e5f6cd0a95494d38312284d7cb4246f9078",
+  "phase": "bound",
+  "generation": 15,
+  "digest": "57d23982276da72dfc564e40d88291fbdcdd603236eb99d2e52f58efd905e360",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5819/design.md",
   "diagram_path": ".csdlc/prepared/issues/5819/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-foundation-design-review",
+      "revision": "0f509a4269de24b7f78958acc43dd121f141d1c5bfa97a5b94f5ffed47ee0593"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "1a1d1ac7fab3deecdbafeb595fc79d195d84c20aa9ea478e8c146c63776fdf2d",
-      "rendered_digest": "410077e7faa29eb244e4e337e7b9c9e5301fb7869352cbcf6fed8c8879d2efef",
-      "ast_digest": "c1867c1d0c511aeca44f28c3091e8a6a72660087015e79e1afbf91d34794cf0b"
+      "values_digest": "61f59773a0fe551b9e993ca4835b2563445cb928df71604e316dcedacb1c880c",
+      "rendered_digest": "44e6d8cf86fd0800f426b743c58bc2352661d9beeea3551cfdbb579e08a05dfc",
+      "ast_digest": "dadf91013f912bb3f6d459708baa2117f193b2c4eeb7b7ef1e1bbee61995e981"
     },
     "stp": {
-      "values_digest": "3ed459072076964a839a3efe1ecb0fe75e03faf2d1eb6e635fca5eab110a9fdd",
-      "rendered_digest": "cb89ae44a26c71b28c56a619d7e46308b5054f781f547e0243dca78b148e1609",
-      "ast_digest": "810a56b2d7567dcc88e64441645f626b65aeb4ca207dc2f744a6893372e9d450"
+      "values_digest": "8e8123ae644bf122389ff70d9bd3c4b31b38f90478ed3e692a4860425437eb06",
+      "rendered_digest": "5528444e8fd589da8c62740f08525b29bcd153e279cf0d1a04f955782349ac7b",
+      "ast_digest": "e955da3f367a6f0ec8be61464cec1e41f202b8a98c0c38354c2781a9c3429e94"
     },
     "spp": {
-      "values_digest": "07269019d876d3d03fff7503324ad2305e2cd3e515dacc71d372d86aece4855b",
-      "rendered_digest": "e2e1f6de1196d24ea8faa392e1508f76d161dd7be53393f7dd4a9798a7a96fae",
-      "ast_digest": "2b75185c2daedfb277e929fc669c1145b4e07b595ace400019c44cdfe5f1ff52"
+      "values_digest": "74593b407b34f1363ac6a29696d57d693020cc640734d6c3779344d0786e7f77",
+      "rendered_digest": "61531b0ec78c42f390f25d3c873c25470017299282feb25c3d3339b3b57721b0",
+      "ast_digest": "5ac36d6e50f5d2b4a31c5e95d36fd2489a08606554758e3aa82c82b748ccb51d"
     },
     "vpp": {
-      "values_digest": "4fe5c13e39a9e1c9a4b372f8fb8febb661c31ec69757ef36f64848f9b9705ffc",
-      "rendered_digest": "a6f4a478e678d7a676e6abc251b7fefc06e7dfd26f09ec18d67c476d72f684df",
-      "ast_digest": "55b21d7c9fef7506a36d8c9802054eaf03463797f456302c708cfb33d676f556"
+      "values_digest": "a0e300013b86f33a834680cc553b7ceb19559fd1ddf73aea65da3a4dc83ecdeb",
+      "rendered_digest": "4b7dbb9233b1eee3044ceb4774a10eb08e26d25515f61f49f3892476f97cd8ae",
+      "ast_digest": "437742607c9c4fa7228ca9ee9b0835ccc5ffa7f8acf1d04d5350212490ae93c9"
     },
     "srp": {
-      "values_digest": "6df095d20894f748ce3a2e4d2db6d2979c0ce0a2bc1b573a64ab03517a808b07",
-      "rendered_digest": "b270a848ea030995a295334632e84dc9997ddbbcf14b7ed42a6c74d426abaf4c",
-      "ast_digest": "be20b042202d7ffa8c9cfd3e046bbe53185220a4b673cb7c526860d5c0c6c0b9"
+      "values_digest": "1df32513a5b41b70cc65f4f48c18367ce9cca04e6078ea44b4b30f308b4b83e5",
+      "rendered_digest": "734056ebfca5125e98986cbbfd83620c219853a8db268ceba6b4d30dec8df33b",
+      "ast_digest": "3e8f2043f792c6d62e42f6a5ca496e340b8a9f6d1a040cf8c72371ec3148c862"
     },
     "sor": {
-      "values_digest": "7ce0cf2c6390f8a1a5c50b9a9d1572145f85d73a246b721ebf12f5426b039c01",
+      "values_digest": "7fd899c070c89b5021773c8e0e93271b4fb5921f65503fa9bcbebf452fc5ef0d",
       "rendered_digest": "b9d02042c58382c56857864e90a725014418ad564516ddde5a0559f85a2a1e9b",
       "ast_digest": "2d4882273217ccc6b33a14cd0d057b992c48a401a63dfe2680b0ca6254180916"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,132 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness\",\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5819\",\".csdlc/issues/5819\",\".csdlc/locks/5819.lock\",\".csdlc/prepared/issues/5819\"],\"purpose\":\"Prepare issue 5819 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-foundation-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace the placeholder migration scope with exact repositories and evidence surfaces.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Serial transfer of cognitive-sdlc-paper, godel-hadamard-bayes-paper, general-intelligence-paper-private, universal-tool-schema, and agent-design-language from danielbaustin to agent-logic\",\"Per-repository redacted before and after manifests, assignee membership or reassignment plans, and transfer receipts\",\"Current operational URL, package, OIDC, Pages, webhook, App, clone remote, and external integration updates\",\"agent-logic.ai production and beta ADL link cutover after the ADL destination exists\",\".csdlc/issues/5819, .csdlc/prepared/issues/5819, and .csdlc/evidence/5819\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record migration authority and exclusions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Agent Logic organization owners authorize transfer windows, billing, policy, and recovery decisions\",\"Issue 5819 owns exactly five approved transfers and their verification\",\"danielbaustin/asksifu remains personal and Horust remains excluded\",\"WP-02A owns CI redesign; downstream work packages retain implementation authority\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make migration deliverables manifest-driven.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Organization readiness and exact five-repository scope receipt\",\"Five redacted before/after manifest pairs with exact HEAD and digest lineage\",\"Assignee membership or completed reassignment evidence for every open issue and PR\",\"Per-repository transfer, integration, package, Pages, Actions, security, and redirect verification\",\"asksifu and Horust negative-control evidence\",\"Final migration report with zero unexplained drift\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Retain exact migration dependencies.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-01 issue #5817 and WP-01B issue #5818 complete\",\"Reviewed migration plan from issue #5815 and PR #5816 remains current\",\"Confirmed destination organization owners, billing owner, recovery contact, and required 2FA\",\"Complete five-repository inventory and free destination names\",\"Organization billing, security, Actions, Pages, package, LFS, and transfer policy readiness\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Use portable migration inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\".csdlc/prepared/issues/5819/design.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/milestones/v0.92/WBS_v0.92.md\",\".csdlc/issues/5815\",\"agent-logic.ai current production and beta source-link inventory\",\"GitHub transfer, organization-role, and fork-network documentation captured at execution\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make migration non-goals exact.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Migration of asksifu or Horust\",\"Repository rename, visibility change, recreation, or history rewrite\",\"WP-02A CI and coverage redesign\",\"Export of secret values or credential material\",\"Downstream milestone implementation or completion claims\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic migration plan summary.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify organization gates, transfer exactly five repositories serially with assignee-aware manifests and zero unexplained drift, execute the ADL website/integration cutover last, prove exclusions, and retain a reviewed final report.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Declare migration affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"GitHub repository ownership and organization policy\",\"Issues, pull requests, assignees, teams, collaborators, and rulesets\",\"Actions, environments, OIDC, packages, LFS, Pages, webhooks, Apps, and deploy keys\",\"Current repository URLs, clone remotes, badges, sites, and external consumers\",\"Issue-local migration evidence\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record migration invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Transfer one repository at a time and pass verification before continuing\",\"Preserve repository name, visibility, default branch, and exact history\",\"Record secret names and scopes only, never values\",\"Use redirects only as temporary compatibility\",\"asksifu remains personal and Horust is untouched\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record migration risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Assignee loses eligibility after organization transfer\",\"Packages, OIDC, Pages, or integrations retain old-owner coupling\",\"Fork-network or destination-name conflict blocks transfer\",\"Transfer-back fails to restore organization-owned settings\",\"Concurrent publication changes the manifest during a window\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record migration stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-01B or #5815 plan lineage is not current\",\"Destination owner, billing, recovery, or security gate is incomplete\",\"Before-manifest drift is unexplained\",\"An assignee lacks membership and an approved reassignment plan\",\"Any transferred repository fails Gate 4 verification\",\"A secret value appears in retained evidence\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record migration replanning triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"GitHub changes transfer, package, Pages, or organization-policy behavior\",\"A destination repository or fork-network conflict appears\",\"A critical external integration cannot support a same-window cutover\",\"Transfer-back becomes the organization-owner recovery decision\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic migration acceptance, steps, and lanes.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Organization owners, recovery, billing, policy, permissions, destination names, and exact five-repository scope are verified\",\"Every repository has a reviewed redacted before-manifest at an exact HEAD and complete assignee membership or reassignment plan\",\"Exactly five repositories transfer in the declared order with names, visibility, and history preserved\",\"Every destination passes manifest comparison for GitHub surfaces, security, packages, Pages, LFS, Actions, and external integrations before the next transfer\",\"ADL transfers last and current agent-logic.ai links, clone remotes, OIDC, packages, and critical consumers use the canonical destination\",\"asksifu remains personal and Horust is neither transferred nor modified\",\"Final evidence contains no secret values, no unexplained drift, and one exact-revision bounded review\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify organization readiness, plan lineage, exact scope, and per-repository assignee-aware manifests\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Transfer and verify each repository serially, stopping on any unexplained drift\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Complete the ADL and website cutover, negative controls, final report, and exact-revision review\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"migration-evidence-contract\",\"proof_role\":\"Validate exact repository order, before/after manifest digests, assignee dispositions, transfer times, and zero unexplained drift.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"p='.csdlc/evidence/5819/migration-report.json'; r=JSON.parse(File.read(p)); exp=%w[cognitive-sdlc-paper godel-hadamard-bayes-paper general-intelligence-paper-private universal-tool-schema agent-design-language]; abort('wrong order') unless r['repositories'].map{|x|x['name']}==exp; abort('incomplete') unless r['repositories'].all?{|x|x['before_digest']&&x['after_digest']&&x['exact_head']&&x['assignees_verified']==true&&x['unexplained_drift']==[]}; abort('secret leakage flag') unless r['secret_values_retained']==false\"],\"parallel_group\":\"migration-contract\",\"defer_reason\":null},{\"lane\":\"github-live-destination-platform\",\"proof_role\":\"Verify the five live agent-logic destinations and preserved GitHub repository surfaces after each transfer.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":5000,\"argv\":[\"gh\",\"repo\",\"view\",\"agent-logic/agent-design-language\",\"--json\",\"nameWithOwner,visibility,defaultBranchRef\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"migration-negative-controls\",\"proof_role\":\"Prove asksifu remains under danielbaustin and Horust was not transferred or modified.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"gh\",\"repo\",\"view\",\"danielbaustin/asksifu\",\"--json\",\"nameWithOwner,visibility\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors in tracked integration and evidence changes.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make migration review prompts issue-specific.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Did exactly the five approved repositories transfer in the declared order?\",\"Does every before/after manifest prove assignee and GitHub-surface preservation or explicit repair?\",\"Are asksifu, Horust, secret values, WP-02A, and downstream work excluded?\",\"Are the ADL website, remote, package, OIDC, and integration cutovers canonical and reversible?\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]
 }

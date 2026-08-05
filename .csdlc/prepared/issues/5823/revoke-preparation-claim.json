@@ -1,0 +1,11 @@
+{
+  "issue": 5823,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5823-v092-preparation",
+  "expected_generation": 15,
+  "expected_digest": "4be36e47597267818376d624d69b8a8d24199f3cf3540fa58c26f30a3c4c3ba5",
+  "now_unix_seconds": 1785949580,
+  "actor": "codex:5860-foundation-readiness",
+  "operator_authority": "operator:daniel-issue-5860-readiness-repair",
+  "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time."
+}

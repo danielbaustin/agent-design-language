@@ -1,2 +1,10 @@
-flowchart LR
-  I["Issue 5824"] --> D["Design required"]
+flowchart TD
+  I["Current v2 restricted-field inventory"] --> C{"Field classification"}
+  C -->|typed_complete| N["No-duplicate-work disposition"]
+  C -->|intentionally_extensible| S["Retain string boundary"]
+  C -->|finite_gap| E["Smallest shared enum authority"]
+  E --> P["Parser, serde, schema, editor, validator parity"]
+  P --> R["Markdown and values round-trip proof"]
+  N --> V["Exact-revision audit review"]
+  S --> V
+  R --> V

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02B][build] Run the post-migration build acceleration experiment",
     "slug": "v0-92-wp-02b-post-migration-build-acceleration",
     "version": "v0.92",
-    "generation": 0
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -23,15 +23,14 @@
         "Ten-run post-change observation for adopted routes or cleanup confirmation for rejected routes"
       ],
       "acceptance_criteria": [
-        "WP-02 migration and WP-02A CI reliability gates are verified before paid execution",
-        "Control and candidate runs use one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, and proof input set",
-        "Five cold and ten warm trials per selected workload and platform retain cache classification, queue delay, failures, retries, cancellations, and justified outliers",
-        "Result, artifact, validation, and required-check semantics are equivalent before the canary",
-        "The decision table reports p50, p95, critical-path delta, queue delta, cost, reliability, and proof parity against predeclared thresholds",
-        "No route is adopted without threshold compliance and a successful canary; adopted routes retain fallback and ten-run observation evidence",
-        "Rejected or deferred routing is removed without product-code or test-expectation changes",
-        "Failure, security, privacy, portability, recovery, cost, and claim boundaries are tested or explicitly dispositioned",
-        "One exact-revision pre-PR review has no unresolved actionable findings"
+        "WP-02, WP-02A, organization plan, owner budget and alerts, selected-repository access, concurrency-one, and rollback entry gates are verified",
+        "Control and candidate runs freeze one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, proof inputs, and required checks",
+        "Five cold and ten warm trials per selected workload and platform retain cache evidence, queue delay, failures, retries, cancellations, and justified outliers",
+        "Result, artifact, validation, and required-check parity passes before exactly one production-semantics canary",
+        "Every lane decision reports p50, p95, critical-path and queue deltas, reliability, cost, proof parity, and a predeclared threshold disposition",
+        "Adopted routing has a successful canary, ten-run observation, and standard-runner fallback; rejected or deferred routing is removed",
+        "Untrusted code cannot reach privileged runner context and no required-check, branch-protection, validation-breadth, or proof semantic changes occur",
+        "The issue-local validator, workflow contracts, diff hygiene, and exact-head review pass"
       ],
       "dependencies": [
         "WP-02",
@@ -39,13 +38,14 @@
         "Agent Logic organization-owner approval for budget and selected-repository runner access"
       ],
       "repo_inputs": [
-        ".adl/docs/TBD/POST_GITHUB_MIGRATION_BUILD_ACCELERATION_EXPERIMENT_PLAN.md",
-        ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+        ".csdlc/prepared/issues/5853/design.md",
+        ".csdlc/prepared/issues/5853/validate-experiment.rb",
         ".github/workflows/ci.yaml",
         "docs/tooling/BUILD_PLATFORM_BENCHMARKS.md",
         "docs/tooling/VALIDATION_PLATFORM_ROUTING.md",
         "docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md",
-        "docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md"
+        "docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
       ],
       "non_goals": [
         "AWS or a self-hosted runner platform",

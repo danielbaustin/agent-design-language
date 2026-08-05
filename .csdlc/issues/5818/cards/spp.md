@@ -12,38 +12,46 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Inventory authoritative current surfaces, update v0.92 documentation and version declarations, preserve historical evidence, run focused parity and structure proof, then obtain exact-revision review.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
-    "acceptance_ids": [
-      "AC-2"
-    ],
-    "status": "pending"
-  },
-  {
-    "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Build and review the classified canonical-surface and version-authority inventory",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
       "AC-4"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S2",
+    "action": "Update current documentation, feature inventory, links, and authoritative version metadata without historical drift",
     "acceptance_ids": [
-      "AC-5"
+      "AC-2",
+      "AC-3",
+      "AC-5",
+      "AC-6"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Run focused structure, parity, historical-negative, and exact-revision review proof",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7"
     ],
     "status": "pending"
   }
@@ -51,15 +59,17 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- v0.92 active does not mean v0.92 features complete
+- v0.91.8 remains the latest completed release until separate release authority changes it
+- Historical evidence retains original versions and claims
+- No tracked work on main and no generated-file hand editing
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- A broad replacement rewrites historical truth
+- Version declarations drift across workspace members
+- Current links point to absent or operator-local paths
+- Cargo.lock regeneration introduces unrelated churn
 
 ## Estimates
 
@@ -73,19 +83,20 @@ Revision 1
 
 .csdlc/prepared/issues/5818/design.md
 
-Digest: 79cfb382f24ea48c1427a73b108423978d0a1db99ac2d74d66668becddccf4e0
+Digest: 99e1b12457133a819381491865811286cafd3d5fa45563f790569e0970e1183a
 
 ## Diagram
 
 .csdlc/prepared/issues/5818/diagram.mmd
 
-Digest: ef434e023917cd923187771e63bd314d5e45f5582b28b34813f892e41bc39dcc
+Digest: 031adc526b6fb3e7420d6f84f360751febe5858232cbb45d62cdb50c059ad1a9
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- Ambiguous authoritative version owner
+- Generated-file ownership cannot be identified
+- Historical-preservation scan reports a rewritten evidence surface
+- Protected-path collision with another active issue
 
 ## Handoff
 

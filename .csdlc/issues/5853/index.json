@@ -3,9 +3,9 @@
   "issue": 5853,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "30c5e01cd7aaa0c008930afafb3d1c037c58ffe34866399d13f29b55d2f8d503",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "34105dd551515c096c50bd72f532539e4279e13fc4725404f3a4851de723f85d",
+  "phase": "bound",
+  "generation": 6,
+  "digest": "5b15dafd598e7c9ba3961a6bf67f3cd9fddc00fabd8e1d0069d41a499ec026cf",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5853/design.md",
   "diagram_path": ".csdlc/prepared/issues/5853/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-foundation-design-review",
+      "revision": "f5be4e21e235dcbbfea8d4483057a9d0b3b60bc653b6955dc3799e6e85989525"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "aa85198ce8edb50f33ecd6da2661131a996e6e6f70d8e4f9bedc81c379f35ce2",
-      "rendered_digest": "04726f64d50295daada15d1db5ed70d9bac1e6b2a1eb5bd79d116cab956c7a0b",
-      "ast_digest": "c970ffb7843e4318e4aa2106725b9ac1615fe8909e927b41c389e68ba55b9d33"
+      "values_digest": "beff11a0f7d3f898b38e88f5fd95c395c90334461dcb47ef4a033e8339ab7e09",
+      "rendered_digest": "718b77d5b1f856b60e25fae5100d133ef18c17c723d1361c324c12fa4af50fce",
+      "ast_digest": "437de793a48b3ec154bcbfbe384ac1d81457087ed3eb36e7b8b8579aa6faae0c"
     },
     "stp": {
-      "values_digest": "0f39385cd1a7fd054e2b6556ce856db78d8b3673ad3f1e56801af89c9fe733da",
-      "rendered_digest": "0245187f6510a3c4f2090470e7640cf3149de3cc59dea46eda36c21c94a2fd90",
-      "ast_digest": "b02f8a368621c775b22a133a9048a3df717c13a841ab80498153d4b05e1f5a8f"
+      "values_digest": "646c33387463d2d3ade558f00ed6a784d6d3eafc46362bfa7095bcf6bfc8d34e",
+      "rendered_digest": "2133e45aa569f9c797ff2f52318966de9f25857cee4e31ab284b754479f5c1a5",
+      "ast_digest": "98fc540675582b42af2ca5a36b2ee377b46f4f641635bd6adc8837f872ac5ffa"
     },
     "spp": {
-      "values_digest": "f8c625028fda240d27a3f0b8a52e125d2fc935f3fcfbe57a6f3ee0e433c40bb7",
-      "rendered_digest": "807715b06401b5c227964251368acd0416a21620358eebd41d8abaf15a74f43b",
-      "ast_digest": "65d408e7d4faa7048b5938ea024fa5c868ead26bf8194c9fd7f26a4e53529d15"
+      "values_digest": "201a72b7437eabc813fec8bf259e9571558b07e41641120f634a712140a76964",
+      "rendered_digest": "131e435d5fcf7556cf053d05796088140055d88773954dd6edf61e53fae3067c",
+      "ast_digest": "42693222354e6f5362a45edbbbe2ec443e5614207430d5a1d57ad8b8cd66dc51"
     },
     "vpp": {
-      "values_digest": "460565309f528eacd7227a7bddbf90a2c85a17ffe3cf91859bed6b72d687169c",
-      "rendered_digest": "2e6b85db13cd90cb2fd40715ba89da702dae84ac80e52906c8b3a590f2f4554d",
-      "ast_digest": "b944f6c7f6b3a39674f4de5589ae22970e0b1563a74394614434997f341e7afe"
+      "values_digest": "9c41c2e24252ce09a0f11064ff0fa8a1ab2bc16148fa57eb86beccebb1e15cfb",
+      "rendered_digest": "1ea8157866df53500fc094d1a552c64a453f507c09c1da5148a1e87765d689cf",
+      "ast_digest": "43d146a95c19fc32fd02c2b1f2bb6379c0734e08c3930d6509fb718b18ac9ec1"
     },
     "srp": {
-      "values_digest": "6dd18878510ff6ac653399be9ea22ef2bc3d95c5dc2d01b70a82eec1979cbb4a",
+      "values_digest": "2ca1d4ee9057ea9708d2dcb64cd84959d1074853884f009e3735c9910570df2b",
       "rendered_digest": "b697a1894e90439d6a5d7b5c5b3954a52a9766c17bf612204b20287c993ae387",
       "ast_digest": "191d41e27dcd0b8037611c604f1d89297c6d224c576055534d242e69ce6a35aa"
     },
     "sor": {
-      "values_digest": "2fa7a5e268426534f33aa6bd66adb6c2a1faab92039c4deed1141c26daaa216a",
+      "values_digest": "3c9af82fcef09847d4d2cc57ff9e905c6a702c5206e07050a0b073564c38a399",
       "rendered_digest": "c8c0658069791fed33a7be33428288105be9227795586c3ab67ca9b5c6c9272f",
       "ast_digest": "c376bbd4d55aa0d818ef44f2c187ea3875d728095d27dddd352d43798c8fa825"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,69 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5853-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness\",\"claim_id\":\"claim-5853-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5853\",\".csdlc/issues/5853\",\".csdlc/locks/5853.lock\",\".csdlc/prepared/issues/5853\"],\"purpose\":\"Prepare issue 5853 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-foundation-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Remove the untracked operator-local plan dependency from the portable WP-02B scope.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\".github/workflows/ci.yaml selected runner routing only\",\"docs/tooling/BUILD_PLATFORM_BENCHMARKS.md and docs/tooling/VALIDATION_PLATFORM_ROUTING.md\",\".csdlc/prepared/issues/5853/design.md and validate-experiment.rb\",\".csdlc/issues/5853 and .csdlc/evidence/5853 eligibility, manifest, trials, parity, decision, and final-state artifacts\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Use tracked portable WP-02B inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\".csdlc/prepared/issues/5853/design.md\",\".csdlc/prepared/issues/5853/validate-experiment.rb\",\".github/workflows/ci.yaml\",\"docs/tooling/BUILD_PLATFORM_BENCHMARKS.md\",\"docs/tooling/VALIDATION_PLATFORM_ROUTING.md\",\"docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md\",\"docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Declare the concrete WP-02B affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"Selected GitHub Actions runner routing\",\"Restricted organization runner-group access and cost controls\",\"Exact-SHA cold and warm benchmark evidence\",\"Proof, artifact, validation, and required-check parity\",\"Lane decision, canary, observation, fallback, and cleanup evidence\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-02B replanning triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"GitHub changes available runner sizes or larger-runner billing\",\"WP-02A changes the control workflow or selected lane topology\",\"The frozen workflow, toolchain, lockfile, cache, permission, or required-check inputs drift\",\"The organization owner changes thresholds before the first measured run\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Add explicit experiment, negative, platform, and exact-head proof lanes.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"WP-02, WP-02A, organization plan, owner budget and alerts, selected-repository access, concurrency-one, and rollback entry gates are verified\",\"Control and candidate runs freeze one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, proof inputs, and required checks\",\"Five cold and ten warm trials per selected workload and platform retain cache evidence, queue delay, failures, retries, cancellations, and justified outliers\",\"Result, artifact, validation, and required-check parity passes before exactly one production-semantics canary\",\"Every lane decision reports p50, p95, critical-path and queue deltas, reliability, cost, proof parity, and a predeclared threshold disposition\",\"Adopted routing has a successful canary, ten-run observation, and standard-runner fallback; rejected or deferred routing is removed\",\"Untrusted code cannot reach privileged runner context and no required-check, branch-protection, validation-breadth, or proof semantic changes occur\",\"The issue-local validator, workflow contracts, diff hygiene, and exact-head review pass\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify entry gates and freeze exact workloads, environment, permissions, cost, cache, and proof topology\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Capture complete ubuntu-latest and restricted 16-core cold/warm trials and parity evidence\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run one canary, decide each lane, retain observation or cleanup and fallback proof, validate, and review\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"experiment-evidence-contract\",\"proof_role\":\"Validate entry gates, frozen inputs, complete platform samples, warm-cache evidence, parity, decisions, and observation-or-cleanup state.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":5000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5853/validate-experiment.rb\"],\"parallel_group\":\"experiment-analysis\",\"defer_reason\":null},{\"lane\":\"runner-security-negative\",\"proof_role\":\"Reject broad repository access, concurrency expansion, untrusted fork privilege, missing fallback, changed required-check identity, or incomplete cleanup.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"e=JSON.parse(File.read('.csdlc/evidence/5853/eligibility.json')); f=JSON.parse(File.read('.csdlc/evidence/5853/final-state.json')); abort('security boundary') unless e['selected_repository_access']==true&&e['concurrency_one']==true&&e['untrusted_fork_privilege']==false&&f['standard_runner_fallback']==true&&f['required_check_identity_preserved']==true\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"workflow-routing-platform-contract\",\"proof_role\":\"Prove Linux larger-runner routing remains a machine-selection detail and preserves workflow/check semantics.\",\"acceptance_ids\":[\"AC-2\",\"AC-4\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"parallel_group\":\"workflow\",\"defer_reason\":null},{\"lane\":\"exact-head-diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5853-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]
 }

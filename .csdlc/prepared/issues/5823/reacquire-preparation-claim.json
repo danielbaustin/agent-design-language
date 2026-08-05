@@ -1,0 +1,25 @@
+{
+  "issue": 5823,
+  "expected_generation": 0,
+  "expected_digest": "70a87d9723eea38f33d70e82136c40ee2aac835b66e44e622ed15fb83e81e7d5",
+  "now_unix_seconds": 1785949016,
+  "actor": "codex:5860-foundation-readiness",
+  "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+  "replacement": {
+    "id": "claim-5823-v092-preparation",
+    "owner": "codex:5860-foundation-readiness",
+    "generation": 0,
+    "acquired_unix_seconds": 1785949016,
+    "expires_unix_seconds": 1786035416,
+    "heartbeat_unix_seconds": 1785949016,
+    "branch": "codex/5860-foundation-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5823",
+      ".csdlc/issues/5823",
+      ".csdlc/locks/5823.lock",
+      ".csdlc/prepared/issues/5823"
+    ],
+    "purpose": "Prepare issue 5823 design and typed cards without product implementation"
+  }
+}

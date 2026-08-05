@@ -1,0 +1,23 @@
+{
+  "issue": 5801,
+  "base_branch": "main",
+  "branch": "codex/5860-foundation-readiness",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5801-v092-preparation",
+    "owner": "codex:5860-foundation-readiness",
+    "generation": 1,
+    "acquired_unix_seconds": 1785949006,
+    "expires_unix_seconds": 1786035406,
+    "heartbeat_unix_seconds": 1785949006,
+    "branch": "codex/5860-foundation-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5801",
+      ".csdlc/issues/5801",
+      ".csdlc/locks/5801.lock",
+      ".csdlc/prepared/issues/5801"
+    ],
+    "purpose": "Prepare issue 5801 design and typed cards without product implementation"
+  }
+}

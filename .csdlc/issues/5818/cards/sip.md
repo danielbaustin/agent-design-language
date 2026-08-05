@@ -20,14 +20,19 @@ v0.92 current-version truth across docs/planning/ADL_FEATURE_LIST.md, canonical 
 
 ## Scope
 
-- Issue 5818 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- README.md and docs/README.md current entrypoints
+- docs/planning/ADL_FEATURE_LIST.md and current planning indexes
+- docs/milestones/v0.92 current feature, quality, demo, review, and execution entrypoints
+- root and workspace Cargo.toml files, Cargo.lock, and user-visible package version metadata
+- AGENTS.md, REVIEW.md, csdlc-v2/operator/skills, and current docs/tooling runbooks
+- .csdlc/issues/5818, .csdlc/prepared/issues/5818, and .csdlc/evidence/5818
 
 ## Authority
 
-- Issue 5818 owns only WP-01B: Canonical documentation and version activation
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Issue 5818 owns current v0.92 documentation and authoritative version activation only
+- Historical milestone, release, review, migration, and evidence records retain their original claims
+- Feature owners retain implementation, proof, release, and closeout authority
+- Generated files change only through their owning generator
 
 ## Assumptions
 

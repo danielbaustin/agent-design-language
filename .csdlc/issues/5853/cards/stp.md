@@ -25,15 +25,14 @@ Deliver a measured and reversible post-migration build acceleration decision for
 
 ## Acceptance
 
-1. WP-02 migration and WP-02A CI reliability gates are verified before paid execution
-2. Control and candidate runs use one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, and proof input set
-3. Five cold and ten warm trials per selected workload and platform retain cache classification, queue delay, failures, retries, cancellations, and justified outliers
-4. Result, artifact, validation, and required-check semantics are equivalent before the canary
-5. The decision table reports p50, p95, critical-path delta, queue delta, cost, reliability, and proof parity against predeclared thresholds
-6. No route is adopted without threshold compliance and a successful canary; adopted routes retain fallback and ten-run observation evidence
-7. Rejected or deferred routing is removed without product-code or test-expectation changes
-8. Failure, security, privacy, portability, recovery, cost, and claim boundaries are tested or explicitly dispositioned
-9. One exact-revision pre-PR review has no unresolved actionable findings
+1. WP-02, WP-02A, organization plan, owner budget and alerts, selected-repository access, concurrency-one, and rollback entry gates are verified
+2. Control and candidate runs freeze one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, proof inputs, and required checks
+3. Five cold and ten warm trials per selected workload and platform retain cache evidence, queue delay, failures, retries, cancellations, and justified outliers
+4. Result, artifact, validation, and required-check parity passes before exactly one production-semantics canary
+5. Every lane decision reports p50, p95, critical-path and queue deltas, reliability, cost, proof parity, and a predeclared threshold disposition
+6. Adopted routing has a successful canary, ten-run observation, and standard-runner fallback; rejected or deferred routing is removed
+7. Untrusted code cannot reach privileged runner context and no required-check, branch-protection, validation-breadth, or proof semantic changes occur
+8. The issue-local validator, workflow contracts, diff hygiene, and exact-head review pass
 
 ## Dependencies
 
@@ -43,13 +42,14 @@ Deliver a measured and reversible post-migration build acceleration decision for
 
 ## Inputs
 
-- .adl/docs/TBD/POST_GITHUB_MIGRATION_BUILD_ACCELERATION_EXPERIMENT_PLAN.md
-- .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
+- .csdlc/prepared/issues/5853/design.md
+- .csdlc/prepared/issues/5853/validate-experiment.rb
 - .github/workflows/ci.yaml
 - docs/tooling/BUILD_PLATFORM_BENCHMARKS.md
 - docs/tooling/VALIDATION_PLATFORM_ROUTING.md
 - docs/tooling/DEVELOPER_THROUGHPUT_FAST_LANE.md
 - docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
 
 ## Non Goals
 

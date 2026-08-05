@@ -16,24 +16,25 @@ Change only the two defaults, run focused behavior and lint proof, review the ex
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Confirm the two warnings and exact default semantics",
+    "action": "Confirm current source, lint reproduction, and exact fail-closed default tests",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-3"
+      "AC-3",
+      "AC-4"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Apply the two-line correction and run focused proof",
+    "action": "Apply only the two eager-default substitutions and run focused test, format, and Clippy proof",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -46,8 +47,9 @@ Revision 1
   },
   {
     "id": "S3",
-    "action": "Resolve exact-head review and publish",
+    "action": "Review the exact two-line candidate and publish with closing linkage",
     "acceptance_ids": [
+      "AC-6",
       "AC-7"
     ],
     "status": "pending"
@@ -78,13 +80,13 @@ Revision 1
 
 .csdlc/prepared/issues/5812/design.md
 
-Digest: d259e90a5aadf5b1cd805f4495d30ec0a42d39dd756f2d62b0a8a63be8b98f5d
+Digest: e6684cc405f9772581c043ab4a87b8513800988539344974fa0ac4390d0bad44
 
 ## Diagram
 
 .csdlc/prepared/issues/5812/diagram.mmd
 
-Digest: ff62ba79fb6d92d3c3e3d837678c8f146cdae9b793ab34ad77402ecdc2ebbdf5
+Digest: ecc400f15bce3baa144b59854cd774554bc04d7e8747d44fecb4093ad83cbc82
 
 ## Stop Conditions
 

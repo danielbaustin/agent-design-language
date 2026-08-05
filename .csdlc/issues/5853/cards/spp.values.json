@@ -7,48 +7,54 @@
     "title": "[v0.92][WP-02B][build] Run the post-migration build acceleration experiment",
     "slug": "v0-92-wp-02b-post-migration-build-acceleration",
     "version": "v0.92",
-    "generation": 0
+    "generation": 6
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
+      "plan_revision": 4,
       "summary": "Verify migration and CI entry gates, freeze the comparison, capture standard and 16-core cold/warm trials, prove parity, run one canary, apply predeclared thresholds, retain the decision, and prove fallback or cleanup.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify entry gates and freeze the exact workload, environment, permissions, cache, cost, and measurement contract",
+          "action": "Verify entry gates and freeze exact workloads, environment, permissions, cost, cache, and proof topology",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
-            "AC-8"
+            "AC-7"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Capture complete standard-runner and restricted 16-core cold and warm trial evidence",
+          "action": "Capture complete ubuntu-latest and restricted 16-core cold/warm trials and parity evidence",
           "acceptance_ids": [
             "AC-3",
             "AC-4",
-            "AC-8"
+            "AC-7"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Run one canary, decide each lane, retain observation or cleanup evidence, and resolve exact-head review",
+          "action": "Run one canary, decide each lane, retain observation or cleanup and fallback proof, validate, and review",
           "acceptance_ids": [
             "AC-5",
             "AC-6",
             "AC-7",
-            "AC-9"
+            "AC-8"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "Selected GitHub Actions runner routing",
+        "Restricted organization runner-group access and cost controls",
+        "Exact-SHA cold and warm benchmark evidence",
+        "Proof, artifact, validation, and required-check parity",
+        "Lane decision, canary, observation, fallback, and cleanup evidence"
+      ],
       "invariants": [
         "Standard GitHub-hosted runners remain the default and immediate fallback",
         "Exact-head validation and proof quality are independent of runner class",
@@ -77,11 +83,16 @@
         "Untrusted code can reach privileged runner context",
         "Protected-path collision"
       ],
-      "replan_triggers": [],
+      "replan_triggers": [
+        "GitHub changes available runner sizes or larger-runner billing",
+        "WP-02A changes the control workflow or selected lane topology",
+        "The frozen workflow, toolchain, lockfile, cache, permission, or required-check inputs drift",
+        "The organization owner changes thresholds before the first measured run"
+      ],
       "design_ref": ".csdlc/prepared/issues/5853/design.md",
-      "design_digest": "96310158c2af202cfd50cb27d68f5b5877a9bb6329ec07025377958f1cf92b48",
+      "design_digest": "f5be4e21e235dcbbfea8d4483057a9d0b3b60bc653b6955dc3799e6e85989525",
       "diagram_ref": ".csdlc/prepared/issues/5853/diagram.mmd",
-      "diagram_digest": "dd20f17272d8b8ac65f7f5fffe41f0bbf46184fd6b60261d243ddcddbfa13974"
+      "diagram_digest": "17d5a853df6d07718c8495e9076f622572dea08eba574fccccf450a39131a966"
     }
   }
 }

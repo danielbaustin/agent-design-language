@@ -1,2 +1,10 @@
 flowchart LR
-  I["Issue 5818"] --> D["Design required"]
+  A["Current and historical surface scan"] --> I["Classified canonical inventory"]
+  I --> C["Current docs and feature index"]
+  I --> V["Authoritative 0.92.0 metadata"]
+  I --> P["Historical evidence preserved"]
+  C --> Q["Parity, links, and structure proof"]
+  V --> Q
+  P --> N["Negative historical-preservation scan"]
+  Q --> R["Exact-revision review"]
+  N --> R

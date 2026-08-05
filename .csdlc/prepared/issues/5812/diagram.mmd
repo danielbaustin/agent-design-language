@@ -1,6 +1,8 @@
 flowchart LR
-  W["Two Clippy warnings"] --> F["Two eager JSON defaults"]
-  F --> T["Focused behavior tests"]
-  F --> C["Clippy -D warnings"]
-  T --> R["Behavior-preserving repair"]
+  W["Two unnecessary lazy defaults"] --> E["Two eager JSON defaults"]
+  E --> T["csm_freedom_gate module tests"]
+  E --> C["adl-gws-context-mirror Clippy -D warnings"]
+  E --> F["cargo fmt check"]
+  T --> R["Behavior-preserving exact diff"]
   C --> R
+  F --> R

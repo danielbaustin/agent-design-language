@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-07] Prompt-card enum typing",
     "slug": "v0-92-wp-07-prompt-card-enum-typing",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "pre_phase",
   "content": {
@@ -17,9 +17,10 @@
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-07 scope?"
+        "Does the inventory cover every restricted current-v2 field and distinguish finite from extensible values?",
+        "Is any code change limited to a proven remaining gap rather than historical duplication?",
+        "Do parse/display/serde/schema/editor/validator/Markdown boundaries share one canonical authority?",
+        "Are valid card round trips stable and invalid or legacy values handled explicitly?"
       ],
       "findings": [],
       "residual_risk": [],

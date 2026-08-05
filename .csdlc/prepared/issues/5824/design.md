@@ -1,3 +1,46 @@
-# Issue 5824 design
+# WP-07 Prompt-Card Enum Typing Design
 
-Status: design required before Ready.
+## Audit-First Boundary
+
+Issue #5824 begins with a delivery audit because C-SDLC v2 already defines many
+governance-sensitive values as Rust enums in `csdlc-v2/src/cards.rs` and
+`csdlc-v2/src/model.rs`, with typed JSON schemas and deterministic Markdown
+round trips. The old prompt-editor plan and sunset v1 implementations are
+historical comparison inputs only.
+
+The implementation may change code only for a finite field that the audit
+proves is still represented by duplicated or ad hoc strings across current v2
+editing, validation, schema, or Markdown boundaries. If no gap remains, the
+truthful outcome is a reviewed no-duplicate-work disposition with proof.
+
+## Inventory And Decision Method
+
+1. Inventory every restricted current v2 card field and map its stored string,
+   Rust type, parser, formatter, schema, editor operation, validator, Markdown
+   importer/exporter, and tests.
+2. Classify each field as `typed_complete`, `finite_gap`, or
+   `intentionally_extensible`, with source references.
+3. Select at most the smallest coherent finite-gap family. Open-ended lane IDs,
+   provenance labels, source classifications, and policy-extensible identifiers
+   remain strings.
+4. If a gap exists, add one enum-backed authority with canonical serde/display
+   strings and reuse it at all affected current v2 boundaries.
+5. Preserve existing rendered Markdown and values JSON for unchanged input.
+
+## Compatibility And Negative Boundary
+
+- Active template registry and tracked structure schemas remain authoritative.
+- Existing valid `1.0.x` cards round-trip byte-stably unless a separately
+  versioned template migration is required.
+- Unknown finite values fail with one truthful diagnostic; explicitly supported
+  legacy aliases normalize only at a tested boundary.
+- No template redesign, durable wire-format replacement, generic form-engine
+  rewrite, or revival of sunset v1 commands is authorized.
+
+## Rollback And Proof
+
+Rollback restores the previous internal representation without changing stored
+cards. Proof includes the inventory, enum parse/display/serde round trips,
+schema parity, editor allowed-value parity, Markdown import/render stability,
+invalid-value negatives, and a no-duplicate-work disposition for every audited
+field. The issue is complete only at an exact reviewed revision.

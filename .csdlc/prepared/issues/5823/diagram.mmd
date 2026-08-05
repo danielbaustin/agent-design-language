@@ -1,2 +1,12 @@
-flowchart LR
-  I["Issue 5823"] --> D["Design required"]
+flowchart TD
+  Q["Typed exact-revision validation request"] --> S["Fail-closed adapter selection"]
+  S --> L["Local adapter"]
+  S --> N["Nessus adapter"]
+  S --> A["AWS adapter with explicit authorization"]
+  N --> R["Typed provenance and artifact result"]
+  A --> R
+  L --> R
+  N -->|Network unavailable| F["Same-profile local fallback"]
+  A -->|Provider unavailable| F
+  F --> R
+  R --> P["Linux, macOS, Windows, and negative proof"]

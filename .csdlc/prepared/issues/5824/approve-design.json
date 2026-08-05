@@ -1,0 +1,7 @@
+{
+  "issue": 5824,
+  "expected_generation": 0,
+  "expected_digest": "0260258bbf78042c43031a5441f0ddbbbf3802164045e256f66df8f977183f61",
+  "claim_id": "claim-5824-v092-preparation",
+  "reviewer": "codex:5860-foundation-design-review"
+}

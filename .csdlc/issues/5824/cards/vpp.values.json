@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-07] Prompt-card enum typing",
     "slug": "v0-92-wp-07-prompt-card-enum-typing",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "ready",
   "content": {
@@ -16,19 +16,90 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-07",
-          "proof_role": "schema inventory, typed round trips, negative cases, and no-duplicate-work disposition",
+          "lane": "enum-inventory-contract",
+          "proof_role": "Validate complete field ownership and one disposition per restricted current-v2 field.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
             "AC-3",
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            "-rjson",
+            "-e",
+            "r=JSON.parse(File.read('.csdlc/evidence/5824/enum-inventory.json')); abort('empty') unless r.is_a?(Array)&&!r.empty?; allowed=%w[typed_complete finite_gap intentionally_extensible]; abort('bad row') unless r.all?{|x|x['field'].to_s!=''&&allowed.include?(x['disposition'])&&x['stored_string']&&x['owners'].is_a?(Hash)}; abort('duplicate') unless r.map{|x|x['field']}.uniq.length==r.length"
+          ],
+          "parallel_group": "inventory",
+          "defer_reason": null
+        },
+        {
+          "lane": "typed-card-roundtrip-and-schema",
+          "proof_role": "Prove parse/display/serde, public schema, semantic editor, Markdown importer, renderer, and existing-card parity.",
+          "acceptance_ids": [
             "AC-4",
-            "AC-5"
+            "AC-5",
+            "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 3600,
-          "budget_tokens": 25000,
+          "budget_seconds": 900,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2",
+            "enum"
+          ],
+          "parallel_group": "csdlc-v2",
+          "defer_reason": null
+        },
+        {
+          "lane": "invalid-value-and-legacy-negative",
+          "proof_role": "Reject unknown finite values and prove any supported alias normalization is explicit and lossless.",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6",
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate2",
+            "invalid"
+          ],
+          "parallel_group": "csdlc-v2",
+          "defer_reason": null
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Reject whitespace and unintended template or sunset-v1 changes and support exact-revision review.",
+          "acceptance_ids": [
+            "AC-7",
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 500,
           "argv": [
             "git",
             "diff",
@@ -42,9 +113,9 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5824/design.md",
-      "design_digest": "c9a2b7cfae3d97403333f6429b2395bf0dd7899e5b9436a5906f29eca7bc72e7",
+      "design_digest": "e83cbd5c35a95ce03128aeaff870ee6a07cf1f47e62912bec184bf7de60e3007",
       "diagram_ref": ".csdlc/prepared/issues/5824/diagram.mmd",
-      "diagram_digest": "8e6e403c4e75baa55858f6f77015fddfe34f9f4ba52e80b6862911629b0baeb6"
+      "diagram_digest": "5846fe328a23646041deee2956de2d777e77a496fc82d707f3976361df4c5249"
     }
   }
 }

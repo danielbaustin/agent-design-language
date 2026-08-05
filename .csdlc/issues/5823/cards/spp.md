@@ -12,38 +12,48 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Extract a provider-neutral exact-revision request/result contract over current adapters, add deterministic provenance, artifacts, redaction, timeout, cleanup, and no-network fallback, then prove Linux, macOS, Windows, and failure boundaries.
 
 ## Plan
 
-Revision 1
+Revision 8
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Define typed portable request/result, provenance, redaction, cleanup, and local-fallback contracts",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1",
+      "AC-2",
+      "AC-7"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Integrate local, Nessus, and AWS adapters with fail-closed selection, timeout, cancellation, artifacts, and fallback",
     "acceptance_ids": [
-      "AC-1",
       "AC-3",
-      "AC-4"
+      "AC-4",
+      "AC-5",
+      "AC-7"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Run Linux, macOS, Windows, no-network, failure, cleanup, and exact-revision review proof",
     "acceptance_ids": [
-      "AC-5"
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6",
+      "AC-7",
+      "AC-8"
     ],
     "status": "pending"
   }
@@ -51,15 +61,19 @@ Revision 1
 
 ## Invariants
 
-- No tracked work on main
-- No scope absorption across work packages
-- Evidence claims remain exact-revision and source-grounded
+- Remote and local execution use the same declared command profile
+- A result cannot claim a different revision, adapter, or profile digest
+- Network failure does not disable local validation
+- Machine JSON remains on stdout and human adl_event diagnostics on stderr
+- Durable evidence uses repo-relative paths and no credential values
 
 ## Risks
 
-- Dependency drift
-- Scope overlap
-- Insufficient real-behavior proof
+- Provider adapters diverge in exit, artifact, or cleanup semantics
+- Remote mutable state or cache masks revision drift
+- Windows quoting or path rules corrupt the command profile
+- Network interruption leaves paid resources running
+- Logs leak host paths or credentials
 
 ## Estimates
 
@@ -73,19 +87,21 @@ Revision 1
 
 .csdlc/prepared/issues/5823/design.md
 
-Digest: 9a1b49f41788b5327a65c66a8c3b5f60f2434fbc1ce84fbd4148ce2677c51699
+Digest: 95946a208ce7fca949dbbe9423e7708e4658a7f22d987d2e5cd135b3bf531534
 
 ## Diagram
 
 .csdlc/prepared/issues/5823/diagram.mmd
 
-Digest: 3eb05c4430e793d511b69b46a3dec1a684109fa2296feebb82b148b013df8eec
+Digest: 24b36a7dc64ffb0ae6f13c33c638f96389ffb5b4711ac2e8027a2606508b73ca
 
 ## Stop Conditions
 
-- Protected-path collision
-- Contradictory dependency evidence
-- Required proof cannot be produced within issue scope
+- WP-02A command profile or proof semantics are unstable
+- Exact revision or profile digest cannot be verified remotely
+- Provider cleanup cannot reach or prove a terminal state
+- No-network fallback differs from the declared profile
+- Credential or host-path leakage appears in durable evidence
 
 ## Handoff
 

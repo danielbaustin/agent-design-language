@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02B][build] Run the post-migration build acceleration experiment",
     "slug": "v0-92-wp-02b-post-migration-build-acceleration",
     "version": "v0.92",
-    "generation": 0
+    "generation": 6
   },
   "status": "ready",
   "content": {
@@ -16,13 +16,10 @@
       "goal": "Determine with controlled same-SHA evidence whether selected ADL CI lanes should use a restricted GitHub-hosted 16-core Ubuntu runner.",
       "required_outcome": "A complete, reversible control-versus-candidate experiment with retained measurements, proof parity, one canary, and an adopt/reject/defer decision for every measured lane.",
       "declared_scope": [
-        ".adl/docs/TBD/POST_GITHUB_MIGRATION_BUILD_ACCELERATION_EXPERIMENT_PLAN.md",
-        ".github/workflows/ci.yaml",
-        "docs/tooling/BUILD_PLATFORM_BENCHMARKS.md",
-        "docs/tooling/VALIDATION_PLATFORM_ROUTING.md",
-        ".csdlc/issues/5853",
-        ".csdlc/prepared/issues/5853",
-        ".csdlc/evidence/5853"
+        ".github/workflows/ci.yaml selected runner routing only",
+        "docs/tooling/BUILD_PLATFORM_BENCHMARKS.md and docs/tooling/VALIDATION_PLATFORM_ROUTING.md",
+        ".csdlc/prepared/issues/5853/design.md and validate-experiment.rb",
+        ".csdlc/issues/5853 and .csdlc/evidence/5853 eligibility, manifest, trials, parity, decision, and final-state artifacts"
       ],
       "authority_boundary": [
         "Issue 5853 owns the bounded 16-core GitHub-hosted runner experiment and any accepted routing change",

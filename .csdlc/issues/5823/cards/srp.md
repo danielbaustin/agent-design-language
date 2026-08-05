@@ -16,9 +16,10 @@ WP-06 issue 5823, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-06 scope?
+- Do all adapters preserve one exact-revision request/result and artifact contract?
+- Can network, timeout, cancellation, malformed output, or cleanup failure produce false success?
+- Does local no-network fallback remain equivalent and available?
+- Are Linux, macOS, Windows, observability, redaction, credential, and AWS-account boundaries truthful?
 
 ## Findings
 

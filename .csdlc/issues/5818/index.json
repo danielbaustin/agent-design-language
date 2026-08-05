@@ -3,9 +3,9 @@
   "issue": 5818,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ed0c16b82a7c094d6474b27313bfc4d63eaabcae5bedee51d7e839e9c8534fd",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "4f29c60248ae8ca3cb5ab87cb0671a66c6ac3cb6885b95377525972e42088bee",
+  "phase": "bound",
+  "generation": 15,
+  "digest": "e4da07fed628e95c7754b4ffb027f19f0fac7977d90fd6a11f815b449519fa71",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5818/design.md",
   "diagram_path": ".csdlc/prepared/issues/5818/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-foundation-design-review",
+      "revision": "99e1b12457133a819381491865811286cafd3d5fa45563f790569e0970e1183a"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "0b032b91c81a37f49aa129c40b8332759bdc63fca52c17a9f0bcb20079a2d545",
-      "rendered_digest": "d1fa96973268ca0c558e266fbd97bad197aba7688d1e55b5c0394a939ed5308d",
-      "ast_digest": "73aadddc223599490a31f64a84cead0b57fcdec8c7a5ddcbb7f6c44ae03fdd63"
+      "values_digest": "2cc8e4ddbdde7c56b4acdf290ad021016ae5110885ba93b3aa09d070ed2fdc1d",
+      "rendered_digest": "7497385431a0397c1dbead85e28d4294d7efcb2caaff6b14f342826caeeb6bb0",
+      "ast_digest": "23098f1f67be5cc90995f6aec88db71ec06a8b4914e8e36d34a1939b4fa6a2e8"
     },
     "stp": {
-      "values_digest": "f53912d46e0721bb2c50ae43d08115b70ebb9820bbfbe22ac03b7974f34a791d",
-      "rendered_digest": "bedb53225f0bfda7fb2f3b4da69a86c8257ddc943c080c1a6f3cd07bfe2c336d",
-      "ast_digest": "1debba7427f5dcc41d83b6a6e869ba198c9e64f1fa20b49287b27c84222b1402"
+      "values_digest": "7234f730ea70ebef57bd3b89c6ceeb7d167c2fbd3abcb20f15e297a79b8fd0bc",
+      "rendered_digest": "dc9ca2e6873748ad0c2f07ac2bc1401c2adc838b0ac2cdea1b32a274f662257d",
+      "ast_digest": "80b74024d9352f60c19693bf2f9bf68bf911645eaf5e0f6a570662eb8371c0a4"
     },
     "spp": {
-      "values_digest": "4739f407d83a666843d5e7ba1dbec093d2629dd8ba134bba5dedc87262faa3f3",
-      "rendered_digest": "a825db5e27617e4450861035f354b670edeb6da2e4dc5b9b064e0b249b985b1d",
-      "ast_digest": "94b0453b6766d4586ebc9621fdc63d7665d5f475563dc524c79bea3aaaade3be"
+      "values_digest": "06504bb38501c2977bb6747c3dc2cad406fe74972c7dffa29ca431e5952f5637",
+      "rendered_digest": "78251796eea742739da53e6bdcb6ed7c3ab4a598677ee3529046c659df953906",
+      "ast_digest": "cbffd8850c8d36f04e7a851dd08efd5c549dd168c6b419014ebd257d2a318e71"
     },
     "vpp": {
-      "values_digest": "91d374a00fe24cc1338d7b19c10f0bccb8afad0e55742b8fc530687b8eabb0c8",
-      "rendered_digest": "32d85d5ff80fd2f5a53881317c2ccc925ea06692d30af87b752931dabae558f8",
-      "ast_digest": "77107a61a1132caf9e7304105ac2b0ec080a3179ce522e61034a1a2b4f883455"
+      "values_digest": "c493a4c4e46b6762fdf3c988839a1da7aa726cf54332e90c3ec3e03ab80fdbeb",
+      "rendered_digest": "3bdf1624c8562feb15b3c841ee9524ced73f05f7a61d791d155dbde0dd80468c",
+      "ast_digest": "333decf93eafd5f27b2c4fc62d1d38466de4dd448f67f8a80da340c0b82d0d09"
     },
     "srp": {
-      "values_digest": "9c5f1b2930e6ef4ec3e115f974c2f1621b6b55f5fda51e8015803f7f744cf6bf",
-      "rendered_digest": "f2b830f5860898434d055463987e905bf4a74a34bcca7a219dbf7fba8e6ad1bc",
-      "ast_digest": "7080fac597831a70abb3db5dc1b575f2904fd4f071a7e44cd400fa1226cbe513"
+      "values_digest": "5dde62b32973dac9813aac90c59827bcb71974c36455233987475ffebb1dc520",
+      "rendered_digest": "850bf908b77990370d184fe9ee2bf1f084431dcf2706ebffe5dec935345b2b4e",
+      "ast_digest": "3e71138cb5d788546c289c6f05d2f941b1373f21ac7150406dbc2f07d8c5af6a"
     },
     "sor": {
-      "values_digest": "148a7081888b77717c57e94e7a41ab9dbcb77db7162d2879774f834394078bc9",
+      "values_digest": "c9335a3b820bc2a62455a26294767ea1745c801298fe4561bb594fcd95efa094",
       "rendered_digest": "bd15fe44fe2ca1bceaa2ed905a0b6cb117e1b973e9553ca9cb3fa825bc8a10d6",
       "ast_digest": "a228ec470a1b6243cc39ed9b70888478cf0b6d452147c0160d50b928ec42e7b7"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,132 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness\",\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5818\",\".csdlc/issues/5818\",\".csdlc/locks/5818.lock\",\".csdlc/prepared/issues/5818\"],\"purpose\":\"Prepare issue 5818 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-foundation-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace the placeholder WP-01B scope with exact canonical and historical-preservation surfaces.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"README.md and docs/README.md current entrypoints\",\"docs/planning/ADL_FEATURE_LIST.md and current planning indexes\",\"docs/milestones/v0.92 current feature, quality, demo, review, and execution entrypoints\",\"root and workspace Cargo.toml files, Cargo.lock, and user-visible package version metadata\",\"AGENTS.md, REVIEW.md, csdlc-v2/operator/skills, and current docs/tooling runbooks\",\".csdlc/issues/5818, .csdlc/prepared/issues/5818, and .csdlc/evidence/5818\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-01B authority and historical evidence boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5818 owns current v0.92 documentation and authoritative version activation only\",\"Historical milestone, release, review, migration, and evidence records retain their original claims\",\"Feature owners retain implementation, proof, release, and closeout authority\",\"Generated files change only through their owning generator\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-01B deliverables concrete and inventory-backed.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Machine-readable canonical-surface inventory with update, already_current, historical_preserve, or not_authoritative disposition\",\"Current docs and docs/planning/ADL_FEATURE_LIST.md aligned to active v0.92 without unlanded completion claims\",\"Authoritative 0.92.0 package and workspace version declarations with inspected lockfile regeneration\",\"Current link and C-SDLC v2 language repairs with historical records preserved\",\"Retained focused validation and exact-revision review packet\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Retain the exact WP-01 publication dependency.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-01 issue #5817 and PR #5859 merged\",\"The WP-01 merge commit is ancestral to the implementation base\",\"The v0.92 issue wave and canonical milestone package remain current\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Use portable tracked WP-01B source inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"README.md\",\"docs/README.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/QUALITY_GATE_v0.92.md\",\"docs/templates/prompts/current.json\",\"AGENTS.md\",\"REVIEW.md\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-01B non-goals explicit.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"v0.92 product implementation\",\"Historical evidence rewriting\",\"Repository migration or release ceremony\",\"Child issue execution or closeout\",\"Broad runtime validation unless executable version behavior changes\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace the generic WP-01B plan summary.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Inventory authoritative current surfaces, update v0.92 documentation and version declarations, preserve historical evidence, run focused parity and structure proof, then obtain exact-revision review.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Declare exact WP-01B affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"Canonical documentation indexes and feature inventory\",\"Workspace and package version metadata\",\"Current milestone, tooling, skill, and runbook entrypoints\",\"Issue-local inventory and proof artifacts\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-01B invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"v0.92 active does not mean v0.92 features complete\",\"v0.91.8 remains the latest completed release until separate release authority changes it\",\"Historical evidence retains original versions and claims\",\"No tracked work on main and no generated-file hand editing\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-01B risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"A broad replacement rewrites historical truth\",\"Version declarations drift across workspace members\",\"Current links point to absent or operator-local paths\",\"Cargo.lock regeneration introduces unrelated churn\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-01B stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Ambiguous authoritative version owner\",\"Generated-file ownership cannot be identified\",\"Historical-preservation scan reports a rewritten evidence surface\",\"Protected-path collision with another active issue\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-01B replanning triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"A current surface is owned by another open v0.92 issue\",\"Executable version behavior changes and requires broader proof\",\"The active prompt-template or workspace version authority changes before execution\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic acceptance, plan, and VPP lanes atomically.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Canonical inventory classifies every checked current or historical surface and names its owner and disposition\",\"docs/planning/ADL_FEATURE_LIST.md and current entrypoints identify v0.92 as active without claiming planned features complete\",\"All authoritative current version declarations agree on v0.92 or 0.92.0 and Cargo metadata is internally consistent\",\"Historical milestone, release, review, migration, and evidence records retain their original version and claims\",\"Current Markdown links plus YAML and JSON surfaces parse and resolve within their declared boundary\",\"Current AGENTS.md, REVIEW.md, skills, and runbooks agree with final C-SDLC v2 authority\",\"Focused diff, lockfile, placeholder, stale-reference, and exact-revision review checks pass\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Build and review the classified canonical-surface and version-authority inventory\",\"acceptance_ids\":[\"AC-1\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Update current documentation, feature inventory, links, and authoritative version metadata without historical drift\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused structure, parity, historical-negative, and exact-revision review proof\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"canonical-inventory-contract\",\"proof_role\":\"Validate the retained inventory has unique paths, allowed dispositions, owners, and complete current-surface coverage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"p='.csdlc/evidence/5818/canonical-surface-inventory.json'; rows=JSON.parse(File.read(p)); abort('empty inventory') unless rows.is_a?(Array)&&!rows.empty?; allowed=%w[update already_current historical_preserve not_authoritative]; abort('invalid inventory') unless rows.all?{|r| r['path'].to_s!=''&&allowed.include?(r['disposition'])&&r['owner'].to_s!=''}; abort('duplicate path') unless rows.map{|r|r['path']}.uniq.length==rows.length\"],\"parallel_group\":\"docs-contract\",\"defer_reason\":null},{\"lane\":\"version-and-structure-parity\",\"proof_role\":\"Prove Cargo metadata, current version parity, and structured YAML/JSON/Markdown entrypoints are consistent.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"metadata\",\"--locked\",\"--format-version\",\"1\"],\"parallel_group\":\"metadata\",\"defer_reason\":null},{\"lane\":\"historical-preservation-negative\",\"proof_role\":\"Reject edits that rewrite historical milestone, release, review, migration, or evidence claims.\",\"acceptance_ids\":[\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":1000,\"argv\":[\"git\",\"diff\",\"--exit-code\",\"origin/main\",\"--\",\"docs/milestones/v0.91.8\",\"docs/releases\",\".csdlc/evidence\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision bounded review.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make the pre-execution WP-01B review prompts issue-specific.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does the inventory cover every authoritative current surface and distinguish historical records?\",\"Do current docs and versions say v0.92 is active without claiming planned work complete?\",\"Are Cargo metadata, links, structured files, and generated artifacts consistent?\",\"Did the change remain within WP-01B and preserve historical evidence?\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]
 }

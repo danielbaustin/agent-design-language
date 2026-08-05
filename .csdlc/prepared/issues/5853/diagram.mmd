@@ -1,14 +1,13 @@
 flowchart LR
   M["WP-02 migration gate"] --> E["Eligibility and frozen manifest"]
   C["WP-02A trustworthy CI control"] --> E
-  E --> B["Same-SHA standard-runner baseline"]
-  E --> R["Restricted 16-core candidate"]
-  B --> P["Proof and artifact parity"]
+  E --> B["Same-SHA ubuntu-latest trials"]
+  E --> R["Restricted 16-core trials"]
+  B --> P["Result, artifact, and check parity"]
   R --> P
-  P --> K["One canary lane"]
+  P --> K["Exactly one canary lane"]
   K --> D{"Threshold decision"}
   D -->|Adopt| O["Ten-run observation and fallback proof"]
-  D -->|Reject| X["Remove experimental routing"]
-  D -->|Defer| X
-  O --> F["Retained final decision"]
-  X --> F
+  D -->|Reject or defer| X["Remove experimental routing"]
+  O --> V["Issue-local evidence validator"]
+  X --> V

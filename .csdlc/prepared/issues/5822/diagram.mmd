@@ -1,2 +1,11 @@
 flowchart LR
-  I["Issue 5822"] --> D["Design required"]
+  L["Lifecycle and GitHub truth"] --> J["Provenance-preserving observation join"]
+  V["PVF and validation observations"] --> J
+  S["Approved session telemetry"] --> J
+  J --> C["Deterministic comparable cohort"]
+  C --> F["Advisory forecast, range, confidence"]
+  F --> A["Typed SPP acceptance or adjustment"]
+  A --> E["Execution without estimate enforcement"]
+  E --> O["Terminal actuals and error record"]
+  O --> C
+  F --> B["Static profile fallback on insufficient data"]

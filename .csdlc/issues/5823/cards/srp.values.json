@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-06] Remote validation/build runner",
     "slug": "v0-92-wp-06-remote-validation-build-runner",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "pre_phase",
   "content": {
@@ -17,9 +17,10 @@
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-06 scope?"
+        "Do all adapters preserve one exact-revision request/result and artifact contract?",
+        "Can network, timeout, cancellation, malformed output, or cleanup failure produce false success?",
+        "Does local no-network fallback remain equivalent and available?",
+        "Are Linux, macOS, Windows, observability, redaction, credential, and AWS-account boundaries truthful?"
       ],
       "findings": [],
       "residual_risk": [],

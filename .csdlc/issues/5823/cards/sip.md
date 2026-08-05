@@ -20,15 +20,19 @@ portable bounded runner with provenance and failover
 
 ## Scope
 
-- Issue 5823 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/workflow_tooling/planning/REMOTE_BUILD_RUNNER_PILOT_PLAN.md
+- Provider-neutral typed validation request, result, provenance, artifact, timeout, cancellation, cleanup, and fallback contracts
+- Existing provider adapters in tools/aws_remote_validation, adl/tools/run_aws_spot_remote_validation_lane.sh, and adl/tools/run_nessus_remote_validation.sh
+- Local no-network execution of the same declared command profile
+- Linux remote, local macOS, and Windows path/quoting or approved live-runner proof
+- Issue-local portable fixtures and redacted evidence under .csdlc/evidence/5823
 
 ## Authority
 
-- Issue 5823 owns only WP-06: Remote validation/build runner
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Issue 5823 owns the provider-neutral runner contract and bounded adapter integration
+- Existing AWS and Nessus tools remain provider-specific adapters
+- Local validation remains authoritative and usable without network availability
+- AWS runs require explicit authorization and the agent-logic-admin business profile
+- No credential values or arbitrary secret payloads enter requests or evidence
 
 ## Assumptions
 

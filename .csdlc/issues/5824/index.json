@@ -3,9 +3,9 @@
   "issue": 5824,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b64ea880252f74a339493a02b2aaa4484361128d76e56588f7fed78d84751c0f",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "65f02a16f0a0c87c7fe730ea0597553ca3d926cc63564abc3f7d48a33a2f5ad3",
+  "phase": "bound",
+  "generation": 15,
+  "digest": "ce59897f7602b1d7ff5c2e55c033b9af5fa02e7b3aa0b969b5b726c87bea3022",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5824/design.md",
   "diagram_path": ".csdlc/prepared/issues/5824/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-foundation-design-review",
+      "revision": "e83cbd5c35a95ce03128aeaff870ee6a07cf1f47e62912bec184bf7de60e3007"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "e7a9af77c9fc8f190373f9226c4b62c7744a8c3aa6bb908a865baa595ea87835",
-      "rendered_digest": "3af14897457c1ff6130a61197d94e59aebaaa0c0fea8f6a1635dedc2d49c797b",
-      "ast_digest": "ac37f7fc1eaf2d5b82fc27d9060686ed1ea33a4342a9e68ab0b56829490f9292"
+      "values_digest": "22bd498134a8cb955596e891b5b5941d5e10fe7643402a3d6d627d114c1b50c0",
+      "rendered_digest": "3c078a22e0b186e812947cb68fc69b204388acd828c00652285bc791baa8f916",
+      "ast_digest": "7d89a791d94d459f676de8a69ffcba4e938277e73b7c52ea1bd9bf1278ac1425"
     },
     "stp": {
-      "values_digest": "33fe281d11c6f568d4b36fb3d297ca039d4f3f84070488888ab8f2c6e3af8f1a",
-      "rendered_digest": "4be1f8d1796bdd9ffa8d96ffe7fcce6a5520958867dd4b3d9ad8cd103a189b28",
-      "ast_digest": "1d28a5f016adb85c96d80a92b6b382be9c6be1ad337c650ac52e5965f14837f6"
+      "values_digest": "b393d467c8582a6548b58dc01542eb13211995a097eca2bcd961ad72b72253b1",
+      "rendered_digest": "5547a21aaeb7a6330dfd467ab30a6beb025818bd937058c94a4e3ed599616b21",
+      "ast_digest": "d24a73523da556a3feae88677c0cbec2098dadc1dcab7922072058a64237eab5"
     },
     "spp": {
-      "values_digest": "f5f308df094879d662dbab655ac71c0019e1b3cca81f77117d9498a676faffbf",
-      "rendered_digest": "3ee8280cd87a308916751220325187fa13337e303f254757588640e1d6a69050",
-      "ast_digest": "efa8f20cc54c64c0a8d716faefc915b68b84fc8070a2e597021b6f2f16cedb28"
+      "values_digest": "cfdfc87ca1d77cfffb5ea3d39826c55d9241ac4422df89fda12e16195000c1c2",
+      "rendered_digest": "15024b8f9cd4aba2723045339f76dd42307acb492ae8c8cb952d40e8e94e13bd",
+      "ast_digest": "62c8a0999b88195c8e2d9e46e215fe34dd203299ed1ba3413b701464811e674d"
     },
     "vpp": {
-      "values_digest": "7425aee9c4b3d69b80f0cd62ddd1611c93bac59feb8a714188fe95634b1d00b4",
-      "rendered_digest": "28d3e888a0c38a2b53a73ab890f80b3ccb667bbc6685f2e9520a34bf8ffd3400",
-      "ast_digest": "86cea552b2184ccb9fb8b2497e79bb9a4c0eb56db2305d1980f94e7be4626797"
+      "values_digest": "dd80f82f9c810796dad1cb1e365e5090db30010bc52311057f3d463c4c1ed7ca",
+      "rendered_digest": "cc64ab51d5e926ed10df14e793def10009db1f075175a52745a8e04887a843ee",
+      "ast_digest": "1b175707e7f5054d73c99f46541402842dde2e8c5bc3338d2fedc227a05719e6"
     },
     "srp": {
-      "values_digest": "4f031b9dd8073e98c5a8e08c5bfc5189ec2a8c238d998006e7c59668fa9bc17d",
-      "rendered_digest": "7dec2e788a0182f2ff361f69bbcf14c7d3db6ab5173b35968b268c20ab6bd575",
-      "ast_digest": "ef6284035b644175aaaff904ece5b175bf422e093b0870e06bf37fe811f32083"
+      "values_digest": "257ca3281cd71a16574ff1953ece6d97eb7861ac09b66b46eb9f0b783257e037",
+      "rendered_digest": "330fdc5d203d7c423f7a21a24d362260ea0bc0e37e0cf61a0bcf5aafe738c1d8",
+      "ast_digest": "c41f89ee3243519e57315ed19839689b0a975dfc2ad05a3ade9cfe1a61e6b6df"
     },
     "sor": {
-      "values_digest": "5cf4703154f433ee49b3e42168b97d8b0f7926bd802f89931cb278407ee6b434",
+      "values_digest": "7dea6a2af3350affce3e69b8032761b9304f577573a2775d08423100bfd38d0a",
       "rendered_digest": "a9e82b10a38d86a71ce1ace7f3ba80ddab41b2610f14edee8e48c1c31c9479b2",
       "ast_digest": "c4bf4161b995d734609a8fdd7728933f7382fcd4ff9a2cd2c8918511c0b4ee03"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,132 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5824-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness\",\"claim_id\":\"claim-5824-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5824\",\".csdlc/issues/5824\",\".csdlc/locks/5824.lock\",\".csdlc/prepared/issues/5824\"],\"purpose\":\"Prepare issue 5824 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-foundation-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace the placeholder WP-07 scope with current v2 enum and round-trip surfaces.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Audit of restricted current C-SDLC v2 card fields across csdlc-v2/src/cards.rs, model.rs, schema.rs, store.rs, and markdown.rs\",\"Mapping of stored strings, Rust types, parser/formatter, serde/schema, editor operations, validators, Markdown importer/renderer, and tests\",\"At most the smallest coherent finite_gap enum family proven by the audit\",\"Typed round trips, schema parity, editor allowed-value parity, invalid-value negatives, and no-duplicate-work evidence\",\".csdlc/issues/5824, .csdlc/prepared/issues/5824, and .csdlc/evidence/5824\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-07 audit-first and v2-only authority.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Current independent C-SDLC v2 types and tracked prompt schemas are authoritative\",\"Sunset v1 prompt editors and old plans are historical comparison inputs only\",\"Only a proven finite current-v2 gap may change code\",\"Extensible lane, provenance, source-classification, and policy identifiers remain strings\",\"Durable Markdown and values JSON remain stable unless a separately versioned template migration is authorized\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-07 deliverables concrete.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Restricted-field inventory with typed_complete, finite_gap, or intentionally_extensible disposition and source references\",\"No-duplicate-work disposition for historically delivered enum families\",\"Smallest coherent current-v2 enum/schema/editor/validator correction only if a finite gap is proven\",\"Canonical parse, display, serde, allowed-value, schema, and diagnostic contract\",\"Markdown and values round-trip plus invalid-value and legacy compatibility evidence\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Retain exact WP-01 and WP-05 dependencies.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-01 issue #5817 current prompt-template registry and v2 authority published\",\"WP-05 issue #5822 typed estimation/card boundary complete\",\"Current docs/templates/prompts/current.json and tracked structure schemas remain authoritative\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Use tracked WP-07 source inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\".csdlc/prepared/issues/5824/design.md\",\"csdlc-v2/src/cards.rs\",\"csdlc-v2/src/model.rs\",\"csdlc-v2/src/schema.rs\",\"csdlc-v2/src/store.rs\",\"csdlc-v2/src/markdown.rs\",\"csdlc-v2/tests/gate2.rs\",\"docs/templates/prompts/current.json\",\"docs/templates/prompts/README.md\",\"adl/src/csdlc_prompt_editor.rs as historical non-authority\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-07 non-goals exact.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Revival or modification of sunset v1 lifecycle commands\",\"Prompt-template redesign or durable wire-format replacement\",\"Typing open-ended lane IDs, provenance labels, or policy-extensible identifiers\",\"Generic form-engine or cross-repository schema rewrite\",\"Duplicating already-delivered current-v2 enum work\",\"Changing valid rendered card text without a versioned migration\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic WP-07 plan summary.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Audit current v2 restricted fields end to end, classify typed completion and extensibility, implement only the smallest proven finite gap, preserve durable strings, and prove schema/editor/validator/Markdown round-trip parity and invalid-value rejection.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Declare WP-07 affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"C-SDLC v2 card and lifecycle enums\",\"Semantic editor operation and field ownership types\",\"Public JSON schema bundle\",\"Markdown AST import and deterministic rendering\",\"Gate 2 typed round-trip and invalid-value tests\",\"Issue-local enum inventory and no-duplicate-work report\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-07 invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Durable card values remain canonical strings\",\"One typed authority supplies parsing, formatting, serde, schema, editor choices, and validation for a finite field\",\"Existing valid cards round-trip without drift\",\"Extensible identifiers are not prematurely closed\",\"No code change occurs when the audit proves no remaining gap\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-07 risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"The issue duplicates enum work already delivered in v2\",\"An extensible policy identifier is incorrectly closed\",\"Parser normalization silently rewrites durable truth\",\"Schema, editor, validator, and Markdown variants diverge\",\"Historical v1 code is mistaken for current authority\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-07 stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-05 typed-card dependency is incomplete\",\"The inventory cannot prove a current finite gap\",\"A change requires template redesign or wire-format migration\",\"Valid existing cards fail byte-stable round trips\",\"The proposed field is policy-extensible\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-07 replanning triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"The active prompt-template registry changes\",\"WP-05 introduces a new restricted card field\",\"The audit finds multiple unrelated finite gaps requiring separate issues\",\"Legacy aliases require an explicit versioned compatibility policy\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic WP-07 acceptance, plan, and lanes.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Every restricted current-v2 field is inventoried with stored string, Rust type, parser/formatter, schema, editor, validator, Markdown, and test ownership\",\"Every field has a source-backed typed_complete, finite_gap, or intentionally_extensible disposition\",\"Only the smallest coherent finite_gap family changes code; no-gap results retain a reviewed no-duplicate-work disposition\",\"A changed finite field has one canonical parse, display, serde, allowed-value, schema, editor, validator, and diagnostic authority\",\"Existing valid values JSON and rendered Markdown round-trip without drift and active template structure/schema parity remains intact\",\"Invalid values fail deterministically and any supported legacy alias normalizes only at an explicit tested boundary\",\"Sunset v1 authority, template redesign, wire-format migration, and extensible identifier typing remain excluded\",\"Focused inventory, round-trip, schema, negative, diff, and exact-revision review proof passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Inventory and classify every restricted current-v2 card field and historical delivery\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"If and only if a finite gap is proven, implement the smallest shared enum authority across current v2 boundaries\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run inventory, round-trip, schema, invalid-value, no-duplicate-work, and exact-revision review proof\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"enum-inventory-contract\",\"proof_role\":\"Validate complete field ownership and one disposition per restricted current-v2 field.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"r=JSON.parse(File.read('.csdlc/evidence/5824/enum-inventory.json')); abort('empty') unless r.is_a?(Array)&&!r.empty?; allowed=%w[typed_complete finite_gap intentionally_extensible]; abort('bad row') unless r.all?{|x|x['field'].to_s!=''&&allowed.include?(x['disposition'])&&x['stored_string']&&x['owners'].is_a?(Hash)}; abort('duplicate') unless r.map{|x|x['field']}.uniq.length==r.length\"],\"parallel_group\":\"inventory\",\"defer_reason\":null},{\"lane\":\"typed-card-roundtrip-and-schema\",\"proof_role\":\"Prove parse/display/serde, public schema, semantic editor, Markdown importer, renderer, and existing-card parity.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"enum\"],\"parallel_group\":\"csdlc-v2\",\"defer_reason\":null},{\"lane\":\"invalid-value-and-legacy-negative\",\"proof_role\":\"Reject unknown finite values and prove any supported alias normalization is explicit and lossless.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate2\",\"invalid\"],\"parallel_group\":\"csdlc-v2\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace and unintended template or sunset-v1 changes and support exact-revision review.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-07 review prompts issue-specific.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does the inventory cover every restricted current-v2 field and distinguish finite from extensible values?\",\"Is any code change limited to a proven remaining gap rather than historical duplication?\",\"Do parse/display/serde/schema/editor/validator/Markdown boundaries share one canonical authority?\",\"Are valid card round trips stable and invalid or legacy values handled explicitly?\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5824-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]
 }

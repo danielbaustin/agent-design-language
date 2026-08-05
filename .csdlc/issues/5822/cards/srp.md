@@ -16,9 +16,10 @@ WP-05 issue 5822, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-05 scope?
+- Does every forecast field preserve provenance, unknowns, cohort rationale, uncertainty, and drift state?
+- Can target actuals, sensitive transcript content, or model-era drift contaminate a forecast?
+- Is estimate use strictly advisory in SPP and terminal comparison paths?
+- Do backtests and cycle-time cohorts justify the claimed improvement without weakening gates?
 
 ## Findings
 

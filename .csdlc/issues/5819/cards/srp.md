@@ -16,9 +16,10 @@ WP-02 issue 5819, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-02 scope?
+- Did exactly the five approved repositories transfer in the declared order?
+- Does every before/after manifest prove assignee and GitHub-surface preservation or explicit repair?
+- Are asksifu, Horust, secret values, WP-02A, and downstream work excluded?
+- Are the ADL website, remote, package, OIDC, and integration cutovers canonical and reversible?
 
 ## Findings
 

@@ -3,9 +3,9 @@
   "issue": 5822,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b476d2b9dfcbc719a2efb87fbffe14fcb7df6263bcbaecc1a27a64c5c4c1e798",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "f9dbc14cd9f0243fce34fa4588e304baa31bb12bace8c0353e7e9c847507ac97",
+  "phase": "bound",
+  "generation": 15,
+  "digest": "17d92bad43681db89b8b3bac3294f947532fa4b6a1abf7a618847052de8a55e5",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5822/design.md",
   "diagram_path": ".csdlc/prepared/issues/5822/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-foundation-design-review",
+      "revision": "383ba7248a20b4d58d83a488d3445ceffc38d42195c5510be7a3912463560422"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "f44489baf0056ce3a012ae58d2a3cab2f2ff8e3a8fd9d312bf7e42a178e80513",
-      "rendered_digest": "2d539819dd9a0a6ffc1409cacd1f12c975e04b76b01c0b200e3ae7ea50e8d92d",
-      "ast_digest": "59b2b9fffdffa696fe8d4bb3635efd66159b3301606ca78f1befa37eac8062d4"
+      "values_digest": "fab9c19b9484409b31f65ee3fa921ddf6061d6b0cd5a6cd05556671aa8e0a64d",
+      "rendered_digest": "a2e05d299c61fb87347a0c7e4217da58dcd8ffcdb615f1dc0aac4438c3bebd79",
+      "ast_digest": "98e306b57fa7f5865499191708ed16b077317e9e8f9018041ed11757b0f78e2f"
     },
     "stp": {
-      "values_digest": "9b504a2b0b9f2916a61b05ab867afb991b4ae8c175eafff7e5c9656067f2fe36",
-      "rendered_digest": "f128fe9756532a7a9652f28ebcee68b6a7e07823b2016083e9bb6b871e0894e5",
-      "ast_digest": "a96be79ea4aa8a4913e0d9ba3ea42c5dd837e71387831dface28e5315c79fbbc"
+      "values_digest": "fc3e0609b3e4cc0a9f5abb61fbbdc47956842d967609bb6ca07ac77073723334",
+      "rendered_digest": "631accc892c4d2b7347fca6fc88692a722bd3513f555fa12c4f97d913155dbb7",
+      "ast_digest": "8c7ff19a5058aa0c0c7de3713f12d79bc2c87f226cf4d56e7d938242c4efe0bb"
     },
     "spp": {
-      "values_digest": "57df685d9d48313fe69049c6dca39e9654fbebdb00265eae2e2b2b144082c342",
-      "rendered_digest": "f9dc73cb94833db449e82a25dccd7333b81b9a52626db93b187768b23e508af0",
-      "ast_digest": "1fec5dcee1703a3378b1696a8ad9877e92f8dc4ace32b7fe2afb28338633252b"
+      "values_digest": "eef33b607a4f0ce5b4386da0e42315c3fb29f6c62f57d5760e5e06188065a3a4",
+      "rendered_digest": "622636521c6aec39df5983178565c4a0eaba18997bc67d98e2b36e02a018fd45",
+      "ast_digest": "8d23437d5c79d2556dbb4c6495465c4c962c9122d4c458807880b181b0509b52"
     },
     "vpp": {
-      "values_digest": "170b5ebc6c2643de07f6792938649f8eb71a085959db77ad250de27a49111148",
-      "rendered_digest": "75844e74f08ac008f66f88343b1bccf858dd1572ed1d71f16bec2b0359430146",
-      "ast_digest": "a2f36cfaba09e1267e7e79303b6501f2619390c20fb0ff70eb5498a1cb4d2278"
+      "values_digest": "96cad82b8ed39666be20608519f6453961cacc4c875398be4ab738915e0da710",
+      "rendered_digest": "4eab5a145c28a747bf1bcb9bd362a87e285cd2233e794203079ecebc4c9a8c23",
+      "ast_digest": "a076e1fc455ca01894b85d777fcb0982b16e9fc5d4dc0d376f631697727bd5fd"
     },
     "srp": {
-      "values_digest": "0114529208ac7a3ba626908bfdd0acd177bdf3866ada4ac3c6e521d09927d5cb",
-      "rendered_digest": "ffb41bf00b0285a89ba00dfa8daa395b437413d15c20d605e2f62d901125abc6",
-      "ast_digest": "9ed976bb510259caf5f18457595414aee7ea258ce69dbdca1b33dace2715d3f4"
+      "values_digest": "0a30808aa293686921b3056916a9ad6956eb0671ab45d0c0cb2d14f2c9013d6c",
+      "rendered_digest": "69ab3feab354c989fbe6922f1f8b04f2a39e07b6831180b12f22fbee71eceb58",
+      "ast_digest": "6cac5cde4b2319c579dc8d5b66b951bda0ab8ea548ce7d91f55a755f5c0a3a80"
     },
     "sor": {
-      "values_digest": "3aa4aa65d344506dcaf51bf036a7bcf8c1b91204bb51d41c543ac6ba6cec16f3",
+      "values_digest": "3d5022baef4ef6a5d842bee3baa65ef818123c60df6d5faabe3cef13b4cf4be0",
       "rendered_digest": "350a21346b3268c5d96b108284fe5ca27520ed7417790180d5cb3e56e0754fbe",
       "ast_digest": "ae340b59eeb81d8a04dbd8dd632b73c8a311492d9edc837dc8291b95a4200968"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,132 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5822-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness\",\"claim_id\":\"claim-5822-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5822\",\".csdlc/issues/5822\",\".csdlc/locks/5822.lock\",\".csdlc/prepared/issues/5822\"],\"purpose\":\"Prepare issue 5822 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-foundation-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace the placeholder WP-05 scope with current v2 and historical evidence surfaces.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"csdlc-v2 typed observation, forecast, outcome, schema, card-reference, and closeout comparison surfaces\",\"csdlc-v2/src/cards.rs static PlanningProfile estimates retained as explicit fallback\",\"Historical session telemetry and deterministic predictor scripts under adl/tools/skills/sprint-conductor/scripts as migration inputs only\",\"Issue-local joined fixture corpus, backtests, cycle-time baseline, candidate comparison, and operator workflow proof\",\".csdlc/issues/5822, .csdlc/prepared/issues/5822, and .csdlc/evidence/5822\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-05 advisory and v2-only authority.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Independent csdlc-v2 binaries and schemas own current estimation integration\",\"Historical v1 sprint-conductor scripts are source evidence only and are not restored as lifecycle commands\",\"Estimates are advisory and cannot stop work or change lifecycle truth\",\"WP-02A owns the stable CI substrate and WP-07 consumes the resulting typed-card boundary\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-05 deliverables concrete.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"deliverables\",\"values\":[\"Typed provenance-bearing observation, forecast, accepted-estimate, and outcome schemas\",\"Deterministic multi-source join with explicit unknown, interruption, and schema-drift handling\",\"Comparable-issue selection, sparse-data baseline, uncertainty, confidence, and drift reporting\",\"Typed SPP advisory estimate reference and operator disposition without enforcement\",\"Terminal forecast-versus-actual record and retained calibration/backtest report\",\"Measured baseline-versus-candidate operator cycle-time and reconnection proof\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Retain exact WP-02A dependency.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-02A issue #5801 complete with stable CI/PVF timing and lifecycle topology\",\"Retained v0.91.7 session telemetry and deterministic prediction evidence remains readable\",\"Current C-SDLC v2 card, validation, review, publication, and closeout schemas are authoritative\"]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Use tracked WP-05 source inputs.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\".csdlc/prepared/issues/5822/design.md\",\"csdlc-v2/src/cards.rs\",\"csdlc-v2/src/model.rs\",\"csdlc-v2/src/schema.rs\",\"csdlc-v2/src/store.rs\",\"csdlc-v2/src/finish.rs\",\"adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py\",\"adl/tools/skills/sprint-conductor/scripts/write_issue_goal_metrics_report.py\",\"adl/tools/skills/sprint-conductor/scripts/predict_issue_execution_metrics.py\",\"docs/milestones/v0.91.7/review/V0917_WP04_CODEX_SESSION_TELEMETRY_SAMPLE_4617.prediction.json\",\"docs/milestones/v0.91.7/review/V0917_WP04_EXECUTION_METRICS_PREDICTION_SAMPLE_4743.json\"]}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-05 non-goals exact.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Estimate-based token or time limits, scheduler deadlines, or kill switches\",\"Restoration of sunset v1 lifecycle commands\",\"Treating session transcripts as complete ground truth\",\"Predictive-accuracy claims from one sample or plumbing fixture\",\"Weakening validation, review, publication, merge, or closeout gates\",\"Cross-repository analytics platform or raw transcript publication\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic WP-05 plan summary.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Inventory historical estimation evidence, define v2-owned typed joins and advisory forecasts, prove sparse/unknown/drift behavior and no enforcement, integrate accepted estimates and terminal actuals, then measure cycle-time and calibration against retained baselines.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Declare WP-05 affected areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"C-SDLC v2 typed schemas and deterministic estimator\",\"SPP advisory estimate reference and operator disposition\",\"Terminal closeout actual and forecast-error recording\",\"Session, lifecycle, GitHub, and PVF adapters\",\"Fixture corpus, backtests, calibration, drift, and operator cycle-time reports\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-05 invariants.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"invariants\",\"values\":[\"Unknown observations remain unknown rather than zero\",\"Every forecast field retains source provenance and model/platform era\",\"The target issue cannot leak its own future actuals into its cohort\",\"Estimates never enforce completion, stopping, phase changes, or acceptance\",\"Static planning profiles remain an explicit fallback until measured promotion\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-05 risks.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Sparse or selected session data produces false confidence\",\"Model or workflow drift invalidates historical token and duration cohorts\",\"Multi-session and interrupted work is double-counted or omitted\",\"Sensitive transcript content leaks into durable evidence\",\"A speedup removes a truthful lifecycle gate\"]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-05 stop conditions.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-02A timing and lane topology is unstable\",\"Joined field provenance cannot be established\",\"Target-actual leakage or transcript-content retention is observed\",\"Estimator output changes lifecycle state or execution limits\",\"Cycle-time cohorts are not comparable\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record WP-05 replanning triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"Codex session schema or token accounting era changes\",\"C-SDLC v2 cards or closeout schemas change\",\"CI/PVF topology materially changes cohort comparability\",\"Backtests fail to outperform or calibrate against static and historical baselines\"]}"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace generic WP-05 acceptance, plan, and lanes.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Typed observation, forecast, accepted-estimate, and outcome schemas retain per-field provenance and explicit unknown values\",\"Lifecycle, GitHub, PVF/validation, approved session, and operator-annotation adapters join deterministically without transcript-content leakage\",\"Comparable cohorts exclude target actuals and forecasts report ranges, cohort size, dispersion, confidence, outlier factors, and drift state\",\"Static PlanningProfile estimates remain an explicit fallback when data sufficiency or calibration gates fail\",\"A typed SPP edit records advisory estimate source and operator disposition without enforcing time, tokens, completion, or phase\",\"Terminal closeout records forecast-versus-actual evidence and supports reproducible backtest and calibration reports\",\"Equivalent baseline and candidate cohorts demonstrate truthful operator cycle-time and reconnection behavior without gate weakening\",\"Focused schema, negative, deterministic, privacy, lifecycle, and exact-revision review proof passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Inventory historical evidence and define typed multi-source observations, forecasts, outcomes, and sufficiency gates\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement deterministic cohorts, advisory SPP integration, terminal actuals, backtests, and drift handling\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Measure comparable workflow cycle time and run privacy, negative, determinism, lifecycle, and exact-revision review proof\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"estimation-schema-and-roundtrip\",\"proof_role\":\"Prove typed observation, forecast, accepted-estimate, and outcome schema and serde round trips.\",\"acceptance_ids\":[\"AC-1\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"estimation\"],\"parallel_group\":\"csdlc-v2\",\"defer_reason\":null},{\"lane\":\"estimation-negative-and-privacy\",\"proof_role\":\"Reject missing provenance, schema drift, transcript leakage, target-actual leakage, and estimate enforcement.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-5\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"estimation_negative\"],\"parallel_group\":\"csdlc-v2\",\"defer_reason\":null},{\"lane\":\"forecast-backtest-and-fallback\",\"proof_role\":\"Prove deterministic cohorts, uncertainty, drift, calibration, and explicit static-profile fallback on insufficient data.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":5000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"estimation_backtest\"],\"parallel_group\":\"analysis\",\"defer_reason\":null},{\"lane\":\"cycle-time-comparison\",\"proof_role\":\"Validate retained equivalent baseline and candidate workflow cohorts and component timing.\",\"acceptance_ids\":[\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"r=JSON.parse(File.read('.csdlc/evidence/5822/cycle-time-comparison.json')); abort('incomparable') unless r['baseline_cohort']&&r['candidate_cohort']&&r['comparison_basis_equal']==true&&r['gates_preserved']==true\"],\"parallel_group\":\"analysis\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Make WP-05 review prompts issue-specific.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every forecast field preserve provenance, unknowns, cohort rationale, uncertainty, and drift state?\",\"Can target actuals, sensitive transcript content, or model-era drift contaminate a forecast?\",\"Is estimate use strictly advisory in SPP and terminal comparison paths?\",\"Do backtests and cycle-time cohorts justify the claimed improvement without weakening gates?\"]}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5822-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]
 }

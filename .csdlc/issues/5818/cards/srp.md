@@ -16,9 +16,10 @@ WP-01B issue 5818, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-01B scope?
+- Does the inventory cover every authoritative current surface and distinguish historical records?
+- Do current docs and versions say v0.92 is active without claiming planned work complete?
+- Are Cargo metadata, links, structured files, and generated artifacts consistent?
+- Did the change remain within WP-01B and preserve historical evidence?
 
 ## Findings
 

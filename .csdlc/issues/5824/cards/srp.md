@@ -16,9 +16,10 @@ WP-07 issue 5824, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-07 scope?
+- Does the inventory cover every restricted current-v2 field and distinguish finite from extensible values?
+- Is any code change limited to a proven remaining gap rather than historical duplication?
+- Do parse/display/serde/schema/editor/validator/Markdown boundaries share one canonical authority?
+- Are valid card round trips stable and invalid or legacy values handled explicitly?
 
 ## Findings
 

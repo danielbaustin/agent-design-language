@@ -1,2 +1,12 @@
-flowchart LR
-  I["Issue 5801"] --> D["Design required"]
+flowchart TD
+  D["Changed paths and typed lineage"] --> P["Single CI path-policy decision"]
+  P --> F["Focused docs or metadata lane"]
+  P --> T["Tooling contract lane"]
+  P --> S["Source and runtime proof lanes"]
+  P --> U["Unknown or mixed: stronger lane"]
+  S --> C["One coverage authority and shard aggregation"]
+  F --> G["Stable required-check gate"]
+  T --> G
+  C --> G
+  U --> G
+  G --> X["Exact-head merge evidence"]

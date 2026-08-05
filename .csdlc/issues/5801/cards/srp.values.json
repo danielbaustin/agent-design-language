@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02A] CI and coverage reliability",
     "slug": "v0-92-wp-02-ci-and-coverage-reliability",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "pre_phase",
   "content": {
@@ -17,9 +17,10 @@
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-02A scope?"
+        "Does every change class map deterministically to a truthful PVF and release-gate role?",
+        "Can any substantive or unknown source change escape exact-head proof or coverage?",
+        "Are coverage aggregation, stale-run cancellation, metadata-lineage reuse, and required checks fail-closed?",
+        "Do platform fixtures and the final exact-head CI result support the claimed boundary?"
       ],
       "findings": [],
       "residual_risk": [],

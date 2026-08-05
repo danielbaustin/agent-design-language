@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5853/diagram.mmd
 
 [
   {
-    "lane": "build-acceleration-experiment-contract",
-    "proof_role": "Validate the frozen manifest, raw trial completeness, cache classification, statistical decision table, proof parity, canary, cost controls, and observation-or-cleanup record.",
+    "lane": "experiment-evidence-contract",
+    "proof_role": "Validate entry gates, frozen inputs, complete platform samples, warm-cache evidence, parity, decisions, and observation-or-cleanup state.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -33,7 +33,6 @@ Diagram: .csdlc/prepared/issues/5853/diagram.mmd
       "AC-4",
       "AC-5",
       "AC-6",
-      "AC-7",
       "AC-8"
     ],
     "deterministic": true,
@@ -48,10 +47,53 @@ Diagram: .csdlc/prepared/issues/5853/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "exact-head-diff-hygiene",
-    "proof_role": "Reject whitespace errors in the exact reviewed candidate.",
+    "lane": "runner-security-negative",
+    "proof_role": "Reject broad repository access, concurrency expansion, untrusted fork privilege, missing fallback, changed required-check identity, or incomplete cleanup.",
     "acceptance_ids": [
-      "AC-9"
+      "AC-1",
+      "AC-6",
+      "AC-7",
+      "AC-8"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
+    "argv": [
+      "ruby",
+      "-rjson",
+      "-e",
+      "e=JSON.parse(File.read('.csdlc/evidence/5853/eligibility.json')); f=JSON.parse(File.read('.csdlc/evidence/5853/final-state.json')); abort('security boundary') unless e['selected_repository_access']==true&&e['concurrency_one']==true&&e['untrusted_fork_privilege']==false&&f['standard_runner_fallback']==true&&f['required_check_identity_preserved']==true"
+    ],
+    "parallel_group": "negative",
+    "defer_reason": null
+  },
+  {
+    "lane": "workflow-routing-platform-contract",
+    "proof_role": "Prove Linux larger-runner routing remains a machine-selection detail and preserves workflow/check semantics.",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-4",
+      "AC-6",
+      "AC-7",
+      "AC-8"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 4000,
+    "argv": [
+      "bash",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "parallel_group": "workflow",
+    "defer_reason": null
+  },
+  {
+    "lane": "exact-head-diff-hygiene",
+    "proof_role": "Reject whitespace errors and support exact-revision review.",
+    "acceptance_ids": [
+      "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "small",
@@ -80,6 +122,8 @@ Tokens: 50000
 ## Commands
 
 - `ruby .csdlc/prepared/issues/5853/validate-experiment.rb`
+- `ruby -rjson -e e=JSON.parse(File.read('.csdlc/evidence/5853/eligibility.json')); f=JSON.parse(File.read('.csdlc/evidence/5853/final-state.json')); abort('security boundary') unless e['selected_repository_access']==true&&e['concurrency_one']==true&&e['untrusted_fork_privilege']==false&&f['standard_runner_fallback']==true&&f['required_check_identity_preserved']==true`
+- `bash adl/tools/test_ci_runtime_contracts.sh`
 - `git diff --check`
 
 ## Failure Semantics

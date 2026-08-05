@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
     "slug": "v0-92-wp-01a-agent-logic-github-organization-repository-migration",
     "version": "v0.92",
-    "generation": 0
+    "generation": 15
   },
   "status": "pre_phase",
   "content": {
@@ -17,9 +17,10 @@
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-02 scope?"
+        "Did exactly the five approved repositories transfer in the declared order?",
+        "Does every before/after manifest prove assignee and GitHub-surface preservation or explicit repair?",
+        "Are asksifu, Horust, secret values, WP-02A, and downstream work excluded?",
+        "Are the ADL website, remote, package, OIDC, and integration cutovers canonical and reversible?"
       ],
       "findings": [],
       "residual_risk": [],

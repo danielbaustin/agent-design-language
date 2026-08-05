@@ -24,19 +24,119 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-02",
-    "proof_role": "CI contracts, failure regressions, and exact-head green required checks",
+    "lane": "ci-path-policy-contract",
+    "proof_role": "Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.",
     "acceptance_ids": [
-      "AC-1",
       "AC-2",
       "AC-3",
-      "AC-4",
-      "AC-5"
+      "AC-7"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 3600,
-    "budget_tokens": 25000,
+    "budget_seconds": 400,
+    "budget_tokens": 3000,
+    "argv": [
+      "bash",
+      "adl/tools/test_ci_path_policy.sh"
+    ],
+    "parallel_group": "policy",
+    "defer_reason": null
+  },
+  {
+    "lane": "ci-runtime-and-coverage-contract",
+    "proof_role": "Prove workflow graph, stale-run behavior, one coverage authority, shard provenance, and aggregation semantics.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
+    "argv": [
+      "bash",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "parallel_group": "policy",
+    "defer_reason": null
+  },
+  {
+    "lane": "coverage-impact-negative",
+    "proof_role": "Reject unmapped or insufficient source coverage and prevent broad basename fallback.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 500,
+    "budget_tokens": 4000,
+    "argv": [
+      "bash",
+      "adl/tools/test_check_coverage_impact.sh"
+    ],
+    "parallel_group": "coverage",
+    "defer_reason": null
+  },
+  {
+    "lane": "metadata-lineage-negative",
+    "proof_role": "Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head source drift.",
+    "acceptance_ids": [
+      "AC-5",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 400,
+    "budget_tokens": 3000,
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "gate_finish",
+      "metadata"
+    ],
+    "parallel_group": "lifecycle",
+    "defer_reason": null
+  },
+  {
+    "lane": "exact-head-ci-platform",
+    "proof_role": "GitHub required checks prove the final exact head on the migrated Linux-hosted CI substrate while contract fixtures cover macOS and Windows boundaries.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-4",
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": false,
+    "resource_profile": "large",
+    "budget_seconds": 1200,
+    "budget_tokens": 10000,
+    "argv": [
+      "gh",
+      "pr",
+      "checks",
+      "--watch"
+    ],
+    "parallel_group": "github-live",
+    "defer_reason": null
+  },
+  {
+    "lane": "diff-hygiene",
+    "proof_role": "Reject whitespace and unintended policy-surface churn.",
+    "acceptance_ids": [
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 30,
+    "budget_tokens": 500,
     "argv": [
       "git",
       "diff",
@@ -59,6 +159,11 @@ Tokens: 25000
 
 ## Commands
 
+- `bash adl/tools/test_ci_path_policy.sh`
+- `bash adl/tools/test_ci_runtime_contracts.sh`
+- `bash adl/tools/test_check_coverage_impact.sh`
+- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate_finish metadata`
+- `gh pr checks --watch`
 - `git diff --check`
 
 ## Failure Semantics

@@ -3,9 +3,9 @@
   "issue": 5812,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "00ffe4f675d8a5fb02d44c4860d3f331ef37cbc03e595286463aa7d700e358d4",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "6aece16715e041a4095778e2e8d3ff5e157795f8626866d9260625130b80ba91",
+  "phase": "bound",
+  "generation": 4,
+  "digest": "7bfe549af7840ad3b66e27867fd3c8dbb2c6aa3c987f4aab17ed976e33dd6f07",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5812/design.md",
   "diagram_path": ".csdlc/prepared/issues/5812/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-foundation-design-review",
+      "revision": "e6684cc405f9772581c043ab4a87b8513800988539344974fa0ac4390d0bad44"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "b1e8a5aeff4fe92ea359691f3bb32b142cb398dfa296291d22fac7ff652bd34b",
+      "values_digest": "0b22b7c121013600ebf312bb3d7e0949523f385da8ef1a94488bca2919b4a839",
       "rendered_digest": "eea1e855587938558d63612a7aac5412155ff5eec16e1408e712fe87f92b744b",
       "ast_digest": "932a85ba546430881677b05014186d8f7960ccaf4bf5f3612e4d834438bf93e6"
     },
     "stp": {
-      "values_digest": "1efa0379258c37df9a580e09975cd1f49641240b3ce7679c550ad0a9409116b6",
-      "rendered_digest": "c9153f61e73a27c23d2150d2f5baae3f4c0faf87a1c730ef09aab31d1a2e541e",
-      "ast_digest": "81ac774216299fb5e327e9aae614258904580fe56b4a1a915ab7e5bf16ec5fa6"
+      "values_digest": "90c4039a42a66a0f2aac3c808fedfac7be0dbfb87162491595de48d74305e22f",
+      "rendered_digest": "c2cc3f623128102d109e14d9a1af4b1569f485d8f88002f192fd5cdb9a7a1a78",
+      "ast_digest": "15b992ed9bc49eab45d60509a9852b606c688ebe4c149e85ee199c5efda086c1"
     },
     "spp": {
-      "values_digest": "0ff9f51425ee1e3d557aaa03b50f9c3dbcf577480fdf89a358c0ae879e45d204",
-      "rendered_digest": "50d86ded1ca08ecb46c1e01ec144ddbb85f91e4b32cb6032e3e32c3aabe09bfe",
-      "ast_digest": "3c3293940d8d9f31ddb10e6a8f89b55dacbb70ad45b6d6feded34b77ebf94865"
+      "values_digest": "7e6387768486d06d3120b40e4805a4b038e3aed023384414db523cfce92f2b11",
+      "rendered_digest": "d3087488ecd97ad08f6cc1d1fa236d6ca5bae0dd40b738f156b91e96d6d3755f",
+      "ast_digest": "03484ae5318822e43a2e2d0784603063975fd3b3c2b4fe6ee77019b64b2f8824"
     },
     "vpp": {
-      "values_digest": "ab569b45e394ca472c8ed85410baef4202048bd49bfc085215fd413da113bd22",
-      "rendered_digest": "27bc5c41ce983a3245fd62c9f980e70cbc948cfc50ce67f9c44eebf6eeb1db24",
-      "ast_digest": "d37d357a05e438ff0b12f9ce64666dc5219a70ce24bac8a0b40fdf9ffa784f36"
+      "values_digest": "98f500ca1056edcec11175c08da8f63c54e620990ed7d2bd38dc7627868e3087",
+      "rendered_digest": "854b371489aa225414be0ebb90284174cd72a3f63dccf9f9d46347ba6b73318e",
+      "ast_digest": "a2cc91cd877bcfa71c8c5579dc865f3b4cd9eec40cd6bbde8cca0e61fc02c2a7"
     },
     "srp": {
-      "values_digest": "65de90ee9e4aee700e467b6e0f73b965a06459f992416cecfd6f2866c611ab4a",
+      "values_digest": "1ab61d9da38f984c73cedc7da13fc0daa15ff0ada98b4e2c3ac4689496e43cfb",
       "rendered_digest": "c83dd84e8956d3c4cc9283fc8b4302ad937f73f3836aa4561d9d72dda4df14df",
       "ast_digest": "b5a6ecd08df3b59851ae285651c0be23e649888f2d8d4e0d8076ec9dfdca09af"
     },
     "sor": {
-      "values_digest": "4a896a819561ed95056fc8dfd41e1750c15b7c1ce1d0cdbbdcc597680adc98de",
+      "values_digest": "49d593c7d91758ca5d1d85630912366fce4ea5b5c3fe7e5534c36947c27bcba4",
       "rendered_digest": "4ff0dbcf96ef65210fa23f69dbf49528e3d73a11fc06b0895efbd4bf474a9780",
       "ast_digest": "86e1a36f42bafe12e44ff4801e8c2f186041c38de1baeb98af920e8232c8c94d"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,55 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5812-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-foundation-readiness\",\"claim_id\":\"claim-5812-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5812\",\".csdlc/issues/5812\",\".csdlc/locks/5812.lock\",\".csdlc/prepared/issues/5812\"],\"purpose\":\"Prepare issue 5812 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-foundation-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Declare the exact Freedom Gate affected area.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl/src/csm_freedom_gate.rs lines containing the two retained-status defaults\",\"Existing csm_freedom_gate module tests\",\"adl-gws-context-mirror production-binary Clippy target\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Record concrete preparation replanning triggers.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"replan_triggers\",\"values\":[\"The reported expressions or Clippy lint no longer reproduce\",\"Focused default or unsafe-artifact tests expose behavior outside the two-line change\",\"The named production binary no longer compiles the affected module\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Align acceptance, pending steps, and all focused proof lanes.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Both unnecessary lazy-evaluation warnings are removed by changing only the two reported default expressions\",\"executor_requires_gate_decision still defaults to true\",\"unmediated_execution_allowed still defaults to false\",\"Focused csm_freedom_gate tests, including unsafe retained-artifact rejection, pass\",\"The adl-gws-context-mirror production binary passes Clippy with warnings denied\",\"Cargo formatting and diff hygiene pass with no Cargo.toml, Cargo.lock, dependency, Google Drive, or unrelated source changes\",\"One exact-revision bounded review has no unresolved actionable findings\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Confirm current source, lint reproduction, and exact fail-closed default tests\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Apply only the two eager-default substitutions and run focused test, format, and Clippy proof\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Review the exact two-line candidate and publish with closing linkage\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"freedom-gate-module-tests\",\"proof_role\":\"Prove both defaults and unsafe retained-artifact rejection remain behaviorally unchanged.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":450,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl/Cargo.toml\",\"--lib\",\"csm_freedom_gate::tests\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"freedom-gate-clippy\",\"proof_role\":\"Reproduce and eliminate the exact production-binary warnings with warnings denied.\",\"acceptance_ids\":[\"AC-1\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":2000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl/Cargo.toml\",\"--bin\",\"adl-gws-context-mirror\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"rust\",\"defer_reason\":null},{\"lane\":\"rust-format\",\"proof_role\":\"Reject unintended Rust formatting churn.\",\"acceptance_ids\":[\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"cargo\",\"fmt\",\"--manifest-path\",\"adl/Cargo.toml\",\"--all\",\"--\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null},{\"lane\":\"scope-negative-and-diff\",\"proof_role\":\"Reject lockfile, dependency, Google Drive, or unrelated source changes and support exact-revision review.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 4,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5812-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]
 }

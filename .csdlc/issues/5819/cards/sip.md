@@ -20,15 +20,18 @@ five serially transferred company repositories with danielbaustin/asksifu retain
 
 ## Scope
 
-- Issue 5819 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
+- Serial transfer of cognitive-sdlc-paper, godel-hadamard-bayes-paper, general-intelligence-paper-private, universal-tool-schema, and agent-design-language from danielbaustin to agent-logic
+- Per-repository redacted before and after manifests, assignee membership or reassignment plans, and transfer receipts
+- Current operational URL, package, OIDC, Pages, webhook, App, clone remote, and external integration updates
+- agent-logic.ai production and beta ADL link cutover after the ADL destination exists
+- .csdlc/issues/5819, .csdlc/prepared/issues/5819, and .csdlc/evidence/5819
 
 ## Authority
 
-- Issue 5819 owns only WP-02: Agent Logic GitHub organization repository migration
-- Adjacent v0.92 work packages retain their own implementation and proof authority
+- Agent Logic organization owners authorize transfer windows, billing, policy, and recovery decisions
+- Issue 5819 owns exactly five approved transfers and their verification
+- danielbaustin/asksifu remains personal and Horust remains excluded
+- WP-02A owns CI redesign; downstream work packages retain implementation authority
 
 ## Assumptions
 

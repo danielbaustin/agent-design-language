@@ -21,13 +21,13 @@ Deliver Clippy-clean Freedom Gate defaults with unchanged runtime behavior.
 
 ## Acceptance
 
-1. Both unnecessary lazy-evaluation warnings are removed
-2. The executor_requires_gate_decision default remains true
-3. The unmediated_execution_allowed default remains false
-4. Focused Freedom Gate tests pass
-5. The named production-binary Clippy command passes with -D warnings
-6. Formatting and diff hygiene pass with no unrelated changes
-7. One exact-revision review has no unresolved actionable findings
+1. Both unnecessary lazy-evaluation warnings are removed by changing only the two reported default expressions
+2. executor_requires_gate_decision still defaults to true
+3. unmediated_execution_allowed still defaults to false
+4. Focused csm_freedom_gate tests, including unsafe retained-artifact rejection, pass
+5. The adl-gws-context-mirror production binary passes Clippy with warnings denied
+6. Cargo formatting and diff hygiene pass with no Cargo.toml, Cargo.lock, dependency, Google Drive, or unrelated source changes
+7. One exact-revision bounded review has no unresolved actionable findings
 
 ## Dependencies
 
