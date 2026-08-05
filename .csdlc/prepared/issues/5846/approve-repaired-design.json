@@ -1,0 +1,7 @@
+{
+  "issue": 5846,
+  "expected_generation": 8,
+  "expected_digest": "3c34b10f7a85c69fe95241052aa4789df58d5c4a5d44be3e69281cda89e73dd2",
+  "claim_id": "claim-5846-v092-preparation",
+  "reviewer": "codex:5860-quality-release-readiness-repair-review"
+}

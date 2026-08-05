@@ -34,13 +34,13 @@ Diagram: .csdlc/prepared/issues/5848/diagram.mmd
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "resource_profile": "small",
+    "budget_seconds": 240,
+    "budget_tokens": 2500,
     "argv": [
       "ruby",
       "-e",
-      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete row' unless r['rows'].all? { |x| %w[id source severity evidence owner disposition].all? { |k| x[k] } }"
+      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; keys=%w[id source severity evidence owner disposition]; abort 'incomplete row' unless r['rows'].all? { |x| keys.all? { |k| x[k].is_a?(String) && !x[k].strip.empty? } }"
     ],
     "parallel_group": "disposition",
     "defer_reason": null
@@ -68,19 +68,18 @@ Diagram: .csdlc/prepared/issues/5848/diagram.mmd
   },
   {
     "lane": "affected-quality-regression",
-    "proof_role": "Re-run every affected WP-22 row and release-facing claim check at each exact merged remediation revision.",
+    "proof_role": "Execute every affected WP-22 row validator and every impacted release-claim validator at the exact remediation target SHA; require an explicit no-impact disposition when no release claim changed.",
     "acceptance_ids": [
       "AC-3",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 2000,
+    "budget_seconds": 600,
+    "budget_tokens": 3500,
     "argv": [
-      "git",
-      "diff",
-      "--check"
+      "ruby",
+      ".csdlc/prepared/issues/5848/validate-remediation-regressions.rb"
     ],
     "parallel_group": "regression",
     "defer_reason": null
@@ -120,9 +119,9 @@ Tokens: 10000
 
 ## Commands
 
-- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete row' unless r['rows'].all? { |x| %w[id source severity evidence owner disposition].all? { |k| x[k] } }`
+- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; keys=%w[id source severity evidence owner disposition]; abort 'incomplete row' unless r['rows'].all? { |x| keys.all? { |k| x[k].is_a?(String) && !x[k].strip.empty? } }`
 - `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/validation.json')); abort 'remediation blockers remain' unless r['blockers'].is_a?(Array) && r['blockers'].empty?`
-- `git diff --check`
+- `ruby .csdlc/prepared/issues/5848/validate-remediation-regressions.rb`
 - `csdlc-doctor --repo . --issue 5848`
 
 ## Failure Semantics

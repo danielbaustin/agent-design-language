@@ -29,7 +29,8 @@ replaces local duplication with an unowned shared utility fails the objective.
 
 1. Verify WP-20 and WP-21 are merged, terminal, claim-free, and ancestral.
 2. Rebuild the post-deletion Rust inventory and choose a small reviewed set of
-   hotspots with exact files and behavior invariants.
+   hotspots with exact files, explicit active owners from `adl-v2`,
+   `adl-runtime-kernel`, or `csdlc-v2`, and behavior invariants.
 3. Capture characterization tests or existing proving tests before edits.
 4. Refactor one ownership boundary at a time and keep public behavior stable.
 5. Run focused parity, negative, lint, and affected-workspace tests after each
@@ -51,10 +52,11 @@ whole-root claim is authorized by this design.
 
 ## Validation And Failure Policy
 
-Required lanes are inventory/ownership lint, focused pre/post behavior parity,
-negative-case preservation, touched-workspace tests, strict Clippy, formatting,
-before/after LoC and duplication accounting, Linux/macOS CI where affected, and
-bounded exact-head review. Replan if behavior changes, a feature gap appears,
+Required lanes are selected-owner inventory validation, focused pre/post
+behavior parity, negative-case preservation, dynamically selected tests and
+strict Clippy for every touched workspace, formatting, before/after LoC and
+duplication accounting, digest-bound native Linux and macOS CI evidence at the
+same target SHA, and bounded exact-head review. Replan if behavior changes, a feature gap appears,
 the selected owner is unclear, or the refactor requires a broad public API
 break. Preserve the original behavior and route larger redesign separately.
 

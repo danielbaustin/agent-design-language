@@ -1,25 +1,25 @@
 {
-  "actor": "codex:5860-quality-release-readiness",
-  "expected_digest": "2920c967d30da26251fae0226a04e53d3426496c719bdc294d73bb22fb17f9b8",
-  "expected_generation": 0,
+  "actor": "codex:5860-quality-release-readiness-repair",
+  "expected_digest": "04b365ca6bf00f1d5d5d63446df3426d7614b9afbffb8b33913d94d7cc20158e",
+  "expected_generation": 8,
   "issue": 5841,
-  "now_unix_seconds": 1785948749,
-  "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5841 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+  "now_unix_seconds": 1785951701,
+  "reason": "Reacquire the released preparation claim to repair exact-head quality/release readiness findings without implementation or publication.",
   "replacement": {
-    "acquired_unix_seconds": 1785948749,
-    "branch": "codex/5860-quality-release-readiness",
-    "expires_unix_seconds": 1786035149,
-    "generation": 0,
-    "heartbeat_unix_seconds": 1785948749,
+    "acquired_unix_seconds": 1785951701,
+    "branch": "codex/5860-v092-execution-readiness",
+    "expires_unix_seconds": 1786038101,
+    "generation": 8,
+    "heartbeat_unix_seconds": 1785951701,
     "id": "claim-5841-v092-preparation",
-    "owner": "codex:5860-quality-release-readiness",
+    "owner": "codex:5860-quality-release-readiness-repair",
     "protected_paths": [
       ".csdlc/evidence/5841",
       ".csdlc/issues/5841",
       ".csdlc/locks/5841.lock",
       ".csdlc/prepared/issues/5841"
     ],
-    "purpose": "Prepare and approve issue 5841 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.",
+    "purpose": "Repair issue 5841 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.",
     "worktree": "."
   }
 }

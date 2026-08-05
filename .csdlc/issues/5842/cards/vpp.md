@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5842/diagram.mmd
 
 [
   {
-    "lane": "feature-matrix-schema",
-    "proof_role": "Require a nonempty, complete matrix whose accepted rows carry exact implementation, review, merge, validation, integration, platform, and terminal identity.",
+    "lane": "complete-feature-matrix",
+    "proof_role": "Require exactly the 13 indexed v0.92 feature documents and nonempty exact implementation, review, merge, positive, negative, integration, platform, and terminal evidence for every accepted row.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -34,38 +34,38 @@ Diagram: .csdlc/prepared/issues/5842/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "budget_seconds": 600,
+    "budget_tokens": 5000,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5842/feature-completion-matrix.json')); abort 'rows missing' unless r['rows'].is_a?(Array) && !r['rows'].empty?; keys=%w[owner_issue reviewed_head merge_sha validation_ref integration_ref terminal_ref disposition]; abort 'incomplete row' unless r['rows'].all? { |x| keys.all? { |k| x[k] } }"
+      ".csdlc/prepared/issues/5842/validate-quality-gate.rb",
+      "matrix"
     ],
     "parallel_group": "gate",
     "defer_reason": null
   },
   {
-    "lane": "prohibited-evidence-negative",
-    "proof_role": "Reject fixtures, receipts-only, demo mode, synthetic success, provider substitution, stale review, missing ancestry, and unsupported platform credit.",
+    "lane": "exercised-prohibited-evidence",
+    "proof_role": "Execute the quality gate against all eight prohibited evidence classes and require each forged case to fail with digest-bound observed output.",
     "acceptance_ids": [
       "AC-3",
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 300,
-    "budget_tokens": 2500,
+    "resource_profile": "medium",
+    "budget_seconds": 600,
+    "budget_tokens": 5000,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5842/negative-cases.json')); abort 'negative cases not rejected' unless r['cases'].is_a?(Array) && !r['cases'].empty? && r['cases'].all? { |x| x['outcome']=='rejected' }"
+      ".csdlc/prepared/issues/5842/validate-quality-gate.rb",
+      "negative"
     ],
     "parallel_group": "negative",
     "defer_reason": null
   },
   {
-    "lane": "docs-yaml-link-hygiene",
-    "proof_role": "Validate gate docs, YAML/JSON, links, and patch hygiene without broad product tests.",
+    "lane": "gate-packet-hygiene",
+    "proof_role": "Validate tracked gate packet whitespace after the proving matrix and negative validators run.",
     "acceptance_ids": [
       "AC-4",
       "AC-5"
@@ -117,8 +117,8 @@ Tokens: 25000
 
 ## Commands
 
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5842/feature-completion-matrix.json')); abort 'rows missing' unless r['rows'].is_a?(Array) && !r['rows'].empty?; keys=%w[owner_issue reviewed_head merge_sha validation_ref integration_ref terminal_ref disposition]; abort 'incomplete row' unless r['rows'].all? { |x| keys.all? { |k| x[k] } }`
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5842/negative-cases.json')); abort 'negative cases not rejected' unless r['cases'].is_a?(Array) && !r['cases'].empty? && r['cases'].all? { |x| x['outcome']=='rejected' }`
+- `ruby .csdlc/prepared/issues/5842/validate-quality-gate.rb matrix`
+- `ruby .csdlc/prepared/issues/5842/validate-quality-gate.rb negative`
 - `git diff --check`
 - `csdlc-doctor --repo . --issue 5842`
 

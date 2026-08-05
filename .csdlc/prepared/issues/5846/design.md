@@ -51,7 +51,9 @@ sources. Remediation paths belong to #5848 or separately routed owners.
 ## Validation And Failure Policy
 
 Required lanes are packet-manifest/digest validation, source coverage, exact
-issue/PR/head/merge and typed-terminal readback, specialist completion,
+issue/PR/head/merge and typed-terminal readback, the explicit code, security,
+tests, docs, architecture, and dependency specialist roster with reviewer-authored
+digest-bound reports and defensible zero-finding rationale where applicable,
 finding-schema and evidence-link checks, duplicate/disagreement accounting,
 redaction/private-path/secret scanning, and review-quality evaluation. Missing
 sources, stale revision identity, incomplete lanes, unsupported severity, or

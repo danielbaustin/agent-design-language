@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5852/diagram.mmd
 [
   {
     "lane": "release-evidence-manifest",
-    "proof_role": "Require every release claim to bind exact implementation, validation, review, merge, terminal receipt, artifact hash, risk, and non-claim evidence.",
+    "proof_role": "Require every release claim to bind nonempty exact implementation, validation, review, merge, terminal, artifact hash, residual-risk, and non-claim evidence, then recompute every artifact digest.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -34,11 +34,10 @@ Diagram: .csdlc/prepared/issues/5852/diagram.mmd
     "deterministic": true,
     "resource_profile": "medium",
     "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "budget_tokens": 3500,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/release-evidence-manifest.json')); abort 'empty manifest' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'unbound claim' unless r['rows'].all? { |x| %w[claim implementation_ref validation_ref review_ref merge_sha terminal_ref].all? { |k| x[k] } }"
+      ".csdlc/prepared/issues/5852/validate-release-evidence.rb"
     ],
     "parallel_group": "release",
     "defer_reason": null
@@ -63,7 +62,7 @@ Diagram: .csdlc/prepared/issues/5852/diagram.mmd
   },
   {
     "lane": "release-identity-negative",
-    "proof_role": "Reject red checks, active claims, missing receipts/findings, dirty head, tag/release conflict, partial verification, stale assets, and blind retries.",
+    "proof_role": "Reject red checks, active claims, missing receipts/findings, dirty head, tag/release conflict, partial verification, stale assets, and blind retries with an exercised negative-case packet.",
     "acceptance_ids": [
       "AC-1",
       "AC-4",
@@ -77,28 +76,9 @@ Diagram: .csdlc/prepared/issues/5852/diagram.mmd
     "argv": [
       "ruby",
       "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/ceremony-negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }"
+      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/ceremony-negative-cases.json')); c=r['cases']; abort 'negative cases missing' unless c.is_a?(Array) && !c.empty?; abort 'unexercised negative case' unless c.all? { |x| x['observed_exit'].is_a?(Integer) && x['observed_exit'] != 0 && x['stderr_sha256'].is_a?(String) && x['stderr_sha256'].match?(/\\A[0-9a-f]{64}\\z/) }"
     ],
     "parallel_group": "negative",
-    "defer_reason": null
-  },
-  {
-    "lane": "release-doc-hygiene",
-    "proof_role": "Validate final notes, plan, checklist, handoff, links, hashes, redaction, claims, and diff hygiene without broad product tests.",
-    "acceptance_ids": [
-      "AC-2",
-      "AC-3"
-    ],
-    "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 120,
-    "budget_tokens": 500,
-    "argv": [
-      "git",
-      "diff",
-      "--check"
-    ],
-    "parallel_group": "hygiene",
     "defer_reason": null
   },
   {
@@ -136,10 +116,9 @@ Tokens: 10000
 
 ## Commands
 
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/release-evidence-manifest.json')); abort 'empty manifest' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'unbound claim' unless r['rows'].all? { |x| %w[claim implementation_ref validation_ref review_ref merge_sha terminal_ref].all? { |k| x[k] } }`
+- `ruby .csdlc/prepared/issues/5852/validate-release-evidence.rb`
 - `bash adl/tools/test_release_ceremony.sh`
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/ceremony-negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }`
-- `git diff --check`
+- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/ceremony-negative-cases.json')); c=r['cases']; abort 'negative cases missing' unless c.is_a?(Array) && !c.empty?; abort 'unexercised negative case' unless c.all? { |x| x['observed_exit'].is_a?(Integer) && x['observed_exit'] != 0 && x['stderr_sha256'].is_a?(String) && x['stderr_sha256'].match?(/\A[0-9a-f]{64}\z/) }`
 - `csdlc-doctor --repo . --issue 5852`
 
 ## Failure Semantics

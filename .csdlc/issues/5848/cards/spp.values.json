@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-27] Review findings remediation",
     "slug": "v0-92-wp-27-review-findings-remediation",
     "version": "v0.92",
-    "generation": 8
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -89,7 +89,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5848/design.md",
-      "design_digest": "fe35997745ec728a3c1c992656c895117780f7617fa6f2309aa95b767a78fe1f",
+      "design_digest": "edde7c21ea8734503699499430774e6d3be95fe231dbee4cc3a1101e41144f5f",
       "diagram_ref": ".csdlc/prepared/issues/5848/diagram.mmd",
       "diagram_digest": "bbd55a23ecab369dc5724109636f2fa3e89c73129f97ce62f2d8b3ee87b0df77"
     }

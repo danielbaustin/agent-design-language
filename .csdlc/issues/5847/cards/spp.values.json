@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-26] External / third-party review",
     "slug": "v0-92-wp-26-external-third-party-review",
     "version": "v0.92",
-    "generation": 8
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -88,7 +88,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5847/design.md",
-      "design_digest": "22166f395e6aeb03f21a5aaf3e9a6edc998de845fc8fa9dc2c49ba388a7d6387",
+      "design_digest": "87f9be3d8bb3567165a85171d7f8322ccf7133fd3c840e4253bc390bc6a5624c",
       "diagram_ref": ".csdlc/prepared/issues/5847/diagram.mmd",
       "diagram_digest": "3f27fc4f521fdd57a23ed1afaa29417434e08b8ac93e33e58d1a106069d94cd1"
     }

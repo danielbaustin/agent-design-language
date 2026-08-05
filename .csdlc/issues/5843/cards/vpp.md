@@ -24,62 +24,43 @@ Diagram: .csdlc/prepared/issues/5843/diagram.mmd
 
 [
   {
-    "lane": "canonical-doc-inventory",
-    "proof_role": "Require every inventoried canonical document and release claim to have owner, status, and exact evidence or non-claim disposition.",
+    "lane": "canonical-doc-release-truth",
+    "proof_role": "Parse every inventoried JSON/YAML document, resolve every relative Markdown link, execute declared command checks, enforce v0.92/WP ownership, and reject machine-local paths or credential-like text.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
       "AC-3",
-      "AC-4"
+      "AC-4",
+      "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "budget_seconds": 720,
+    "budget_tokens": 6000,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5843/canonical-doc-inventory.json')); abort 'inventory missing' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'undispositioned claim' unless r['rows'].all? { |x| x['path'] && x['status'] && x['owner'] }"
+      ".csdlc/prepared/issues/5843/validate-doc-release-truth.rb"
     ],
     "parallel_group": "docs",
     "defer_reason": null
   },
   {
     "lane": "claim-boundary-negative",
-    "proof_role": "Reject unsupported release, birthday, provider, platform, privacy, governance, legal, personhood, consciousness, and v0.93 completion claims.",
+    "proof_role": "Require the retained claim-boundary scanner to identify no unsupported release, birthday, provider, platform, privacy, governance, legal, personhood, consciousness, or v0.93 completion claims.",
     "acceptance_ids": [
       "AC-4",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 180,
-    "budget_tokens": 1500,
+    "budget_seconds": 300,
+    "budget_tokens": 2000,
     "argv": [
       "ruby",
       "-e",
-      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5843/claim-boundary-scan.json')); abort 'claim blockers remain' unless r['blockers'].is_a?(Array) && r['blockers'].empty?"
+      "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5843/claim-boundary-scan.json')); abort 'claim blockers remain' unless r['blockers'].is_a?(Array) && r['blockers'].empty?; abort 'scan corpus missing' unless r['scanned_paths'].is_a?(Array) && !r['scanned_paths'].empty? && r['scanned_paths'].all? { |p| File.file?(p) }"
     ],
     "parallel_group": "negative",
-    "defer_reason": null
-  },
-  {
-    "lane": "docs-format-link-command",
-    "proof_role": "Validate changed Markdown, YAML/JSON, relative links, commands, version/WP ownership, redaction, and diff hygiene.",
-    "acceptance_ids": [
-      "AC-3",
-      "AC-5"
-    ],
-    "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 120,
-    "budget_tokens": 500,
-    "argv": [
-      "git",
-      "diff",
-      "--check"
-    ],
-    "parallel_group": "hygiene",
     "defer_reason": null
   },
   {
@@ -117,9 +98,8 @@ Tokens: 10000
 
 ## Commands
 
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5843/canonical-doc-inventory.json')); abort 'inventory missing' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'undispositioned claim' unless r['rows'].all? { |x| x['path'] && x['status'] && x['owner'] }`
-- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5843/claim-boundary-scan.json')); abort 'claim blockers remain' unless r['blockers'].is_a?(Array) && r['blockers'].empty?`
-- `git diff --check`
+- `ruby .csdlc/prepared/issues/5843/validate-doc-release-truth.rb`
+- `ruby -e require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5843/claim-boundary-scan.json')); abort 'claim blockers remain' unless r['blockers'].is_a?(Array) && r['blockers'].empty?; abort 'scan corpus missing' unless r['scanned_paths'].is_a?(Array) && !r['scanned_paths'].empty? && r['scanned_paths'].all? { |p| File.file?(p) }`
 - `csdlc-doctor --repo . --issue 5843`
 
 ## Failure Semantics

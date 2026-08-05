@@ -54,8 +54,8 @@ claim all documentation or any product source root.
 
 ## Validation And Failure Policy
 
-Required lanes are canonical inventory completeness, docs/YAML/JSON parsing,
-relative-link and command checks, version/WP ownership consistency, accepted-
+Required lanes are canonical inventory completeness, executable docs/YAML/JSON
+parsing, relative-link resolution and command checks, version/WP ownership consistency, accepted-
 evidence link checks, stale/planned/unsupported claim rejection, secret/private
 path scanning, and exact-head docs review. Any unresolved contradiction or
 unsupported release claim blocks completion and remains visible.

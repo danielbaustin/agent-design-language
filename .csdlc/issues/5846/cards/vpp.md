@@ -24,60 +24,41 @@ Diagram: .csdlc/prepared/issues/5846/diagram.mmd
 
 [
   {
-    "lane": "review-packet-manifest",
-    "proof_role": "Validate exact target, packet object inventory/digest, issue/PR/typed identity, and included/excluded/unknown/redacted surfaces.",
+    "lane": "packet-and-specialist-roster",
+    "proof_role": "Require the exact six-lane specialist roster, reviewer-authored digest-bound reports at the packet target SHA, complete finding reconciliation, and coverage-backed rationale for every zero-finding lane.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-5"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
-    "argv": [
-      "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/packet-manifest.json')); abort 'target missing' unless r['target_sha']; abort 'corpus missing' unless r['paths'].is_a?(Array) && !r['paths'].empty?"
-    ],
-    "parallel_group": "packet",
-    "defer_reason": null
-  },
-  {
-    "lane": "specialist-findings-schema",
-    "proof_role": "Require all specialist lanes and evidence-backed stable findings with explicit disagreement/duplicate accounting.",
-    "acceptance_ids": [
       "AC-3",
       "AC-4",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "budget_seconds": 720,
+    "budget_tokens": 6000,
     "argv": [
       "ruby",
-      "-e",
-      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/findings.json')); abort 'lanes incomplete' unless r['lanes_complete']==true; abort 'bad finding' unless r.fetch('findings',[]).all? { |f| %w[id severity evidence invariant owner disposition].all? { |k| f[k] } }"
+      ".csdlc/prepared/issues/5846/validate-internal-review.rb"
     ],
-    "parallel_group": "findings",
+    "parallel_group": "review",
     "defer_reason": null
   },
   {
     "lane": "review-redaction-negative",
-    "proof_role": "Reject secrets, private paths, hidden local state, unsupported severities, stale packet identity, and incomplete reviewer lanes.",
+    "proof_role": "Reject secrets, private paths, hidden local state, unsupported severities, stale packet identity, and incomplete reviewer lanes from retained validation evidence.",
     "acceptance_ids": [
       "AC-4",
       "AC-5"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 180,
-    "budget_tokens": 1500,
+    "budget_seconds": 300,
+    "budget_tokens": 2000,
     "argv": [
       "ruby",
       "-e",
-      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/validation.json')); abort 'review validation blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?"
+      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/validation.json')); abort 'review validation blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?; abort 'negative checks absent' unless r['negative_checks'].is_a?(Array) && !r['negative_checks'].empty?"
     ],
     "parallel_group": "negative",
     "defer_reason": null
@@ -117,9 +98,8 @@ Tokens: 10000
 
 ## Commands
 
-- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/packet-manifest.json')); abort 'target missing' unless r['target_sha']; abort 'corpus missing' unless r['paths'].is_a?(Array) && !r['paths'].empty?`
-- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/findings.json')); abort 'lanes incomplete' unless r['lanes_complete']==true; abort 'bad finding' unless r.fetch('findings',[]).all? { |f| %w[id severity evidence invariant owner disposition].all? { |k| f[k] } }`
-- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/validation.json')); abort 'review validation blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?`
+- `ruby .csdlc/prepared/issues/5846/validate-internal-review.rb`
+- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/validation.json')); abort 'review validation blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?; abort 'negative checks absent' unless r['negative_checks'].is_a?(Array) && !r['negative_checks'].empty?`
 - `csdlc-doctor --repo . --issue 5846`
 
 ## Failure Semantics

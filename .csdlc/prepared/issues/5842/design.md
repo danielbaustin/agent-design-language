@@ -29,8 +29,8 @@ date, or authorize WP-25 internal review while any required row is unaccepted.
 
 1. Verify WP-04, WP-05, WP-06, WP-07, WP-13A, WP-20, WP-21, and WP-21A at
    current live GitHub and typed terminal truth and pin the gate SHA.
-2. Enumerate the feature index and supporting quality/release rows without
-   silently dropping planned or blocked entries.
+2. Enumerate all 13 named feature documents in the feature index and supporting
+   quality/release rows without silently dropping planned or blocked entries.
 3. Resolve each row to exact implementation, review, validation, integration,
    platform, and claim-boundary evidence.
 4. Run negative audits for fixture/synthetic/substitution credit, stale SHAs,
@@ -53,9 +53,9 @@ blocker routed to its owner, not absorbed into the WP-22 claim.
 
 ## Validation And Failure Policy
 
-Required lanes are feature-index completeness/schema checks, issue/PR/head/
+Required lanes are exact 13-feature index completeness/schema checks, issue/PR/head/
 merge/ancestry and typed-terminal cross-checks, positive proof-link validation,
-negative rejection fixtures for every prohibited evidence class, platform and
+executable negative gate cases for every prohibited evidence class, platform and
 provider-identity consistency checks, docs/YAML/link validation, and exact-head
 review. One missing or ambiguous row makes the gate fail; the report must name
 the blocker and owner without advancing internal review.

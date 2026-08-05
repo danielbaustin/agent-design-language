@@ -51,10 +51,11 @@ silently edited to make the result more favorable.
 
 ## Validation And Failure Policy
 
-Required lanes are predecessor/readiness checks, packet object inventory and
-digest reproducibility, stale-digest rejection, link/command validation,
+Required lanes are predecessor/readiness checks, packet digest recomputation
+over every listed path, stale-digest rejection, link/command validation,
 secret/private-path/redaction scanning, reviewer-authority checks, sent/received
-state validation, report integrity, and findings-index completeness. Missing
+state validation, reviewer-authored report path/digest/identity bound to the
+exact packet, and findings-index completeness. Missing
 reviewer output, changed packet identity, inaccessible evidence, or unsafe
 content yields blocked/deferred truth, not a synthetic review pass.
 

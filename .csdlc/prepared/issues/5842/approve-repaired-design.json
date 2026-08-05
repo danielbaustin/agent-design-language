@@ -1,0 +1,7 @@
+{
+  "issue": 5842,
+  "expected_generation": 8,
+  "expected_digest": "96ee0e6298bc0dd2cf3234ff83aef13cab282a585c1c6828753b48b4b0b5c1df",
+  "claim_id": "claim-5842-v092-preparation",
+  "reviewer": "codex:5860-quality-release-readiness-repair-review"
+}

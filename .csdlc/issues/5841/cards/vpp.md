@@ -24,84 +24,29 @@ Diagram: .csdlc/prepared/issues/5841/diagram.mmd
 
 [
   {
-    "lane": "language-compiler-characterization",
-    "proof_role": "Preserve parser/compiler deterministic identity, diagnostics, limits, and characterization parity.",
+    "lane": "selected-owner-proof",
+    "proof_role": "Read the exact post-WP-21 selection, execute tests, strict Clippy, and formatting checks for every selected active owner, verify before/after metrics, and require digest-bound native macOS and Linux evidence at the same target SHA.",
     "acceptance_ids": [
       "AC-2",
       "AC-3",
-      "AC-4"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 900,
-    "budget_tokens": 5000,
-    "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "adl-v2/Cargo.toml",
-      "-p",
-      "adl-language",
-      "-p",
-      "adl-compiler"
-    ],
-    "parallel_group": "parity",
-    "defer_reason": null
-  },
-  {
-    "lane": "engine-runtime-negative",
-    "proof_role": "Preserve bounded scheduling, failure/resume, port contracts, and runtime negative behavior for touched owners.",
-    "acceptance_ids": [
-      "AC-3",
-      "AC-4"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 900,
-    "budget_tokens": 5000,
-    "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "adl-v2/Cargo.toml",
-      "-p",
-      "adl-engine"
-    ],
-    "parallel_group": "parity",
-    "defer_reason": null
-  },
-  {
-    "lane": "strict-rust-quality",
-    "proof_role": "Prove touched active Rust owners remain warning-free, formatted, and workspace-compatible.",
-    "acceptance_ids": [
+      "AC-4",
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "large",
-    "budget_seconds": 1200,
-    "budget_tokens": 7000,
+    "resource_profile": "medium",
+    "budget_seconds": 1800,
+    "budget_tokens": 10000,
     "argv": [
-      "cargo",
-      "clippy",
-      "--locked",
-      "--manifest-path",
-      "adl-v2/Cargo.toml",
-      "--workspace",
-      "--all-targets",
-      "--",
-      "-D",
-      "warnings"
+      "ruby",
+      ".csdlc/prepared/issues/5841/validate-refactor-selection.rb"
     ],
-    "parallel_group": "lint",
+    "parallel_group": "parity",
     "defer_reason": null
   },
   {
-    "lane": "diff-metrics-platform",
-    "proof_role": "Validate patch hygiene and retain before/after LoC, dependency, duplication, and required macOS/Linux CI evidence.",
+    "lane": "format-and-diff",
+    "proof_role": "Reject patch whitespace defects after the selected-owner validator proves formatting for every touched workspace.",
     "acceptance_ids": [
-      "AC-2",
       "AC-5"
     ],
     "deterministic": true,
@@ -151,9 +96,7 @@ Tokens: 25000
 
 ## Commands
 
-- `cargo test --locked --manifest-path adl-v2/Cargo.toml -p adl-language -p adl-compiler`
-- `cargo test --locked --manifest-path adl-v2/Cargo.toml -p adl-engine`
-- `cargo clippy --locked --manifest-path adl-v2/Cargo.toml --workspace --all-targets -- -D warnings`
+- `ruby .csdlc/prepared/issues/5841/validate-refactor-selection.rb`
 - `git diff --check`
 - `csdlc-doctor --repo . --issue 5841`
 

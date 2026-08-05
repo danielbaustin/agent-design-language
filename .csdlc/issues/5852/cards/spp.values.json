@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-30] Release ceremony",
     "slug": "v0-92-wp-30-release-ceremony",
     "version": "v0.92",
-    "generation": 8
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -88,7 +88,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5852/design.md",
-      "design_digest": "4605a83c28aba9b74d5d068f61d4afc0d6e3559bf06d825003cef1e0d48a23d5",
+      "design_digest": "3696cdb26e650c90119f8a46b4f0f7360eafad8693222ea73183b97bd00bd014",
       "diagram_ref": ".csdlc/prepared/issues/5852/diagram.mmd",
       "diagram_digest": "6457d352e4b029f960adb90912d556e38a0a16ac88e9c3712435b72c47bcc647"
     }

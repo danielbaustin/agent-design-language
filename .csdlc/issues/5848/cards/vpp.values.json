@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-27] Review findings remediation",
     "slug": "v0-92-wp-27-review-findings-remediation",
     "version": "v0.92",
-    "generation": 8
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -26,13 +26,13 @@
             "AC-5"
           ],
           "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 300,
-          "budget_tokens": 3000,
+          "resource_profile": "small",
+          "budget_seconds": 240,
+          "budget_tokens": 2500,
           "argv": [
             "ruby",
             "-e",
-            "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete row' unless r['rows'].all? { |x| %w[id source severity evidence owner disposition].all? { |k| x[k] } }"
+            "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; keys=%w[id source severity evidence owner disposition]; abort 'incomplete row' unless r['rows'].all? { |x| keys.all? { |k| x[k].is_a?(String) && !x[k].strip.empty? } }"
           ],
           "parallel_group": "disposition",
           "defer_reason": null
@@ -60,19 +60,18 @@
         },
         {
           "lane": "affected-quality-regression",
-          "proof_role": "Re-run every affected WP-22 row and release-facing claim check at each exact merged remediation revision.",
+          "proof_role": "Execute every affected WP-22 row validator and every impacted release-claim validator at the exact remediation target SHA; require an explicit no-impact disposition when no release claim changed.",
           "acceptance_ids": [
             "AC-3",
             "AC-5"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 300,
-          "budget_tokens": 2000,
+          "budget_seconds": 600,
+          "budget_tokens": 3500,
           "argv": [
-            "git",
-            "diff",
-            "--check"
+            "ruby",
+            ".csdlc/prepared/issues/5848/validate-remediation-regressions.rb"
           ],
           "parallel_group": "regression",
           "defer_reason": null
@@ -103,7 +102,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5848/design.md",
-      "design_digest": "fe35997745ec728a3c1c992656c895117780f7617fa6f2309aa95b767a78fe1f",
+      "design_digest": "edde7c21ea8734503699499430774e6d3be95fe231dbee4cc3a1101e41144f5f",
       "diagram_ref": ".csdlc/prepared/issues/5848/diagram.mmd",
       "diagram_digest": "bbd55a23ecab369dc5724109636f2fa3e89c73129f97ce62f2d8b3ee87b0df77"
     }

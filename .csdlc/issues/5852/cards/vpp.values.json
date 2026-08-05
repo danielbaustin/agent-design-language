@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-30] Release ceremony",
     "slug": "v0-92-wp-30-release-ceremony",
     "version": "v0.92",
-    "generation": 8
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -17,7 +17,7 @@
       "lanes": [
         {
           "lane": "release-evidence-manifest",
-          "proof_role": "Require every release claim to bind exact implementation, validation, review, merge, terminal receipt, artifact hash, risk, and non-claim evidence.",
+          "proof_role": "Require every release claim to bind nonempty exact implementation, validation, review, merge, terminal, artifact hash, residual-risk, and non-claim evidence, then recompute every artifact digest.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -26,11 +26,10 @@
           "deterministic": true,
           "resource_profile": "medium",
           "budget_seconds": 300,
-          "budget_tokens": 3000,
+          "budget_tokens": 3500,
           "argv": [
             "ruby",
-            "-e",
-            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/release-evidence-manifest.json')); abort 'empty manifest' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'unbound claim' unless r['rows'].all? { |x| %w[claim implementation_ref validation_ref review_ref merge_sha terminal_ref].all? { |k| x[k] } }"
+            ".csdlc/prepared/issues/5852/validate-release-evidence.rb"
           ],
           "parallel_group": "release",
           "defer_reason": null
@@ -55,7 +54,7 @@
         },
         {
           "lane": "release-identity-negative",
-          "proof_role": "Reject red checks, active claims, missing receipts/findings, dirty head, tag/release conflict, partial verification, stale assets, and blind retries.",
+          "proof_role": "Reject red checks, active claims, missing receipts/findings, dirty head, tag/release conflict, partial verification, stale assets, and blind retries with an exercised negative-case packet.",
           "acceptance_ids": [
             "AC-1",
             "AC-4",
@@ -69,28 +68,9 @@
           "argv": [
             "ruby",
             "-e",
-            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/ceremony-negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }"
+            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/ceremony-negative-cases.json')); c=r['cases']; abort 'negative cases missing' unless c.is_a?(Array) && !c.empty?; abort 'unexercised negative case' unless c.all? { |x| x['observed_exit'].is_a?(Integer) && x['observed_exit'] != 0 && x['stderr_sha256'].is_a?(String) && x['stderr_sha256'].match?(/\\A[0-9a-f]{64}\\z/) }"
           ],
           "parallel_group": "negative",
-          "defer_reason": null
-        },
-        {
-          "lane": "release-doc-hygiene",
-          "proof_role": "Validate final notes, plan, checklist, handoff, links, hashes, redaction, claims, and diff hygiene without broad product tests.",
-          "acceptance_ids": [
-            "AC-2",
-            "AC-3"
-          ],
-          "deterministic": true,
-          "resource_profile": "small",
-          "budget_seconds": 120,
-          "budget_tokens": 500,
-          "argv": [
-            "git",
-            "diff",
-            "--check"
-          ],
-          "parallel_group": "hygiene",
           "defer_reason": null
         },
         {
@@ -119,7 +99,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5852/design.md",
-      "design_digest": "4605a83c28aba9b74d5d068f61d4afc0d6e3559bf06d825003cef1e0d48a23d5",
+      "design_digest": "3696cdb26e650c90119f8a46b4f0f7360eafad8693222ea73183b97bd00bd014",
       "diagram_ref": ".csdlc/prepared/issues/5852/diagram.mmd",
       "diagram_digest": "6457d352e4b029f960adb90912d556e38a0a16ac88e9c3712435b72c47bcc647"
     }

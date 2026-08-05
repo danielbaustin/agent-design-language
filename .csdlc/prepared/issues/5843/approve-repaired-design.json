@@ -1,0 +1,7 @@
+{
+  "issue": 5843,
+  "expected_generation": 8,
+  "expected_digest": "4255d98e20c58defb4a87723830ed42d086e6cb475a7a78f702893329ad921b2",
+  "claim_id": "claim-5843-v092-preparation",
+  "reviewer": "codex:5860-quality-release-readiness-repair-review"
+}

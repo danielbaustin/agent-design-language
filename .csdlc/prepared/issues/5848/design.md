@@ -52,7 +52,8 @@ issue or owner, #5848 records and watches that route instead of colliding.
 Required lanes are finding-universe completeness, dedup/provenance checks,
 disposition-schema validation, focused positive and negative tests per fix,
 platform/security/privacy lanes required by the finding, exact fix/review/merge
-readback, regression of affected WP-22 rows, and open-finding rejection. Any
+readback, execution of every affected WP-22 row validator and every impacted
+release-claim validator at the target SHA, and open-finding rejection. Any
 unresolved actionable finding, missing proof, stale fix SHA, or unauthorized
 risk acceptance blocks completion.
 

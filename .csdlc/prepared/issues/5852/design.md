@@ -57,7 +57,9 @@ tracked-path ownership substitutes.
 
 ## Validation And Failure Policy
 
-Required lanes are evidence-manifest completeness, release-claim linkage,
+Required lanes are evidence-manifest completeness with nonempty required
+fields, recomputed artifact hashes, residual-risk and non-claim evidence,
+release-claim linkage,
 notes/checklist/handoff consistency, tag/release absence and identity negative
 cases, ceremony script focused tests and dry-run, duplicate/partial-failure
 recovery, artifact hash verification, exact-head review, and post-publication

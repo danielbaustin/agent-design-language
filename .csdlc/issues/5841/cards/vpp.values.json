@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 8
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -16,84 +16,29 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "language-compiler-characterization",
-          "proof_role": "Preserve parser/compiler deterministic identity, diagnostics, limits, and characterization parity.",
+          "lane": "selected-owner-proof",
+          "proof_role": "Read the exact post-WP-21 selection, execute tests, strict Clippy, and formatting checks for every selected active owner, verify before/after metrics, and require digest-bound native macOS and Linux evidence at the same target SHA.",
           "acceptance_ids": [
             "AC-2",
             "AC-3",
-            "AC-4"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 900,
-          "budget_tokens": 5000,
-          "argv": [
-            "cargo",
-            "test",
-            "--locked",
-            "--manifest-path",
-            "adl-v2/Cargo.toml",
-            "-p",
-            "adl-language",
-            "-p",
-            "adl-compiler"
-          ],
-          "parallel_group": "parity",
-          "defer_reason": null
-        },
-        {
-          "lane": "engine-runtime-negative",
-          "proof_role": "Preserve bounded scheduling, failure/resume, port contracts, and runtime negative behavior for touched owners.",
-          "acceptance_ids": [
-            "AC-3",
-            "AC-4"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 900,
-          "budget_tokens": 5000,
-          "argv": [
-            "cargo",
-            "test",
-            "--locked",
-            "--manifest-path",
-            "adl-v2/Cargo.toml",
-            "-p",
-            "adl-engine"
-          ],
-          "parallel_group": "parity",
-          "defer_reason": null
-        },
-        {
-          "lane": "strict-rust-quality",
-          "proof_role": "Prove touched active Rust owners remain warning-free, formatted, and workspace-compatible.",
-          "acceptance_ids": [
+            "AC-4",
             "AC-5"
           ],
           "deterministic": true,
-          "resource_profile": "large",
-          "budget_seconds": 1200,
-          "budget_tokens": 7000,
+          "resource_profile": "medium",
+          "budget_seconds": 1800,
+          "budget_tokens": 10000,
           "argv": [
-            "cargo",
-            "clippy",
-            "--locked",
-            "--manifest-path",
-            "adl-v2/Cargo.toml",
-            "--workspace",
-            "--all-targets",
-            "--",
-            "-D",
-            "warnings"
+            "ruby",
+            ".csdlc/prepared/issues/5841/validate-refactor-selection.rb"
           ],
-          "parallel_group": "lint",
+          "parallel_group": "parity",
           "defer_reason": null
         },
         {
-          "lane": "diff-metrics-platform",
-          "proof_role": "Validate patch hygiene and retain before/after LoC, dependency, duplication, and required macOS/Linux CI evidence.",
+          "lane": "format-and-diff",
+          "proof_role": "Reject patch whitespace defects after the selected-owner validator proves formatting for every touched workspace.",
           "acceptance_ids": [
-            "AC-2",
             "AC-5"
           ],
           "deterministic": true,
@@ -134,7 +79,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5841/design.md",
-      "design_digest": "02e97b83ffbc6cbdbf4f0aceee8220ce150c9917c2deef715f767fd595935d45",
+      "design_digest": "da1aae684e3702aea1a1b6e18c0797fb0476281afe07a066e83b9ada9a259128",
       "diagram_ref": ".csdlc/prepared/issues/5841/diagram.mmd",
       "diagram_digest": "b4df00a4d3d743cffd8848bba7bb5c20d5b4d4641915587f6a72b37044e3c611"
     }

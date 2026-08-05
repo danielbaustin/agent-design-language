@@ -1,0 +1,74 @@
+{
+  "issue": 5841,
+  "card": "vpp",
+  "expected_generation": 10,
+  "expected_digest": "193cfa53c6c86debed9b70b96ae6d8fe7f1302d71730ea2a8aaecbb71a416b92",
+  "claim_id": "claim-5841-v092-preparation",
+  "actor": "codex:5860-quality-release-readiness-repair",
+  "reason": "Replace self-attested quality/release validation with issue-local proving validators that resolve the exact-head review findings.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "selected-owner-proof",
+        "proof_role": "Read the exact post-WP-21 selection, execute tests, strict Clippy, and formatting checks for every selected active owner, verify before/after metrics, and require digest-bound native macOS and Linux evidence at the same target SHA.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 1800,
+        "budget_tokens": 10000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5841/validate-refactor-selection.rb"
+        ],
+        "parallel_group": "parity",
+        "defer_reason": null
+      },
+      {
+        "lane": "format-and-diff",
+        "proof_role": "Reject patch whitespace defects after the selected-owner validator proves formatting for every touched workspace.",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 500,
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "parallel_group": "hygiene",
+        "defer_reason": null
+      },
+      {
+        "lane": "typed-card-doctor",
+        "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 60,
+        "budget_tokens": 1000,
+        "argv": [
+          "csdlc-doctor",
+          "--repo",
+          ".",
+          "--issue",
+          "5841"
+        ],
+        "parallel_group": "typed-readback",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}
