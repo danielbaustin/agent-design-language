@@ -22,3 +22,4 @@
 {"sequence":22,"generation":16,"actor":"codex:5359-planning-review","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":23,"generation":17,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"Current origin/main integration brought the merged WP-21 and WP-21A terminal projections into the WP-22 branch; recover stale review and publication truth for one exact current-main review and same-PR republication.","operation":"recover_review"}
 {"sequence":24,"generation":18,"actor":"subagent:019fcfd0-9e93-7130-a9e1-24d7f0736900","reason":"atomically record exact review evidence and reviewed phase","operation":"record_review"}
+{"sequence":25,"generation":19,"actor":"codex:019f4b3e-6c61-7653-957b-7a2a6042a80d","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
