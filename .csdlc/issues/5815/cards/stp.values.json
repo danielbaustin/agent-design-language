@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5815,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
+    "slug": "v0-92-wp-01a-github-final-agent-logic-repository-migration-plan",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Finalize and review one repository migration runbook.",
+      "deliverables": [
+        "Current five-repository migration inventory",
+        "Serial transfer and verification runbook",
+        "Coordinated agent-logic.ai link cutover",
+        "Gemini 3.1 Pro review and disposition"
+      ],
+      "acceptance_criteria": [
+        "Exactly five repositories are marked migrate",
+        "asksifu is retained personally and Horust is excluded",
+        "Existing agent-logic repositories are inventory-only",
+        "The website production and beta link updates are explicit",
+        "Each transfer has preflight, verification, stop, and rollback gates",
+        "Gemini findings are incorporated or dispositioned"
+      ],
+      "dependencies": [
+        "Issue 5765 scheduling record",
+        "Current GitHub source and destination inventories",
+        "Current agent-logic.ai origin/main link inventory"
+      ],
+      "repo_inputs": [
+        ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+        "AGENTS.md"
+      ],
+      "non_goals": [
+        "Repository transfers",
+        "Organization or billing changes",
+        "Remote, website, Actions, package, DNS, secret, or permission mutation"
+      ]
+    }
+  }
+}

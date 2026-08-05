@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5815,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
+    "slug": "v0-92-wp-01a-github-final-agent-logic-repository-migration-plan",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "docs-migration-plan",
+          "proof_role": "Validate inventory wording, link references, Markdown hygiene, and diff scope",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 2000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "docs",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed if inventory is ambiguous, scope widens, or the plan implies transfer authorization.",
+      "design_ref": ".csdlc/prepared/issues/5815/design.md",
+      "design_digest": "3903051c45a9e32dbdf3b4da816a1a01af50bc43f94759db5d115f01e6559c77",
+      "diagram_ref": ".csdlc/prepared/issues/5815/diagram.mmd",
+      "diagram_digest": "a2f69f6e27574e4c6b78c87a771afb56422873777063c1bf607fc8a08c197e14"
+    }
+  }
+}

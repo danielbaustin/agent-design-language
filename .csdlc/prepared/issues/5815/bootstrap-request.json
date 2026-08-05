@@ -1,0 +1,134 @@
+{
+  "issue": 5815,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5815/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5815/diagram.mmd",
+  "design_reviewer": "operator:daniel-approved-plan",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5815-v092-final-repo-migration-plan",
+    "owner": "codex:5815",
+    "generation": 0,
+    "acquired_unix_seconds": 1785909450,
+    "expires_unix_seconds": 1786514250,
+    "heartbeat_unix_seconds": 1785909450,
+    "branch": "codex/5815-v092-final-repo-migration-plan",
+    "worktree": ".worktrees/adl-wp-5815",
+    "protected_paths": [
+      ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+      ".csdlc/issues/5815",
+      ".csdlc/prepared/issues/5815",
+      ".csdlc/evidence/5815"
+    ],
+    "purpose": "Finalize and independently review the Agent Logic repository migration runbook"
+  },
+  "initial": {
+    "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
+    "slug": "v0-92-wp-01a-github-final-agent-logic-repository-migration-plan",
+    "version": "v0.92",
+    "goal": "Produce the final executable Agent Logic repository migration plan from current live inventory truth.",
+    "required_outcome": "A concise reviewed runbook names the five transfers, exclusions, website cutover, exact verification, rollback, and residual risks without performing migration work.",
+    "declared_scope": [
+      ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md"
+    ],
+    "authority_boundary": [
+      "Issue 5815 owns the migration plan only",
+      "No repository transfer or organization mutation is authorized",
+      "Gemini review is advisory and cannot authorize execution"
+    ],
+    "operator_constraints": [
+      "Use current live GitHub inventory as evidence",
+      "Keep the plan concise and executable",
+      "Do not transfer repositories or inspect secret values",
+      "Use Gemini 3.1 Pro for the bounded final review"
+    ],
+    "task_boundary": "Finalize and review one repository migration runbook.",
+    "deliverables": [
+      "Current five-repository migration inventory",
+      "Serial transfer and verification runbook",
+      "Coordinated agent-logic.ai link cutover",
+      "Gemini 3.1 Pro review and disposition"
+    ],
+    "acceptance_criteria": [
+      "Exactly five repositories are marked migrate",
+      "asksifu is retained personally and Horust is excluded",
+      "Existing agent-logic repositories are inventory-only",
+      "The website production and beta link updates are explicit",
+      "Each transfer has preflight, verification, stop, and rollback gates",
+      "Gemini findings are incorporated or dispositioned"
+    ],
+    "dependencies": [
+      "Issue 5765 scheduling record",
+      "Current GitHub source and destination inventories",
+      "Current agent-logic.ai origin/main link inventory"
+    ],
+    "repo_inputs": [
+      ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+      "AGENTS.md"
+    ],
+    "non_goals": [
+      "Repository transfers",
+      "Organization or billing changes",
+      "Remote, website, Actions, package, DNS, secret, or permission mutation"
+    ],
+    "plan_summary": "Reconcile the draft to live inventory, simplify it into an operator-ready runbook, review it with Gemini 3.1 Pro, incorporate findings, and publish the documentation change.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Reconcile repository and website inventory into the final runbook",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Run focused document validation and Gemini 3.1 Pro review",
+        "acceptance_ids": ["AC-5", "AC-6"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Incorporate actionable findings and seal the final reviewed plan",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "No tracked edit occurs on main",
+      "No secret value is inspected or recorded",
+      "No transfer occurs",
+      "asksifu and Horust are never transfer candidates"
+    ],
+    "risks": [
+      "GitHub transfer behavior may differ for forks, packages, Pages, Actions, or private networks",
+      "Website links may temporarily point to a nonexistent destination if cutover is not coordinated",
+      "Historical owner references must not be rewritten as if they were current dependencies"
+    ],
+    "planning_profile": "small",
+    "stop_conditions": [
+      "Any request to transfer a repository or mutate GitHub organization state",
+      "Any need to inspect secret values",
+      "Any edit outside declared or issue-local paths"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "docs-migration-plan",
+        "proof_role": "Validate inventory wording, link references, Markdown hygiene, and diff scope",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "docs",
+        "budget_seconds": 120,
+        "budget_tokens": 2000,
+        "argv": ["git", "diff", "--check"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"]
+      }
+    ],
+    "failure_policy": "Fail closed if inventory is ambiguous, scope widens, or the plan implies transfer authorization.",
+    "review_prompts": [
+      "Does the runbook reflect current GitHub inventory and exclusions?",
+      "Are transfer-specific GitHub risks and verification gates complete?",
+      "Is the agent-logic.ai cutover coordinated without relying on redirects?",
+      "Can the runbook be simplified without weakening safety?"
+    ],
+    "review_scope": "Only the final migration plan and issue-local evidence."
+  }
+}

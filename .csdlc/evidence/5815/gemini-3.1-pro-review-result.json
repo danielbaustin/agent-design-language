@@ -1,0 +1,37 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "google/gemini-3.1-pro-preview",
+    "credential_ref": "env:OPENROUTER_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "google/gemini-3.1-pro-preview",
+    "provider_model_id": "google/gemini-3.1-pro-preview",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "2026-08-04"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1785909747",
+      "duration_ms": 31384,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted provider text len=4356]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 31387,
+  "request_id": "agent-logic-final-repo-migration-plan-gemini-31-pro-20260804",
+  "output_text": "{\n  \"overall\": \"pass_with_findings\",\n  \"findings\": [\n    {\n      \"severity\": \"High\",\n      \"title\": \"GHCR Packages Do Not Transfer Automatically\",\n      \"evidence\": \"Gate 2 states 'Prepare OIDC, package/GHCR... updates' and Gate 4 verifies 'package and GHCR publication/consumption coordinates'.\",\n      \"recommendation\": \"GitHub Container Registry (GHCR) images are scoped to the user/organization namespace, not the repository itself. Transferring a repository does not transfer its GHCR images. Explicitly plan to rebuild and push container images to the new `agent-logic` organization namespace, and update all consumers to pull from the new registry path.\"\n    },\n    {\n      \"severity\": \"Medium\",\n      \"title\": \"Missing Git LFS Quota/Billing Verification\",\n      \"evidence\": \"Gate 0 requires confirming 'Actions and package spending budgets' but omits Git LFS storage and bandwidth quotas. Gate 4 expects 'LFS objects' to be present.\",\n      \"recommendation\": \"Add LFS data pack and quota verification to Gate 0. If the `agent-logic` organization lacks sufficient LFS storage/bandwidth quota compared to the source personal account, LFS objects may become locked or cause the transfer to fail.\"\n    },\n    {\n      \"severity\": \"Medium\",\n      \"title\": \"Unplanned GitHub Pages Custom Domain Downtime\",\n      \"evidence\": \"Gate 4 expects verification of 'Pages URL, custom-domain ownership, DNS/TXT state, and TLS where applicable' immediately post-transfer.\",\n      \"recommendation\": \"Acknowledge that moving a repository with a custom domain breaks the Pages routing and TLS certificate. The domain must be verified in the new organization via DNS TXT records, and a new TLS certificate must be provisioned by Let's Encrypt via GitHub. Add a specific expectation for Pages downtime and TLS provisioning delay.\"\n    },\n    {\n      \"severity\": \"Low\",\n      \"title\": \"Invalid Expectation of 'Teams' in Personal Manifest\",\n      \"evidence\": \"Gate 1 requires the before-manifest to include 'teams', and Gate 4 verifies 'teams' against the manifest.\",\n      \"recommendation\": \"Personal GitHub accounts do not support Teams. Remove 'teams' from the Gate 1 before-manifest requirement. Instead, add a step in Gate 2 to map existing individual collaborators to newly assigned `agent-logic` organization teams.\"\n    },\n    {\n      \"severity\": \"Low\",\n      \"title\": \"Missing Explicit Organization Secret Provisioning\",\n      \"evidence\": \"Operating Rules state 'Record secret and variable names and scopes only. Never export their values.' Gate 4 checks 'secret names'.\",\n      \"recommendation\": \"Repository-level secrets transfer, but any dependencies on user-level secrets (if applicable via Actions) will break. Ensure Gate 2 includes a step for an organization administrator to manually provision any necessary organization-level secrets required by the destination repositories.\"\n    }\n  ],\n  \"residual_risks\": [\n    \"OIDC trust breakage: There will be a strict authentication failure window between the repository transfer completing and the external cloud providers (AWS/GCP) having their OIDC subject claims updated to match `repo:agent-logic/...`.\",\n    \"Redirect hijacking: Although GitHub maintains redirects for transferred repositories, if a new repository or fork with the same name is ever created under the `danielbaustin` account, the redirect will instantly break.\",\n    \"Third-party OAuth Apps and webhooks may fail to deliver payloads during the transfer window or may require an organization owner to explicitly grant access to the App in the new org.\"\n  ],\n  \"simplifications\": [\n    \"Automate Gate 1 (Before-Manifest) generation using the GitHub CLI (`gh repo view --json` and `gh api`) to generate machine-readable state snapshots, significantly reducing manual documentation effort and improving Gate 4 diff accuracy.\",\n    \"Consolidate Gate 4 (Per-Repository Verification) into a standardized GitHub Actions workflow stored in `.github/workflows/` that can be triggered on `workflow_dispatch` immediately after transfer to automatically verify variables, secrets availability, and build success.\",\n    \"For the 4 internal documentation links in `agent-logic.ai`, use relative or domain-agnostic referencing if possible, or script a single search-and-replace command to ensure exact application rather than managing a lingering PR.\"\n  ]\n}",
+  "output_text_excerpt": "[redacted provider text len=4356]",
+  "artifact_ref": ".csdlc/evidence/5815/gemini-3.1-pro-review-result.json",
+  "trace_ref": "provider_adapter.circuit_breaker"
+}

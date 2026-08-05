@@ -1,0 +1,35 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5815,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
+    "slug": "v0-92-wp-01a-github-final-agent-logic-repository-migration-plan",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Produce the final executable Agent Logic repository migration plan from current live inventory truth.",
+      "required_outcome": "A concise reviewed runbook names the five transfers, exclusions, website cutover, exact verification, rollback, and residual risks without performing migration work.",
+      "declared_scope": [
+        ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md"
+      ],
+      "authority_boundary": [
+        "Issue 5815 owns the migration plan only",
+        "No repository transfer or organization mutation is authorized",
+        "Gemini review is advisory and cannot authorize execution"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use current live GitHub inventory as evidence",
+        "Keep the plan concise and executable",
+        "Do not transfer repositories or inspect secret values",
+        "Use Gemini 3.1 Pro for the bounded final review"
+      ]
+    }
+  }
+}

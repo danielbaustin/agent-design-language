@@ -1,0 +1,23 @@
+{
+  "issue": 5815,
+  "base_branch": "main",
+  "branch": "codex/5815-v092-final-repo-migration-plan",
+  "worktree": ".worktrees/adl-wp-5815",
+  "claim": {
+    "id": "claim-5815-v092-final-repo-migration-plan",
+    "owner": "codex:5815",
+    "generation": 0,
+    "acquired_unix_seconds": 1785909450,
+    "expires_unix_seconds": 1786514250,
+    "heartbeat_unix_seconds": 1785909450,
+    "branch": "codex/5815-v092-final-repo-migration-plan",
+    "worktree": ".worktrees/adl-wp-5815",
+    "protected_paths": [
+      ".adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md",
+      ".csdlc/issues/5815",
+      ".csdlc/prepared/issues/5815",
+      ".csdlc/evidence/5815"
+    ],
+    "purpose": "Finalize and independently review the Agent Logic repository migration runbook"
+  }
+}

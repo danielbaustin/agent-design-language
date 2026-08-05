@@ -1,0 +1,12 @@
+flowchart LR
+  A["Confirm five migrate repositories"] --> B["Secure destination organization"]
+  B --> C["Capture redacted repository manifests"]
+  C --> D["Transfer one repository"]
+  D --> E["Verify repository and consumers"]
+  E --> F{"More repositories?"}
+  F -->|"yes"| D
+  F -->|"no"| G["Transfer ADL last"]
+  G --> H["Deploy agent-logic.ai link update"]
+  H --> I["Organization-wide verification"]
+  A --> J["Keep asksifu personal"]
+  A --> K["Exclude inactive Horust fork"]

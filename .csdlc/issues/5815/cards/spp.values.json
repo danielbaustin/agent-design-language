@@ -1,0 +1,82 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5815,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
+    "slug": "v0-92-wp-01a-github-final-agent-logic-repository-migration-plan",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Reconcile the draft to live inventory, simplify it into an operator-ready runbook, review it with Gemini 3.1 Pro, incorporate findings, and publish the documentation change.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Reconcile repository and website inventory into the final runbook",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Run focused document validation and Gemini 3.1 Pro review",
+          "acceptance_ids": [
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Incorporate actionable findings and seal the final reviewed plan",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No tracked edit occurs on main",
+        "No secret value is inspected or recorded",
+        "No transfer occurs",
+        "asksifu and Horust are never transfer candidates"
+      ],
+      "risks": [
+        "GitHub transfer behavior may differ for forks, packages, Pages, Actions, or private networks",
+        "Website links may temporarily point to a nonexistent destination if cutover is not coordinated",
+        "Historical owner references must not be rewritten as if they were current dependencies"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Any request to transfer a repository or mutate GitHub organization state",
+        "Any need to inspect secret values",
+        "Any edit outside declared or issue-local paths"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5815/design.md",
+      "design_digest": "3903051c45a9e32dbdf3b4da816a1a01af50bc43f94759db5d115f01e6559c77",
+      "diagram_ref": ".csdlc/prepared/issues/5815/diagram.mmd",
+      "diagram_digest": "a2f69f6e27574e4c6b78c87a771afb56422873777063c1bf607fc8a08c197e14"
+    }
+  }
+}

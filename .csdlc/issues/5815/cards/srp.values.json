@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5815,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01A][github] Finalize Agent Logic repository migration plan",
+    "slug": "v0-92-wp-01a-github-final-agent-logic-repository-migration-plan",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Only the final migration plan and issue-local evidence.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the runbook reflect current GitHub inventory and exclusions?",
+        "Are transfer-specific GitHub risks and verification gates complete?",
+        "Is the agent-logic.ai cutover coordinated without relying on redirects?",
+        "Can the runbook be simplified without weakening safety?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}
