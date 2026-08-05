@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d53be3af2faf3e66031a9d44cf075b231b9bb435cb118d4f77841ff2b8f74db9",
   "phase": "implemented",
-  "generation": 10,
-  "digest": "1d72be3fe299836dd16d9d84993cbb0a797faf009c376b5c3c6a8f6a96330f2b",
+  "generation": 12,
+  "digest": "94492c367d79f5f3a971e0a2601101b8448eee6adebb29682d3814e7379ee521",
   "claim": {
     "id": "claim-5817-v092-wp01",
     "owner": "codex:5817",
-    "generation": 10,
+    "generation": 12,
     "acquired_unix_seconds": 1785910303,
     "expires_unix_seconds": 1786515103,
     "heartbeat_unix_seconds": 1785910303,
@@ -43,34 +43,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "cf6e23183ca4271777fac03b1c608e63879f398d86687d0acc0f54ef97e6a080",
+      "values_digest": "86f730050804e978976441af8554eb9325aff896ec9143015b442b6e0d057e3c",
       "rendered_digest": "4451da75fc9cb7d4886b7877ab335834a02ceb41919e4bb6b6bdea011277826f",
       "ast_digest": "02838e8a1abbb2d0df6a250cf97f2b8ac4cef2309d3afaa866777d382c2cc66a"
     },
     "stp": {
-      "values_digest": "461837f36f377f246fae743ba7e975f74caa164c18fa774749bb37967e2133ec",
+      "values_digest": "a61c38d09862eb4aa2fbc54d21c54faf79508214715df31003cdaafd878a5e51",
       "rendered_digest": "1d34155c8cb1a8b4cc3a16462f3e1e76a5a9d7fb5dcad1dc0801011ccb404a78",
       "ast_digest": "8cd8c20ceed3eeefa51c5392c7b84f4078db985f356ca1b5abab232dcc3cff65"
     },
     "spp": {
-      "values_digest": "7e4742cf28c1e4c7a75c8492963f7b374c97f7c51d553d0d2b8864494975126c",
+      "values_digest": "6d5be1e824426b293fb2bb4a4b119226dd89bfb6bc60291c93e98fb2045cbf32",
       "rendered_digest": "bf1ba4c2268a9dba7a05452b7849fb8c8404da598b6b4b815a4e6a69350f136e",
       "ast_digest": "ce85c03a9a720cc590ebf965f1ca3824e060ec9ac59512e8c38ca273c7499d18"
     },
     "vpp": {
-      "values_digest": "9ab862e20be6b48176ff3500a4806d8cfc48be02f5962adaf34c79e9e3714ddd",
-      "rendered_digest": "a5829d3bb3ae60682e68dac0291b6e0b1c8837a4ecdf8e939322f190250c864d",
-      "ast_digest": "d238138d0646200a06e3f09e2044f86b2424ad75dc0efaef1ca2e1b6ea92fea6"
+      "values_digest": "d791326a3a2c52e2cc5f0435264cbc463e5bc080e97d636570974625fab98ba8",
+      "rendered_digest": "d85894fa48efe8ccb4d733b7e417a2aff1919e67218d67197cce609c0eb86a74",
+      "ast_digest": "1de323fb0538fbab70651bafd41ee7478461e291662947e26e4af0d863244785"
     },
     "srp": {
-      "values_digest": "f8ffea5eeac48877f0777b6922149becb8389444074f8665bcae1a9910251a77",
+      "values_digest": "824e187649d805e30290764d5e519a93719514e909311f270eb37bc5a251fbea",
       "rendered_digest": "cd4bb98b48746ccdab2be739406c3e989dc54b4ab3b457c6db777cd32e2b83e0",
       "ast_digest": "552cdee9ab9df482004176341730bd937def333d5da4e7703b963ded3bb34816"
     },
     "sor": {
-      "values_digest": "411bba6e153a507da9536d72344adf8ef362daf56e0601894c0a31b6ff4f5b83",
-      "rendered_digest": "a089f561a0551d9ff44c897a963e454a3fe3eefccb86506abfa14c6902df99f0",
-      "ast_digest": "91fac25e40bd2bc57006fa415969c2e4a0cc9366427ed014144a23d8ad068b85"
+      "values_digest": "fe718f23953b64c3b9a015b290aa467c7e5886d047e82bfb51b3cfbec5212c5e",
+      "rendered_digest": "5fad475d72b22d9e908029fe9bfa8bd7833b215a8b5d1326b39f38f1944e02c8",
+      "ast_digest": "c52e343a677f48f2400ad8f7540b22984b28dd8ad86a1e63cb640a885a790963"
     }
   },
   "transitions": [
@@ -180,6 +180,20 @@
       "actor": "codex:5817-review-remediation",
       "reason": "Record the expanded package validator after review remediation aligned retained proof with AC-6.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"purpose\":\"Prove YAML and v0.92 identity, Markdown links, typed card schema identity, unique issue mapping, dependency acyclicity, feature coverage, delivery gates, and active-wave wording across the final package.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 11,
+      "actor": "codex:5817-wp02b-sidecar",
+      "reason": "Refresh the exact package counts after scheduling and fully initializing WP-02B issue 5853.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"v092-planning-package\",\"proof_role\":\"Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 39 unique WP and issue mappings, 38 initialized child records, 456 typed card artifacts and schema identities, required feature contracts, delivery gates, active-wave wording, and scope alignment.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"runtime-v3-loop-requalification\",\"proof_role\":\"Requalify the historical #5104 loop contract against current Runtime v3 bounded execution, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5817/target\",\"--test\",\"reasoning\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors in the complete WP-01 candidate.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"docs\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 12,
+      "actor": "codex:5817-wp02b-sidecar",
+      "reason": "Record the complete active v0.92 issue wave after adding and validating the post-migration build-acceleration sidecar.",
+      "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Activated the canonical v0.92 milestone package, consumed prerequisite truth, requalified historical loop semantics against current Runtime v3, opened the final issue wave including WP-02B, and initialized every child issue with six typed cards.\",\"changes\":[\"Reconciled active milestone, sprint, WBS, ADR, demo, feature, quality, handoff, and execution-readiness surfaces\",\"Opened and verified 38 child issues across 39 unique work packages\",\"Generated 456 typed child card artifacts with exact wave alignment\",\"Scheduled issue 5853 as WP-02B with a bounded same-SHA build-acceleration experiment and executable evidence validator\",\"Added complete feature ownership and hard WP-22 completion gates\",\"Promoted Memory Palace and Adaptive Learning DAG from planning escape hatches to required working Runtime slices\",\"Requalified #5104 loop semantics against current Runtime v3 source and focused tests\"],\"artifacts\":[\"docs/milestones/v0.92\",\".csdlc/issues/5786\",\".csdlc/issues/5801\",\".csdlc/issues/5818 through .csdlc/issues/5853\",\".csdlc/prepared/issues/5853/design.md\",\".csdlc/prepared/issues/5853/diagram.mmd\",\".csdlc/prepared/issues/5853/validate-experiment.rb\",\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\",\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"],\"validation\":[{\"command\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"purpose\":\"Prove 39 unique acyclic WPs, 38 initialized child issues, 456 typed card artifacts, source dispositions, feature coverage, links, and delivery gates.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\"},{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5817/target\",\"--test\",\"reasoning\"],\"purpose\":\"Requalify current Runtime v3 bounded reasoning, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"},{\"command\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5817\"],\"purpose\":\"Confirm the WP-01 typed lifecycle record remains healthy after the sidecar addition.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5817/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Reject whitespace errors in the complete candidate.\",\"outcome\":\"passed\",\"evidence_ref\":\"working tree\"},{\"command\":[\"git\",\"-C\",\"/Users/daniel/git/agent-design-language\",\"status\",\"--short\",\"--branch\"],\"purpose\":\"Confirm the primary checkout remains clean on main.\",\"outcome\":\"passed\",\"evidence_ref\":\"/Users/daniel/git/agent-design-language\"}]}"
     }
   ]
 }

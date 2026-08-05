@@ -17,11 +17,12 @@ raise "issue wave milestone is not v0.92" unless wave.fetch("milestone") == "v0.
 rows = wave.fetch("work_packages")
 wps = rows.map { |row| row.fetch("wp") }
 issues = rows.map { |row| Integer(row.fetch("issue")) }
-raise "expected 38 work packages, found #{rows.length}" unless rows.length == 38
+raise "expected 39 work packages, found #{rows.length}" unless rows.length == 39
 raise "duplicate WP identifier" unless wps.uniq.length == wps.length
 raise "duplicate issue mapping" unless issues.uniq.length == issues.length
 raise "WP-02 must be repository migration issue 5819" unless rows.any? { |row| row["wp"] == "WP-02" && row["issue"] == 5819 }
 raise "WP-02A must be CI issue 5801" unless rows.any? { |row| row["wp"] == "WP-02A" && row["issue"] == 5801 }
+raise "WP-02B must be build acceleration issue 5853" unless rows.any? { |row| row["wp"] == "WP-02B" && row["issue"] == 5853 }
 
 wbs_rows = File.read(WBS_PATH).scan(/^\| (WP-[^ |]+) \| ([^|]+?) \|/).map do |wp, title|
   [wp, title.strip]
@@ -76,7 +77,7 @@ child_rows.each do |row|
 
   stp = JSON.parse(File.read(File.join(issue_root, "cards/stp.values.json")))
     .fetch("content").fetch("values")
-  expected_deliverables = [row.fetch("primary_deliverable"), row.fetch("proof_surface")]
+  expected_deliverables = row.fetch("deliverables", [row.fetch("primary_deliverable"), row.fetch("proof_surface")])
   raise "issue #{issue} task does not match wave" unless stp.fetch("task_boundary") == "Deliver #{row.fetch("primary_deliverable")}."
   raise "issue #{issue} deliverables do not match wave" unless stp.fetch("deliverables") == expected_deliverables
   raise "issue #{issue} dependencies do not match wave" unless stp.fetch("dependencies") == Array(row["depends_on"]).map(&:to_s)
@@ -92,6 +93,7 @@ raise "duplicate child claim paths: #{duplicates.keys.join(", ")}" unless duplic
 
 expected_sources = %w[
   .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
+  .adl/docs/TBD/POST_GITHUB_MIGRATION_BUILD_ACCELERATION_EXPERIMENT_PLAN.md
   .adl/docs/TBD/publication/ADL_MEDIUM_ARTICLE_LIST.md
   .adl/docs/TBD/publication/MEDIUM_ARTICLE_SERIES_PLAN.md
   .adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md

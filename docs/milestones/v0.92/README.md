@@ -18,7 +18,7 @@ in `WP_ISSUE_WAVE_v0.92.yaml`, and each child issue has an initialized typed
 not started through this planning issue.
 
 - Planning: active under `#5817`
-- Issue wave: open; 37 child work-package issues are mapped in the wave file
+- Issue wave: open; 38 child work-package issues are mapped in the wave file
 - Cards: initialized for every mapped child issue; issue owners must complete
   issue-specific design approval and binding before implementation
 - Execution: WP-01 only; child WPs remain dependency-gated
@@ -260,6 +260,8 @@ WP execution should preserve the following milestone rhythm:
 - WP-01B: activate v0.92 across canonical docs and version declarations
 - WP-02: execute the reviewed Agent Logic repository migration
 - WP-02A: establish reliable CI and coverage before broad implementation proof
+- WP-02B: measure one restricted 16-core GitHub-hosted runner against the
+  same-SHA standard-runner control and retain a reversible lane decision
 - feature WPs: implement identity, continuity, memory grounding, capability,
   ACP/cognitive profile, Adaptive Learning DAG queue/proof planning, ACIP
   binary transport-readiness, witness, receipt, and birthday-record surfaces

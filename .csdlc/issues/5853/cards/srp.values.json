@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5853,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-02B][build] Run the post-migration build acceleration experiment",
+    "slug": "v0-92-wp-02b-post-migration-build-acceleration",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "WP-02B issue 5853, its bounded runner experiment, accepted routing if any, and retained exact-head evidence",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Are the control and candidate samples truly comparable at one exact revision?",
+        "Do retained measurements support every lane decision without cache, queue, or cost distortion?",
+        "Are proof semantics, access controls, required checks, fallback, and cleanup preserved?",
+        "Does the issue avoid claiming success from provisioning or planning alone?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

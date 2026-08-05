@@ -6,10 +6,10 @@ Date: 2026-08-04
 
 PASS for WP-01 planning coverage.
 
-- 38 work packages are mapped to 38 unique live GitHub issues.
-- All 38 issues were read through `csdlc-github-issue`; all are open.
+- 39 work packages are mapped to 39 unique live GitHub issues.
+- All 39 issues were read through `csdlc-github-issue`; all are open.
 - All live titles now identify their owning WP.
-- 37 child issues have six initialized typed cards, 444 card artifacts total.
+- 38 child issues have six initialized typed cards, 456 card artifacts total.
 - Every child STP task, deliverable, proof surface, and dependency matches the
   authoritative issue wave.
 - Every indexed product feature has a concrete owning WP and linked feature
@@ -38,8 +38,8 @@ PASS for WP-01 planning coverage.
 
 ## Supporting Work
 
-WP-01/WP-01B planning and documentation, WP-02 repository migration, WP-02A
-CI, WP-05 through WP-07 workflow tooling, WP-20 proof coverage,
+WP-01/WP-01B planning and documentation, WP-02 repository migration,
+WP-02A CI, WP-02B measured build acceleration, WP-05 through WP-07 workflow tooling, WP-20 proof coverage,
 WP-21/WP-21A cleanup and refactoring, WP-22/WP-23 quality and release truth,
 WP-24/WP-24A publication, and WP-25 through WP-30 review and release are
 supporting tracks. They remain required work but are not misrepresented as
@@ -66,13 +66,13 @@ The issue-local validator is the focused documentation authority for this
 package. At the corrected candidate it passed with:
 
 ```text
-v0.92 WP-01 validation passed: 38 WPs, 37 child issues, 444 card artifacts
+v0.92 WP-01 validation passed: 39 WPs, 38 child issues, 456 card artifacts
 ```
 
 That validator parses the issue-wave YAML; verifies the `v0.92` milestone
 identity; proves unique WP and issue mappings and an acyclic dependency graph;
 checks WBS/wave alignment; parses every child card values file; verifies issue,
-version, card-kind, and values-object identity for all 444 card artifacts;
+version, card-kind, and values-object identity for all 456 card artifacts;
 checks required source dispositions, feature contracts, completion gates, and
 active-wave wording; and resolves every relative Markdown link under the v0.92
 milestone package.

@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5817/diagram.mmd
 [
   {
     "lane": "v092-planning-package",
-    "proof_role": "Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 38 unique WP and issue mappings, 37 initialized child records, 444 typed card artifacts and schema identities, required feature contracts, delivery gates, active-wave wording, and scope alignment.",
+    "proof_role": "Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 39 unique WP and issue mappings, 38 initialized child records, 456 typed card artifacts and schema identities, required feature contracts, delivery gates, active-wave wording, and scope alignment.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

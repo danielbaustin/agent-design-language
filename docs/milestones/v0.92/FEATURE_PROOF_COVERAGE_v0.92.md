@@ -9,6 +9,7 @@ linked by the owning issue.
 | Canonical milestone and version truth | WP-01, WP-01B | Issue graph, six-card inventory, docs/version parity | active |
 | Agent Logic repository migration | WP-02 | Transfer manifests, preserved-surface checks, integration verification | planned |
 | Reliable CI and coverage | WP-02A | Lane-selection regressions, coverage aggregation, platform checks | planned |
+| Evidence-based build acceleration | WP-02B | Same-SHA standard/16-core trials, proof parity, canary, cost decision, and fallback or cleanup | planned |
 | Resilient local Runtime | WP-03 | Start, stop, recovery, configuration, clean-log, and failure injection proof | planned |
 | Distributed Guardian/polis | WP-04 | Architecture/security review and 16-issue integrated distributed proof | planned |
 | Faster C-SDLC and remote validation | WP-05, WP-06, WP-07 | Cycle-time comparison, portable runner proof, typed-card parity | planned |

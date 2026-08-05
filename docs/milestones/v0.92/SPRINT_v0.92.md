@@ -47,6 +47,9 @@ the execution sequence.
   review-ready packages with real audio, transcripts, show notes, metadata,
   and RSS-ready artifacts.
 - Repair CI/coverage before it is used as milestone proof.
+- After migration and CI repair, run the bounded same-SHA build-acceleration
+  experiment and adopt no lane without proof parity, canary, cost, and fallback
+  evidence.
 - Consolidate Runtime reliability and schedule the distributed Guardian/polis
   program without hiding its 16 child issues.
 - Reduce C-SDLC cycle time and establish portable remote validation without
@@ -79,14 +82,15 @@ program.
 3. Start all ten Medium articles and all ten Podcast Studio episodes as two
    parallel publication-production tranches.
 4. Repair CI/coverage.
-5. Run Runtime reliability, distributed-runtime, workflow-efficiency, remote
+5. Run the post-migration standard-versus-16-core build-acceleration experiment.
+6. Run Runtime reliability, distributed-runtime, workflow-efficiency, remote
    validation, and prompt-typing tracks in parallel where safe.
-6. Execute birthday, identity, continuity, memory, capability, ACP,
+7. Execute birthday, identity, continuity, memory, capability, ACP,
    adaptive-learning, ACIP/A2A, witness, review-packet, demo, consumer,
    provider-neutral proof, and handoff work in dependency order.
-7. Complete the bounded repository-reduction cleanup and the behavior-preserving
+8. Complete the bounded repository-reduction cleanup and the behavior-preserving
    Rust refactoring and maintainability pass.
-8. Run quality, docs and publication finalization, internal review, external review, remediation,
+9. Run quality, docs and publication finalization, internal review, external review, remediation,
    next-milestone planning, closeout planning, next-milestone review, and
    release ceremony.
 
@@ -106,14 +110,15 @@ and validation tight rather than one oversized single-threaded queue.
 | Phase | Focus | Expected outcome |
 | --- | --- | --- |
 | 1 | Planning, migration, and publication setup | Canonical docs, reviewed issue wave, six-card bundles, completed Agent Logic repository migration, ten article drafts, and ten podcast production packets underway in parallel. |
-| 2 | Runtime and workflow foundations | Consolidated Runtime launch/resilience, architecture-gated distributed Guardian/polis program, C-SDLC efficiency, remote validation, and prompt typing. |
-| 3 | Birthday contract | Definition of birth and negative cases. |
-| 4 | Identity and continuity | Stable name, identity root, continuity record, and cycle evidence. |
-| 5 | Memory, capability, and cognitive profile | Memory grounding, capability envelope, ACP/cognitive profile, and redacted review boundaries. |
-| 6 | Adaptive learning and ACIP/A2A readiness | Adaptive Learning DAG queue plus reconciled protocol semantics, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS proof. |
-| 7 | Witness and integrated review packet | Birth witness set, receipt, and reviewer packet. |
-| 8 | Demos, consumers, and handoff | First-birthday demo, Observatory/Unity integration, provider-neutral multi-agent proof, governance handoff, and proof matrix. |
-| 9 | Cleanup and release tail | Repository reduction, Rust refactoring, quality, docs, article and podcast finalization, reviews, remediation, next-milestone planning, closeout planning, and ceremony. |
+| 2 | CI and build foundation | Reliable CI/coverage plus a completed same-SHA standard-versus-16-core experiment with a reversible lane decision. |
+| 3 | Runtime and workflow foundations | Consolidated Runtime launch/resilience, architecture-gated distributed Guardian/polis program, C-SDLC efficiency, remote validation, and prompt typing. |
+| 4 | Birthday contract | Definition of birth and negative cases. |
+| 5 | Identity and continuity | Stable name, identity root, continuity record, and cycle evidence. |
+| 6 | Memory, capability, and cognitive profile | Memory grounding, capability envelope, ACP/cognitive profile, and redacted review boundaries. |
+| 7 | Adaptive learning and ACIP/A2A readiness | Adaptive Learning DAG queue plus reconciled protocol semantics, protobuf schema, public catalog, JSON projection, and authenticated full-duplex WSS proof. |
+| 8 | Witness and integrated review packet | Birth witness set, receipt, and reviewer packet. |
+| 9 | Demos, consumers, and handoff | First-birthday demo, Observatory/Unity integration, provider-neutral multi-agent proof, governance handoff, and proof matrix. |
+| 10 | Cleanup and release tail | Repository reduction, Rust refactoring, quality, docs, article and podcast finalization, reviews, remediation, next-milestone planning, closeout planning, and ceremony. |
 
 ## Dependencies To Check Before WP-01
 

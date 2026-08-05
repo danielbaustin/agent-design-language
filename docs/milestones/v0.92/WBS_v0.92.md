@@ -38,6 +38,7 @@ moral-trace, or constitutional-governance milestones.
 | WP-24 | Ten-article launch series | Write all ten planned ADL launch articles in parallel, bring every article to editorial-review-ready state, maintain them as milestone evidence lands, and finalize claims during WP-23. | Ten complete review-ready article drafts, one coherent series arc, claim/evidence matrix, and final release-grounded publication disposition. | WP-02 for parallel drafting; WP-23 for final release-truth alignment. |
 | WP-24A | Podcast Studio first ten episodes | Produce all first ten Podcast Studio episodes in parallel as complete review-ready packages rather than topic placeholders. | Ten reviewed episode packages with scripts, transcripts, show notes, final audio and QA, guest metadata, artwork/ID3 metadata, and RSS-ready enclosure records. | WP-02; established Podcast Studio v2 proof; Agent Logic route and storage decisions. |
 | WP-02A | CI and coverage reliability | Repair fast/slow routing, coverage aggregation, platform parity, and immediate-failure causes before broad execution. | Green proving substrate with focused and slow lanes separated. | WP-02. |
+| WP-02B | Post-migration build acceleration experiment | Compare the same exact CI workloads on standard and one restricted 16-core GitHub-hosted Ubuntu runner without changing proof semantics. | Complete cold/warm measurement corpus, proof parity, one canary, lane decisions, and fallback or cleanup evidence. | WP-02, WP-02A, organization-owner budget and runner-access approval. |
 | WP-03 | Runtime launch and resilience consolidation | Combine launch recovery and long-lived Agent OS plans into one bounded reliability tranche. | One Guardian-owned launch path, resilient kernel startup, configuration, recovery, and lifecycle proof. | WP-02A. |
 | WP-04 | Distributed Guardian/polis runtime | Execute and complete the documented 16-issue distributed-runtime program within v0.92 with architecture and security gates. | Reviewed architecture/security gate, all 16 child issues landed, and integrated distributed proof. | WP-03. |
 | WP-05 | C-SDLC estimation and cycle-time reduction | Join session estimation/reconnection and sprint cycle-time work into one workflow-efficiency track. | Measured cycle-time baseline, simplified lifecycle path, and regression proof. | WP-02A. |
@@ -74,7 +75,7 @@ moral-trace, or constitutional-governance milestones.
 ## Work Packages
 
 The work packages are the active `WP-01` through `WP-30` rows above,
-including the bounded `WP-01B`, `WP-13A`, `WP-18A`, `WP-18B`, `WP-21A`, and `WP-28A` sidecars. They
+including the bounded `WP-01B`, `WP-02B`, `WP-13A`, `WP-18A`, `WP-18B`, `WP-21A`, and `WP-28A` sidecars. They
 are backed by concrete GitHub issues and initialized six-card bundles.
 
 ## Sequencing
@@ -88,7 +89,8 @@ closeout planning, next-milestone review, and ceremony form the release tail.
 
 ## Sequencing Pressure
 
-1. Update canonical docs and repair CI/coverage before broad execution credit.
+1. Update canonical docs, complete repository migration, repair CI/coverage,
+   and run the bounded build-acceleration experiment before broad execution credit.
 2. Run Runtime reliability, distributed-runtime, C-SDLC efficiency, remote
    validation, and prompt-typing work in parallel where dependencies permit.
 3. Start the birthday contract and negative cases, then add identity and

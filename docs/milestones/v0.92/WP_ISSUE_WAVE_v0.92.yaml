@@ -11,6 +11,7 @@ notes:
   - WP-01 updates canonical docs and consumes the final v0.91.8 release package, the activation-test map, AEE completion evidence, issue 3377, and WP-22 planning dispositions before opening the wave.
   - WP-02 performs the Agent Logic GitHub organization repository migration before substantive milestone work begins.
   - WP-02A repairs CI and coverage before broad milestone proof receives credit.
+  - WP-02B runs one bounded post-migration build-acceleration experiment only after WP-02 and WP-02A are complete.
   - Runtime, distributed Guardian/polis, C-SDLC efficiency, remote validation, and prompt-typing tracks may proceed in parallel only where their declared dependencies allow.
   - WP-01B activates v0.92 across canonical documentation and version surfaces immediately after WP-01 and before substantive implementation.
   - WP-24 writes all ten launch articles in parallel after WP-02 and receives final release-truth alignment in WP-23.
@@ -45,6 +46,10 @@ scheduled_tbd_inputs:
     wp: WP-02
     sources:
       - .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md
+  - track: post_migration_build_acceleration
+    wp: WP-02B
+    sources:
+      - .adl/docs/TBD/POST_GITHUB_MIGRATION_BUILD_ACCELERATION_EXPERIMENT_PLAN.md
   - track: distributed_guardian_polis
     wp: WP-04
     sources:
@@ -180,6 +185,20 @@ work_packages:
     depends_on: [WP-02]
     primary_deliverable: reliable focused and slow test routing, coverage aggregation, and platform parity
     proof_surface: CI contracts, failure regressions, and exact-head green required checks
+  - wp: WP-02B
+    issue: 5853
+    title: Post-migration build acceleration experiment
+    queue: tooling_operations
+    depends_on: [WP-02, WP-02A, Agent Logic organization-owner approval for budget and selected-repository runner access]
+    primary_deliverable: a measured and reversible post-migration build acceleration decision for the standard and 16-core GitHub-hosted runner comparison
+    proof_surface: eligibility and frozen-manifest records, five cold and ten warm trials per platform and workload, queue/cache/timing/cost analysis, proof parity, one canary, and ten-run observation or cleanup evidence
+    deliverables:
+      - Migration-eligibility receipt and frozen workload/environment manifest
+      - Raw five-cold and ten-warm trial records for each platform and selected workload
+      - Queue, cache, timing, reliability, proof-parity, and cost analysis
+      - Restricted runner-group access, concurrency, budget, and rollback evidence
+      - One production-semantics canary and lane-by-lane adopt/reject/defer decision
+      - Ten-run post-change observation for adopted routes or cleanup confirmation for rejected routes
   - wp: WP-03
     issue: 5820
     title: Runtime launch and resilience consolidation
