@@ -1,0 +1,81 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5856,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "d4beafc6da08ae46a5a30d44df7d51865c9e2829a8b6bede0a15aa07b234ae44",
+  "phase": "initialized",
+  "generation": 0,
+  "digest": "bb69630c525cf7b62b327a2e47988f7ac3a6ae51f294712cc179be1133e7eb47",
+  "claim": {
+    "id": "claim-5856-v092-sprint-preparation",
+    "owner": "wp01:sprint-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1785918233,
+    "expires_unix_seconds": 1788510233,
+    "heartbeat_unix_seconds": 1785918233,
+    "branch": "codex/5856-v092-sprint-quality-and-release-tail",
+    "worktree": ".worktrees/adl-wp-5856",
+    "protected_paths": [
+      ".csdlc/issues/5856",
+      ".csdlc/prepared/issues/5856",
+      ".csdlc/evidence/5856"
+    ],
+    "purpose": "Prepare the v0.92 quality-and-release-tail sprint for independent session execution"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5856/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5856/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:daniel-v092-parallel-sprints",
+      "revision": "c874e9d3a3705a6ab9c92c4594ff685b9fccb1cdd5180cbd3e50da7459a0ef9b"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "e9d23a55b35268ea8a2109c4e5af67c47c89f956fb540226875d2cebc459b205",
+      "rendered_digest": "be9641819bff32c1f3130ca640b3cc3f5bbf52eead08ee6a7171f72c4babb1ce",
+      "ast_digest": "bbe17d725d3194c2a60d2ae5bc2ef167b888a892c0487e85975c5ec7ab837ff5"
+    },
+    "stp": {
+      "values_digest": "18a5c12a44d28660d699b01ff0ba803228f583c9bbf02f186742c1f78948b1bf",
+      "rendered_digest": "143fe8cd32a74567b6561c95a5422dfd1024e8d576dcafba0b59d37bcfad5149",
+      "ast_digest": "98a18574152668b842c2caf701878c9ef3a46b4634e32740caf3f78d7256677b"
+    },
+    "spp": {
+      "values_digest": "ecc4923403c2e70e3ed1f53bb6ef4b291eae3c79e7fd5af58f0c90255ef742e5",
+      "rendered_digest": "6f883e5308e6a9c46606d9a2c92b0dd3fd1add31b8236f041a694429b6dfcaba",
+      "ast_digest": "a4af73bb0919f992c174bb93495a07c2e6aa2718f96da1d47365c3ed07707642"
+    },
+    "vpp": {
+      "values_digest": "85b70268e5bce6b3b0ced3a299855f0e8c1974e51b3ff669d2db97ecc0008e6d",
+      "rendered_digest": "bf63f634f723db5fd5a002795eb5154c62e020a70f5d5c0f038b0e0b06ce7af0",
+      "ast_digest": "1b984be9335ac2db6872c1f2ade5034d6e2ff852acefed7d74505613e41ae898"
+    },
+    "srp": {
+      "values_digest": "d7999727f853186bc44ed544482f5a06dc8a83ad2464c7044f20eac5c340bf9c",
+      "rendered_digest": "7a17796ea2fa7db2fda1f543273ef115d9a04de777c610bced9b4a8a69459453",
+      "ast_digest": "c8e3105097d72cc608516565276835d2e7e359b99bf385c337ef17f3845390fa"
+    },
+    "sor": {
+      "values_digest": "a1f00fcfd12be55c210a17f30358ea565dfc2b70a852775b5ddcff8107e4bdcd",
+      "rendered_digest": "71d78a944a2c6152f8e2760da33bb2223fa288dde02a84732286235e89f4191a",
+      "ast_digest": "4cbcee4a32a79886a902bbac4441224352981b99edd814187c751d7a6a2abb37"
+    }
+  },
+  "transitions": [],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "wp01:sprint-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    }
+  ]
+}

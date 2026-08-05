@@ -1,0 +1,21 @@
+sprint_issue: 5854
+version: v0.92
+slug: demonstration-handoff-publication
+execution_mode: hybrid
+ordered_issue_numbers: [5835, 5836, 5838, 5839, 5840, 5844, 5845]
+safe_parallel_lanes:
+  - issues: [5844, 5845]
+    gate: issue 5819 complete
+    boundary: Articles and podcasts are independently reviewable publication packages.
+  - issues: [5835, 5836, 5839]
+    gate: each declared child dependency satisfied
+    boundary: Demo, migration, and governance handoff retain separate child worktrees.
+serial_gates:
+  - issues 5835 and 5836 follow issue 5834
+  - issue 5838 follows issues 5832, 5834, and 5836
+  - issue 5840 follows issues 5836, 5837, 5838, and 5839
+  - final publication claims align only after issue 5843
+review_path: .csdlc/evidence/5854/sprint-review.md
+activity_log_path: .csdlc/evidence/5854/activity.jsonl
+child_goal_rule: Each child session creates an issue-bound goal after bind and before implementation.
+closeout_rule: Review real proof artifacts and publication truth before umbrella closeout.

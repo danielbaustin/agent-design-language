@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5855,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Runtime, Observatory, polis, and protocol sprint",
+    "slug": "runtime-observatory-polis-protocol",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Review the exact sprint issue record, design, diagram, Sprint Execution Packet, child membership, parallel-lane independence, serial gates, child-authority boundary, review path, activity-log declaration, and terminal closeout rule.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the packet preserve exact child ownership and dependency truth?",
+        "Are parallel lanes actually independent and are serial gates explicit?",
+        "Can the umbrella close only after every child has truthful terminal state?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

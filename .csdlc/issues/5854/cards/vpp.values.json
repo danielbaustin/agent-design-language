@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5854,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Demonstration, handoff, and publication sprint",
+    "slug": "demonstration-handoff-publication",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "v092-sprint-package",
+          "proof_role": "Sprint membership, packet completeness, child authority boundaries, and review-ready coordination truth",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5817/validate-v092-package.rb"
+          ],
+          "parallel_group": "v092-docs",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on overlapping ownership, unmet serial gates, missing child readiness, or unsupported completion claims.",
+      "design_ref": ".csdlc/prepared/issues/5854/design.md",
+      "design_digest": "3a0febc8c51927d94207ad4a06ae4bc10ab3d3ac9e726eece2fce9c4263323d3",
+      "diagram_ref": ".csdlc/prepared/issues/5854/diagram.mmd",
+      "diagram_digest": "3aa3d305ede97572d5144451f5a22e0d0521938ac1cedce3bbab87ab21308a6b"
+    }
+  }
+}

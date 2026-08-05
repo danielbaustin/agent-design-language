@@ -100,6 +100,8 @@ sprints = wave.fetch("execution_sprints")
 raise "expected five execution sprints" unless sprints.length == 5
 sprint_names = sprints.map { |sprint| sprint.fetch("sprint") }
 raise "duplicate execution sprint" unless sprint_names.uniq.length == sprint_names.length
+sprint_issues = sprints.map { |sprint| Integer(sprint.fetch("issue")) }
+raise "sprint umbrella issue set differs" unless sprint_issues.sort == [5854, 5855, 5856, 5857, 5858]
 expected_members = rows.reject { |row| row.fetch("wp") == "WP-01" }.map { |row| row.fetch("wp") } +
   supporting_rows.map { |row| "issue-#{row.fetch("issue")}" }
 actual_members = sprints.flat_map { |sprint| sprint.fetch("members").map(&:to_s) }
@@ -110,6 +112,57 @@ sprints.each do |sprint|
   raise "sprint lacks serial gates" unless sprint.fetch("serial_gates").is_a?(Array)
   raise "sprint lacks parallel-lane declaration" unless sprint.fetch("parallel_lanes").is_a?(Array)
   raise "sprint lacks write-surface boundary" if sprint.fetch("write_surface").strip.empty?
+
+  issue = Integer(sprint.fetch("issue"))
+  issue_root = File.join(ROOT, ".csdlc/issues", issue.to_s)
+  record = JSON.parse(File.read(File.join(issue_root, "index.json")))
+  raise "sprint issue #{issue} is not initialized" unless record.fetch("phase") == "initialized"
+  raise "sprint issue #{issue} record identity mismatch" unless record.fetch("issue") == issue
+  CARD_NAMES.each do |card|
+    %W[#{card}.md #{card}.values.json].each do |name|
+      path = File.join(issue_root, "cards", name)
+      raise "sprint issue #{issue} missing #{name}" unless File.file?(path) && !File.zero?(path)
+    end
+    values = JSON.parse(File.read(File.join(issue_root, "cards", "#{card}.values.json")))
+    identity = values.fetch("identity")
+    content = values.fetch("content")
+    raise "sprint issue #{issue} #{card} identity mismatch" unless identity.fetch("issue") == issue
+    raise "sprint issue #{issue} #{card} version mismatch" unless identity.fetch("version") == "v0.92"
+    raise "sprint issue #{issue} #{card} kind mismatch" unless content.fetch("card_kind") == card
+  end
+
+  packet_path = File.join(ROOT, ".csdlc/prepared/issues", issue.to_s, "sprint-execution-packet.yaml")
+  packet = YAML.safe_load(File.read(packet_path), aliases: true)
+  raise "sprint packet #{issue} identity mismatch" unless Integer(packet.fetch("sprint_issue")) == issue
+  member_issues = sprint.fetch("members").map do |member|
+    member = member.to_s
+    if member.start_with?("issue-")
+      Integer(member.delete_prefix("issue-"))
+    else
+      Integer(rows.find { |row| row.fetch("wp") == member }.fetch("issue"))
+    end
+  end
+  raise "sprint packet #{issue} membership differs" unless packet.fetch("ordered_issue_numbers") == member_issues
+  raise "sprint packet #{issue} lacks review path" if packet.fetch("review_path").strip.empty?
+  raise "sprint packet #{issue} lacks activity log" if packet.fetch("activity_log_path").strip.empty?
+  raise "sprint packet #{issue} lacks child goal rule" if packet.fetch("child_goal_rule").strip.empty?
+
+  human_packet_path = File.join(ROOT, ".csdlc/prepared/issues", issue.to_s, "sprint-execution-packet.md")
+  human_packet = File.read(human_packet_path)
+  required_sections = [
+    "## Child Issue Wave",
+    "## Recommended Execution Order",
+    "## Watcher Policy",
+    "## Budget And Goal Accounting",
+    "## Watcher Plan",
+    "## Safe Parallel Lanes",
+    "## Candidate Parallel Lanes",
+    "## Serial Gates",
+    "## Parallelism Outcome Plan",
+    "## Sprint Closeout Rollup Expectations"
+  ]
+  missing_sections = required_sections.reject { |section| human_packet.include?(section) }
+  raise "sprint packet #{issue} missing sections: #{missing_sections.join(", ")}" unless missing_sections.empty?
 end
 
 expected_sources = %w[
@@ -227,4 +280,5 @@ Dir.glob(File.join(milestone_root, "**/*.md")).sort.each do |markdown_path|
   end
 end
 
-puts "v0.92 WP-01 validation passed: #{rows.length} WPs, #{child_rows.length} child issues, #{child_rows.length * CARD_NAMES.length * 2} card artifacts"
+card_artifact_count = (child_rows.length + sprints.length) * CARD_NAMES.length * 2
+puts "v0.92 WP-01 validation passed: #{rows.length} WPs, #{child_rows.length} child issues, #{sprints.length} sprint umbrellas, #{card_artifact_count} card artifacts"

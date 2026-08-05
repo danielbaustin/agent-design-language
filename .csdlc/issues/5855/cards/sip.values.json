@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5855,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Runtime, Observatory, polis, and protocol sprint",
+    "slug": "runtime-observatory-polis-protocol",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Coordinate one resilient Runtime and Observatory path with distributed polis, protocol, provider, and consumer integration.",
+      "required_outcome": "A reviewable sprint coordination lane can route #5800, #5820, #5795, #5821, #5832, #5837 through their own typed lifecycles without scope collision or false completion.",
+      "declared_scope": [
+        ".csdlc/issues/5855",
+        ".csdlc/prepared/issues/5855",
+        ".csdlc/evidence/5855"
+      ],
+      "authority_boundary": [
+        "Sprint coordination records only; child issues own implementation and evidence."
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use typed C-SDLC v2 lifecycle only",
+        "Never write tracked changes on main",
+        "Never use /private/tmp",
+        "Use repo-native GitHub tools only",
+        "The umbrella coordinates child sessions and never implements child code",
+        "Every child session reads AGENTS.md, binds its own worktree, and creates its own goal before implementation"
+      ]
+    }
+  }
+}

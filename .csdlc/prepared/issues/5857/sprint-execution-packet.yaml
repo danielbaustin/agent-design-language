@@ -1,0 +1,18 @@
+sprint_issue: 5857
+version: v0.92
+slug: first-birthday-core
+execution_mode: hybrid
+ordered_issue_numbers: [5825, 5826, 5827, 5828, 5829, 5830, 5831, 5833, 5834]
+safe_parallel_lanes:
+  - issues: [5828, 5829, 5830, 5831]
+    gate: declared issue dependencies satisfied
+    boundary: Memory, capability, cognitive-profile, and learning work retain separate child ownership.
+serial_gates:
+  - 5825 before 5826 and 5829
+  - 5826 before 5827 and 5828
+  - issues 5827, 5828, 5829, and 5830 before 5833
+  - issues 5831 and 5833 before 5834
+review_path: .csdlc/evidence/5857/sprint-review.md
+activity_log_path: .csdlc/evidence/5857/activity.jsonl
+child_goal_rule: Each child session creates an issue-bound goal after bind and before implementation.
+closeout_rule: Complete the birthday-core integrated review before umbrella closeout.

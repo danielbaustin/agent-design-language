@@ -1,0 +1,81 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5855,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "a270f26590e5bc852e05a9eacf23bc22b7c06f282d28da0bda5fd1183ce8697a",
+  "phase": "initialized",
+  "generation": 0,
+  "digest": "7bf2fa71b1555a30881985b4e105cdc9143ce2328f06f0e6724d8b0587124a56",
+  "claim": {
+    "id": "claim-5855-v092-sprint-preparation",
+    "owner": "wp01:sprint-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1785918233,
+    "expires_unix_seconds": 1788510233,
+    "heartbeat_unix_seconds": 1785918233,
+    "branch": "codex/5855-v092-sprint-runtime-observatory-polis-protocol",
+    "worktree": ".worktrees/adl-wp-5855",
+    "protected_paths": [
+      ".csdlc/issues/5855",
+      ".csdlc/prepared/issues/5855",
+      ".csdlc/evidence/5855"
+    ],
+    "purpose": "Prepare the v0.92 runtime-observatory-polis-protocol sprint for independent session execution"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5855/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5855/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:daniel-v092-parallel-sprints",
+      "revision": "14efc285fc7c301a47f421208ca999e55059c7610b4b35f6e4a73937eb6a8629"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "89ff57d71a927bd35af5afe5c96c0c00390c70d1e81ef034ba807df967fff226",
+      "rendered_digest": "f590bfc95016ac139f718f3b6b74b04a03c4dfe9a829a329c0eeedeefcfe0312",
+      "ast_digest": "8385c8203746306f20d870eb14b148b52958547f9d6ab9f9fdbccb43ad091831"
+    },
+    "stp": {
+      "values_digest": "257838fdf05d1382aa20035d93096749957ae587fcc36e63081c1918a4d80b9f",
+      "rendered_digest": "52e0823bce4965bfd6a7b79adc0290e45804a495043a21c856a21cf82c6dcb55",
+      "ast_digest": "6741fdd80721fae379cb7812a946182fc6d7219eb6930ecd5388c508b5ed596b"
+    },
+    "spp": {
+      "values_digest": "33ab1804d302a2ab69ffec585250b79c4b4a1319d3ad833395e1f4f33608923a",
+      "rendered_digest": "f08c6ec3f61c4321a046e8bcae69981d1343e3d383c9d89ab63d74d9f387e9fa",
+      "ast_digest": "b108a69ac2472532925dad4502a512bf9cda48cea127f2c1d42430b784da3fb6"
+    },
+    "vpp": {
+      "values_digest": "d7cffc3899b39cb2c1ed85d143603c891dd9e311ecdf4478bed0c5bca8539308",
+      "rendered_digest": "eec37c869d8be54e7d5aedfc538217e77599836310e17bc82fa134bbb17da00c",
+      "ast_digest": "0b1dfc098a357e4da322ad1b21b59a400d387402a5c0bacf0021da6d3fe73173"
+    },
+    "srp": {
+      "values_digest": "ee40040df50647147b03d28b6a69b546574be1892003b04d6cf14849529a5bf7",
+      "rendered_digest": "fc72df4f797db9e0cd8ed3f2bfaff9ed9eea3a4df2a23ca39fc437be7d606926",
+      "ast_digest": "eaa72e278ec8d8ae093373116e31dbd25971f3adfb8abb8f8b40342bf8a25527"
+    },
+    "sor": {
+      "values_digest": "579f7d791158b0b2fce2701ac3dd64f56888eaa7a2d5dc8af9ffe162375bf76b",
+      "rendered_digest": "ee166c4f8b6dac2c318f7396a678665694aa71f9bd74459818dcfdaa9af433e3",
+      "ast_digest": "2b3232206d8981abfc1b9b7bcb82cca09f77da6ae67616751a9b57f1c1ff1b51"
+    }
+  },
+  "transitions": [],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "wp01:sprint-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    }
+  ]
+}

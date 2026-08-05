@@ -1,0 +1,21 @@
+sprint_issue: 5858
+version: v0.92
+slug: foundation-and-throughput
+execution_mode: hybrid
+ordered_issue_numbers: [5818, 5819, 5812, 5801, 5853, 5822, 5823, 5824]
+safe_parallel_lanes:
+  - issues: [5822, 5823]
+    gate: issue 5801 complete
+    boundary: C-SDLC efficiency and remote validation use separate child worktrees.
+  - issues: [5812]
+    gate: coordinate with issue 5801
+    boundary: Freedom Gate cleanup remains a bounded child repair.
+serial_gates:
+  - 5818 before 5819
+  - 5819 before 5801 and 5853
+  - 5801 before 5853, 5822, and 5823
+  - 5822 before 5824
+review_path: .csdlc/evidence/5858/sprint-review.md
+activity_log_path: .csdlc/evidence/5858/activity.jsonl
+child_goal_rule: Each child session creates an issue-bound goal after bind and before implementation.
+closeout_rule: Review and close the umbrella only after every child has truthful issue and PR terminal state.

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
     "slug": "v0-92-wp-01-planning-promote-canonical-docs-and-open-final-issue-wave",
     "version": "v0.92",
-    "generation": 14
+    "generation": 18
   },
   "status": "ready",
   "content": {
@@ -17,7 +17,7 @@
       "lanes": [
         {
           "lane": "v092-planning-package",
-          "proof_role": "Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 39 unique WP mappings, 41 initialized child and supporting records, 492 typed card artifacts and schema identities, five complete sprint umbrellas, required feature contracts, delivery gates, active-wave wording, and scope alignment.",
+          "proof_role": "Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 39 unique WP mappings, 41 initialized child and supporting records, five initialized live sprint umbrella records, 552 typed card artifacts and schema identities, exact sprint execution packets, required feature contracts, delivery gates, active-wave wording, and scope alignment.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",

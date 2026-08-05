@@ -7,20 +7,20 @@
     "title": "[v0.92][WP-01][planning] Promote canonical docs and open the final issue wave",
     "slug": "v0-92-wp-01-planning-promote-canonical-docs-and-open-final-issue-wave",
     "version": "v0.92",
-    "generation": 14
+    "generation": 18
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "sor",
     "values": {
-      "summary": "Activated the canonical v0.92 milestone package, requalified prerequisites, opened the complete issue wave, initialized every child and supporting issue, and organized execution into five dependency-aware sprint umbrellas.",
+      "summary": "Activated the canonical v0.92 milestone package, requalified prerequisites, opened the complete issue wave, initialized every child, supporting issue, and sprint umbrella, and prepared five independent sprint sessions.",
       "actual_changes": [
         "Reconciled active milestone, sprint, WBS, ADR, demo, feature, quality, handoff, and execution-readiness surfaces",
         "Opened and verified 41 child and supporting issues across 39 unique work packages and three explicit supporting issues",
-        "Generated 492 typed card artifacts with exact wave alignment",
-        "Scheduled issue 5853 as WP-02B with a bounded same-SHA build-acceleration experiment and executable evidence validator",
-        "Recovered and initialized supporting issues 5812, 5800, and 5795 with bounded design and proof contracts",
-        "Organized every child and supporting issue exactly once across five coordination-only sprint umbrellas with serial gates, parallel lanes, and write-surface boundaries",
+        "Created live sprint umbrella issues 5854 through 5858 and initialized each with six typed cards",
+        "Generated 552 typed card artifacts with exact wave and sprint alignment",
+        "Added one Sprint Execution Packet per umbrella with exact membership, safe lanes, serial gates, review path, activity log, child-goal rule, and closeout rule",
+        "Kept every umbrella coordination-only so child issues retain implementation, proof, review, publication, and closeout authority",
         "Added complete feature ownership and hard WP-22 completion gates, including WP-24 and WP-24A",
         "Requalified #5104 loop semantics against current Runtime v3 source and focused tests"
       ],
@@ -31,11 +31,11 @@
         ".csdlc/issues/5800",
         ".csdlc/issues/5801",
         ".csdlc/issues/5812",
-        ".csdlc/issues/5818 through .csdlc/issues/5853",
+        ".csdlc/issues/5818 through .csdlc/issues/5858",
         ".csdlc/prepared/issues/5795",
         ".csdlc/prepared/issues/5800",
         ".csdlc/prepared/issues/5812",
-        ".csdlc/prepared/issues/5853/validate-experiment.rb",
+        ".csdlc/prepared/issues/5854 through .csdlc/prepared/issues/5858",
         ".csdlc/evidence/5817/feature-and-issue-coverage-audit.md",
         ".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md"
       ],
@@ -45,7 +45,7 @@
             "ruby",
             ".csdlc/prepared/issues/5817/validate-v092-package.rb"
           ],
-          "purpose": "Prove 39 WPs, 41 initialized child and supporting issues, 492 typed card artifacts, five complete sprint umbrellas, source dispositions, feature coverage, links, and delivery gates.",
+          "purpose": "Prove 39 WPs, 41 initialized child and supporting issues, five initialized sprint umbrellas, 552 typed card artifacts, exact execution packets, source dispositions, feature coverage, links, and delivery gates.",
           "outcome": "passed",
           "evidence_ref": ".csdlc/evidence/5817/feature-and-issue-coverage-audit.md"
         },
@@ -101,7 +101,7 @@
           "evidence_ref": "/Users/daniel/git/agent-design-language"
         }
       ],
-      "integration_state": "not_started",
+      "integration_state": "worktree_only",
       "publication_state": "not_published",
       "merge_state": "not_merged",
       "closeout_state": "not_started",

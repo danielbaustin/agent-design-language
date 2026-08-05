@@ -1,0 +1,56 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5855,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Runtime, Observatory, polis, and protocol sprint",
+    "slug": "runtime-observatory-polis-protocol",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare and operate only the runtime-observatory-polis-protocol sprint umbrella; do not implement its child issues.",
+      "deliverables": [
+        "Issue-specific six-card sprint record",
+        "Sprint Execution Packet with membership, lanes, gates, review path, and activity log",
+        "Integrated sprint review and truthful umbrella closeout record"
+      ],
+      "acceptance_criteria": [
+        "AC-1: The Sprint Execution Packet records exact child membership and dependency order.",
+        "AC-2: Safe parallel lanes and serial gates are explicit and do not overlap child ownership.",
+        "AC-3: The umbrella coordinates only; each child retains implementation, proof, review, publication, and closeout authority.",
+        "AC-4: Every child handoff requires issue-bound bind, readiness, and session-goal truth before implementation.",
+        "AC-5: Integrated sprint review and umbrella closeout occur only after every child reaches truthful terminal state."
+      ],
+      "dependencies": [
+        "#5800",
+        "#5820",
+        "#5795",
+        "#5821",
+        "#5832",
+        "#5837"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/SPRINT_v0.92.md",
+        ".csdlc/prepared/issues/5855/sprint-execution-packet.yaml",
+        "#5800",
+        "#5820",
+        "#5795",
+        "#5821",
+        "#5832",
+        "#5837"
+      ],
+      "non_goals": [
+        "Implementing child issue code",
+        "Replacing child C-SDLC records",
+        "Collapsing child review or publication into the umbrella",
+        "Claiming parallel execution beyond the declared packet"
+      ]
+    }
+  }
+}

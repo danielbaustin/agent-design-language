@@ -8,11 +8,11 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: draft
 
 ## Scope
 
-Canonical v0.92 activation surfaces, issue-wave evidence, and issue-local lifecycle records.
+
 
 ## Prompts
 

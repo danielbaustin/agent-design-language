@@ -1,0 +1,16 @@
+sprint_issue: 5856
+version: v0.92
+slug: quality-and-release-tail
+execution_mode: sequential
+ordered_issue_numbers: [5786, 5841, 5842, 5843, 5846, 5847, 5848, 5849, 5850, 5851, 5852]
+safe_parallel_lanes: []
+serial_gates:
+  - 5786 before 5841
+  - 5841 before 5842
+  - 5842 before 5843
+  - 5843 before 5846
+  - issues 5846 through 5852 execute in dependency order
+review_path: .csdlc/evidence/5856/sprint-review.md
+activity_log_path: .csdlc/evidence/5856/activity.jsonl
+child_goal_rule: Each child session creates an issue-bound goal after bind and before implementation.
+closeout_rule: No release-tail advancement occurs without the preceding child's truthful terminal state.

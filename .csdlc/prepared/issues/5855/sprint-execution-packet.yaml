@@ -1,0 +1,20 @@
+sprint_issue: 5855
+version: v0.92
+slug: runtime-observatory-polis-protocol
+execution_mode: hybrid
+ordered_issue_numbers: [5800, 5820, 5795, 5821, 5832, 5837]
+safe_parallel_lanes:
+  - issues: [5821, 5832]
+    gate: Runtime ingress contracts from issue 5820 are stable
+    boundary: Distributed-polis and protocol work use separate child worktrees.
+  - issues: [5795]
+    gate: preparation may precede integration; integration waits for issues 5800 and 5820
+    boundary: Local-provider work cannot redefine Observatory or Runtime contracts.
+serial_gates:
+  - issues 5800 and 5820 establish the trusted local launch baseline
+  - issue 5795 integrates after issues 5800 and 5820
+  - issue 5837 integrates after issues 5820 and 5832 and its WP-18 dependency
+review_path: .csdlc/evidence/5855/sprint-review.md
+activity_log_path: .csdlc/evidence/5855/activity.jsonl
+child_goal_rule: Each child session creates an issue-bound goal after bind and before implementation.
+closeout_rule: Review the integrated Runtime and Observatory path before umbrella closeout.
