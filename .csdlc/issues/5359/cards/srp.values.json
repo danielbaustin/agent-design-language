@@ -7,25 +7,22 @@
     "title": "[v0.91.8][WP-22] Review next-milestone planning before opening v0.92",
     "slug": "v0918-wp22-next-milestone-planning-review",
     "version": "v0.91.8",
-    "generation": 12
+    "generation": 14
   },
-  "status": "pre_phase",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": ".csdlc/issues/5359\n.csdlc/evidence/5359\n.csdlc/prepared/issues/5359\ndocs/milestones/v0.92/WBS_v0.92.md\ndocs/milestones/v0.92/SPRINT_v0.92.md\ndocs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-      "review_revision": "git-blake3:c25ef00dd75aa2fa55daaa52a2e5ff564b2e7494:8986ff33006890ddf159be1b85972bfdb5d8be5c9607e7d8b9a9ecaa7234f2db",
-      "reviewer": "subagent:gpt-5.5:Peirce",
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
       "review_prompts": [
         "Are blockers and overclaims classified?",
         "Does the review avoid opening v0.92 by implication?"
       ],
       "findings": [],
-      "residual_risk": [
-        "This planning-only review schedules work but does not execute or accept any v0.92 work package.",
-        "The operator-local TBD source contents remain inputs to WP-01 requalification; this review proves their explicit schedule or deferral in the tracked package."
-      ],
-      "review_result": "pass"
+      "residual_risk": [],
+      "review_result": "pre_review"
     }
   }
 }

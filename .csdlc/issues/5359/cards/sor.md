@@ -12,7 +12,7 @@ Status: pre_phase
 
 ## Summary
 
-Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, and publication tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.
+Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, ten-article, ten-podcast, and release tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.
 
 ## Artifacts
 
@@ -24,8 +24,8 @@ Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the a
 
 ## Execution
 
-- Expanded the v0.92 WBS to a 35-row candidate sequence with the Agent Logic repository migration before substantive work, an early living article track, parallel reliability/tooling tracks, and a complete review/closeout tail.
-- Updated the sprint plan with migration, publication setup, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.
+- Expanded the v0.92 WBS to a 36-row candidate sequence with the Agent Logic repository migration before substantive work, ten parallel review-ready articles, ten parallel review-ready podcast episodes, parallel reliability/tooling tracks, and a complete review/closeout tail.
+- Updated the sprint plan with migration, parallel article and podcast production, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.
 - Updated the issue-wave YAML with exact WP/title parity, scheduled source ownership, deferred source retention, and later backlog.
 - Added the WP-22 planning review packet with blockers, stale assumptions, overclaims, non-claims, and WP-23 disposition.
 - Preserved draft_pre_open status and opened no v0.92 execution issues.
@@ -69,11 +69,11 @@ Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the a
 
 ## Integration
 
-pr_open
+worktree_only
 
 ## Publication
 
-Publication: ready
+Publication: not_published
 
 Merge: not_merged
 

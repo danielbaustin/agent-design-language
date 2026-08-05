@@ -1,17 +1,17 @@
 {
   "issue": 5359,
   "card": "sor",
-  "expected_generation": 9,
-  "expected_digest": "e819d57c9b699428680bc4f71a163206ba60b491a0f2222da94ef7a9e699851e",
+  "expected_generation": 13,
+  "expected_digest": "1f1e46a6df52505db9fd4a600b64da81ba6cf1d59fb120cea6f0951a91991d29",
   "claim_id": "claim-5359-v0918-prep-recovery-20260804",
   "actor": "codex:5359-planning-review",
-  "reason": "Replace the non-replayable compound validation argv with the three independently executed validation commands.",
+  "reason": "Refresh WP-22 execution truth after adding the operator-required ten-article and ten-podcast parallel production tranches.",
   "operation": {
     "operation": "replace_execution",
-    "summary": "Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, and publication tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.",
+    "summary": "Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, ten-article, ten-podcast, and release tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.",
     "changes": [
-      "Expanded the v0.92 WBS to a 35-row candidate sequence with the Agent Logic repository migration before substantive work, an early living article track, parallel reliability/tooling tracks, and a complete review/closeout tail.",
-      "Updated the sprint plan with migration, publication setup, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.",
+      "Expanded the v0.92 WBS to a 36-row candidate sequence with the Agent Logic repository migration before substantive work, ten parallel review-ready articles, ten parallel review-ready podcast episodes, parallel reliability/tooling tracks, and a complete review/closeout tail.",
+      "Updated the sprint plan with migration, parallel article and podcast production, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.",
       "Updated the issue-wave YAML with exact WP/title parity, scheduled source ownership, deferred source retention, and later backlog.",
       "Added the WP-22 planning review packet with blockers, stale assumptions, overclaims, non-claims, and WP-23 disposition.",
       "Preserved draft_pre_open status and opened no v0.92 execution issues."

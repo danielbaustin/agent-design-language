@@ -43,8 +43,12 @@ review and closeout tail.
 - The Agent Logic repository migration was listed only as a merged planning
   input rather than an executable v0.92 WP. It is now WP-01A and must complete
   before substantive milestone work.
-- The Medium article was incorrectly placed at the end of implementation. It
-  now starts as an early living draft after WP-01A and is finalized by WP-23.
+- The Medium program was incorrectly reduced to one late article. WP-24 now
+  writes all ten planned articles in parallel after WP-01A, brings every one
+  to editorial-review-ready state, and uses WP-23 for final claim alignment.
+- The Podcast Studio ten-episode launch plan was omitted. WP-24A now produces
+  the first ten complete review-ready episode packages in parallel; topic-only
+  specs or demo audio do not satisfy the WP.
 
 ## Overclaims Removed
 
@@ -79,7 +83,8 @@ planning repairs, implementation, or hidden remediation.
 | Observatory/Unity consumer integration | WP-18A | `OBSERVATORY_UNITY_DESIGN.md` | Separate consumer WP; the Observatory remains outside the Runtime API implementation. |
 | Provider-neutral multi-agent proof | WP-18B | `multiagent_demos/` | Provider-neutral proof tranche after the birthday review packet is available. |
 | Repository-wide code reduction remainder | WP-21 | `ADL_REPOSITORY_CODE_REDUCTION_PLAN_v0.91.8.md` | Bounded cleanup only; preserve behavior and prove the deletion denominator. |
-| Medium launch article | WP-24 | former empty `publication/medium_launch_articles/1-WHY-ADL.md` placeholder | Start a real living draft immediately after WP-01A, maintain it as evidence lands, and finalize claims in WP-23. |
+| Ten-article launch series | WP-24 | `publication/ADL_MEDIUM_ARTICLE_LIST.md`; `publication/MEDIUM_ARTICLE_SERIES_PLAN.md`; former empty `publication/medium_launch_articles/1-WHY-ADL.md` placeholder | Write all ten articles in parallel, make all ten editorial-review-ready, maintain them as evidence lands, and finalize claims in WP-23. |
+| Podcast Studio first ten episodes | WP-24A | `PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md` | Produce ten complete review-ready episode packages with real audio, transcripts, show notes, metadata, and RSS-ready artifacts. |
 
 ## Explicitly Deferred
 
@@ -102,7 +107,7 @@ planning repairs, implementation, or hidden remediation.
 
 1. WP-01 updates canonical docs and opens only the reviewed issue wave.
 2. WP-01A executes and verifies the Agent Logic repository migration before substantive milestone work.
-3. WP-24 begins its living draft after WP-01A; WP-23 owns final release-truth alignment.
+3. WP-24 and WP-24A run in parallel after WP-01A: all ten articles and all ten podcast episodes must be review-ready; WP-23 owns final article claim alignment.
 4. WP-02 repairs CI/coverage before it is credited as milestone proof.
 5. WP-03 through WP-07 may proceed in parallel where their dependencies allow.
 6. The birthday product spine starts at WP-08 and retains identity,
@@ -122,6 +127,6 @@ planning repairs, implementation, or hidden remediation.
 - This review does not open or execute v0.92 issues.
 - Deferred sources are not silently accepted as delivered.
 - The Distributed Guardian/polis program is scheduled, not completed.
-- The Medium article is scheduled, not authored.
+- The ten articles and ten podcast episodes are scheduled, not authored or produced by this planning review.
 - No legal-personhood, production-citizenship, consciousness, or v0.93
   constitutional-governance claim is introduced.

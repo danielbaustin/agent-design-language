@@ -3,13 +3,13 @@
   "issue": 5359,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1e45fdeda7d0795b7290a037be238e7e7c8624af5008b8c868d9e3b0a4c50365",
-  "phase": "published",
-  "generation": 12,
-  "digest": "20d20086af3750a5a91566dab90ace0ff3559056dcb5316287135fdd2b4ea433",
+  "phase": "implemented",
+  "generation": 14,
+  "digest": "462ac5e2b37953b5f281cf9fcc734111d06352928eaae907e6a341c50cca0323",
   "claim": {
     "id": "claim-5359-v0918-prep-recovery-20260804",
     "owner": "codex:5359-preparation-owner",
-    "generation": 12,
+    "generation": 14,
     "acquired_unix_seconds": 1785865465,
     "expires_unix_seconds": 1786470265,
     "heartbeat_unix_seconds": 1785865465,
@@ -26,49 +26,9 @@
     ],
     "purpose": "Prepare #5359 WP-22 next-milestone planning review only; no execution until WP-21A #5355 is live-merged and ancestral"
   },
-  "review_assignment": {
-    "reviewer": "subagent:gpt-5.5:Peirce",
-    "assigned_by": "codex:5359-planning-review",
-    "revision": "git-blake3:c25ef00dd75aa2fa55daaa52a2e5ff564b2e7494:8986ff33006890ddf159be1b85972bfdb5d8be5c9607e7d8b9a9ecaa7234f2db",
-    "scope": [
-      ".csdlc/issues/5359",
-      ".csdlc/evidence/5359",
-      ".csdlc/prepared/issues/5359",
-      "docs/milestones/v0.92/WBS_v0.92.md",
-      "docs/milestones/v0.92/SPRINT_v0.92.md",
-      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
-    ]
-  },
-  "review": {
-    "reviewer": "subagent:gpt-5.5:Peirce",
-    "scope": [
-      ".csdlc/issues/5359",
-      ".csdlc/evidence/5359",
-      ".csdlc/prepared/issues/5359",
-      "docs/milestones/v0.92/WBS_v0.92.md",
-      "docs/milestones/v0.92/SPRINT_v0.92.md",
-      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
-    ],
-    "reviewed_revision": "git-blake3:c25ef00dd75aa2fa55daaa52a2e5ff564b2e7494:8986ff33006890ddf159be1b85972bfdb5d8be5c9607e7d8b9a9ecaa7234f2db",
-    "findings": [],
-    "residual_risks": [
-      "This planning-only review schedules work but does not execute or accept any v0.92 work package.",
-      "The operator-local TBD source contents remain inputs to WP-01 requalification; this review proves their explicit schedule or deferral in the tracked package."
-    ],
-    "completed": true,
-    "non_substantive_proof": null
-  },
-  "publication": {
-    "repository": "danielbaustin/agent-design-language",
-    "issue": 5359,
-    "pull_request": 5811,
-    "url": "https://github.com/danielbaustin/agent-design-language/pull/5811",
-    "base": "main",
-    "head": "codex/5359-v0918-preparation",
-    "revision": "git-blake3:17ff7b7c60e910b3625b6d2aa915996ab7b84416:567dab79a4e97763988cebfdbb89931e6c7b4a97d66b2d052d6c167a192a77ed",
-    "draft": false,
-    "observed_state": "open"
-  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -82,34 +42,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "9e426ae9e7e91ae1f7222ae077d6e055e4c8966b2af3bb0a5a88b6297d6a3604",
+      "values_digest": "632e84a98bb783d3b22c0bc2941895b3907c0c626ce4f0383d4ccc268ceebd90",
       "rendered_digest": "b5b05423d638e93763bbb471be206e9a35ec25d30f99900e0f97e789c0d928ab",
       "ast_digest": "3413b735bfe7ddbedd9595dde0373caedd93e4f2d53fe1eb5a2db6c78dd47ef7"
     },
     "stp": {
-      "values_digest": "828634fcdec952baa892e59b674e4d55a197d4ff1e067c8da6d2d8503eaee1f8",
+      "values_digest": "438bd3de2343515c40d67b4264d72e83a0faa3ca3d08769fd1c2946e5c81cc2f",
       "rendered_digest": "709a96bb616f3e3591b958f7eda47f81a8c21588ac42b4dc8dd49b03b128b98e",
       "ast_digest": "eebc1238aefc97fda13ea37fca2b8eafd5a65dc00f7c3f140f37d0853f7b58a0"
     },
     "spp": {
-      "values_digest": "4886ce46111d2def8673dfb1e47fdb9da3b309e98579a723488011499394926b",
+      "values_digest": "c3c69b88f6dd2adc40b4a36bf53b9ad8460439e9baabe4fea5d29b8e9fdc769e",
       "rendered_digest": "76b9658f0c0cd986e58d96c68590fe5e2645c26b1860704d99f3951c132637e7",
       "ast_digest": "55c93f3f78c5e88784167dbc380ce05eea0bea38176b2468178ec6f7e5adf647"
     },
     "vpp": {
-      "values_digest": "c8261c858a8488b5fbb2165f338fade7aef915dd1d4f20ae4bf6b8b6f5d3fac4",
+      "values_digest": "e989b862aa159ed136fc122fa8f99838daf51255193c0b00e003f69ffc4cf243",
       "rendered_digest": "ceb39c57a89d83c4a8ac5b88043a6b036b8f4a7bd76643e5262299605778d662",
       "ast_digest": "7b19a1624305e712a92f1ec429ab2c5ec28e3688f72c4bb5b979dcaf9080fc3b"
     },
     "srp": {
-      "values_digest": "2f76af5f6220ac3c746a4c157e6ee2b4ebbf199ad1cf40dfc3b4edcbefb99b45",
-      "rendered_digest": "aea7d361564ca97528e8ed4bbdcdf6a7d81f105c49bd41dd692532269f773b4c",
-      "ast_digest": "aa5e9001c532d5b7d505d612229475424606d7966410812ec82b3387e2a30a2b"
+      "values_digest": "1252eff7d59c10224b97605d80d34807c5d50b789b60fe816537af36e1dc2edb",
+      "rendered_digest": "fad9251a61bc087fb7e5770003bd94acb2955929b6b25df24b9dfde14a4766e2",
+      "ast_digest": "1191ce0e7c7e1a7b759ee9070c2a4e0fdf67806c5bee6fba14867de2035eea2b"
     },
     "sor": {
-      "values_digest": "e369611e65dc87ffd15634b7a84b8924ce82a522ed241451d10bf13d02e5b110",
-      "rendered_digest": "509e2cb8f69e237c1031e77a83941b3e642ea717ab936cc7493d681fbd7f7593",
-      "ast_digest": "649ab62a2d88a2adb8693ac08b4a3388fbc59c4fc19bfb557f0cc8bd16ae4bd5"
+      "values_digest": "8ca6dc1c03d69466ba99d8f87f72192d01fcc09f874502197c31b0a3570258a3",
+      "rendered_digest": "e2607825ebce69c854623c837e64e4af3698892e9ee85af452bf9a8d63c7edb7",
+      "ast_digest": "fc1764cde6b253566f273a0d8dd54fa9a831acf7514fb00c0b3aa71e2fed48f7"
     }
   },
   "transitions": [
@@ -147,6 +107,13 @@
       "to": "published",
       "actor": "codex:5359-planning-review",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:5359-planning-review",
+      "reason": "Recover published review truth to add the operator-required ten-article and ten-podcast parallel publication tranches omitted from the reviewed package."
     }
   ],
   "audit": [
@@ -268,6 +235,20 @@
       "actor": "codex:5359-planning-review",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:5359-planning-review",
+      "reason": "Recover published review truth to add the operator-required ten-article and ten-podcast parallel publication tranches omitted from the reviewed package.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:5359-planning-review",
+      "reason": "Refresh WP-22 execution truth after adding the operator-required ten-article and ten-podcast parallel production tranches.",
+      "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Reviewed the complete v0.92 candidate package and TBD inventory; scheduled the approved reliability, tooling, migration, protocol, consumer, proof, cleanup, ten-article, ten-podcast, and release tracks; retained the birthday product spine and full release tail; and recorded explicit technical deferrals and later backlog.\",\"changes\":[\"Expanded the v0.92 WBS to a 36-row candidate sequence with the Agent Logic repository migration before substantive work, ten parallel review-ready articles, ten parallel review-ready podcast episodes, parallel reliability/tooling tracks, and a complete review/closeout tail.\",\"Updated the sprint plan with migration, parallel article and podcast production, proving-substrate, Runtime, workflow, birthday, consumer, cleanup, and release phases.\",\"Updated the issue-wave YAML with exact WP/title parity, scheduled source ownership, deferred source retention, and later backlog.\",\"Added the WP-22 planning review packet with blockers, stale assumptions, overclaims, non-claims, and WP-23 disposition.\",\"Preserved draft_pre_open status and opened no v0.92 execution issues.\"],\"artifacts\":[\"docs/milestones/v0.92/WBS_v0.92.md\",\"docs/milestones/v0.92/SPRINT_v0.92.md\",\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"validation\":[{\"command\":[\"ruby\",\"-ryaml\",\".csdlc/prepared/issues/5359/validate-v092-package.rb\"],\"purpose\":\"Prove YAML structure, exact WBS/YAML WP parity, complete TBD source dispositions, and six-card policy.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"},{\"command\":[\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5359\"],\"purpose\":\"Prove typed lifecycle integrity and all six card projections.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5359/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Prove the bounded planning changes contain no whitespace errors.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5359/V092_PLANNING_REVIEW.md\"}]}"
     }
   ]
 }

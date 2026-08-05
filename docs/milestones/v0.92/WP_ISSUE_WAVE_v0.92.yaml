@@ -12,7 +12,8 @@ notes:
   - WP-02 repairs CI and coverage before broad milestone proof receives credit.
   - Runtime, distributed Guardian/polis, C-SDLC efficiency, remote validation, and prompt-typing tracks may proceed in parallel only where their declared dependencies allow.
   - WP-01A completes the Agent Logic GitHub organization repository migration before substantive milestone work begins.
-  - WP-24 starts an early living article draft after WP-01A and receives final release-truth alignment in WP-23.
+  - WP-24 writes all ten launch articles in parallel after WP-01A and receives final release-truth alignment in WP-23.
+  - WP-24A produces all first ten Podcast Studio episodes in parallel as complete review-ready packages; topic-only placeholders do not satisfy it.
   - WP-01 must requalify post-5104 loop-runtime merge evidence against current Runtime v3 contracts before consuming loops as validated replayable objects.
   - No v0.92 issue may claim legal personhood, production citizenship, consciousness proof, or completed v0.93 constitutional governance.
   - Every opened v0.92 issue must receive SIP, STP, SPP, VPP, SRP, and SOR cards from the active prompt-template registry.
@@ -79,11 +80,17 @@ scheduled_tbd_inputs:
     wp: WP-21
     sources:
       - .adl/docs/TBD/ADL_REPOSITORY_CODE_REDUCTION_PLAN_v0.91.8.md
-  - track: medium_launch_article
+  - track: medium_launch_article_series
     wp: WP-24
     sources:
+      - .adl/docs/TBD/publication/ADL_MEDIUM_ARTICLE_LIST.md
+      - .adl/docs/TBD/publication/MEDIUM_ARTICLE_SERIES_PLAN.md
       - .adl/docs/TBD/publication/medium_launch_articles/1-WHY-ADL.md
     source_status: zero_byte_placeholder_removed_authoring_required
+  - track: podcast_studio_first_ten
+    wp: WP-24A
+    sources:
+      - .adl/docs/TBD/PODCAST_STUDIO_NEXT_WEEK_LAUNCH_PLAN_5702.md
 
 deferred_planning:
   - track: capability_taxonomy_integration
@@ -137,11 +144,18 @@ work_packages:
     proof_surface: pre-transfer manifests, per-repository transfer and verification evidence, integration updates, negative asksifu control, and final migration report
   - wp: WP-24
     issue: pending
-    title: Medium launch article
+    title: Ten-article launch series
     queue: publication
-    depends_on: [WP-01A for initial draft, WP-23 for final release-truth alignment]
-    primary_deliverable: early substantive living draft followed by final release-grounded publication disposition
-    proof_surface: reviewed article source, claim scan, links, milestone evidence updates, and publication boundary
+    depends_on: [WP-01A for parallel drafting, WP-23 for final release-truth alignment]
+    primary_deliverable: all ten planned articles complete and ready for editorial review, followed by final release-grounded publication disposition
+    proof_surface: ten reviewed article sources, series-arc review, per-article claim scans, links, milestone evidence updates, and publication boundary
+  - wp: WP-24A
+    issue: pending
+    title: Podcast Studio first ten episodes
+    queue: publication_media
+    depends_on: [WP-01A, Podcast Studio v2 proof, Agent Logic route and storage decisions]
+    primary_deliverable: all first ten episodes complete as review-ready production packages, not topic or schema placeholders
+    proof_surface: ten scripts, transcripts, show notes, final audio files and QA reports, guest metadata, artwork and ID3 metadata, RSS-ready enclosure records, redaction checks, and editorial/audio review packets
   - wp: WP-02
     issue: pending
     title: CI and coverage reliability
@@ -321,7 +335,7 @@ work_packages:
     issue: pending
     title: Internal review
     queue: review
-    depends_on: [WP-23, WP-24]
+    depends_on: [WP-23, WP-24, WP-24A]
     primary_deliverable: internal review report and finding register
     proof_surface: internal review packet
   - wp: WP-26
