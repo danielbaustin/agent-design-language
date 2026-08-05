@@ -7,22 +7,25 @@
     "title": "[v0.91.8][WP-22] Review next-milestone planning before opening v0.92",
     "slug": "v0918-wp22-next-milestone-planning-review",
     "version": "v0.91.8",
-    "generation": 17
+    "generation": 18
   },
   "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": ".csdlc/issues/5359\n.csdlc/evidence/5359\n.csdlc/prepared/issues/5359\n.csdlc/publication/5359.intent.json\ndocs/milestones/v0.92/WBS_v0.92.md\ndocs/milestones/v0.92/SPRINT_v0.92.md\ndocs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      "review_revision": "git-blake3:9de77e34e0a6f0ff41231c1935312654b578cc1a:8fbb2fc48f78e2812a97f6744964e9a63f3387aa5b873d7ddbf9b977c762fc2a",
+      "reviewer": "subagent:gpt-5.5:Kuhn",
       "review_prompts": [
         "Are blockers and overclaims classified?",
         "Does the review avoid opening v0.92 by implication?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "This planning-only review schedules but does not author, produce, publish, or accept the ten articles or ten podcast episodes.",
+        "Final article claims remain subject to WP-23 release-truth alignment; podcast publication remains subject to editorial, audio, RSS, route, and operator approval gates."
+      ],
+      "review_result": "pass"
     }
   }
 }

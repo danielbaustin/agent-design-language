@@ -3,13 +3,13 @@
   "issue": 5359,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1e45fdeda7d0795b7290a037be238e7e7c8624af5008b8c868d9e3b0a4c50365",
-  "phase": "implemented",
-  "generation": 17,
-  "digest": "9afaf9ffb9b6d47311e3936db8cd652596e7be491280e58d8f2a17be47dc49ad",
+  "phase": "reviewed",
+  "generation": 18,
+  "digest": "df0aa6cca74cb4de95d1b19740b8c2580150a4c9793cf0825c769ad67ff81234",
   "claim": {
     "id": "claim-5359-v0918-prep-recovery-20260804",
     "owner": "codex:5359-preparation-owner",
-    "generation": 17,
+    "generation": 18,
     "acquired_unix_seconds": 1785865465,
     "expires_unix_seconds": 1786470265,
     "heartbeat_unix_seconds": 1785865465,
@@ -27,7 +27,26 @@
     "purpose": "Prepare #5359 WP-22 next-milestone planning review only; no execution until WP-21A #5355 is live-merged and ancestral"
   },
   "review_assignment": null,
-  "review": null,
+  "review": {
+    "reviewer": "subagent:gpt-5.5:Kuhn",
+    "scope": [
+      ".csdlc/issues/5359",
+      ".csdlc/evidence/5359",
+      ".csdlc/prepared/issues/5359",
+      ".csdlc/publication/5359.intent.json",
+      "docs/milestones/v0.92/WBS_v0.92.md",
+      "docs/milestones/v0.92/SPRINT_v0.92.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
+    ],
+    "reviewed_revision": "git-blake3:9de77e34e0a6f0ff41231c1935312654b578cc1a:8fbb2fc48f78e2812a97f6744964e9a63f3387aa5b873d7ddbf9b977c762fc2a",
+    "findings": [],
+    "residual_risks": [
+      "This planning-only review schedules but does not author, produce, publish, or accept the ten articles or ten podcast episodes.",
+      "Final article claims remain subject to WP-23 release-truth alignment; podcast publication remains subject to editorial, audio, RSS, route, and operator approval gates."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -42,32 +61,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "ae9430e448ce6ecaf51a5a19fac859535c5c75e65c8a81ab16e78460976d6b87",
+      "values_digest": "d880523cda7c8a73251d90564026112e952cd30ce22380b85d80b0323c6a2bac",
       "rendered_digest": "b5b05423d638e93763bbb471be206e9a35ec25d30f99900e0f97e789c0d928ab",
       "ast_digest": "3413b735bfe7ddbedd9595dde0373caedd93e4f2d53fe1eb5a2db6c78dd47ef7"
     },
     "stp": {
-      "values_digest": "fa93caafd9020be4a38f17690b953084e48aa5a855bea2785635c24ac9af9299",
+      "values_digest": "2d83c1b21b3339973323b081a16a540bff022f23700d37edabcf007b16516f76",
       "rendered_digest": "709a96bb616f3e3591b958f7eda47f81a8c21588ac42b4dc8dd49b03b128b98e",
       "ast_digest": "eebc1238aefc97fda13ea37fca2b8eafd5a65dc00f7c3f140f37d0853f7b58a0"
     },
     "spp": {
-      "values_digest": "490bf57937c3856655263a89b1d103ccf9685dcbb6508096f054b932d3442b59",
+      "values_digest": "2e9cb4f0da45235caa8851d88047365e8cf4d1c9d30bbe860599661cf03edd17",
       "rendered_digest": "76b9658f0c0cd986e58d96c68590fe5e2645c26b1860704d99f3951c132637e7",
       "ast_digest": "55c93f3f78c5e88784167dbc380ce05eea0bea38176b2468178ec6f7e5adf647"
     },
     "vpp": {
-      "values_digest": "93b292224ef59830d6a572d84a87b9d94e81d81e01785bfbf6f38a7187a0428c",
+      "values_digest": "dad57b05c6e742258e0e6dccfe99d3c8089479a72da26b5fceb73bb875210396",
       "rendered_digest": "ceb39c57a89d83c4a8ac5b88043a6b036b8f4a7bd76643e5262299605778d662",
       "ast_digest": "7b19a1624305e712a92f1ec429ab2c5ec28e3688f72c4bb5b979dcaf9080fc3b"
     },
     "srp": {
-      "values_digest": "fe08b843843583d2207332ecdcc702660a00452d0dc18eb9dcf6560c26e21368",
-      "rendered_digest": "fad9251a61bc087fb7e5770003bd94acb2955929b6b25df24b9dfde14a4766e2",
-      "ast_digest": "1191ce0e7c7e1a7b759ee9070c2a4e0fdf67806c5bee6fba14867de2035eea2b"
+      "values_digest": "9956e19bb6006c14e87037770f120c3ae50ecb6753471dbfaf6aff294d15e012",
+      "rendered_digest": "2b04676ef0ec3274e38c6e81baff04e730a43a28753df3d3c8aa7a09412bb23d",
+      "ast_digest": "8756a1a8004c895a23dca32a23ec61e9c9a8569c03d39534be0efac1120b833f"
     },
     "sor": {
-      "values_digest": "4efb5ae5d5ce34a3d9192d8815e70d9fccfa04a2e70afcf309b7f1c90ff4dfb6",
+      "values_digest": "ec00375e62a24bc2fbcfc1faf5742d1280daef5e769a9c398c7e1c79556a3e15",
       "rendered_digest": "e2607825ebce69c854623c837e64e4af3698892e9ee85af452bf9a8d63c7edb7",
       "ast_digest": "fc1764cde6b253566f273a0d8dd54fa9a831acf7514fb00c0b3aa71e2fed48f7"
     }
@@ -135,6 +154,13 @@
       "to": "implemented",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Current origin/main integration brought the merged WP-21 and WP-21A terminal projections into the WP-22 branch; recover stale review and publication truth for one exact current-main review and same-PR republication."
+    },
+    {
+      "sequence": 10,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "subagent:019fcfd0-9e93-7130-a9e1-24d7f0736900",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -298,6 +324,13 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "Current origin/main integration brought the merged WP-21 and WP-21A terminal projections into the WP-22 branch; recover stale review and publication truth for one exact current-main review and same-PR republication.",
       "operation": "recover_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 18,
+      "actor": "subagent:019fcfd0-9e93-7130-a9e1-24d7f0736900",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }
