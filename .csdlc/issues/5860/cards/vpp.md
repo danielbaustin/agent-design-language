@@ -90,7 +90,7 @@ Diagram: .csdlc/prepared/issues/5860/diagram.mmd
   },
   {
     "lane": "wp04-implementation-wave-preparation",
-    "proof_role": "Prove the sixteen-child WP-04 preparation contract and terminal integration gate required before WP-14 handoff",
+    "proof_role": "Prove the sixteen-child WP-04 preparation contract while leaving terminal receipt and integration authority to the active #5862 execution claim",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -106,7 +106,8 @@ Diagram: .csdlc/prepared/issues/5860/diagram.mmd
     "budget_tokens": 4000,
     "argv": [
       "ruby",
-      ".csdlc/prepared/issues/5862/validate-implementation-wave.rb"
+      ".csdlc/prepared/issues/5862/validate-implementation-wave.rb",
+      "--preflight"
     ],
     "parallel_group": "readiness-controls",
     "defer_reason": null
@@ -128,7 +129,7 @@ Tokens: 50000
 - `ruby .csdlc/prepared/issues/5860/validate-v092-readiness.rb --verify-live`
 - `ruby .csdlc/prepared/issues/5860/validate-v092-doctors.rb`
 - `ruby .csdlc/prepared/issues/5821/validate-child-wave.rb`
-- `ruby .csdlc/prepared/issues/5862/validate-implementation-wave.rb`
+- `ruby .csdlc/prepared/issues/5862/validate-implementation-wave.rb --preflight`
 
 ## Failure Semantics
 

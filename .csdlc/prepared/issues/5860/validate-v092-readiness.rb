@@ -12,9 +12,9 @@ LIVE_MANIFEST_PATH = ".csdlc/evidence/5860/V092_LIVE_ISSUE_CONTRACTS.json"
 OWNERSHIP_VALIDATOR = ".csdlc/prepared/issues/5860/validate-v092-ownership.rb"
 DOCTOR_VALIDATOR = ".csdlc/prepared/issues/5860/validate-v092-doctors.rb"
 LIVE_BODY_PUBLISHER = ".csdlc/prepared/issues/5860/publish-v092-live-issue-bodies.rb"
-LIVE_PREPARATION_VALIDATORS = [
-  ".csdlc/prepared/issues/5821/validate-child-wave.rb",
-  ".csdlc/prepared/issues/5862/validate-implementation-wave.rb"
+LIVE_PREPARATION_COMMANDS = [
+  ["ruby", ".csdlc/prepared/issues/5821/validate-child-wave.rb"],
+  ["ruby", ".csdlc/prepared/issues/5862/validate-implementation-wave.rb", "--preflight"]
 ].freeze
 ALLOWED_DIFF_PREFIXES = [".adl/docs/TBD/", ".csdlc/", "docs/"].freeze
 
@@ -421,11 +421,12 @@ else
 end
 
 if verify_live
-  LIVE_PREPARATION_VALIDATORS.each do |validator|
+  LIVE_PREPARATION_COMMANDS.each do |command|
+    validator = command[1]
     abort "missing #{validator}" unless File.file?(validator)
 
-    _stdout, stderr, status = Open3.capture3("ruby", validator)
-    abort "preparation control failed for #{validator}: #{stderr.strip}" unless status.success?
+    _stdout, stderr, status = Open3.capture3(*command)
+    abort "preparation control failed for #{command.join(' ')}: #{stderr.strip}" unless status.success?
   end
   _stdout, stderr, status = Open3.capture3("ruby", LIVE_BODY_PUBLISHER)
   abort "live issue body parity failed: #{stderr.strip}" unless status.success?

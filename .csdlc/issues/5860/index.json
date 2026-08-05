@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "55ede2c3738e4bf11b1ccb5c475e5b9703bea3faabc6e4d568d4cd61d96e7886",
   "phase": "bound",
-  "generation": 10,
-  "digest": "0a3f8eb1ceb6c18ece24355756d9bc815e1dc3a1e4267b04669b085d06985a61",
+  "generation": 11,
+  "digest": "bbe13d07d9be874513d18ce54a7091d6bc5ac6d73fb50a4a1d998722d3fe54c9",
   "claim": {
     "id": "claim-5860-v092-execution-readiness",
     "owner": "codex:5860-readiness-integration",
-    "generation": 10,
+    "generation": 11,
     "acquired_unix_seconds": 1785948596,
     "expires_unix_seconds": 1786553396,
     "heartbeat_unix_seconds": 1785948596,
@@ -41,32 +41,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "ec2a0fbb0689f58b7c4c85f500dc6b03d582599a3c8c04abf459a82bfbf7fc69",
+      "values_digest": "7c09163965a0b9193d7af8f01bff967790f9dcf7b6309a3210e1b18f1182894c",
       "rendered_digest": "a9a08ee753ff6d97cb3e0827ae52215eb8d51ecb61d365161bb619cbe370bcf4",
       "ast_digest": "9f1eb19114a5cfece22a7f83f79d74cbbae68370b5ec23f266ebdc968449e575"
     },
     "stp": {
-      "values_digest": "328d85db24b6fe3b0db8550b3e80bd583b2a0e04bdab51452ff5076606022588",
+      "values_digest": "15a603e34325d27bbd2bb5524aa1e414f2395e7accd6dc5f663cedb69ccb7682",
       "rendered_digest": "b937d7f3213966bb56114bf30cd7b6153d94162e05048abaad46aea9d4775ac7",
       "ast_digest": "915fb5b0ca4f2afb4ff595d31cb4daf93aa5bb0c5474757ad9759b75a425cc3c"
     },
     "spp": {
-      "values_digest": "2e8718bda069d4713e79baeb86a666d5767b73ed2e7c1c8af6053c0729798f32",
+      "values_digest": "120ff6518a4bf25f2ccb4ddda47a0306ce908eb0d0a03da1aea91fbf13f1f7f8",
       "rendered_digest": "e9910fa33fbcee98c23fccf2aa9bc0f2b6561fdb479fc41aa0f791d9e0783d8c",
       "ast_digest": "2c816888dcc0088f271db7d98db1e30fecadcc73e340537b8fdf27967d494bea"
     },
     "vpp": {
-      "values_digest": "8d4c5a6e9dc2967e0e9d423a8325552f14b4416649ba5781ba185586025f4f92",
-      "rendered_digest": "097d1faa01a0783ce472f7db10d1aad93aa156f0ca7ce97fea5be5b999c41f0c",
-      "ast_digest": "28b73f26fa0f9bc50471273f61175645be299cc2a7831965bef3cf78d2417eaf"
+      "values_digest": "00826a83521cbf7a633f5692abbdd0db99d6c11aa99700595d02c5b033793ca2",
+      "rendered_digest": "02134c1a62be7b8eecfde6067d4586ee623fcd727e7b2a6f0d6eccfc107ad030",
+      "ast_digest": "aa4993cfb7db69afed7a3f0b739e091143c4a79ee275fe0e482f581caea8da5d"
     },
     "srp": {
-      "values_digest": "ac6398cb5fc727ac76b760578190a22a02230d534e32a5b69b0b7b0a36bae669",
+      "values_digest": "847039c30feceb7ac99ed73383e0ddb1bfdf7fc2ae1954ce1b212c99df1210bb",
       "rendered_digest": "2d6ee588e4921e5bb3a660e21ece6918d643896ac9fcd81e7d4b81e24a42ce6c",
       "ast_digest": "e25cf00dde4d12ae66c1438b9da71ec44e2d82d49bfc547265c91c7883f3001c"
     },
     "sor": {
-      "values_digest": "b0572a342a50391162f317c1aa4619c8443bf41931ecabb2f773bff4a80d369b",
+      "values_digest": "bc360434fb3dd63640888ce03b82bfa3d10b7ce0328c73dc701908ec90ca9584",
       "rendered_digest": "e5c23d520fdb2039cc289c6e10700a41dcc06cee612b2c66a204f054853b7fc0",
       "ast_digest": "223f1066bd695acf41a77dd6529663934aab79c15f0fc409eba3fd6fe4ade01f"
     }
@@ -185,6 +185,13 @@
       "actor": "codex:5860-readiness-integration",
       "reason": "Make each aggregate preparation control explicit after exact-head review found false-green readiness.",
       "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"v092-readiness-matrix\",\"proof_role\":\"Prove the exact 58-issue documentation-only denominator, rollback, card, dependency, ownership, live-contract, artifact-digest, doctor, and preparation-control contract while excluding #5861\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":18000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5860/validate-v092-readiness.rb\",\"--verify-live\"],\"parallel_group\":\"readiness-integration\",\"defer_reason\":null},{\"lane\":\"v092-typed-doctor-parity\",\"proof_role\":\"Recompute all 58 typed doctor reports and reject pinned handoff evidence drift\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5860/validate-v092-doctors.rb\"],\"parallel_group\":\"readiness-controls\",\"defer_reason\":null},{\"lane\":\"wp04-child-wave-preparation\",\"proof_role\":\"Prove the live WP-04 child mapping, approvals, null claims, ownership, rollback, and operator-visible umbrella contract\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-child-wave.rb\"],\"parallel_group\":\"readiness-controls\",\"defer_reason\":null},{\"lane\":\"wp04-implementation-wave-preparation\",\"proof_role\":\"Prove the sixteen-child WP-04 preparation contract and terminal integration gate required before WP-14 handoff\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5862/validate-implementation-wave.rb\"],\"parallel_group\":\"readiness-controls\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "Keep aggregate readiness in WP-04 preflight mode while retaining terminal integration proof for the execution umbrella.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"v092-readiness-matrix\",\"proof_role\":\"Prove the exact 58-issue documentation-only denominator, rollback, card, dependency, ownership, live-contract, artifact-digest, doctor, and preparation-control contract while excluding #5861\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":18000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5860/validate-v092-readiness.rb\",\"--verify-live\"],\"parallel_group\":\"readiness-integration\",\"defer_reason\":null},{\"lane\":\"v092-typed-doctor-parity\",\"proof_role\":\"Recompute all 58 typed doctor reports and reject pinned handoff evidence drift\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5860/validate-v092-doctors.rb\"],\"parallel_group\":\"readiness-controls\",\"defer_reason\":null},{\"lane\":\"wp04-child-wave-preparation\",\"proof_role\":\"Prove the live WP-04 child mapping, approvals, null claims, ownership, rollback, and operator-visible umbrella contract\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-child-wave.rb\"],\"parallel_group\":\"readiness-controls\",\"defer_reason\":null},{\"lane\":\"wp04-implementation-wave-preparation\",\"proof_role\":\"Prove the sixteen-child WP-04 preparation contract while leaving terminal receipt and integration authority to the active #5862 execution claim\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5862/validate-implementation-wave.rb\",\"--preflight\"],\"parallel_group\":\"readiness-controls\",\"defer_reason\":null}]}"
     }
   ]
 }

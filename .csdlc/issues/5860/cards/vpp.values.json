@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 10
+    "generation": 11
   },
   "status": "ready",
   "content": {
@@ -82,7 +82,7 @@
         },
         {
           "lane": "wp04-implementation-wave-preparation",
-          "proof_role": "Prove the sixteen-child WP-04 preparation contract and terminal integration gate required before WP-14 handoff",
+          "proof_role": "Prove the sixteen-child WP-04 preparation contract while leaving terminal receipt and integration authority to the active #5862 execution claim",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -98,7 +98,8 @@
           "budget_tokens": 4000,
           "argv": [
             "ruby",
-            ".csdlc/prepared/issues/5862/validate-implementation-wave.rb"
+            ".csdlc/prepared/issues/5862/validate-implementation-wave.rb",
+            "--preflight"
           ],
           "parallel_group": "readiness-controls",
           "defer_reason": null

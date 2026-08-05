@@ -5,406 +5,406 @@
     "5786": {
       "number": 5786,
       "title": "[v0.92][WP-21][adl-v2][deletion] Retire legacy adl/src after rollback window",
-      "body_sha256": "52fb1a338ff51a7885384b47062200f7d1713fe3de038579071bbc1e866d9fe4",
+      "body_sha256": "119f42ddc0715197c0808a1fea6d87b6233acbe5cab2e63937d8afe9c885ab4c",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5786"
     },
     "5795": {
       "number": 5795,
       "title": "[v0.92][runtime][shepherd] Pull local Gemma/MLX Shepherd MVP forward",
-      "body_sha256": "603740106cea07175588c5568872af1698c8411076b7e603064321e3f27f93c9",
+      "body_sha256": "0c0417cd4b1018ae5a5a832d097200fbdcef1026e38d52c3338cb77e60413d80",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5795"
     },
     "5800": {
       "number": 5800,
       "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
-      "body_sha256": "091dc9c01935ca0ac673e06ff26992dfd156a68ba98f07f5424385118be806ab",
+      "body_sha256": "4dc8d1cdd44d300c0455244b17142707fb12e330f9ab6204e4fd8ac1b421b15b",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5800"
     },
     "5801": {
       "number": 5801,
       "title": "[v0.92][WP-02A][ci] CI and coverage reliability",
-      "body_sha256": "bf0367ad44678f94e6bdc3fbf9568303ad2df5793bcf30d3d780f0be4b076a89",
+      "body_sha256": "758dc1ac1103b9f5f64b0bc3c96038789b6d41581431525f3ce1581c97fdb1d6",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5801"
     },
     "5812": {
       "number": 5812,
       "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
-      "body_sha256": "d211aa108988f36cf35c3dd4ec906a7e978077d1dbc33a3fce5676f612986235",
+      "body_sha256": "3d50bcddca242e9a305ce313b226d37503d9b3a7de693c828f494c01cca304c5",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5812"
     },
     "5818": {
       "number": 5818,
       "title": "[v0.92][WP-01B][docs] Activate v0.92 across canonical docs and version surfaces",
-      "body_sha256": "56c2e1afa10921b6ac3689a148f1011c753e9b83644c45ad228844723b256e88",
+      "body_sha256": "7c6a81409532318cfe2d79cb4077bb3ad8f8c4d783feec27f6bb1a750c56fcdb",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5818"
     },
     "5819": {
       "number": 5819,
       "title": "[v0.92][WP-02][operations] Agent Logic GitHub organization repository migration",
-      "body_sha256": "0e79ac0a62dd3597c375f9e95521d724ec4fe5047ef32ba5b18dd32daf30b46e",
+      "body_sha256": "b4768ed15a6b29e967b158bcd2192dd244ed3b86a8d0aacfa128b4366ae7191d",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5819"
     },
     "5820": {
       "number": 5820,
       "title": "[v0.92][WP-03] Runtime launch and resilience consolidation",
-      "body_sha256": "9a4320ea7f8649ffdef7dc74778ca7f00a092dac5f4c556633d510729d6d8a88",
+      "body_sha256": "74ceeee165675e9cccdbc084cf6aef99327b5df93e2e2373a6e89621539bbf56",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5820"
     },
     "5821": {
       "number": 5821,
       "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
-      "body_sha256": "36135ad4f7eb23f16101782f1d47a152f8c247f8a2ed7787743c9f5f6c06f0e5",
+      "body_sha256": "0c8b5f6db53812ba60008d8b6daf1624257d48f62da4f4cb71422439cb6ac981",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5821"
     },
     "5822": {
       "number": 5822,
       "title": "[v0.92][WP-05] C-SDLC estimation and cycle-time reduction",
-      "body_sha256": "ac8b82ab4b5e5440c2c2934fe8b308322fa267f6b422c1416ae109d23782a73b",
+      "body_sha256": "1ab95e83ec72e6fd89f2c98e91b8001b481ab42e67d5e027c0bc832d845aea38",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5822"
     },
     "5823": {
       "number": 5823,
       "title": "[v0.92][WP-06] Remote validation/build runner",
-      "body_sha256": "5d9c01f95f86e2d6cd39c2d8401d16624ac56dda7cccd453273b7861311c200f",
+      "body_sha256": "c40f4843823b257d5a10264ae8b168ed61411336c3178e91368dac9fc68cf127",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5823"
     },
     "5824": {
       "number": 5824,
       "title": "[v0.92][WP-07] Prompt-card enum typing",
-      "body_sha256": "b332106fdbfc38b783c58bf0af5e21b1d5f70fab42443523a5cf04a9b2789c1b",
+      "body_sha256": "7165c8107492db2e184376f9fff1d06f2403171ad96a4fb34f96a9cc8ba500dc",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5824"
     },
     "5825": {
       "number": 5825,
       "title": "[v0.92][WP-08] Birthday contract and negative cases",
-      "body_sha256": "35ad491c2ce55d7d885a545b46d92265da80ab87a157aa204a95beaff74da06e",
+      "body_sha256": "61d02502aaf0d98ea0d05728423219f9f36d73fa02c06404b047666c5ebbee8f",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5825"
     },
     "5826": {
       "number": 5826,
       "title": "[v0.92][WP-09] Stable name and identity architecture",
-      "body_sha256": "ebe3f833be42d8f6d4d5c302a0c6a8385f47a0e07de2b7df2589cdafb36bd4ee",
+      "body_sha256": "45343fbc87289b93a5a3e48e72b2d8edfe6afacdcda731689aeadaabbfa1713b",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5826"
     },
     "5827": {
       "number": 5827,
       "title": "[v0.92][WP-10] Continuity across bounded cycles",
-      "body_sha256": "78bff2023294af5c592e18532920306d7c835d0356f7609441d50224b911f0e3",
+      "body_sha256": "2258d54fc23904577294922742d92003847e6a65950ce0ac152bbf4ca6c5d471",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5827"
     },
     "5828": {
       "number": 5828,
       "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
-      "body_sha256": "26d0363958586b6c720555572d50b2564258df628180da7b30e1520f7e7396f3",
+      "body_sha256": "032c27c256a20ab92aaa4c1537697d79e5f9cef63b8ab5ab0cb0fb5da8f050d3",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5828"
     },
     "5829": {
       "number": 5829,
       "title": "[v0.92][WP-12] Capability envelope",
-      "body_sha256": "85d9c6f2615bcd41598d675883f9725f1da39164e04f6ecc8de280068c875914",
+      "body_sha256": "3182bafbfbd19fec87ee610693886bcba55edc0abe097b5dd949bc07a4c5f823",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5829"
     },
     "5830": {
       "number": 5830,
       "title": "[v0.92][WP-13] ACP / cognitive profiles",
-      "body_sha256": "d0ba81eec2c90d5949fce3036f464496ca3f0ac8c31ae064ed80fb7c2b245daa",
+      "body_sha256": "7fc6db5f0b8f5e8e642b1bbf68f486a3f04fa12a237b442c82962b9dfd19f69a",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5830"
     },
     "5831": {
       "number": 5831,
       "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
-      "body_sha256": "1dcbcbec6d941fc8d553fc989111700ef0ecb79461f4c525e261a4893dcca07d",
+      "body_sha256": "b02ce260f5e0412c2eda569f33202f4dd1cebb68c5a516677e8aad572b538a4d",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5831"
     },
     "5832": {
       "number": 5832,
       "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation",
-      "body_sha256": "f508033a4fa88794c33828fced732a63cc21e163329cc6dadb3dcb598a70154a",
+      "body_sha256": "da337deefbb5e92f7e4318daae7964607205fc06ffa5fb81a1986f9b28c77866",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5832"
     },
     "5833": {
       "number": 5833,
       "title": "[v0.92][WP-15] Birth witnesses and receipts",
-      "body_sha256": "9a4656ee1835b8e158a441a11c24fac85b4c1257b3eb990ed433629da05655e5",
+      "body_sha256": "667eca70b8c983880a81c772f0fbd518305145e3cf9e4fa6460dddc8a36d5122",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5833"
     },
     "5834": {
       "number": 5834,
       "title": "[v0.92][WP-16] Birthday review packet",
-      "body_sha256": "62afda840f5274129a033a59dfe2151ff8400b4fda08c2d2594d7dd8d40a405c",
+      "body_sha256": "bd7ebb536104d0671788b6d8ca2480926e245aced870308912b4e35990989123",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5834"
     },
     "5835": {
       "number": 5835,
       "title": "[v0.92][WP-17] Migration and cross-polis continuity planning",
-      "body_sha256": "2065c7ab0657b650e0dda45a3b9d0fd85239db665d7cb9ce81650d22ab4295f3",
+      "body_sha256": "22c272090b4c42ab935763febae059d9a70ca1e9bcd42b0bd56f2a85c48ed66c",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5835"
     },
     "5836": {
       "number": 5836,
       "title": "[v0.92][WP-18] First birthday demo",
-      "body_sha256": "83343c7031462598e7b336becd0a5742364ed06df4172fe6c9120c298464cedd",
+      "body_sha256": "c75f91563e6c8f1da8378c6d629c9b2c26e83df25c3f437099302f535b84f449",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5836"
     },
     "5837": {
       "number": 5837,
       "title": "[v0.92][WP-18A] Observatory/Unity consumer integration",
-      "body_sha256": "592cf54f00c8ce043878d9c82b47bdfc51abf6b5c20224a23748f120f7577b17",
+      "body_sha256": "00f8c199ecf326f288c0a7544749c4dd74cbd217735d5e26b6accc01e22f470e",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5837"
     },
     "5838": {
       "number": 5838,
       "title": "[v0.92][WP-18B] Provider-neutral multi-agent proof",
-      "body_sha256": "323ed632245e63dd1b1cb6fa20080ae7410c0ddebc6f44b9052e476d9e3d01e4",
+      "body_sha256": "2b43975cdfedf737f6ea0c77cf7840f78926c577b65685738d9fb16f634a5091",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5838"
     },
     "5839": {
       "number": 5839,
       "title": "[v0.92][WP-19] Birthday-to-governance handoff",
-      "body_sha256": "563658ef1bb95c5cb08361a3af87496f6c9ad03b62788c29f5f6bf792fc12f8a",
+      "body_sha256": "3bfc551349d8fdca97072a555a6a1b04283d60bfe091de4a4be26fa193991b45",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5839"
     },
     "5840": {
       "number": 5840,
       "title": "[v0.92][WP-20] Demo matrix, AEE proof, and proof coverage",
-      "body_sha256": "bbf44608fb29336d87475a201c6a13d020befb85648b95b427a8382d250d3356",
+      "body_sha256": "2cec9eb57cb7c16573929923b40ebd96ad942c62469c13248696c3661cc0a116",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5840"
     },
     "5841": {
       "number": 5841,
       "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
-      "body_sha256": "499ef8f23673e4510b734265f2d85d2549765cc6b30db715d4fc1e4b3fd97dfd",
+      "body_sha256": "24fcfda83b120f3b93b2dcfcbffe374742182c713ffc6c6c0742645bfc932849",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5841"
     },
     "5842": {
       "number": 5842,
       "title": "[v0.92][WP-22] Quality gate",
-      "body_sha256": "f25b21b7d3f3e8e737872c69b4d2381ec177953520a526ce6ccb54d0f702fbec",
+      "body_sha256": "cc34560f8fde931b4f074b31438e24aa9d00a9cdd83c4a28893e6338c45c4c7e",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5842"
     },
     "5843": {
       "number": 5843,
       "title": "[v0.92][WP-23] Docs and release-truth pass",
-      "body_sha256": "d8711b77d5285c840ada1ced4d4b8de7b274b7b534535c5af474ecc521da1e0c",
+      "body_sha256": "b46458f4810f799da00559bc1b0ecd50e9b26333bec51d04df23b7c3f2b7aa7f",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5843"
     },
     "5844": {
       "number": 5844,
       "title": "[v0.92][WP-24] Ten-article launch series",
-      "body_sha256": "b0568382cd002dbe3152bb345167a86425f78c59790ef57da125a71d9104a669",
+      "body_sha256": "8b4ba3f0bd2e56d079dd655a9f06c893afbdad76008c3297eabf435caac0e6e4",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5844"
     },
     "5845": {
       "number": 5845,
       "title": "[v0.92][WP-24A] Podcast Studio first ten episodes",
-      "body_sha256": "adbdf17739dec21d0db2c6e649502e0f6393a209b61791ce7485bc309d6db597",
+      "body_sha256": "9c0e697c15117591c0e8faa40d0f472cac7e30ea9140a8d62e25820f1990e0c4",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5845"
     },
     "5846": {
       "number": 5846,
       "title": "[v0.92][WP-25] Internal review",
-      "body_sha256": "927b87d9da28d604104ccb705109dc16406fd9eb729f071732ba56417e34b499",
+      "body_sha256": "82c9dd8464a3441b9b1bd4183a108cd51ef656760189299b76894c7f675bdfdd",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5846"
     },
     "5847": {
       "number": 5847,
       "title": "[v0.92][WP-26] External / third-party review",
-      "body_sha256": "c8e971094197cfdd8ab0be14a23063197426d709c3d63540bd24dfe05853f60e",
+      "body_sha256": "09d2819ffb8e7c293d03485d07f9624719e313d50cfdd2988b1bd0d67f2931bf",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5847"
     },
     "5848": {
       "number": 5848,
       "title": "[v0.92][WP-27] Review findings remediation",
-      "body_sha256": "ce7d08ec90a5f17de535586251ef76cc940a9936d8cfc01b64d92511a92e1808",
+      "body_sha256": "15a34358717e1ae9dc9d5a17a93121d19d607f88631a27f50bfe90889a918265",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5848"
     },
     "5849": {
       "number": 5849,
       "title": "[v0.92][WP-28] Next milestone planning",
-      "body_sha256": "2d811fd998f1c1427e60c1b704e437564a108440f7eb2dca872f4fbddb110382",
+      "body_sha256": "3e51aa1888c701f774721bf21dcfd6a9910547bb2e11d46c01c3f1f63310cfe6",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5849"
     },
     "5850": {
       "number": 5850,
       "title": "[v0.92][WP-28A] Next-milestone closeout plan",
-      "body_sha256": "17fc157ef8e0a25de384a3430e038ebbc650a65f14b002d7190cd78509e154bf",
+      "body_sha256": "f2127a686174433ccd0e5a37909a42472ec2d0198760d0579972c424fd5330bb",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5850"
     },
     "5851": {
       "number": 5851,
       "title": "[v0.92][WP-29] Next milestone review pass",
-      "body_sha256": "787c7302b194ad96caa8c5cfe834cf39c5255903fde90aa8778cbaa86f17b562",
+      "body_sha256": "ea88c2c2c21f0601e65fd9e5c81340e511b2642ed2cdaef83817b92bbc09a9a8",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5851"
     },
     "5852": {
       "number": 5852,
       "title": "[v0.92][WP-30] Release ceremony",
-      "body_sha256": "2b82d20e40effb6794a91c7058d6ad62e094231af134a8807fded0dca1b1d95c",
+      "body_sha256": "7863cc18c11492158bea45358a882ffe3c4e127b31a160f2485a2f592677c99e",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5852"
     },
     "5853": {
       "number": 5853,
       "title": "[v0.92][WP-02B][build] Run the post-migration build acceleration experiment",
-      "body_sha256": "f2249b4b96aa3e356a17115f4217426ba0b96076f72716a395eafc6fbcaa2637",
+      "body_sha256": "98f1904f892ba9f7d75d1f175751f3fafebe3886e68ceb9bd97cc8073f41e579",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5853"
     },
     "5862": {
       "number": 5862,
       "title": "[v0.92][WP-04-IMP][umbrella] Execute distributed Guardian child wave",
-      "body_sha256": "7193a7bbeac18195db47e33480c62ce2387cb1de44e3c4c773daf3bfaa5a1f06",
+      "body_sha256": "46d672d92d39bde0364f632454b854423e3a72d663e9ff63d77f606bc7797eaa",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5862"
     },
     "5863": {
       "number": 5863,
       "title": "[v0.92][WP-04.01] Node identity and authenticated enrollment",
-      "body_sha256": "8325168444629ee4e7c701d9529682852ccddc5c044eb6c6876e8d23cfbc9d9c",
+      "body_sha256": "30ce8f3e33e05379076f4a1190da6a1ec9c78e451e8189930e3257c13a14079a",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5863"
     },
     "5864": {
       "number": 5864,
       "title": "[v0.92][WP-04.02] Distributed certificate purposes and lifecycle",
-      "body_sha256": "e2693f2567c58214b0b79933a7fe81095bb6d8366ba5a2b4a9aaa82c7212a089",
+      "body_sha256": "395d59410f9ba2ef6a0a75c62433f2fff9018f2ea28646dfb00482c9c98b3a29",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5864"
     },
     "5865": {
       "number": 5865,
       "title": "[v0.92][WP-04.03] Maintained QUIC/TLS transport adapter",
-      "body_sha256": "bf539061fe92ca9d71a92ec9b1ad09b8f699f54bfe878aafe21c2aa7d1c14e14",
+      "body_sha256": "9a44eb45916ebdb22ef492576eacbfcf046ca4c2f6742344ad2586b58632fd68",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5865"
     },
     "5866": {
       "number": 5866,
       "title": "[v0.92][WP-04.04] Seed discovery and authenticated join",
-      "body_sha256": "0ef6c5b767e596015b821e7745221d1a9179e3288b16532988d17ab12e3b323f",
+      "body_sha256": "a96f67c4f0155dbb836e3fcd0fc5230a11fd7b13836a8437d427875f47966b5c",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5866"
     },
     "5867": {
       "number": 5867,
       "title": "[v0.92][WP-04.05] Membership state and topology convergence",
-      "body_sha256": "54c7fc6cbe38455da92cdcf3995a1895cbbe349660491e6ccfb887455385516d",
+      "body_sha256": "942b633484393c4682c3f5b3de76cd903b58967ed9374f65385fc569803905c3",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5867"
     },
     "5868": {
       "number": 5868,
       "title": "[v0.92][WP-04.06] Failure detection and partition classification",
-      "body_sha256": "ca3502b209bc1d6fe449bf016bd61a8c8a46b886adb64cd2416d6c36e218f6ba",
+      "body_sha256": "ac0f6a09ad3f105c09bb7fb824b42c7653f62a07747274f68fa2d4cb7e6c7d82",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5868"
     },
     "5869": {
       "number": 5869,
       "title": "[v0.92][WP-04.07] Epoch and lease authority",
-      "body_sha256": "10a9ff22f24ce2aaf086a3d3ec5b54234c1455ef6c891867c4623a138aa14c37",
+      "body_sha256": "3591e9dd5581c43c0e1f676ee1d30ebe8f43f51ba74b64d9435533e2f065c803",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5869"
     },
     "5870": {
       "number": 5870,
       "title": "[v0.92][WP-04.08] Fencing and single-owner enforcement",
-      "body_sha256": "22f7db31ce52ccbc98fd47e3ed1ff78be218162260565e3831d45559daf409cf",
+      "body_sha256": "80bf02a955158c4cd611728fe85bb5faf56978d8a62a15d22982e7dbb0ab6787",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5870"
     },
     "5871": {
       "number": 5871,
       "title": "[v0.92][WP-04.09] Signed capability advertisements",
-      "body_sha256": "18e9f0ca170bf91f45afba70f64b32a4b7708f3259b26ba1bbd507240d3a223d",
+      "body_sha256": "0da2fee07d215e2d9e1cb57edc363095f156e5bcb44ba56fb8c58184a189472c",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5871"
     },
     "5872": {
       "number": 5872,
       "title": "[v0.92][WP-04.10] Signed resource-weather advertisements",
-      "body_sha256": "7df0ff10fad903a76e5c6b443f8400b523dd4f2ed0ad0735df70f11e27351992",
+      "body_sha256": "edcc2e57dbefe681106d1097e9fe002287a4fdf1a65d5316471c85f77a09d09f",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5872"
     },
     "5873": {
       "number": 5873,
       "title": "[v0.92][WP-04.11] Bounded placement decisions",
-      "body_sha256": "e9497691b4defb3dd41f7040643adf7937cf36628fc74e8e4e8d5793fba816a1",
+      "body_sha256": "88cf4383d59166d1b7f12316f54962c45b118575910232131013f170679a6bc5",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5873"
     },
     "5874": {
       "number": 5874,
       "title": "[v0.92][WP-04.12] Snapshot catalog and transfer manifest",
-      "body_sha256": "2448cabf059adecfec4865e0d95cb57e700c55ceecfcda9bbaf57c0d4adfef22",
+      "body_sha256": "87233de0752620377c8a8e31a35b951cb1fbf1fadf5fbe6add9d0f0c3fe0dd47",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5874"
     },
     "5875": {
       "number": 5875,
       "title": "[v0.92][WP-04.13] Migration state machine",
-      "body_sha256": "e1bcf3f434b06d27290fb1581d1a6424a135bfa720bf2bca0ffad787d507ca88",
+      "body_sha256": "6fca8bfecb926460a7f6f5e342c060fe536f5e112b38b5a2b975d8dd9cff7c0b",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5875"
     },
     "5876": {
       "number": 5876,
       "title": "[v0.92][WP-04.14] Rollback, recovery, and relocation failure",
-      "body_sha256": "58eec26c85b768ea2080bef0f63d64712262aa0ad09676b6479548a5e42050cc",
+      "body_sha256": "bc8ca9215dc4e493afcefa7370c5168425b0740e3a9c5849467037f063b555b5",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5876"
     },
     "5877": {
       "number": 5877,
       "title": "[v0.92][WP-04.15] Versioned distributed topology and migration projection",
-      "body_sha256": "64b731aefa34407e6870b783453b393141a3f00dbc3bb4c6b84e17c76b4963c3",
+      "body_sha256": "46149acce853a760ca45f23bb66da2429632a856cc42a50188b8f7374b4b2879",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5877"
     },
     "5878": {
       "number": 5878,
       "title": "[v0.92][WP-04.16] Distributed integration, adversarial, and native-platform proof",
-      "body_sha256": "7de3ef27d8d419361fe11454f4fc956fef7d8491a6ed513bc607fed73235c9af",
+      "body_sha256": "88c01c38bdb3df68702a57f781703cd53311164b4c7d76b12c5afbf7947eedfd",
       "state": "OPEN",
       "url": "https://github.com/danielbaustin/agent-design-language/issues/5878"
     }
