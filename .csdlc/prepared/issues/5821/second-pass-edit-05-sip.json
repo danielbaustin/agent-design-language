@@ -1,0 +1,20 @@
+{
+  "issue": 5821,
+  "card": "sip",
+  "expected_generation": 47,
+  "expected_digest": "daa24868a8587822360f3616bb014f5bf32e6bd92e9bf80e535ea6dae53cb9b4",
+  "claim_id": "claim-5821-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "authority_boundary",
+    "values": [
+      "Issue 5821 owns only the architecture/security gate, live denominator, and gate review",
+      "WP-04-IMP issue 5862 owns orchestration and reconciliation only",
+      "Issues 5863 through 5878 own child implementation, proof, review, PR, closeout, and rollback",
+      "Issue 5878 alone owns module registration and final integration",
+      "Issue 5832 remains blocked until issue 5862 has terminal integrated output"
+    ]
+  }
+}

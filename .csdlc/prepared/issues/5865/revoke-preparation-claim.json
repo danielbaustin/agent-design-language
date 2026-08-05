@@ -1,0 +1,11 @@
+{
+  "issue": 5865,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5865-v092-preparation",
+  "expected_generation": 0,
+  "expected_digest": "1c21d463daaf2ec2fe4712cadfe6b9b27db54a1bf9902302696a40f9e8365248",
+  "now_unix_seconds": 1785953530,
+  "actor": "codex:5860-runtime-wp04-wave",
+  "operator_authority": "operator:daniel-issue-5860-preparation-only",
+  "reason": "Release completed preparation claim for just-in-time child implementation handoff."
+}

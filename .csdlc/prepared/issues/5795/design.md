@@ -43,10 +43,18 @@ does not hold signing keys, launch providers, or gain direct filesystem/model
 authority. Provider failure returns a bounded error and leaves Runtime and the
 public read stream usable.
 
-Candidate implementation surfaces are the governed Runtime ingress/operation
-modules, a narrow local-provider adapter and tests, Runtime API/WSS projections,
-and the HTML Observatory operator channel. Final integration waits for issues
-5800, 5820, and stable 5832 contracts, and must serialize on overlapping files.
+## Exclusive Owned Paths
+
+- `adl-runtime-kernel/src/shepherd.rs`
+- `adl-runtime-kernel/tests/shepherd.rs`
+- `demos/html-observatory/shepherd.js`
+- `demos/html-observatory/index.html`
+- `adl/tools/validate_v092_shepherd_browser_roundtrip.mjs`
+
+Issue 5795 owns exactly these paths. Runtime admission and ACIP/WSS modules are
+read-only dependencies owned by #5832; the common Observatory transport in
+`demos/html-observatory/app.js` is owned by #5837. Integration stops if the
+stable interfaces cannot support this slice without widening ownership.
 
 ## Invariants And Failure Semantics
 

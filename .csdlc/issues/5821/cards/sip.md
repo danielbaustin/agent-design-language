@@ -12,26 +12,27 @@ Status: ready
 
 ## Goal
 
-Pass a reviewed distributed Guardian/polis architecture and threat-model gate, execute the exact 16-child program with disjoint ownership, and integrate real multi-node membership, fencing, migration, rollback, certificate, and recovery behavior.
+Freeze and independently approve the distributed Guardian architecture/security contract, validate the live #5862 plus #5863-#5878 denominator, and stop without product implementation.
 
 ## Required Outcome
 
-One reviewed distributed-runtime contract and threat model governs 16 concrete terminal child issues whose production paths converge at one exact revision with single-authority, mTLS membership, partition, fencing, relocation, rollback, rotation, and recovery proof.
+One approved architecture and threat model plus an exact live sixteen-child ledger with owners, dependencies, exclusive paths, proof boundaries, rollback responsibilities, prepared cards, and null claims.
 
 ## Scope
 
-- Distributed architecture, threat model, schemas, COTS decisions, and 16-child ownership ledger
-- Narrow child-owned surfaces under adl-runtime and adl-runtime-kernel for Guardian identity, networking, topology, state, control, observability, and resource context
-- Integrated multi-node, partition, fencing, migration, rollback, certificate, and recovery proof
-- .csdlc/evidence/5821 program and integration evidence
+- .csdlc/issues/5821
+- .csdlc/prepared/issues/5821
+- .csdlc/evidence/5821
+- docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md
+- docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md
 
 ## Authority
 
-- Issue 5821 owns the architecture/security gate, exact 16-child denominator, integration, and final reconciliation
-- Each child retains its own implementation, proof, review, PR, and closeout authority
-- Guardian remains process 0; network transport never becomes polis, cognition, governance, or identity authority
-- Issue 5832 waits for the integrated substrate and owns protocol reconciliation
-- No Runtime v2 or v0.93 governance authority
+- Issue 5821 owns only the architecture/security gate, live denominator, and gate review
+- WP-04-IMP issue 5862 owns orchestration and reconciliation only
+- Issues 5863 through 5878 own child implementation, proof, review, PR, closeout, and rollback
+- Issue 5878 alone owns module registration and final integration
+- Issue 5832 remains blocked until issue 5862 has terminal integrated output
 
 ## Assumptions
 

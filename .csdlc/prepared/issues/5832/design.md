@@ -49,10 +49,22 @@ and replay identity before dispatch. Backpressure, cancellation, reconnect,
 and error frames are bounded and observable. No browser token appears in URLs,
 logs, fixtures, or committed artifacts.
 
-Candidate implementation surfaces are the Runtime ACIP modules, protocol
-adapter/ingress modules, Runtime API/auth/WSS tests, new schema/catalog files,
-and issue evidence. The executor must narrow exact paths after WP-04 lands and
-avoid consumer-owned files.
+## Exclusive Owned Paths
+
+- `adl-runtime/src/acip.rs`
+- `adl-runtime/src/runtime_api_auth.rs`
+- `adl-runtime-kernel/src/acip.rs`
+- `adl-runtime-kernel/src/protocol_adapters.rs`
+- `adl-runtime/tests/runtime_api_wss.rs`
+- `schemas/acip/v1/acip.proto`
+- `schemas/acip/v1/catalog.json`
+- `docs/api/runtime-v3/v1/acip.openapi.json`
+- `adl/tools/validate_v092_acip_wss.sh`
+- `adl/tools/validate_v092_acip_native_receipts.rb`
+
+Issue 5832 owns exactly these paths. It reads the integrated distributed
+projection produced by WP-04-IMP #5862 but does not edit any distributed child
+path. Consumer files remain owned by #5795 and #5837.
 
 ## Invariants And Failure Semantics
 
@@ -66,20 +78,28 @@ avoid consumer-owned files.
 
 ## Dependencies And Coordination
 
-WP-04 issue 5821 must provide the integrated distributed substrate. Existing
-ACIP stream and trace/replay baselines must be requalified at the current
-revision. Issue 5795 waits for stable command semantics; issue 5837 waits for
-the stable API/WSS consumer contract. Their implementation files remain out of
-scope here.
+WP-04 gate issue #5821 must be terminal and WP-04-IMP issue #5862 must produce
+terminal integrated distributed output from all sixteen children before final
+implementation begins. Existing ACIP stream and trace/replay baselines must be
+requalified at the current revision. Issue 5795 waits for stable command
+semantics; issue 5837 waits for the stable API/WSS consumer contract. Their
+implementation files remain out of scope here.
 
 ## Validation Boundary
 
 Deterministic lanes cover schema/catalog parity, protobuf/JSON round trips,
 golden compatibility fixtures, ordering, limits, unsupported versions,
-malformed frames, replay, and denied access. A real Rustls WSS lane performs
-authenticated bidirectional exchange and reconnect/backpressure behavior over
-the production endpoint. Platform lanes run protocol tests on macOS, Linux,
-and native Windows; consumer rendering is deferred to 5837.
+malformed frames, replay, and denied access.
+`adl/tools/validate_v092_acip_wss.sh` launches the production Guardian/kernel,
+uses the real Rustls endpoint, performs authenticated bidirectional binary and
+JSON exchanges, reconnects under backpressure, verifies trace/replay identity,
+and retains exact-revision transcript digests. It fails on fixture servers,
+plaintext, direct-kernel launch, zero exchanges, schema drift, or auth bypass.
+
+`adl/tools/validate_v092_acip_native_receipts.rb` requires distinct macOS,
+Linux, and native Windows receipts bound to source revision, binary/schema
+digests, exact argv, runner identity, nonzero exchanges, negative-case counts,
+and output artifacts. Consumer rendering remains deferred to #5837.
 
 ## Rollback
 

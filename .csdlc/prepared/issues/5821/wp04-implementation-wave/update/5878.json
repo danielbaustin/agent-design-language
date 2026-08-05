@@ -1,0 +1,18 @@
+{
+  "action": "issue_update",
+  "repository": "danielbaustin/agent-design-language",
+  "issue": 5878,
+  "title": "[v0.92][WP-04.16] Distributed integration, adversarial, and native-platform proof",
+  "body": "## Summary\n\nRegister and integrate the distributed module, then prove real multi-node Guardian behavior, API/WSS continuity, adversarial failures, and native macOS/Linux/Windows receipts.\n\nThis is WP-04.16 in the v0.92 distributed Guardian implementation wave coordinated by WP-04-IMP issue #5862. It may start only after the architecture/security gate in #5821 is terminal and this issue's typed design packet is current.\n\n## Dependencies\n\n- WP-04.01 issue #5863\n- WP-04.02 issue #5864\n- WP-04.03 issue #5865\n- WP-04.04 issue #5866\n- WP-04.05 issue #5867\n- WP-04.06 issue #5868\n- WP-04.07 issue #5869\n- WP-04.08 issue #5870\n- WP-04.09 issue #5871\n- WP-04.10 issue #5872\n- WP-04.11 issue #5873\n- WP-04.12 issue #5874\n- WP-04.13 issue #5875\n- WP-04.14 issue #5876\n- WP-04.15 issue #5877\n- WP-04-IMP issue #5862\n- Architecture/security gate issue #5821 terminal\n\n## Exclusive Owned Paths\n\n- `adl-runtime/src/distributed/mod.rs`\n- `adl-runtime/src/lib.rs`\n- `adl-runtime/tests/distributed_guardian.rs`\n- `adl/tools/validate_v092_distributed_guardian.sh`\n- `adl/tools/validate_v092_distributed_native_receipts.rb`\n\nThese product paths are exclusive to this child. Scope expansion or overlap requires architecture-gate reconciliation before binding.\n\n## Required Proof\n\nExact distributed_guardian test and live validator launch production Guardians and kernels, exercise authenticated API/WSS, partition, fencing, migration, recovery, shutdown, and digest-bound native receipts.\n\nProof must bind the exact source revision, executable argv, nonzero test count, output/artifact digests, runner identity, and platform identity where applicable. Fixtures and hand-authored success fields cannot replace live behavior.\n\n## Rollback Responsibility\n\nRemove module registration and distributed launch configuration, fence remote ownership, and prove the WP-03 single-node Guardian remains healthy from unchanged durable state.\n\n## Acceptance Criteria\n\n- The required outcome is implemented only in the exclusive paths above.\n- Positive, failure, replay/stale, bounded-resource, redaction, and authorization cases applicable to this slice are proven.\n- The exact named test target runs with `--no-tests=fail` or equivalent nonzero-test enforcement.\n- Review has no unresolved actionable findings and the child closes through its own typed lifecycle.\n\n## Non-Goals\n\n- No work owned by another WP-04 child.\n- No Runtime v2 fallback, custom cryptography, plaintext transport, or v0.93 governance work.\n- No completion credit from architecture prose, issue creation, fixtures, or retained evidence alone.\n",
+  "labels": [
+
+  ],
+  "assignees": [
+
+  ],
+  "require_review": false,
+  "required_checks": [
+
+  ],
+  "operation_key": "v092-wp-04-16-exact-live-dependencies"
+}

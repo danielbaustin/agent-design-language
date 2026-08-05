@@ -1,0 +1,21 @@
+{
+  "issue": 5800,
+  "card": "sip",
+  "expected_generation": 40,
+  "expected_digest": "34fbbfa6869af3ed2e3d0608c1ad6c753c2fc0db7bee6acc899de7a470150652",
+  "claim_id": "claim-5800-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "declared_scope",
+    "values": [
+      "adl-runtime/src/local_tls.rs",
+      "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
+      "adl-runtime/tests/local_tls.rs",
+      "demos/html-observatory/runtime-v3.config.json",
+      "demos/html-observatory/README.md",
+      "adl/tools/validate_v092_browser_trusted_observatory.mjs"
+    ]
+  }
+}

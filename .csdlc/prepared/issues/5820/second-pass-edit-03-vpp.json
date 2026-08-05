@@ -1,0 +1,99 @@
+{
+  "issue": 5820,
+  "card": "vpp",
+  "expected_generation": 29,
+  "expected_digest": "6d43ffff40532fe0f5df80be5833ffc6cfb5a165d3844287ab39c7abd527907f",
+  "claim_id": "claim-5820-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "guardian-lifecycle-contract",
+        "proof_role": "Run the exact nonzero production Guardian lifecycle target over init, supervision, restart, durable state, degradation, shutdown, and logs.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": [
+          "cargo",
+          "nextest",
+          "run",
+          "--manifest-path",
+          "adl-runtime/Cargo.toml",
+          "--test",
+          "runtime_guardian_lifecycle",
+          "--no-tests=fail"
+        ],
+        "parallel_group": "runtime",
+        "defer_reason": null
+      },
+      {
+        "lane": "production-guardian-api-wss-restart",
+        "proof_role": "Launch the production Guardian/kernel and prove authenticated HTTPS/WSS, child kill, bounded restart, durable state, readiness, clean shutdown, and clean logs.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": [
+          "bash",
+          "adl/tools/validate_v092_runtime_guardian_lifecycle.sh"
+        ],
+        "parallel_group": "runtime",
+        "defer_reason": null
+      },
+      {
+        "lane": "native-guardian-receipts",
+        "proof_role": "Recompute digest-bound macOS, Linux, and native Windows production Guardian lifecycle receipts.",
+        "acceptance_ids": [
+          "AC-6",
+          "AC-7"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5820/validate-runtime-native-receipts.rb"
+        ],
+        "parallel_group": "runtime",
+        "defer_reason": null
+      },
+      {
+        "lane": "exact-head-review-preflight",
+        "proof_role": "Reject diff damage before exact-head review and issue-closing publication.",
+        "acceptance_ids": [
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "parallel_group": "review",
+        "defer_reason": null
+      }
+    ]
+  }
+}

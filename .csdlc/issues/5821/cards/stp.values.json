@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
     "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
     "version": "v0.92",
-    "generation": 31
+    "generation": 50
   },
   "status": "ready",
   "content": {
@@ -31,11 +31,10 @@
         "Independent architecture and security review of the exact gate revision has no unresolved actionable findings"
       ],
       "dependencies": [
-        "WP-03 issue 5820 terminal with stable ingress, lifecycle, state, and readiness contracts",
-        "Reviewed COTS transport and cryptographic boundary",
-        "WP-04-IMP created only after this architecture and security gate is approved",
-        "WP-04.01 through WP-04.16 prepared before WP-04-IMP implementation starts",
-        "WP-14 issue 5832 waits for stable integrated output from the later WP-04-IMP umbrella"
+        "WP-03 issue 5820 terminal with stable ingress, lifecycle, state, API/WSS, readiness, restart, and shutdown",
+        "WP-04-IMP issue 5862 mapped to exactly issues 5863 through 5878",
+        "All sixteen child designs approved with ready SIP/STP/SPP/VPP, truthful pre-phase SRP/SOR, and null claims",
+        "WP-14 issue 5832 blocked until issue 5862 terminal integrated output"
       ],
       "repo_inputs": [
         "docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md",

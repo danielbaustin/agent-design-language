@@ -7,13 +7,13 @@
     "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
     "slug": "v0-92-observatory-browser-trusted-https",
     "version": "v0.92",
-    "generation": 36
+    "generation": 42
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 14,
+      "plan_revision": 16,
       "summary": "Reconcile the existing local TLS generator with one explicit browser trust mechanism, serialize shared init work with issue 5820, align both HTTPS listeners and documentation, prove failure preserves the last valid pair, then retain verified browser, health, feed, and platform evidence before exact-head review.",
       "steps": [
         {
@@ -60,11 +60,12 @@
         }
       ],
       "affected_areas": [
-        "Runtime local TLS bootstrap and tests",
-        "Runtime v3 TLS and CORS init configuration",
-        "Separate HTML Observatory HTTPS serving and configuration",
-        "Operator trust and reissue documentation",
-        "Issue 5800 proof artifacts"
+        "adl-runtime/src/local_tls.rs",
+        "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
+        "adl-runtime/tests/local_tls.rs",
+        "demos/html-observatory/runtime-v3.config.json",
+        "demos/html-observatory/README.md",
+        "adl/tools/validate_v092_browser_trusted_observatory.mjs"
       ],
       "invariants": [
         "TLS verification remains enabled",
@@ -98,7 +99,7 @@
         "Browser trust requires a different explicit operator mechanism on a supported platform"
       ],
       "design_ref": ".csdlc/prepared/issues/5800/design.md",
-      "design_digest": "b763e6a678932b977803e780f2f4fa0b52a4b1b26e2a38b59af88b35203a5d4a",
+      "design_digest": "57c78c786488cf64234694319e65b20d3aa4534b77def1af5994e8defee30f7a",
       "diagram_ref": ".csdlc/prepared/issues/5800/diagram.mmd",
       "diagram_digest": "7dd8d22e5d50ec170456f9d5e5402880e82cbd01f58e52055996d331a046a55f"
     }

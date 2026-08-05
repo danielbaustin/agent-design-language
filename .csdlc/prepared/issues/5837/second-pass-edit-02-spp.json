@@ -1,0 +1,23 @@
+{
+  "issue": 5837,
+  "card": "spp",
+  "expected_generation": 26,
+  "expected_digest": "c4b121be0599bd9e030e1e60e5fc78bc522571eb175614f5008e4987c3251639",
+  "claim_id": "claim-5837-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "demos/html-observatory/app.js",
+      "demos/html-observatory/styles.css",
+      "demos/v0.91.6/unity-observatory/Assets/Scripts/RuntimeV3Client.cs",
+      "demos/v0.91.6/unity-observatory/Assets/Resources/runtime-v3-contract.json",
+      "demos/v0.91.6/unity-observatory/Assets/Tests/RuntimeV3ClientTests.cs",
+      "adl/tools/validate_v092_html_observatory_live.mjs",
+      "adl/tools/validate_v092_unity_observatory_live.sh",
+      "adl/tools/validate_v092_observatory_restart_reconnect.sh"
+    ]
+  }
+}

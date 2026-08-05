@@ -2,8 +2,10 @@
 
 ## Status
 
-Planned for WP-04 as an architecture/security gate followed by the documented
-16-issue implementation program. No distributed-completion claim is made here.
+Scheduled in v0.92 as architecture/security gate #5821, implementation
+umbrella #5862, and exactly sixteen prepared children #5863 through #5878.
+No distributed-completion claim is made until all children are terminal and
+WP-04.16 provides real integrated proof.
 
 ## Purpose
 
@@ -35,6 +37,10 @@ The architecture issue must freeze trust boundaries, schemas, COTS choices,
 failure semantics, and threat model before implementation publication. The
 program then requires real multi-node membership, partition, fencing,
 migration, rollback, certificate-rotation, recovery, and relocation evidence.
+WP-04.16 #5878 exclusively owns module registration and the production
+Guardian/kernel integration proof, including authenticated API/WSS and
+digest-bound native macOS, Linux, and Windows receipts. WP-14 #5832 remains
+blocked until WP-04-IMP #5862 has terminal integrated output.
 
 ## Non-Goals
 

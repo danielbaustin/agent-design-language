@@ -1,0 +1,7 @@
+{
+  "issue": 5837,
+  "expected_generation": 24,
+  "expected_digest": "f1b2239cc92c8e64c4d6810d6c35706e3b8e83bf02edfc67081a06ff634b7035",
+  "claim_id": "claim-5837-v092-preparation",
+  "reviewer": "codex:5860-runtime-wp04-second-pass-design-review"
+}

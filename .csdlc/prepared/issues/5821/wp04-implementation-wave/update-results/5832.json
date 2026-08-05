@@ -1,0 +1,30 @@
+{
+  "action": "issue_update",
+  "comment_id": null,
+  "issue": {
+    "assignees": [
+
+    ],
+    "body": "## Summary\n\nReconcile ACIP and A2A into one versioned semantic contract, canonical protobuf family, deterministic JSON projection, public catalog, and real authenticated full-duplex Rustls WSS carrier.\n\n## Dependencies\n\n- WP-04 architecture/security gate #5821 terminal.\n- WP-04-IMP #5862 terminal after all sixteen children #5863 through #5878 integrate.\n- Current ACIP stream and trace/replay baselines requalified at the implementation revision.\n\n## Exclusive Owned Paths\n\n- `adl-runtime/src/acip.rs`\n- `adl-runtime/src/runtime_api_auth.rs`\n- `adl-runtime-kernel/src/acip.rs`\n- `adl-runtime-kernel/src/protocol_adapters.rs`\n- `adl-runtime/tests/runtime_api_wss.rs`\n- `schemas/acip/v1/acip.proto`\n- `schemas/acip/v1/catalog.json`\n- `docs/api/runtime-v3/v1/acip.openapi.json`\n- `adl/tools/validate_v092_acip_wss.sh`\n- `adl/tools/validate_v092_acip_native_receipts.rb`\n\n## Required Proof\n\nExact nonzero schema/round-trip/negative tests; production Guardian/kernel authenticated Rustls WSS exchange with binary and JSON parity, reconnect and backpressure; and digest-bound macOS, Linux, and native Windows receipts. Fixtures, generic owner lanes, hand-authored booleans, and #5821 gate completion cannot substitute for #5862 terminal integrated output.\n\n## Non-Goals\n\nDistributed child implementation, consumer UI changes, Shepherd model behavior, cloud bridges, or custom cryptography/transport.\n<!-- csdlc-github-operation:v092-wp14-wp04-imp-dependency-reconcile -->\n",
+    "closed_at": null,
+    "created_at": "2026-08-05T06:31:21Z",
+    "labels": [
+      "track:roadmap",
+      "type:task",
+      "area:runtime",
+      "version:v0.92"
+    ],
+    "marker_present": true,
+    "milestone": null,
+    "number": 5832,
+    "repository": "danielbaustin/agent-design-language",
+    "schema": "csdlc.github_issue.v1",
+    "state": "open",
+    "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation"
+  },
+  "operation_key": "v092-wp14-wp04-imp-dependency-reconcile",
+  "pr_state": null,
+  "reconciled": true,
+  "repository": "danielbaustin/agent-design-language",
+  "schema": "csdlc.github_action_result.v1"
+}

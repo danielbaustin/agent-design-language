@@ -20,11 +20,19 @@ One production Guardian process owns one Tokio/Axum/Rustls Runtime v3 kernel who
 
 ## Scope
 
-- adl-runtime Guardian, supervision, shutdown, resident-agent, API, auth, TLS, and observability modules
-- adl-runtime-kernel assembly, config, durable-state, supervisor, time, observability, and kernel entrypoint modules
+- adl-runtime/src/bin/adl-runtime-guardian.rs
+- adl-runtime/src/guardian.rs
+- adl-runtime/src/shutdown.rs
+- adl-runtime/src/supervision.rs
+- adl-runtime/src/resident_agent.rs
+- adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+- adl-runtime-kernel/src/config.rs
+- adl-runtime-kernel/src/durable_state.rs
+- adl-runtime-kernel/src/supervisor.rs
 - infra/runtime-v3/runtime-init.toml
-- Focused Runtime launch, recovery, state, API, logging, and platform tests and tools
-- .csdlc/evidence/5820
+- adl-runtime/tests/runtime_guardian_lifecycle.rs
+- adl/tools/validate_v092_runtime_guardian_lifecycle.sh
+- adl/tools/validate_v092_runtime_native_receipts.rb
 
 ## Authority
 

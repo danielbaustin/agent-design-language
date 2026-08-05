@@ -1,0 +1,7 @@
+{
+  "issue": 5800,
+  "expected_generation": 39,
+  "expected_digest": "c4c48cf6aa1d858537f7beae86bb975fd5d432dda9e98f9ebb35db192b1e5f29",
+  "claim_id": "claim-5800-v092-preparation",
+  "reviewer": "codex:5860-runtime-wp04-second-pass-design-review"
+}

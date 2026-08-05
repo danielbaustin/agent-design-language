@@ -1,0 +1,54 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5875,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04.13] Migration state machine",
+    "slug": "v0-92-wp-04-13-migration-state-machine",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Implement prepare, quiesce, checkpoint, transfer, validate, fence, activate, and commit with source authority retained until validation and fencing succeed.",
+      "deliverables": [
+        "Implement prepare, quiesce, checkpoint, transfer, validate, fence, activate, and commit with source authority retained until validation and fencing succeed.",
+        "Focused positive and negative tests",
+        "Digest-bound execution proof",
+        "Reviewed rollback evidence"
+      ],
+      "acceptance_criteria": [
+        "Implement only the declared exclusive paths",
+        "Preserve Guardian, authentication, bounds, determinism, durability, and redaction invariants",
+        "Run the exact named test with nonzero test enforcement",
+        "Prove applicable stale, replay, malformed, unauthorized, failure, and recovery cases",
+        "Bind all evidence to the exact source revision and artifact digests",
+        "Complete independent review and child-owned typed closeout"
+      ],
+      "dependencies": [
+        "WP-04.08 issue #5870",
+        "WP-04.11 issue #5873",
+        "WP-04.12 issue #5874",
+        "WP-04-IMP issue 5862",
+        "Architecture/security gate issue 5821 terminal"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md",
+        ".csdlc/prepared/issues/5821/design.md",
+        "adl-runtime/src/guardian.rs",
+        "adl-runtime/src/networking.rs",
+        "adl-runtime/src/runtime_api.rs"
+      ],
+      "non_goals": [
+        "Sibling WP-04 paths",
+        "Runtime v2 fallback",
+        "Custom cryptography or plaintext",
+        "WP-14, consumer UI, or v0.93 work",
+        "Self-attested completion"
+      ]
+    }
+  }
+}

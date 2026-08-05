@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5871,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04.09] Signed capability advertisements",
+    "slug": "v0-92-wp-04-09-capability-advertisements",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Implement bounded signed capability advertisements that are evidence inputs, never direct authority grants.",
+      "required_outcome": "Implement bounded signed capability advertisements that are evidence inputs, never direct authority grants.",
+      "declared_scope": [
+        "adl-runtime/src/distributed/capability_advertisement.rs",
+        "adl-runtime/tests/distributed_capability_advertisement.rs"
+      ],
+      "authority_boundary": [
+        "Issue 5871 exclusively owns the declared paths",
+        "WP-04-IMP issue 5862 coordinates only",
+        "WP-04.16 alone owns final module registration",
+        "No sibling, Runtime v2, or v0.93 authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Do not start before #5821 is terminal",
+        "Bind only the exact exclusive paths",
+        "Use nonzero exact test selection",
+        "Fix all actionable pre-PR findings"
+      ]
+    }
+  }
+}

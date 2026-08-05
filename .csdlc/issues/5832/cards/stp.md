@@ -34,9 +34,9 @@ Reconcile existing ACIP/A2A semantics into one versioned envelope, protobuf sche
 
 ## Dependencies
 
-- WP-04 issue 5821 integrated distributed substrate terminal
-- Current ACIP stream substrate requalified on Runtime v3
-- Current trace/replay identity baseline requalified
+- WP-04 gate issue 5821 terminal
+- WP-04-IMP issue 5862 terminal after issues 5863 through 5878 integrate
+- Current ACIP stream and trace/replay baselines requalified at the implementation revision
 - Stable Runtime API/auth ownership before issues 5795 and 5837 integrate
 
 ## Inputs

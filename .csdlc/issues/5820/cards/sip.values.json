@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-03] Runtime launch and resilience consolidation",
     "slug": "v0-92-wp-03-runtime-launch-and-resilience-consolidation",
     "version": "v0.92",
-    "generation": 19
+    "generation": 30
   },
   "status": "ready",
   "content": {
@@ -16,11 +16,19 @@
       "goal": "Consolidate Runtime v3 onto one Guardian-owned, init-file-driven launch path that starts, reports readiness, recovers bounded failures, preserves durable state, and shuts down cleanly across supported platforms.",
       "required_outcome": "One production Guardian process owns one Tokio/Axum/Rustls Runtime v3 kernel whose configuration, startup, readiness, bounded supervision, recovery, durable restart, observability, and shutdown behavior are reproducible and fail truthfully.",
       "declared_scope": [
-        "adl-runtime Guardian, supervision, shutdown, resident-agent, API, auth, TLS, and observability modules",
-        "adl-runtime-kernel assembly, config, durable-state, supervisor, time, observability, and kernel entrypoint modules",
+        "adl-runtime/src/bin/adl-runtime-guardian.rs",
+        "adl-runtime/src/guardian.rs",
+        "adl-runtime/src/shutdown.rs",
+        "adl-runtime/src/supervision.rs",
+        "adl-runtime/src/resident_agent.rs",
+        "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+        "adl-runtime-kernel/src/config.rs",
+        "adl-runtime-kernel/src/durable_state.rs",
+        "adl-runtime-kernel/src/supervisor.rs",
         "infra/runtime-v3/runtime-init.toml",
-        "Focused Runtime launch, recovery, state, API, logging, and platform tests and tools",
-        ".csdlc/evidence/5820"
+        "adl-runtime/tests/runtime_guardian_lifecycle.rs",
+        "adl/tools/validate_v092_runtime_guardian_lifecycle.sh",
+        "adl/tools/validate_v092_runtime_native_receipts.rb"
       ],
       "authority_boundary": [
         "Issue 5820 owns single-node Guardian launch and Runtime resilience only",

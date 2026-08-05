@@ -20,11 +20,11 @@ A bounded authorized operator message produces a real local model response when 
 
 ## Scope
 
-- adl-runtime-kernel governed ingress, control, operations, and protocol-adapter surfaces
-- adl-runtime Runtime API, auth, and WSS projection surfaces
-- A narrow explicitly configured local MLX/Gemma adapter and deterministic tests
-- demos/html-observatory operator channel and status projection
-- .csdlc/evidence/5795 real local-model and negative proof
+- adl-runtime-kernel/src/shepherd.rs
+- adl-runtime-kernel/tests/shepherd.rs
+- demos/html-observatory/shepherd.js
+- demos/html-observatory/index.html
+- adl/tools/validate_v092_shepherd_browser_roundtrip.mjs
 
 ## Authority
 

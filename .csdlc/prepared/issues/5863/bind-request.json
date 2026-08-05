@@ -1,0 +1,22 @@
+{
+  "issue": 5863,
+  "base_branch": "main",
+  "branch": "codex/5860-v092-execution-readiness",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5863-v092-preparation",
+    "owner": "codex:5860-runtime-wp04-wave",
+    "generation": 0,
+    "acquired_unix_seconds": 1785953406,
+    "expires_unix_seconds": 1786039806,
+    "heartbeat_unix_seconds": 1785953406,
+    "branch": "codex/5860-v092-execution-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5863",
+      ".csdlc/prepared/issues/5863",
+      ".csdlc/evidence/5863"
+    ],
+    "purpose": "Prepare issue 5863 design, cards, and proof contract without product implementation."
+  }
+}

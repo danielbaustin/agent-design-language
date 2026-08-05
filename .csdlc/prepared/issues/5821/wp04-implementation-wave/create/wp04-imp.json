@@ -1,0 +1,20 @@
+{
+  "action": "issue_create",
+  "repository": "danielbaustin/agent-design-language",
+  "title": "[v0.92][WP-04-IMP][umbrella] Execute distributed Guardian child wave",
+  "body": "## Summary\n\nExecute and integrate the exact same-milestone WP-04.01 through WP-04.16 distributed Guardian child wave after #5821's architecture/security gate is terminal. This umbrella coordinates dependency order and final reconciliation; it does not preclaim child product paths or substitute umbrella work for child lifecycle authority.\n\n## Dependencies\n\n- #5821 terminal with approved architecture, threat model, and exact child ledger.\n- WP-03 issue #5820 terminal with stable single-node Guardian, API/WSS, state, readiness, restart, and shutdown contracts.\n- All sixteen children have approved designs, ready SIP/STP/SPP/VPP, truthful pre-phase SRP/SOR, and null claims before implementation starts.\n\n## Required Outcome\n\n- Exactly WP-04.01 through WP-04.16 execute in the approved dependency graph.\n- Every child retains exclusive paths, proof, review, PR, merge, closeout, and rollback authority.\n- Final integration proves production Guardian/kernel multi-node behavior, authenticated API/WSS continuity, partition and fencing, migration and recovery, clean shutdown, and native macOS/Linux/Windows receipts.\n- WP-14 issue #5832 remains blocked until this umbrella has terminal integrated output.\n\n## Owned Paths\n\nThis umbrella owns only its typed lifecycle records and `.csdlc/evidence/<issue>/` orchestration and reconciliation evidence. It owns no `adl-runtime/`, `adl-runtime-kernel/`, `adl/tools/`, or API-schema product path.\n\n## Acceptance Criteria\n\n- The live denominator contains one umbrella and exactly sixteen open prepared child issues mapped to WP-04.01 through WP-04.16.\n- The mapping matches the canonical v0.92 wave and #5821 ledger exactly.\n- Dependency and protected-path graphs are acyclic, exclusive, and mechanically validated.\n- No child starts before #5821 is terminal and no child starts with an unapproved or claim-active preparation packet.\n- Final reconciliation derives terminal child and exact-head evidence rather than trusting self-attested status.\n\n## Non-Goals\n\n- No product implementation directly in the umbrella.\n- No child merging, closeout, or proof substitution by umbrella authority.\n- No Runtime v2, custom cryptography, or v0.93 governance work.\n",
+  "labels": [
+    "track:roadmap",
+    "type:feature",
+    "area:runtime",
+    "version:v0.92"
+  ],
+  "assignees": [
+
+  ],
+  "require_review": false,
+  "required_checks": [
+
+  ],
+  "operation_key": "v092-wp04-imp-distributed-guardian-umbrella"
+}

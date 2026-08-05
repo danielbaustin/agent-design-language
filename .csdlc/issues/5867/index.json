@@ -1,0 +1,95 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5867,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "421dcbb5f175ad60a76124fe09d92fb357634c3ce493305cc9f9722b6827c02e",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "a21b42cbfeaf6e2149aa326d540f0719015d91dbfd801a21fa5485b77eb5fb70",
+  "claim": null,
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5867/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5867/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-runtime-wp04-design-review",
+      "revision": "d021c93afe45a50811e0c4d08dca3942e5fe983af2b4c7c920af7a967b30968d"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "6f3a0ec495ba2737a864bee7cf85a02a69cad77b49988ca651711e06f4ad2b7b",
+      "rendered_digest": "2404737534f213d6f6c53860e0e8cd93bb2ae571215d0babe2a3e723a7d4aa00",
+      "ast_digest": "8c629bbe5d4c07b721678fe03cc526c691082b8f03fdad742d53e7a16d3036ad"
+    },
+    "stp": {
+      "values_digest": "1a9c10a340290ffb1197e7d0fe422c2df9cdafa515b0f9b591f25b9ee497f01a",
+      "rendered_digest": "07efe5821a50a1bd50071a72c471a863e5eafca1c50e1a32a491f8ce4d47353a",
+      "ast_digest": "c8604d51021ad5fb82b36a62b756f943c7acbbe5415ea744af9e0e0fb75d4cf8"
+    },
+    "spp": {
+      "values_digest": "decd3ca24df797fa615366eeff3f0978c021afca33ab0ad2fa5fda8b40e559cc",
+      "rendered_digest": "50c83821c15478cc0099430dedcbb56c24f33e0f8936fc54a1709be2801d96f2",
+      "ast_digest": "fb5ad9a8e8064518396ae6ced68228b507f06fb8d7b74cf32b2b523ddf03234a"
+    },
+    "vpp": {
+      "values_digest": "6f1f99acca8d50d7021f6c7e0768e1496f67447eb87c2bbcb8765f4778ee09b6",
+      "rendered_digest": "e032b52ef933dea8879085a5e65a7d2e34e03e80626ec0e49e6eed9ce1467673",
+      "ast_digest": "c974539abe5eef0fe1cf9723ad697b6b09d5ec0660adb0a38f847887e4595247"
+    },
+    "srp": {
+      "values_digest": "378579256499670d1854acb7c613a2f1ae04689c3d74d38e28fbc542478503fe",
+      "rendered_digest": "a3245be480e3c976e0421d88778ee4db70d49b5ebd20dc19a44362a2665d8c7c",
+      "ast_digest": "7120a6307dcd12e6e48e00f50a177f246e385fbd285df42a062bf3f2de84b1aa"
+    },
+    "sor": {
+      "values_digest": "1c22945ffaba80aba102fd639bb89ef2b248ad3b53dbc6bc419d50bd888929bd",
+      "rendered_digest": "487fd8d4c8837237ec4a3f6e75c27b79f9cc7fcf2c78dcb7a42620d988ddde3f",
+      "ast_digest": "b10faaed4e8a1e939a1dd7c2228022376bfb3cfb113eab20b0830efe21699b23"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-runtime-wp04-wave",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-runtime-wp04-wave",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5860-runtime-wp04-wave",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5860-runtime-wp04-wave",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-runtime-wp04-wave",
+      "reason": "Release completed preparation claim for just-in-time child implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5867-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-wave\"}"
+    }
+  ]
+}

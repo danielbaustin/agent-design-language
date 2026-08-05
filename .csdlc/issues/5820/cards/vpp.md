@@ -24,114 +24,88 @@ Diagram: .csdlc/prepared/issues/5820/diagram.mmd
 
 [
   {
-    "lane": "guardian-contract",
-    "proof_role": "Prove init parsing, process ownership, restart/backoff, signal forwarding, bounded capture, and terminal states.",
+    "lane": "guardian-lifecycle-contract",
+    "proof_role": "Run the exact nonzero production Guardian lifecycle target over init, supervision, restart, durable state, degradation, shutdown, and logs.",
     "acceptance_ids": [
       "AC-1",
-      "AC-2",
-      "AC-3"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--locked",
-      "--manifest-path",
-      "adl-runtime/Cargo.toml",
-      "--test",
-      "guardian_cli"
-    ],
-    "parallel_group": "runtime-unit",
-    "defer_reason": null
-  },
-  {
-    "lane": "kernel-configuration-and-state",
-    "proof_role": "Prove authoritative configuration, bounded assembly, durable checkpoint/restart, readiness, and dependency degradation.",
-    "acceptance_ids": [
       "AC-2",
       "AC-3",
       "AC-4",
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "large",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
       "cargo",
-      "test",
-      "--locked",
+      "nextest",
+      "run",
       "--manifest-path",
-      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime/Cargo.toml",
       "--test",
-      "configuration",
-      "--test",
-      "durable_state",
-      "--test",
-      "kernel"
+      "runtime_guardian_lifecycle",
+      "--no-tests=fail"
     ],
-    "parallel_group": "runtime-unit",
+    "parallel_group": "runtime",
     "defer_reason": null
   },
   {
-    "lane": "guardian-live-lifecycle",
-    "proof_role": "Launch the production Guardian/kernel, exercise health/readiness, authenticated HTTPS/WSS, child failure, restart, shutdown, state recovery, and clean logs.",
+    "lane": "production-guardian-api-wss-restart",
+    "proof_role": "Launch the production Guardian/kernel and prove authenticated HTTPS/WSS, child kill, bounded restart, durable state, readiness, clean shutdown, and clean logs.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
       "AC-3",
       "AC-4",
       "AC-5",
       "AC-6"
     ],
-    "deterministic": false,
-    "resource_profile": "large",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
       "bash",
-      "adl/tools/run_runtime_v3_guardian_soak.sh"
+      "adl/tools/validate_v092_runtime_guardian_lifecycle.sh"
     ],
-    "parallel_group": "runtime-live",
-    "defer_reason": "Run after implementation with installed owner binaries and issue-local state/log roots."
+    "parallel_group": "runtime",
+    "defer_reason": null
   },
   {
-    "lane": "native-platform-lifecycle",
-    "proof_role": "Repeat start-stop, configuration failure, recovery, signal, shutdown, state, and log checks on macOS, Linux, and native Windows.",
+    "lane": "native-guardian-receipts",
+    "proof_role": "Recompute digest-bound macOS, Linux, and native Windows production Guardian lifecycle receipts.",
     "acceptance_ids": [
-      "AC-5",
       "AC-6",
       "AC-7"
     ],
-    "deterministic": false,
-    "resource_profile": "large",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
-      "bash",
-      "adl/tools/run_owner_validation_lane.sh",
-      "runtime"
+      "ruby",
+      ".csdlc/prepared/issues/5820/validate-runtime-native-receipts.rb"
     ],
-    "parallel_group": "platform",
-    "defer_reason": "Requires native CI runners after implementation; missing platform evidence remains blocked."
+    "parallel_group": "runtime",
+    "defer_reason": null
   },
   {
-    "lane": "exact-head-hygiene",
-    "proof_role": "Reject unrelated changes and support exact-head review and closing linkage.",
+    "lane": "exact-head-review-preflight",
+    "proof_role": "Reject diff damage before exact-head review and issue-closing publication.",
     "acceptance_ids": [
       "AC-8"
     ],
     "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 600,
-    "budget_tokens": 4000,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
       "git",
       "diff",
       "--check"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "review",
     "defer_reason": null
   }
 ]
@@ -148,10 +122,9 @@ Tokens: 25000
 
 ## Commands
 
-- `cargo test --locked --manifest-path adl-runtime/Cargo.toml --test guardian_cli`
-- `cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml --test configuration --test durable_state --test kernel`
-- `bash adl/tools/run_runtime_v3_guardian_soak.sh`
-- `bash adl/tools/run_owner_validation_lane.sh runtime`
+- `cargo nextest run --manifest-path adl-runtime/Cargo.toml --test runtime_guardian_lifecycle --no-tests=fail`
+- `bash adl/tools/validate_v092_runtime_guardian_lifecycle.sh`
+- `ruby .csdlc/prepared/issues/5820/validate-runtime-native-receipts.rb`
 - `git diff --check`
 
 ## Failure Semantics

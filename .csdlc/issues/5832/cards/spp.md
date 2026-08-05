@@ -16,7 +16,7 @@ After WP-04 lands, inventory existing ACIP/A2A/WSS/trace contracts, freeze one s
 
 ## Plan
 
-Revision 8
+Revision 12
 
 ## Steps
 
@@ -97,7 +97,7 @@ Revision 8
 
 .csdlc/prepared/issues/5832/design.md
 
-Digest: 585ae0a7f6fa2a3f682bab346edf66b27aeb3528cf5b869d91bdc4ca1a7491e1
+Digest: cc10aa75a38e1544cb668d51ef931b908c9893ff7b937e4b77dea50ae3141e53
 
 ## Diagram
 
@@ -107,11 +107,11 @@ Digest: 0ddb64863e3e34f2587da73ca88c9ce88eb77000c199807e0c69639234b28b7f
 
 ## Stop Conditions
 
-- WP-04 issue 5821 is not terminal
-- The ACIP substrate or trace/replay baseline cannot be requalified
-- A proposed encoding cannot preserve one semantic identity across protobuf and JSON
-- The design requires custom crypto/transport or weakens Runtime authentication
-- Issue 5795 or 5837 owns an overlapping live file without serialization
+- Issue 5821 architecture/security gate is not terminal
+- Issue 5862 WP-04-IMP or any of issues 5863 through 5878 lacks terminal integrated evidence
+- Semantic envelope, schema, catalog, JSON, or WSS authority remains ambiguous
+- Any declared path overlaps an active owner
+- Native macOS, Linux, or Windows proof cannot be produced
 
 ## Handoff
 

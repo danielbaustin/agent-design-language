@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-03] Runtime launch and resilience consolidation",
     "slug": "v0-92-wp-03-runtime-launch-and-resilience-consolidation",
     "version": "v0.92",
-    "generation": 19
+    "generation": 30
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 11,
       "summary": "Audit the current Guardian/kernel/init split and active Runtime collisions, freeze one authoritative init schema, consolidate process ownership and bounded lifecycle behavior, prove dependency degradation cannot kill the kernel, then run real restart/state/API/log/platform proof before exact-head review.",
       "steps": [
         {
@@ -59,11 +59,19 @@
         }
       ],
       "affected_areas": [
-        "Guardian process ownership and CLI",
-        "Runtime kernel assembly and configuration",
-        "Bounded supervision, shutdown, and durable state",
-        "Axum/Rustls API, auth, readiness, and WSS",
-        "Tracing/Vector logging and platform launch proof"
+        "adl-runtime/src/bin/adl-runtime-guardian.rs",
+        "adl-runtime/src/guardian.rs",
+        "adl-runtime/src/shutdown.rs",
+        "adl-runtime/src/supervision.rs",
+        "adl-runtime/src/resident_agent.rs",
+        "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+        "adl-runtime-kernel/src/config.rs",
+        "adl-runtime-kernel/src/durable_state.rs",
+        "adl-runtime-kernel/src/supervisor.rs",
+        "infra/runtime-v3/runtime-init.toml",
+        "adl-runtime/tests/runtime_guardian_lifecycle.rs",
+        "adl/tools/validate_v092_runtime_guardian_lifecycle.sh",
+        "adl/tools/validate_v092_runtime_native_receipts.rb"
       ],
       "invariants": [
         "Guardian is process 0 and reaps every child",
@@ -100,7 +108,7 @@
         "Focused proof reveals more than one production launch path remains"
       ],
       "design_ref": ".csdlc/prepared/issues/5820/design.md",
-      "design_digest": "ed297788195f619435a0a993c692f5c14d111802c3893a59f84df2225404c80f",
+      "design_digest": "32e9dafdd48e5519c49fd44d7d894c26ca903f76bca040116ca7cedb78ad50d9",
       "diagram_ref": ".csdlc/prepared/issues/5820/diagram.mmd",
       "diagram_digest": "c3c9d67b221cc5f5967cbdb03ad51c66980f9e1920c1b2e069a308dbb1183b31"
     }

@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5862,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04-IMP][umbrella] Execute distributed Guardian child wave",
+    "slug": "v0-92-wp-04-imp-distributed-guardian-child-wave",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Coordinate and reconcile the exact sixteen-child distributed Guardian implementation wave.",
+      "required_outcome": "All sixteen child issues execute under exclusive authority and converge in WP-04.16 real multi-node and native-platform proof.",
+      "declared_scope": [
+        ".csdlc/evidence/5862",
+        ".csdlc/prepared/issues/5862"
+      ],
+      "authority_boundary": [
+        "Umbrella owns scheduling and reconciliation only",
+        "Children own implementation, proof, review, PR, closeout, and rollback",
+        "WP-04.16 owns module registration and integration",
+        "WP-14 #5832 waits for terminal integrated output"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Start no child before #5821 is terminal",
+        "Preserve exact sixteen-child denominator",
+        "Never preclaim product paths",
+        "Use derived live terminal evidence"
+      ]
+    }
+  }
+}

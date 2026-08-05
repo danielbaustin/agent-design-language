@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5821/diagram.mmd
 
 [
   {
-    "lane": "child-wave-ledger",
-    "proof_role": "Parse the retained design and require exactly sixteen ordered child identities, unique protected paths, resolvable child dependencies, and the separate implementation umbrella contract.",
+    "lane": "live-child-wave-ledger",
+    "proof_role": "Validate #5862 plus exactly #5863-#5878, complete owner/dependency/path/proof/rollback fields, acyclic dependencies, exclusive paths, approved designs, and null claims.",
     "acceptance_ids": [
       "AC-3",
       "AC-4",
@@ -33,34 +33,32 @@ Diagram: .csdlc/prepared/issues/5821/diagram.mmd
       "AC-6",
       "AC-7"
     ],
-    "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "deterministic": false,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
       "ruby",
       ".csdlc/prepared/issues/5821/validate-child-wave.rb"
     ],
     "parallel_group": "planning-gate",
-    "defer_reason": null
+    "defer_reason": "Requires live GitHub read access through the typed v2 issue owner binary."
   },
   {
-    "lane": "architecture-threat-packet-hygiene",
-    "proof_role": "Reject malformed or whitespace-damaged architecture, threat-model, ledger, diagram, and issue-card changes before independent review.",
+    "lane": "architecture-security-review",
+    "proof_role": "Validate required architecture/threat coverage and an independent accepted exact-packet review with recomputed artifact digests.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
-      "AC-7",
       "AC-8"
     ],
     "deterministic": true,
-    "resource_profile": "small",
-    "budget_seconds": 300,
-    "budget_tokens": 3000,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
-      "git",
-      "diff",
-      "--check"
+      "ruby",
+      ".csdlc/prepared/issues/5821/validate-architecture-security-review.rb"
     ],
     "parallel_group": "planning-gate",
     "defer_reason": null
@@ -80,7 +78,7 @@ Tokens: 50000
 ## Commands
 
 - `ruby .csdlc/prepared/issues/5821/validate-child-wave.rb`
-- `git diff --check`
+- `ruby .csdlc/prepared/issues/5821/validate-architecture-security-review.rb`
 
 ## Failure Semantics
 

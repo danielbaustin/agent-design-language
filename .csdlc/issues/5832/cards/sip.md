@@ -20,11 +20,16 @@ Runtime v3 admits, transports, projects, traces, replays, and rejects the same A
 
 ## Scope
 
-- adl-runtime and adl-runtime-kernel ACIP semantic envelopes and governed protocol adapters
-- Runtime API/auth full-duplex Rustls WSS carrier and focused tests
-- Versioned protobuf schema, deterministic JSON projection, public catalog, and compatibility fixtures
-- Trace/replay identity, frame limits, negotiation, errors, reconnect, and backpressure contracts
-- .csdlc/evidence/5832
+- adl-runtime/src/acip.rs
+- adl-runtime/src/runtime_api_auth.rs
+- adl-runtime-kernel/src/acip.rs
+- adl-runtime-kernel/src/protocol_adapters.rs
+- adl-runtime/tests/runtime_api_wss.rs
+- schemas/acip/v1/acip.proto
+- schemas/acip/v1/catalog.json
+- docs/api/runtime-v3/v1/acip.openapi.json
+- adl/tools/validate_v092_acip_wss.sh
+- adl/tools/validate_v092_acip_native_receipts.rb
 
 ## Authority
 

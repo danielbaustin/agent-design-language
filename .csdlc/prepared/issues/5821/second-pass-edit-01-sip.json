@@ -1,0 +1,20 @@
+{
+  "issue": 5821,
+  "card": "sip",
+  "expected_generation": 43,
+  "expected_digest": "73e0e55188ad4a20d0a222f125e1104745fff8a9d1b23febef83bfbdc57adc79",
+  "claim_id": "claim-5821-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "declared_scope",
+    "values": [
+      ".csdlc/issues/5821",
+      ".csdlc/prepared/issues/5821",
+      ".csdlc/evidence/5821",
+      "docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md",
+      "docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md"
+    ]
+  }
+}

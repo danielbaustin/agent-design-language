@@ -1,0 +1,11 @@
+{
+  "issue": 5800,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5800-v092-preparation",
+  "expected_generation": 42,
+  "expected_digest": "9a32799ad8cf5d4dfba30ce8b5a9f61ba3a112c0c3bf423a9b8929cdc76f050e",
+  "now_unix_seconds": 1785954149,
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "operator_authority": "operator:daniel-issue-5860-preparation-only",
+  "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff."
+}

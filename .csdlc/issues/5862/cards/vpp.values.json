@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5862,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04-IMP][umbrella] Execute distributed Guardian child wave",
+    "slug": "v0-92-wp-04-imp-distributed-guardian-child-wave",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "live-wave-contract",
+          "proof_role": "Verify exact mapping, approved records, null claims, dependency graph, exclusive paths, and the WP-04.16 integration-proof gate.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 5000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5862/validate-implementation-wave.rb"
+          ],
+          "parallel_group": "planning",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on missing children, denominator drift, active preparation claims, dependency bypass, path overlap, or self-attested integration.",
+      "design_ref": ".csdlc/prepared/issues/5862/design.md",
+      "design_digest": "db9a8663968f8bc8966b40c8217ced2bdfd0c38d9964b5715ec6e42ace1fe717",
+      "diagram_ref": ".csdlc/prepared/issues/5862/diagram.mmd",
+      "diagram_digest": "4a0fcf3358b4acc39bfbb4146c36ca0a0bc2dd89ec137659580fe30a08a15eee"
+    }
+  }
+}

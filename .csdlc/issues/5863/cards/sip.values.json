@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5863,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04.01] Node identity and authenticated enrollment",
+    "slug": "v0-92-wp-04-01-node-identity-enrollment",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Implement stable node and Guardian identities plus explicit, fail-closed enrollment into one trust domain.",
+      "required_outcome": "Implement stable node and Guardian identities plus explicit, fail-closed enrollment into one trust domain.",
+      "declared_scope": [
+        "adl-runtime/src/distributed/identity.rs",
+        "adl-runtime/tests/distributed_identity.rs"
+      ],
+      "authority_boundary": [
+        "Issue 5863 exclusively owns the declared paths",
+        "WP-04-IMP issue 5862 coordinates only",
+        "WP-04.16 alone owns final module registration",
+        "No sibling, Runtime v2, or v0.93 authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Do not start before #5821 is terminal",
+        "Bind only the exact exclusive paths",
+        "Use nonzero exact test selection",
+        "Fix all actionable pre-PR findings"
+      ]
+    }
+  }
+}

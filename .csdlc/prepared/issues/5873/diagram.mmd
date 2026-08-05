@@ -1,0 +1,7 @@
+flowchart LR
+  G["#5821 architecture/security gate"] --> U["#5862 WP-04-IMP"]
+  D["Dependencies: WP-04.05, WP-04.08, WP-04.09, WP-04.10"] --> C["WP-04.11 Bounded placement decisions"]
+  U --> C
+  C --> P["Exact named proof and negative cases"]
+  P --> R["Child review, merge, closeout"]
+  R --> I["WP-04.16 integrated proof"]

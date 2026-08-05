@@ -1,0 +1,30 @@
+{
+  "action": "issue_update",
+  "comment_id": null,
+  "issue": {
+    "assignees": [
+
+    ],
+    "body": "## Summary\n\nComplete the v0.92 WP-04 distributed Guardian architecture, security, and exact child-wave gate. This issue freezes the contract and validates the live implementation denominator; it performs no distributed product implementation or integration.\n\n## Required Outcome\n\n- Review and approve the distributed Guardian architecture and threat model.\n- Validate exactly WP-04.01 through WP-04.16 with stable live issue identities, owners, dependencies, exclusive paths, proof boundaries, and rollback responsibilities.\n- Require all sixteen children to be execution-ready and claim-null before WP-04-IMP #5862 schedules implementation.\n- Keep WP-14 #5832 blocked until #5862 has terminal integrated output.\n\n## Exact Live Denominator\n\n- WP-04-IMP: #5862\n- WP-04.01: #5863\n- WP-04.02: #5864\n- WP-04.03: #5865\n- WP-04.04: #5866\n- WP-04.05: #5867\n- WP-04.06: #5868\n- WP-04.07: #5869\n- WP-04.08: #5870\n- WP-04.09: #5871\n- WP-04.10: #5872\n- WP-04.11: #5873\n- WP-04.12: #5874\n- WP-04.13: #5875\n- WP-04.14: #5876\n- WP-04.15: #5877\n- WP-04.16: #5878\n\n## Acceptance Criteria\n\n- Architecture covers identity, enrollment, certificate purposes, discovery, membership, maintained QUIC/TLS, failure detection, epochs, leases, fencing, placement, snapshot transfer, migration, rollback, observability, and safe failure semantics.\n- Threat modeling covers partition, replay, stale lease, cloned state, wrong trust domain, certificate compromise/expiry, relocation/rollback failure, and split-brain activation.\n- The seven-field ledger has exactly sixteen unique mapped children with acyclic dependencies and no duplicate or overlapping paths.\n- Typed child records have approved designs, ready SIP/STP/SPP/VPP, truthful pre-phase SRP/SOR, and null preparation claims.\n- Independent architecture/security review binds exact artifact digests and has no unresolved actionable findings.\n\n## Owned Paths\n\n#5821 owns only its typed records/evidence and the architecture/threat-model documents. #5862 owns orchestration records only. Child product paths remain exclusively child-owned; #5878 owns module registration and integration proof.\n\n## Non-Goals\n\n- No distributed product implementation, child integration, multi-node proof, or terminal child credit in #5821.\n- No Runtime v2 fallback, custom cryptography, plaintext mode, or v0.93 governance work.\n<!-- csdlc-github-operation:v092-wp04-live-gate-denominator-reconcile -->\n",
+    "closed_at": null,
+    "created_at": "2026-08-05T06:31:05Z",
+    "labels": [
+      "track:roadmap",
+      "area:security",
+      "type:task",
+      "version:v0.92"
+    ],
+    "marker_present": true,
+    "milestone": null,
+    "number": 5821,
+    "repository": "danielbaustin/agent-design-language",
+    "schema": "csdlc.github_issue.v1",
+    "state": "open",
+    "title": "[v0.92][WP-04] Distributed Guardian/polis runtime"
+  },
+  "operation_key": "v092-wp04-live-gate-denominator-reconcile",
+  "pr_state": null,
+  "reconciled": true,
+  "repository": "danielbaustin/agent-design-language",
+  "schema": "csdlc.github_action_result.v1"
+}

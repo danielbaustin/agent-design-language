@@ -1,0 +1,37 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5866,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04.04] Seed discovery and authenticated join",
+    "slug": "v0-92-wp-04-04-seed-discovery-join",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Implement bounded seed discovery and authenticated join without making discovery an authority source.",
+      "required_outcome": "Implement bounded seed discovery and authenticated join without making discovery an authority source.",
+      "declared_scope": [
+        "adl-runtime/src/distributed/discovery.rs",
+        "adl-runtime/tests/distributed_discovery.rs"
+      ],
+      "authority_boundary": [
+        "Issue 5866 exclusively owns the declared paths",
+        "WP-04-IMP issue 5862 coordinates only",
+        "WP-04.16 alone owns final module registration",
+        "No sibling, Runtime v2, or v0.93 authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Do not start before #5821 is terminal",
+        "Bind only the exact exclusive paths",
+        "Use nonzero exact test selection",
+        "Fix all actionable pre-PR findings"
+      ]
+    }
+  }
+}

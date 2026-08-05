@@ -1,0 +1,20 @@
+{
+  "action": "issue_create",
+  "repository": "danielbaustin/agent-design-language",
+  "title": "[v0.92][WP-04.03] Maintained QUIC/TLS transport adapter",
+  "body": "## Summary\n\nIntegrate a maintained QUIC/TLS stack with bounded authenticated channels and no custom cryptography or framing.\n\nThis is WP-04.03 in the v0.92 distributed Guardian implementation wave coordinated by WP-04-IMP issue #5862. It may start only after the architecture/security gate in #5821 is terminal and this issue's typed design packet is current.\n\n## Dependencies\n\n- WP-04.02\n\n## Exclusive Owned Paths\n\n- `adl-runtime/src/distributed/transport.rs`\n- `adl-runtime/tests/distributed_transport.rs`\n- `adl-runtime/Cargo.toml`\n- `adl-runtime/Cargo.lock`\n\nThese product paths are exclusive to this child. Scope expansion or overlap requires architecture-gate reconciliation before binding.\n\n## Required Proof\n\nExact nextest target distributed_transport proves mutual authentication, channel bounds, cancellation, malformed-frame denial, peer mismatch, and dependency-lock parity.\n\nProof must bind the exact source revision, executable argv, nonzero test count, output/artifact digests, runner identity, and platform identity where applicable. Fixtures and hand-authored success fields cannot replace live behavior.\n\n## Rollback Responsibility\n\nRemove the distributed transport feature and restore the prior manifest and lockfile while retaining the single-node Runtime API.\n\n## Acceptance Criteria\n\n- The required outcome is implemented only in the exclusive paths above.\n- Positive, failure, replay/stale, bounded-resource, redaction, and authorization cases applicable to this slice are proven.\n- The exact named test target runs with `--no-tests=fail` or equivalent nonzero-test enforcement.\n- Review has no unresolved actionable findings and the child closes through its own typed lifecycle.\n\n## Non-Goals\n\n- No work owned by another WP-04 child.\n- No Runtime v2 fallback, custom cryptography, plaintext transport, or v0.93 governance work.\n- No completion credit from architecture prose, issue creation, fixtures, or retained evidence alone.\n",
+  "labels": [
+    "track:roadmap",
+    "type:feature",
+    "area:runtime",
+    "version:v0.92"
+  ],
+  "assignees": [
+
+  ],
+  "require_review": false,
+  "required_checks": [
+
+  ],
+  "operation_key": "v092-wp-04-03-quic-tls-transport"
+}

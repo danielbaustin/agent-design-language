@@ -16,7 +16,7 @@ After WP-03 stabilizes, freeze and review the distributed architecture and threa
 
 ## Plan
 
-Revision 15
+Revision 18
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 15
 
 .csdlc/prepared/issues/5821/design.md
 
-Digest: b04fce508d08c3b96ef7c9c98b5c706de8bb2d62892b642ce667411774659d46
+Digest: 47b07e77bc1525fd28a0a4a98bd1787298a0bda9a4fca052d56a46813145e7c2
 
 ## Diagram
 

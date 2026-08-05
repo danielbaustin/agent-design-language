@@ -1,0 +1,16 @@
+{
+  "action": "issue_read",
+  "repository": "danielbaustin/agent-design-language",
+  "issue": 5832,
+  "labels": [
+
+  ],
+  "assignees": [
+
+  ],
+  "require_review": false,
+  "required_checks": [
+
+  ],
+  "operation_key": null
+}

@@ -1,0 +1,28 @@
+{
+  "issue": 5820,
+  "card": "spp",
+  "expected_generation": 28,
+  "expected_digest": "8e32e5e25be8170c2295772248706650cdf343b35821ba5d80b4d8d8f133e52e",
+  "claim_id": "claim-5820-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "adl-runtime/src/bin/adl-runtime-guardian.rs",
+      "adl-runtime/src/guardian.rs",
+      "adl-runtime/src/shutdown.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/resident_agent.rs",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/config.rs",
+      "adl-runtime-kernel/src/durable_state.rs",
+      "adl-runtime-kernel/src/supervisor.rs",
+      "infra/runtime-v3/runtime-init.toml",
+      "adl-runtime/tests/runtime_guardian_lifecycle.rs",
+      "adl/tools/validate_v092_runtime_guardian_lifecycle.sh",
+      "adl/tools/validate_v092_runtime_native_receipts.rb"
+    ]
+  }
+}

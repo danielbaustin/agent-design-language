@@ -1,0 +1,19 @@
+{
+  "issue": 5832,
+  "card": "stp",
+  "expected_generation": 28,
+  "expected_digest": "d98e977ab25fbd3029f3fce4d427a7a61a5a48df404c4a3f202200a481df770c",
+  "claim_id": "claim-5832-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "WP-04 gate issue 5821 terminal",
+      "WP-04-IMP issue 5862 terminal after issues 5863 through 5878 integrate",
+      "Current ACIP stream and trace/replay baselines requalified at the implementation revision",
+      "Stable Runtime API/auth ownership before issues 5795 and 5837 integrate"
+    ]
+  }
+}

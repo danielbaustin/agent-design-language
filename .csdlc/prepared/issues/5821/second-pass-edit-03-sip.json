@@ -1,0 +1,14 @@
+{
+  "issue": 5821,
+  "card": "sip",
+  "expected_generation": 45,
+  "expected_digest": "4c5d66b9d11297d8cfefb005c4147febabb9566539ec94de372ae574de139888",
+  "claim_id": "claim-5821-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replan",
+    "field": "goal",
+    "value": "Freeze and independently approve the distributed Guardian architecture/security contract, validate the live #5862 plus #5863-#5878 denominator, and stop without product implementation."
+  }
+}

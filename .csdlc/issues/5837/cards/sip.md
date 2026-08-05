@@ -20,10 +20,14 @@ Both real clients consume current Runtime snapshots/events, perform only authori
 
 ## Scope
 
-- demos/html-observatory Runtime config, transport, status, control, and proof surfaces
-- demos/v0.91.6/unity-observatory native client, contract resource, compatibility verifier, batch/live proof, and approved UI bindings
-- Narrow Runtime projection/auth/schema compatibility changes only when upstream contracts require them
-- Shared client compatibility matrix, redaction/refusal/reconnect evidence, and .csdlc/evidence/5837
+- demos/html-observatory/app.js
+- demos/html-observatory/styles.css
+- demos/v0.91.6/unity-observatory/Assets/Scripts/RuntimeV3Client.cs
+- demos/v0.91.6/unity-observatory/Assets/Resources/runtime-v3-contract.json
+- demos/v0.91.6/unity-observatory/Assets/Tests/RuntimeV3ClientTests.cs
+- adl/tools/validate_v092_html_observatory_live.mjs
+- adl/tools/validate_v092_unity_observatory_live.sh
+- adl/tools/validate_v092_observatory_restart_reconnect.sh
 
 ## Authority
 

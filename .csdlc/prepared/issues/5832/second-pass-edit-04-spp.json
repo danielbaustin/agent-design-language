@@ -1,0 +1,20 @@
+{
+  "issue": 5832,
+  "card": "spp",
+  "expected_generation": 29,
+  "expected_digest": "f4f3605b8ec343d8efab7bcb3decabcfa23af9ed05677d2c1325a7adeb58a6f1",
+  "claim_id": "claim-5832-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "stop_conditions",
+    "values": [
+      "Issue 5821 architecture/security gate is not terminal",
+      "Issue 5862 WP-04-IMP or any of issues 5863 through 5878 lacks terminal integrated evidence",
+      "Semantic envelope, schema, catalog, JSON, or WSS authority remains ambiguous",
+      "Any declared path overlaps an active owner",
+      "Native macOS, Linux, or Windows proof cannot be produced"
+    ]
+  }
+}

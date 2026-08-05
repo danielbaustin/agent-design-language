@@ -1,0 +1,24 @@
+{
+  "issue": 5820,
+  "expected_generation": 26,
+  "expected_digest": "e1b8f3de7bee5a6541748d4098f62d8bb37992e54fcde3357c16e79ef50a48ad",
+  "now_unix_seconds": 1785954132,
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+  "replacement": {
+    "id": "claim-5820-v092-preparation",
+    "owner": "codex:5860-runtime-wp04-second-pass",
+    "generation": 26,
+    "acquired_unix_seconds": 1785954132,
+    "expires_unix_seconds": 1786040532,
+    "heartbeat_unix_seconds": 1785954132,
+    "branch": "codex/5860-v092-execution-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5820",
+      ".csdlc/prepared/issues/5820",
+      ".csdlc/evidence/5820"
+    ],
+    "purpose": "Second-pass Runtime/WP-04 readiness repair without product implementation."
+  }
+}

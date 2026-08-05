@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation",
     "slug": "v0-92-wp-14-acip-and-a2a-contract-reconciliation",
     "version": "v0.92",
-    "generation": 19
+    "generation": 31
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 12,
       "summary": "After WP-04 lands, inventory existing ACIP/A2A/WSS/trace contracts, freeze one semantic envelope and compatibility policy, implement protobuf/catalog/deterministic JSON parity, harden authenticated bounded WSS admission and reconnect behavior, then run round-trip, denial, replay, malformed, real-carrier, platform, and exact-head proof.",
       "steps": [
         {
@@ -63,11 +63,16 @@
         }
       ],
       "affected_areas": [
-        "ACIP/A2A semantic envelopes and adapters",
-        "Protobuf schema and public catalog",
-        "Deterministic JSON projection and compatibility fixtures",
-        "Runtime API/auth WSS carrier",
-        "Trace/replay, limits, negotiation, backpressure, reconnect, and error handling"
+        "adl-runtime/src/acip.rs",
+        "adl-runtime/src/runtime_api_auth.rs",
+        "adl-runtime-kernel/src/acip.rs",
+        "adl-runtime-kernel/src/protocol_adapters.rs",
+        "adl-runtime/tests/runtime_api_wss.rs",
+        "schemas/acip/v1/acip.proto",
+        "schemas/acip/v1/catalog.json",
+        "docs/api/runtime-v3/v1/acip.openapi.json",
+        "adl/tools/validate_v092_acip_wss.sh",
+        "adl/tools/validate_v092_acip_native_receipts.rb"
       ],
       "invariants": [
         "One semantic message has equivalent protobuf and deterministic JSON meaning",
@@ -90,11 +95,11 @@
         "validation_seconds": 3600
       },
       "stop_conditions": [
-        "WP-04 issue 5821 is not terminal",
-        "The ACIP substrate or trace/replay baseline cannot be requalified",
-        "A proposed encoding cannot preserve one semantic identity across protobuf and JSON",
-        "The design requires custom crypto/transport or weakens Runtime authentication",
-        "Issue 5795 or 5837 owns an overlapping live file without serialization"
+        "Issue 5821 architecture/security gate is not terminal",
+        "Issue 5862 WP-04-IMP or any of issues 5863 through 5878 lacks terminal integrated evidence",
+        "Semantic envelope, schema, catalog, JSON, or WSS authority remains ambiguous",
+        "Any declared path overlaps an active owner",
+        "Native macOS, Linux, or Windows proof cannot be produced"
       ],
       "replan_triggers": [
         "WP-04 changes distributed identity or transport assumptions",
@@ -103,7 +108,7 @@
         "Consumer integration requires a previously undeclared versioning rule"
       ],
       "design_ref": ".csdlc/prepared/issues/5832/design.md",
-      "design_digest": "585ae0a7f6fa2a3f682bab346edf66b27aeb3528cf5b869d91bdc4ca1a7491e1",
+      "design_digest": "cc10aa75a38e1544cb668d51ef931b908c9893ff7b937e4b77dea50ae3141e53",
       "diagram_ref": ".csdlc/prepared/issues/5832/diagram.mmd",
       "diagram_digest": "0ddb64863e3e34f2587da73ca88c9ce88eb77000c199807e0c69639234b28b7f"
     }

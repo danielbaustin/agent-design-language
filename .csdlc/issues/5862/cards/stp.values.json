@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5862,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04-IMP][umbrella] Execute distributed Guardian child wave",
+    "slug": "v0-92-wp-04-imp-distributed-guardian-child-wave",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Schedule and reconcile exactly WP-04.01 through WP-04.16 without direct product implementation.",
+      "deliverables": [
+        "Validated live sixteen-child mapping",
+        "Dependency-aware scheduling record",
+        "Child terminal evidence matrix",
+        "WP-04.16 integrated proof handoff to #5832"
+      ],
+      "acceptance_criteria": [
+        "Exactly sixteen prepared mapped children exist",
+        "Mapping and dependencies match #5821 and canonical wave",
+        "All preparation claims are null before scheduling",
+        "Each child executes only after dependencies and path claims pass",
+        "WP-04.16 proves real multi-node API/WSS, partition, fencing, migration, recovery, shutdown, and native platforms",
+        "Final reconciliation derives exact-head terminal evidence"
+      ],
+      "dependencies": [
+        "#5821 architecture/security gate terminal",
+        "#5820 WP-03 terminal",
+        "WP-04.01 through WP-04.16 prepared"
+      ],
+      "repo_inputs": [
+        ".csdlc/prepared/issues/5821/design.md",
+        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+        "docs/milestones/v0.92/WBS_v0.92.md"
+      ],
+      "non_goals": [
+        "Direct product implementation",
+        "Child lifecycle substitution",
+        "Denominator drift",
+        "Runtime v2 or v0.93 work"
+      ]
+    }
+  }
+}

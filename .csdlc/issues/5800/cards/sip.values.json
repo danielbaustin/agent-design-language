@@ -7,7 +7,7 @@
     "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
     "slug": "v0-92-observatory-browser-trusted-https",
     "version": "v0.92",
-    "generation": 36
+    "generation": 42
   },
   "status": "ready",
   "content": {
@@ -16,11 +16,12 @@
       "goal": "Make the separate local Observatory and Runtime v3 API load through one browser-trusted localhost HTTPS identity without warning or verification bypasses.",
       "required_outcome": "A documented, reproducible local certificate generation, trust installation, reissue, configuration, startup, and recovery flow makes Chrome, curl, Observatory HTML, Runtime health/readiness, and the Runtime feed agree on verified HTTPS.",
       "declared_scope": [
-        "adl-runtime/src/local_tls.rs and its local TLS bootstrap binary",
+        "adl-runtime/src/local_tls.rs",
+        "adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs",
         "adl-runtime/tests/local_tls.rs",
-        "infra/runtime-v3/runtime-init.toml TLS and allowed-origin configuration",
-        "demos/html-observatory HTTPS configuration, startup guidance, and focused validation",
-        ".csdlc/evidence/5800 trusted-browser and verified-health proof"
+        "demos/html-observatory/runtime-v3.config.json",
+        "demos/html-observatory/README.md",
+        "adl/tools/validate_v092_browser_trusted_observatory.mjs"
       ],
       "authority_boundary": [
         "Issue 5800 owns local localhost certificate trust, issuance or reissue, and HTTPS consistency only",

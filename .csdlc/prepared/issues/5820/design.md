@@ -45,10 +45,25 @@ reason. A required production adapter that cannot execute real work fails
 before readiness. Shutdown drains the API, checkpoints state, cancels bounded
 tasks, and returns control to Guardian within the declared budget.
 
-Candidate implementation ownership is limited to `adl-runtime/`,
-`adl-runtime-kernel/`, `infra/runtime-v3/runtime-init.toml`, focused Runtime
-tools/tests, and issue evidence. The execution session must claim narrower
-files after checking 5800 and active Runtime worktrees.
+## Exclusive Owned Paths
+
+- `adl-runtime/src/bin/adl-runtime-guardian.rs`
+- `adl-runtime/src/guardian.rs`
+- `adl-runtime/src/shutdown.rs`
+- `adl-runtime/src/supervision.rs`
+- `adl-runtime/src/resident_agent.rs`
+- `adl-runtime-kernel/src/bin/adl-runtime-kernel.rs`
+- `adl-runtime-kernel/src/config.rs`
+- `adl-runtime-kernel/src/durable_state.rs`
+- `adl-runtime-kernel/src/supervisor.rs`
+- `infra/runtime-v3/runtime-init.toml`
+- `adl-runtime/tests/runtime_guardian_lifecycle.rs`
+- `adl/tools/validate_v092_runtime_guardian_lifecycle.sh`
+- `adl/tools/validate_v092_runtime_native_receipts.rb`
+
+These paths are exclusive to #5820. Browser trust stays with #5800;
+distributed modules stay with #5863 through #5878; ACIP/auth/WSS contract work
+stays with #5832. Scope expansion stops before binding.
 
 ## Invariants And Failure Semantics
 
@@ -75,10 +90,20 @@ consumers and cannot broaden this issue into protocol or UI work.
 
 Deterministic lanes prove init parsing, Guardian restart/backoff and signal
 handling, bounded capture, readiness/degradation, API drain, state restart, and
-clean logs. Integration lanes launch the actual Guardian/kernel, exercise
-authenticated HTTPS/WSS, kill/restart the child, and compare retained state.
-Platform lanes run start-stop-recovery on macOS, Linux, and native Windows;
-unsupported platform behavior is a blocker, not a portable-success inference.
+clean logs. `adl/tools/validate_v092_runtime_guardian_lifecycle.sh` must launch
+the production Guardian with the canonical init file, observe the real kernel
+PID, exercise authenticated HTTPS and WSS, kill the child, prove bounded
+Guardian restart, compare durable state before and after restart, trigger clean
+shutdown, and retain stdout/stderr/redaction evidence. The script must fail if
+it observes a fixture binary, direct kernel launch, plaintext endpoint, missing
+restart, lost state, or dirty terminal logs.
+
+`adl/tools/validate_v092_runtime_native_receipts.rb` validates separately
+produced macOS, Linux, and native Windows receipts. Each receipt binds the exact
+source revision, Guardian/kernel binary digests, canonical init digest, exact
+argv, runner identity, HTTPS/WSS transcript digest, restart/state/shutdown
+results, and artifact digests. Missing native execution is a blocker, not a
+portable-success inference.
 
 ## Rollback
 

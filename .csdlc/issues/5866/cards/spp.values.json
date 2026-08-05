@@ -1,0 +1,89 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5866,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04.04] Seed discovery and authenticated join",
+    "slug": "v0-92-wp-04-04-seed-discovery-join",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Verify gates, implement the exclusive slice, run exact proving tests and negatives, validate rollback, resolve review, and close through child authority.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Verify #5821 terminal ancestry, dependency receipts, exact paths, and source contracts.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement the bounded WP-04.04 outcome in the exclusive paths.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run exact positive, negative, failure, recovery, and receipt validation.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Resolve independent review and complete child-owned publication and closeout.",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Exclusive paths remain disjoint",
+        "Guardian stays process 0",
+        "No insecure or Runtime v2 fallback",
+        "Queues and waits remain bounded",
+        "Evidence is exact-revision and digest bound"
+      ],
+      "risks": [
+        "Dependency contract drift",
+        "Cross-child path overlap",
+        "False-green zero-test selection",
+        "Self-attested platform or recovery evidence"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "#5821 is not terminal",
+        "A dependency is not terminal",
+        "Any declared path overlaps an active claim",
+        "The exact test target is absent or selects zero tests",
+        "Scope or rollback authority must widen"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5866/design.md",
+      "design_digest": "7bb117256a91a0d02aa7750ba53019f7d298aaeca0a127de0d89a1a0be0351cf",
+      "diagram_ref": ".csdlc/prepared/issues/5866/diagram.mmd",
+      "diagram_digest": "1b8d06efcd7f570319003f17fbfe38fd444c9b24333feb82fd47809b38828d91"
+    }
+  }
+}

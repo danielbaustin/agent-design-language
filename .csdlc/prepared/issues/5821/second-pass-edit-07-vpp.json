@@ -1,0 +1,54 @@
+{
+  "issue": 5821,
+  "card": "vpp",
+  "expected_generation": 49,
+  "expected_digest": "4dbc1f3075055d71fc174d3a3240b4637dda7cb2f69dcbfa49c5e4a4bf2d48bc",
+  "claim_id": "claim-5821-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "live-child-wave-ledger",
+        "proof_role": "Validate #5862 plus exactly #5863-#5878, complete owner/dependency/path/proof/rollback fields, acyclic dependencies, exclusive paths, approved designs, and null claims.",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6",
+          "AC-7"
+        ],
+        "deterministic": false,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5821/validate-child-wave.rb"
+        ],
+        "parallel_group": "planning-gate",
+        "defer_reason": "Requires live GitHub read access through the typed v2 issue owner binary."
+      },
+      {
+        "lane": "architecture-security-review",
+        "proof_role": "Validate required architecture/threat coverage and an independent accepted exact-packet review with recomputed artifact digests.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-8"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 900,
+        "budget_tokens": 6000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5821/validate-architecture-security-review.rb"
+        ],
+        "parallel_group": "planning-gate",
+        "defer_reason": null
+      }
+    ]
+  }
+}

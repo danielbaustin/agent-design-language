@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-14] ACIP and A2A contract reconciliation",
     "slug": "v0-92-wp-14-acip-and-a2a-contract-reconciliation",
     "version": "v0.92",
-    "generation": 19
+    "generation": 31
   },
   "status": "ready",
   "content": {
@@ -31,9 +31,9 @@
         "One exact-head review has no unresolved actionable findings"
       ],
       "dependencies": [
-        "WP-04 issue 5821 integrated distributed substrate terminal",
-        "Current ACIP stream substrate requalified on Runtime v3",
-        "Current trace/replay identity baseline requalified",
+        "WP-04 gate issue 5821 terminal",
+        "WP-04-IMP issue 5862 terminal after issues 5863 through 5878 integrate",
+        "Current ACIP stream and trace/replay baselines requalified at the implementation revision",
         "Stable Runtime API/auth ownership before issues 5795 and 5837 integrate"
       ],
       "repo_inputs": [

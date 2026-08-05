@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5862,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04-IMP][umbrella] Execute distributed Guardian child wave",
+    "slug": "v0-92-wp-04-imp-distributed-guardian-child-wave",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "WP-04-IMP mapping, scheduling, reconciliation, and child handoff contracts.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does the live wave match #5821 exactly?",
+        "Are all child paths exclusive?",
+        "Can any child or #5832 bypass a terminal gate?",
+        "Is integration proof real, exact-head, and native?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

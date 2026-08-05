@@ -1,0 +1,30 @@
+{
+  "action": "issue_update",
+  "comment_id": null,
+  "issue": {
+    "assignees": [
+
+    ],
+    "body": "## Summary\n\nImplement bounded failure detection that distinguishes suspect, unavailable, partitioned, and recovered nodes without granting authority.\n\nThis is WP-04.06 in the v0.92 distributed Guardian implementation wave coordinated by WP-04-IMP issue #5862. It may start only after the architecture/security gate in #5821 is terminal and this issue's typed design packet is current.\n\n## Dependencies\n\n- WP-04.05 issue #5867\n- WP-04-IMP issue #5862\n- Architecture/security gate issue #5821 terminal\n\n## Exclusive Owned Paths\n\n- `adl-runtime/src/distributed/failure_detection.rs`\n- `adl-runtime/tests/distributed_failure_detection.rs`\n\nThese product paths are exclusive to this child. Scope expansion or overlap requires architecture-gate reconciliation before binding.\n\n## Required Proof\n\nExact nextest target distributed_failure_detection proves timeout bounds, false-positive recovery, partition classification, flapping limits, and deterministic event projection.\n\nProof must bind the exact source revision, executable argv, nonzero test count, output/artifact digests, runner identity, and platform identity where applicable. Fixtures and hand-authored success fields cannot replace live behavior.\n\n## Rollback Responsibility\n\nDisable distributed failure decisions and retain the last committed membership state; never infer healthy ownership from silence.\n\n## Acceptance Criteria\n\n- The required outcome is implemented only in the exclusive paths above.\n- Positive, failure, replay/stale, bounded-resource, redaction, and authorization cases applicable to this slice are proven.\n- The exact named test target runs with `--no-tests=fail` or equivalent nonzero-test enforcement.\n- Review has no unresolved actionable findings and the child closes through its own typed lifecycle.\n\n## Non-Goals\n\n- No work owned by another WP-04 child.\n- No Runtime v2 fallback, custom cryptography, plaintext transport, or v0.93 governance work.\n- No completion credit from architecture prose, issue creation, fixtures, or retained evidence alone.\n<!-- csdlc-github-operation:v092-wp-04-06-exact-live-dependencies -->\n",
+    "closed_at": null,
+    "created_at": "2026-08-05T18:06:51Z",
+    "labels": [
+      "track:roadmap",
+      "type:feature",
+      "area:runtime",
+      "version:v0.92"
+    ],
+    "marker_present": true,
+    "milestone": null,
+    "number": 5868,
+    "repository": "danielbaustin/agent-design-language",
+    "schema": "csdlc.github_issue.v1",
+    "state": "open",
+    "title": "[v0.92][WP-04.06] Failure detection and partition classification"
+  },
+  "operation_key": "v092-wp-04-06-exact-live-dependencies",
+  "pr_state": null,
+  "reconciled": true,
+  "repository": "danielbaustin/agent-design-language",
+  "schema": "csdlc.github_action_result.v1"
+}

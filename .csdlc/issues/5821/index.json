@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9376933aa08bd1c1708eacda6c1cb876ff925d7a61596daf9f30c8c4e86f245e",
   "phase": "bound",
-  "generation": 31,
-  "digest": "b5c3bb1d36ea62994121ddbb61c515f7d469ffc0d42d68e536704c8d022460bb",
+  "generation": 50,
+  "digest": "2a52eada82b1a96670053dae11fa66c26b8b544d9262070efbb195685e8a5093",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5821/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-readiness-repair-design-review",
-      "revision": "b04fce508d08c3b96ef7c9c98b5c706de8bb2d62892b642ce667411774659d46"
+      "reviewer": "codex:5860-runtime-wp04-second-pass-design-review",
+      "revision": "47b07e77bc1525fd28a0a4a98bd1787298a0bda9a4fca052d56a46813145e7c2"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "d8a04475bf0ddc6d09fc0fe514587bab5cc381040b4e0163e00f8a4ccd9d7eeb",
-      "rendered_digest": "fd8725bbe5024f9ee69db3b95a42ab6a522d6c3154d73eff104f8592862b50aa",
-      "ast_digest": "b2b4c1840ccfa82f416250b4f87211b0e9a519f583286f013c7a084db9a6ec28"
+      "values_digest": "8fd369367807c7421629d852931e44beb78f6a6519aff86eea0d03b162133ef4",
+      "rendered_digest": "e0237a5edb0f610637736f1af02104812f6c2a64dd5cb0a573fdaf0b7cb4b576",
+      "ast_digest": "7568b8872375bef23c9c4c66b374537ac9ebeb29505ad8dff9a1af878b7241d5"
     },
     "stp": {
-      "values_digest": "061b1681d9f7908da9ad8a51483c448ac112ea8d4c24eeb04f8c9f33784ca621",
-      "rendered_digest": "5e8b7349918b91b7ac5d18199946919a576f9e78ecbd0a3b5acdb7f7390abba6",
-      "ast_digest": "3839de7224a437d1400084aca7f7b8a7c0f6335812ff2fe19bb273a1e75d5041"
+      "values_digest": "4a48623460603cc9f24bc943a2a358cc350971a352f96133cc5f6113069dfbd1",
+      "rendered_digest": "1f4b22c692e310d367014ae4ec7a02650db3c9c15a20afac792fe25af3553779",
+      "ast_digest": "3813cb1efa14407e1503790a730f37bd93fa39f31314510efd249e8f90b9c2bb"
     },
     "spp": {
-      "values_digest": "577e3fc194d29724b9d14dd09f3b390cc4d0ef15f7ef63b98bb1a8d96f217754",
-      "rendered_digest": "68bec7c9b9d36703d1458551faaee3ede39ceeda5830cc1081688052baeb2e8b",
-      "ast_digest": "9c2bea3ebb266288314e5f0e1d2070d86c615e9023a88d64b5f0aedf1f18d465"
+      "values_digest": "4499e2c3e3e8c801c58f8a96fb3c2818b7b40e849f80eafeeb65d13e731b3a53",
+      "rendered_digest": "ab50c70648de25f64538c7c4b95c115fdbc99d501e74fdaad7807b84b485d32f",
+      "ast_digest": "79c0e4aade79d50d146c2f7f073bb3e53a439673ffb30eb262946aabac5729bb"
     },
     "vpp": {
-      "values_digest": "d2d8b51beb69996a2f96266d0558f26390dc1a25015100a8a9c868d461a4f7d5",
-      "rendered_digest": "769d5b1dd34116476bc918914641f70c85afe6c9a4da1b2a02a7381b574ba4da",
-      "ast_digest": "f0ac50946c4775d1a3ed68be6c6742d6e285caf17c1a2865f7a60c6ab0b8837f"
+      "values_digest": "20fdf0b314718df86a831fb262d7b96fe13208f4707374794d2beca1e633f384",
+      "rendered_digest": "e829989830c7cbf48bac643c15f5d968dfec955136b2a1d6f3fd3404bc0777ce",
+      "ast_digest": "1bc0b8574a93b23a6df19dacc0c86de0d90b714886afec1a0ac5245c368543bc"
     },
     "srp": {
-      "values_digest": "9b85c00461bbf7c065b4d53ea401e7c4d08fb68d153c2ce4b818104f175b3f04",
+      "values_digest": "adcb740d4bff869c0af842adc2f6a7a22bd31a69a9cff27b53f87d2bcc30d826",
       "rendered_digest": "26cef715aa56af54b86ef0aba47aadba1c1bf7f3c05d0719853cd6242ca5e0fd",
       "ast_digest": "46f530c75ae60c4d0858fff71941147846698e0d938b9cc3cb2b7f5e1ab07ce0"
     },
     "sor": {
-      "values_digest": "aa4806ffd59ea1ababd600a1e2842bc4eff40e243c0db1191e689fa1b6765ce8",
+      "values_digest": "191209cbb7f7dd17fe3f0f4e501c6a9b0257ba8327c0bc7fa0f63d448b724dc4",
       "rendered_digest": "e10d878924281817411c3f3ea1f856c4f04bc1a7c1419a67f67224f0db96dd33",
       "ast_digest": "e9f243f2dcd8c5194d9cc00e3bcc0b6d2994a1076c33b349f81126488ff15055"
     }
@@ -349,6 +349,167 @@
       "actor": "codex:5860-runtime-readiness-repair",
       "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 41,
+      "generation": 31,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 32,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 43,
+      "generation": 33,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\",\"docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md\",\"docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md\"]}"
+    },
+    {
+      "sequence": 44,
+      "generation": 34,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\",\"docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md\",\"docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md\"]}"
+    },
+    {
+      "sequence": 45,
+      "generation": 35,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 46,
+      "generation": 36,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\",\"docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md\",\"docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md\"]}"
+    },
+    {
+      "sequence": 47,
+      "generation": 37,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\",\"docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md\",\"docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md\"]}"
+    },
+    {
+      "sequence": 48,
+      "generation": 38,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Freeze and independently approve the distributed Guardian architecture/security contract, validate the live #5862 plus #5863-#5878 denominator, and stop without product implementation.\",\"operation\":\"replan\",\"previous_value\":\"Pass a reviewed distributed Guardian/polis architecture and threat-model gate, execute the exact 16-child program with disjoint ownership, and integrate real multi-node membership, fencing, migration, rollback, certificate, and recovery behavior.\"}"
+    },
+    {
+      "sequence": 49,
+      "generation": 39,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"One approved architecture and threat model plus an exact live sixteen-child ledger with owners, dependencies, exclusive paths, proof boundaries, rollback responsibilities, prepared cards, and null claims.\",\"operation\":\"replan\",\"previous_value\":\"One reviewed distributed-runtime contract and threat model governs 16 concrete terminal child issues whose production paths converge at one exact revision with single-authority, mTLS membership, partition, fencing, relocation, rollback, rotation, and recovery proof.\"}"
+    },
+    {
+      "sequence": 50,
+      "generation": 40,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5821 owns only the architecture/security gate, live denominator, and gate review\",\"WP-04-IMP issue 5862 owns orchestration and reconciliation only\",\"Issues 5863 through 5878 own child implementation, proof, review, PR, closeout, and rollback\",\"Issue 5878 alone owns module registration and final integration\",\"Issue 5832 remains blocked until issue 5862 has terminal integrated output\"]}"
+    },
+    {
+      "sequence": 51,
+      "generation": 41,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-03 issue 5820 terminal with stable ingress, lifecycle, state, API/WSS, readiness, restart, and shutdown\",\"WP-04-IMP issue 5862 mapped to exactly issues 5863 through 5878\",\"All sixteen child designs approved with ready SIP/STP/SPP/VPP, truthful pre-phase SRP/SOR, and null claims\",\"WP-14 issue 5832 blocked until issue 5862 terminal integrated output\"]}"
+    },
+    {
+      "sequence": 52,
+      "generation": 42,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"live-child-wave-ledger\",\"proof_role\":\"Validate #5862 plus exactly #5863-#5878, complete owner/dependency/path/proof/rollback fields, acyclic dependencies, exclusive paths, approved designs, and null claims.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-child-wave.rb\"],\"parallel_group\":\"planning-gate\",\"defer_reason\":null},{\"lane\":\"architecture-security-review\",\"proof_role\":\"Validate required architecture/threat coverage and an independent accepted exact-packet review with recomputed artifact digests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-architecture-security-review.rb\"],\"parallel_group\":\"planning-gate\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 53,
+      "generation": 42,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
+    },
+    {
+      "sequence": 54,
+      "generation": 42,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 55,
+      "generation": 43,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 56,
+      "generation": 44,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\",\"docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md\",\"docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md\"]}"
+    },
+    {
+      "sequence": 57,
+      "generation": 45,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\".csdlc/issues/5821\",\".csdlc/prepared/issues/5821\",\".csdlc/evidence/5821\",\"docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md\",\"docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md\"]}"
+    },
+    {
+      "sequence": 58,
+      "generation": 46,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"field\":\"goal\",\"new_value\":\"Freeze and independently approve the distributed Guardian architecture/security contract, validate the live #5862 plus #5863-#5878 denominator, and stop without product implementation.\",\"operation\":\"replan\",\"previous_value\":\"Freeze and independently approve the distributed Guardian architecture/security contract, validate the live #5862 plus #5863-#5878 denominator, and stop without product implementation.\"}"
+    },
+    {
+      "sequence": 59,
+      "generation": 47,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"field\":\"required_outcome\",\"new_value\":\"One approved architecture and threat model plus an exact live sixteen-child ledger with owners, dependencies, exclusive paths, proof boundaries, rollback responsibilities, prepared cards, and null claims.\",\"operation\":\"replan\",\"previous_value\":\"One approved architecture and threat model plus an exact live sixteen-child ledger with owners, dependencies, exclusive paths, proof boundaries, rollback responsibilities, prepared cards, and null claims.\"}"
+    },
+    {
+      "sequence": 60,
+      "generation": 48,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"authority_boundary\",\"values\":[\"Issue 5821 owns only the architecture/security gate, live denominator, and gate review\",\"WP-04-IMP issue 5862 owns orchestration and reconciliation only\",\"Issues 5863 through 5878 own child implementation, proof, review, PR, closeout, and rollback\",\"Issue 5878 alone owns module registration and final integration\",\"Issue 5832 remains blocked until issue 5862 has terminal integrated output\"]}"
+    },
+    {
+      "sequence": 61,
+      "generation": 49,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-03 issue 5820 terminal with stable ingress, lifecycle, state, API/WSS, readiness, restart, and shutdown\",\"WP-04-IMP issue 5862 mapped to exactly issues 5863 through 5878\",\"All sixteen child designs approved with ready SIP/STP/SPP/VPP, truthful pre-phase SRP/SOR, and null claims\",\"WP-14 issue 5832 blocked until issue 5862 terminal integrated output\"]}"
+    },
+    {
+      "sequence": 62,
+      "generation": 50,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"live-child-wave-ledger\",\"proof_role\":\"Validate #5862 plus exactly #5863-#5878, complete owner/dependency/path/proof/rollback fields, acyclic dependencies, exclusive paths, approved designs, and null claims.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-child-wave.rb\"],\"parallel_group\":\"planning-gate\",\"defer_reason\":\"Requires live GitHub read access through the typed v2 issue owner binary.\"},{\"lane\":\"architecture-security-review\",\"proof_role\":\"Validate required architecture/threat coverage and an independent accepted exact-packet review with recomputed artifact digests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5821/validate-architecture-security-review.rb\"],\"parallel_group\":\"planning-gate\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 63,
+      "generation": 50,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5821-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
     }
   ]
 }

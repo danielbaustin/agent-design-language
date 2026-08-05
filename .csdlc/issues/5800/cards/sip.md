@@ -20,11 +20,12 @@ A documented, reproducible local certificate generation, trust installation, rei
 
 ## Scope
 
-- adl-runtime/src/local_tls.rs and its local TLS bootstrap binary
+- adl-runtime/src/local_tls.rs
+- adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs
 - adl-runtime/tests/local_tls.rs
-- infra/runtime-v3/runtime-init.toml TLS and allowed-origin configuration
-- demos/html-observatory HTTPS configuration, startup guidance, and focused validation
-- .csdlc/evidence/5800 trusted-browser and verified-health proof
+- demos/html-observatory/runtime-v3.config.json
+- demos/html-observatory/README.md
+- adl/tools/validate_v092_browser_trusted_observatory.mjs
 
 ## Authority
 

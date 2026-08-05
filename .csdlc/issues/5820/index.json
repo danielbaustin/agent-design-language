@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "50b75585680c7acb7b8f8912ae3704962d8da142da1ef08a64e78dd0fb1f0129",
   "phase": "bound",
-  "generation": 19,
-  "digest": "d275a0264bdc7c78c04365646ee9343d99edbc4a0cf4c7659418b7743ceeede1",
+  "generation": 30,
+  "digest": "36b2e215f780cce7ce2ce4fa03da3f37bd52d7c68dda9096e05514b2b6df170c",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5820/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-readiness-design-review",
-      "revision": "ed297788195f619435a0a993c692f5c14d111802c3893a59f84df2225404c80f"
+      "reviewer": "codex:5860-runtime-wp04-second-pass-design-review",
+      "revision": "32e9dafdd48e5519c49fd44d7d894c26ca903f76bca040116ca7cedb78ad50d9"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "56c2eb9510d153498b75bf32e80e0a544a4b72a81b642995acfde9f75724d745",
-      "rendered_digest": "c8c66fea84069ebe1ed7d42ef63d5a9206fcb15341ee89778dca1f105b01559c",
-      "ast_digest": "80fa6a822906c04a46b14b9fe53d896f645ae6bdf709b8dbe916eab882beac7c"
+      "values_digest": "9d6962a5d0783a42f76be67400597844fab5419a3d013e7e9fc875477023330e",
+      "rendered_digest": "822b110b8030f1e2f7820eea7307b907c69c28d2f51c220c8ff9a7b3186618c4",
+      "ast_digest": "04364454cada7124a7cda08bc8a36d90667b54ba2d46a986a10cf3e5f8493806"
     },
     "stp": {
-      "values_digest": "5a4babc2a613e58ea8e76881bad90e16e8c4edf9de13f8228311b6e0a3d6719f",
+      "values_digest": "2ff86ab3c70376f9c15ebcb9d6e98cf8da6401d8919e913b243b9cd809bcf5f3",
       "rendered_digest": "42851e4b8c0b2f55ea1c753bba432a5fd8a015ea097b764dd0a8b2bc15eb5b19",
       "ast_digest": "3520e78cac053e9737dcb5cc31ac6407f4e4bc2b0f319992508b9acc0c9903ea"
     },
     "spp": {
-      "values_digest": "2c99763ddd2597d223d5e61a8de425d6c99b9fef9b6b633c8546488cfcebd4b6",
-      "rendered_digest": "44390f016761b3d801c575ea6a11695b71d44d8696cca1aafb102a72c4704a40",
-      "ast_digest": "533a407dff956d9e0018f5478273d00577a89bb283d9f60749cfed0d6bd7dff9"
+      "values_digest": "f39da9c9a1ab6fffabf4ef040caae7b793db457eac4b8a2f43f353d55f898bc8",
+      "rendered_digest": "334fe9fb5d9a87651265fb45c6e5fd6dcc144cbdc4ff76fdc680953a24619b02",
+      "ast_digest": "fe211f2c6739830f6423e14cd07d9e492490c9d4a13a1f3e1d11b63dd950d8f9"
     },
     "vpp": {
-      "values_digest": "77b4585799f960a0bbf60dba63112ed3a5461238a59f0f249632318f5ccb1859",
-      "rendered_digest": "3daa57665ab5c0b6ee62bbca81bdb23eb02ba6a0f191be3c722053a4d60af5c0",
-      "ast_digest": "866efe43caa51189e0a6d5754f4e6e1dd5924be5b9165266ee4f0dd0a2504c68"
+      "values_digest": "8c9c6e0c9c402ebd3e5e168bae7a998b1700ab57cbb62b6126c1e051e4cc1115",
+      "rendered_digest": "4591132c94e856f66bc64b0ba2609fc6ff0cc3f4617da179a98f7da91513f100",
+      "ast_digest": "636893c0184f054eeffda1c1650a425041a04df2133bf2ac5d30f099b95f0a97"
     },
     "srp": {
-      "values_digest": "c8d52c5b51823340b27db8715435157433ff57674d5d55901f38bfa2f16eb82a",
+      "values_digest": "e7242f1bb45df00cce3af77d2a168dd8db614aa168b6e11173300ca7a4a94f8e",
       "rendered_digest": "9c7c37c04789b4430bf9e043b973021fe19d34e483fd88ed7c27b623ce4b1386",
       "ast_digest": "baacb4d0f1a6b174755fca142e86fb09268a52e9de59d07f4590ac5503b8646e"
     },
     "sor": {
-      "values_digest": "817680247bf396a4f0fe03701b1c81e93c707d51ac51d04b5f2fb12edbbdfd55",
+      "values_digest": "b956a8c1be7e7e9ec233d884cdf1b9ccabff27f5891a96f616373e5d89ccb359",
       "rendered_digest": "6366dce0988089114b667d0e041ec857a2ae01ffdd5d685b0fe12e96ebc3cfdd",
       "ast_digest": "ac7fef06771ff91e952fce5af2722151f0fe7a59be4ba8c517a2f57ab786cd25"
     }
@@ -237,6 +237,111 @@
       "actor": "codex:5860-runtime-readiness",
       "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5820-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5820-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5820\",\".csdlc/prepared/issues/5820\",\".csdlc/evidence/5820\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime/src/bin/adl-runtime-guardian.rs\",\"adl-runtime/src/guardian.rs\",\"adl-runtime/src/shutdown.rs\",\"adl-runtime/src/supervision.rs\",\"adl-runtime/src/resident_agent.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/config.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"adl-runtime-kernel/src/supervisor.rs\",\"infra/runtime-v3/runtime-init.toml\",\"adl-runtime/tests/runtime_guardian_lifecycle.rs\",\"adl/tools/validate_v092_runtime_guardian_lifecycle.sh\",\"adl/tools/validate_v092_runtime_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime/src/bin/adl-runtime-guardian.rs\",\"adl-runtime/src/guardian.rs\",\"adl-runtime/src/shutdown.rs\",\"adl-runtime/src/supervision.rs\",\"adl-runtime/src/resident_agent.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/config.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"adl-runtime-kernel/src/supervisor.rs\",\"infra/runtime-v3/runtime-init.toml\",\"adl-runtime/tests/runtime_guardian_lifecycle.rs\",\"adl/tools/validate_v092_runtime_guardian_lifecycle.sh\",\"adl/tools/validate_v092_runtime_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime/src/bin/adl-runtime-guardian.rs\",\"adl-runtime/src/guardian.rs\",\"adl-runtime/src/shutdown.rs\",\"adl-runtime/src/supervision.rs\",\"adl-runtime/src/resident_agent.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/config.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"adl-runtime-kernel/src/supervisor.rs\",\"infra/runtime-v3/runtime-init.toml\",\"adl-runtime/tests/runtime_guardian_lifecycle.rs\",\"adl/tools/validate_v092_runtime_guardian_lifecycle.sh\",\"adl/tools/validate_v092_runtime_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 25,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime/src/bin/adl-runtime-guardian.rs\",\"adl-runtime/src/guardian.rs\",\"adl-runtime/src/shutdown.rs\",\"adl-runtime/src/supervision.rs\",\"adl-runtime/src/resident_agent.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/config.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"adl-runtime-kernel/src/supervisor.rs\",\"infra/runtime-v3/runtime-init.toml\",\"adl-runtime/tests/runtime_guardian_lifecycle.rs\",\"adl/tools/validate_v092_runtime_guardian_lifecycle.sh\",\"adl/tools/validate_v092_runtime_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 26,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"guardian-lifecycle-contract\",\"proof_role\":\"Run the exact nonzero production Guardian lifecycle target over init, supervision, restart, durable state, degradation, shutdown, and logs.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"runtime_guardian_lifecycle\",\"--no-tests=fail\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"production-guardian-api-wss-restart\",\"proof_role\":\"Launch the production Guardian/kernel and prove authenticated HTTPS/WSS, child kill, bounded restart, durable state, readiness, clean shutdown, and clean logs.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"bash\",\"adl/tools/validate_v092_runtime_guardian_lifecycle.sh\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"native-guardian-receipts\",\"proof_role\":\"Recompute digest-bound macOS, Linux, and native Windows production Guardian lifecycle receipts.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5820/validate-runtime-native-receipts.rb\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"exact-head-review-preflight\",\"proof_role\":\"Reject diff damage before exact-head review and issue-closing publication.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"review\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 26,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5820-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 26,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5820-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5820\",\".csdlc/prepared/issues/5820\",\".csdlc/evidence/5820\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 27,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 36,
+      "generation": 28,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime/src/bin/adl-runtime-guardian.rs\",\"adl-runtime/src/guardian.rs\",\"adl-runtime/src/shutdown.rs\",\"adl-runtime/src/supervision.rs\",\"adl-runtime/src/resident_agent.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/config.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"adl-runtime-kernel/src/supervisor.rs\",\"infra/runtime-v3/runtime-init.toml\",\"adl-runtime/tests/runtime_guardian_lifecycle.rs\",\"adl/tools/validate_v092_runtime_guardian_lifecycle.sh\",\"adl/tools/validate_v092_runtime_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 37,
+      "generation": 29,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime/src/bin/adl-runtime-guardian.rs\",\"adl-runtime/src/guardian.rs\",\"adl-runtime/src/shutdown.rs\",\"adl-runtime/src/supervision.rs\",\"adl-runtime/src/resident_agent.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime-kernel/src/config.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\"adl-runtime-kernel/src/supervisor.rs\",\"infra/runtime-v3/runtime-init.toml\",\"adl-runtime/tests/runtime_guardian_lifecycle.rs\",\"adl/tools/validate_v092_runtime_guardian_lifecycle.sh\",\"adl/tools/validate_v092_runtime_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 30,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"guardian-lifecycle-contract\",\"proof_role\":\"Run the exact nonzero production Guardian lifecycle target over init, supervision, restart, durable state, degradation, shutdown, and logs.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"runtime_guardian_lifecycle\",\"--no-tests=fail\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"production-guardian-api-wss-restart\",\"proof_role\":\"Launch the production Guardian/kernel and prove authenticated HTTPS/WSS, child kill, bounded restart, durable state, readiness, clean shutdown, and clean logs.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"bash\",\"adl/tools/validate_v092_runtime_guardian_lifecycle.sh\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"native-guardian-receipts\",\"proof_role\":\"Recompute digest-bound macOS, Linux, and native Windows production Guardian lifecycle receipts.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5820/validate-runtime-native-receipts.rb\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"exact-head-review-preflight\",\"proof_role\":\"Reject diff damage before exact-head review and issue-closing publication.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"review\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 30,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5820-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
     }
   ]
 }

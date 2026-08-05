@@ -34,52 +34,59 @@ rollback failure, and split-brain activation.
 
 ## Exact 16-Child Ledger
 
-The implementation umbrella uses these stable identities. Each protected path
-is exclusive to that child; additions require architecture-gate review before
-binding.
+WP-04-IMP is live as issue #5862. Every row below names the actual child issue,
+the issue owner, required outcome, dependencies, exclusive product paths,
+proving boundary, and rollback responsibility. Additions or denominator changes
+require a new architecture/security gate review before binding.
 
-| Child | Owner and required outcome | Depends on | Protected paths |
-| --- | --- | --- | --- |
-| WP-04.01 | Node identity and enrollment | WP-03 | `adl-runtime/src/distributed/identity.rs`, `adl-runtime/tests/distributed_identity.rs` |
-| WP-04.02 | Certificate purposes, rotation, revocation, expiry | WP-04.01 | `adl-runtime/src/distributed/certificates.rs`, `adl-runtime/tests/distributed_certificates.rs` |
-| WP-04.03 | Maintained QUIC/TLS transport adapter | WP-04.02 | `adl-runtime/src/distributed/transport.rs`, `adl-runtime/tests/distributed_transport.rs` |
-| WP-04.04 | Seed discovery and authenticated join | WP-04.03 | `adl-runtime/src/distributed/discovery.rs`, `adl-runtime/tests/distributed_discovery.rs` |
-| WP-04.05 | Membership state and topology convergence | WP-04.04 | `adl-runtime/src/distributed/membership.rs`, `adl-runtime/tests/distributed_membership.rs` |
-| WP-04.06 | Failure detection and partition classification | WP-04.05 | `adl-runtime/src/distributed/failure_detection.rs`, `adl-runtime/tests/distributed_failure_detection.rs` |
-| WP-04.07 | Epoch and lease authority | WP-04.05 | `adl-runtime/src/distributed/lease.rs`, `adl-runtime/tests/distributed_lease.rs` |
-| WP-04.08 | Fencing and single-owner enforcement | WP-04.06, WP-04.07 | `adl-runtime/src/distributed/fencing.rs`, `adl-runtime/tests/distributed_fencing.rs` |
-| WP-04.09 | Signed capability advertisements | WP-04.03 | `adl-runtime/src/distributed/capability_advertisement.rs`, `adl-runtime/tests/distributed_capability_advertisement.rs` |
-| WP-04.10 | Signed resource-weather advertisements | WP-04.03 | `adl-runtime/src/distributed/resource_weather.rs`, `adl-runtime/tests/distributed_resource_weather.rs` |
-| WP-04.11 | Bounded placement decisions | WP-04.05, WP-04.08, WP-04.09, WP-04.10 | `adl-runtime/src/distributed/placement.rs`, `adl-runtime/tests/distributed_placement.rs` |
-| WP-04.12 | Snapshot catalog and transfer manifest | WP-04.02, WP-04.08 | `adl-runtime/src/distributed/snapshot_catalog.rs`, `adl-runtime/tests/distributed_snapshot_catalog.rs` |
-| WP-04.13 | Migration state machine | WP-04.08, WP-04.11, WP-04.12 | `adl-runtime/src/distributed/migration.rs`, `adl-runtime/tests/distributed_migration.rs` |
-| WP-04.14 | Rollback, recovery, and relocation failure | WP-04.13 | `adl-runtime/src/distributed/recovery.rs`, `adl-runtime/tests/distributed_recovery.rs` |
-| WP-04.15 | Versioned topology, certificate, migration, and failure projection | WP-04.05, WP-04.08, WP-04.13, WP-04.14 | `adl-runtime/src/distributed/projection.rs`, `docs/api/runtime-v3/v1/distributed.openapi.json` |
-| WP-04.16 | Real multi-node adversarial and platform proof | WP-04.01 through WP-04.15 | `adl-runtime/tests/distributed_guardian.rs`, `adl/tools/validate_v092_distributed_guardian.sh` |
+| Child | Issue | Owner and required outcome | Depends on | Exclusive protected paths | Proof boundary | Rollback responsibility |
+| --- | --- | --- | --- | --- | --- | --- |
+| WP-04.01 | #5863 | Issue #5863: node identity and authenticated enrollment | WP-03, #5821 | `adl-runtime/src/distributed/identity.rs`, `adl-runtime/tests/distributed_identity.rs` | Exact nonzero `distributed_identity` test proves signed enrollment, restart stability, wrong-domain and replay denial | Remove issue-created enrollment records and preserve WP-03 single-node identity |
+| WP-04.02 | #5864 | Issue #5864: certificate purposes, rotation, revocation, expiry | WP-04.01 | `adl-runtime/src/distributed/certificates.rs`, `adl-runtime/tests/distributed_certificates.rs` | Exact nonzero `distributed_certificates` test proves purpose separation, rotation, revocation, expiry and compromised-key denial | Restore last valid certificate generation without disabling verification |
+| WP-04.03 | #5865 | Issue #5865: maintained QUIC/TLS transport adapter | WP-04.02 | `adl-runtime/src/distributed/transport.rs`, `adl-runtime/tests/distributed_transport.rs`, `adl-runtime/Cargo.toml`, `adl-runtime/Cargo.lock` | Exact nonzero `distributed_transport` test proves mTLS, bounds, cancellation, malformed frames and peer mismatch | Remove feature and restore manifest/lock while retaining single-node API |
+| WP-04.04 | #5866 | Issue #5866: seed discovery and authenticated join | WP-04.03 | `adl-runtime/src/distributed/discovery.rs`, `adl-runtime/tests/distributed_discovery.rs` | Exact nonzero `distributed_discovery` test proves configured seeds, authenticated join, timeout and stale/wrong-domain refusal | Disable discovery and discard partial uncommitted membership |
+| WP-04.05 | #5867 | Issue #5867: membership state and topology convergence | WP-04.04 | `adl-runtime/src/distributed/membership.rs`, `adl-runtime/tests/distributed_membership.rs` | Exact nonzero `distributed_membership` test proves convergence, epochs, ordering and restart recovery | Restore last committed membership epoch |
+| WP-04.06 | #5868 | Issue #5868: failure detection and partition classification | WP-04.05 | `adl-runtime/src/distributed/failure_detection.rs`, `adl-runtime/tests/distributed_failure_detection.rs` | Exact nonzero `distributed_failure_detection` test proves bounded suspicion, partition, recovery and flapping behavior | Disable distributed decisions and retain committed membership |
+| WP-04.07 | #5869 | Issue #5869: epoch and lease authority | WP-04.05 | `adl-runtime/src/distributed/lease.rs`, `adl-runtime/tests/distributed_lease.rs` | Exact nonzero `distributed_lease` test proves monotonic epochs, renewal, expiry, stale-holder denial and restart recovery | Expire issue-created leases and restore last durable epoch |
+| WP-04.08 | #5870 | Issue #5870: fencing and single-owner enforcement | WP-04.06, WP-04.07 | `adl-runtime/src/distributed/fencing.rs`, `adl-runtime/tests/distributed_fencing.rs` | Exact nonzero `distributed_fencing` test proves stale, cloned, split-brain and post-partition fencing | Fence uncertain owners and return to last durable single owner |
+| WP-04.09 | #5871 | Issue #5871: signed capability advertisements | WP-04.03 | `adl-runtime/src/distributed/capability_advertisement.rs`, `adl-runtime/tests/distributed_capability_advertisement.rs` | Exact nonzero `distributed_capability_advertisement` test proves signatures, expiry, replay, bounds and redaction | Withdraw advertisements and treat capability as unavailable |
+| WP-04.10 | #5872 | Issue #5872: signed resource-weather advertisements | WP-04.03 | `adl-runtime/src/distributed/resource_weather.rs`, `adl-runtime/tests/distributed_resource_weather.rs` | Exact nonzero `distributed_resource_weather` test proves freshness, signatures, bounds, replay denial and redaction | Withdraw observations and apply declared no-data policy |
+| WP-04.11 | #5873 | Issue #5873: bounded deterministic placement | WP-04.05, WP-04.08, WP-04.09, WP-04.10 | `adl-runtime/src/distributed/placement.rs`, `adl-runtime/tests/distributed_placement.rs` | Exact nonzero `distributed_placement` test proves deterministic choice, limits, stale input and fenced-node exclusion | Disable remote placement and retain current owner |
+| WP-04.12 | #5874 | Issue #5874: snapshot catalog and transfer manifest | WP-04.02, WP-04.08 | `adl-runtime/src/distributed/snapshot_catalog.rs`, `adl-runtime/tests/distributed_snapshot_catalog.rs` | Exact nonzero `distributed_snapshot_catalog` test proves digest binding, authorization, redaction and corruption denial | Delete incomplete transfers and retain last valid local catalog |
+| WP-04.13 | #5875 | Issue #5875: migration state machine | WP-04.08, WP-04.11, WP-04.12 | `adl-runtime/src/distributed/migration.rs`, `adl-runtime/tests/distributed_migration.rs` | Exact nonzero `distributed_migration` test proves every transition, idempotence, source retention, validation and fencing | Abort before commit, fence target and resume validated source |
+| WP-04.14 | #5876 | Issue #5876: rollback, recovery and relocation failure | WP-04.13 | `adl-runtime/src/distributed/recovery.rs`, `adl-runtime/tests/distributed_recovery.rs` | Exact nonzero `distributed_recovery` test proves each failure stage, restart, target/source loss and one-owner restoration | Fence both sides on ambiguity and recover from last validated owner |
+| WP-04.15 | #5877 | Issue #5877: versioned distributed projection | WP-04.05, WP-04.08, WP-04.13, WP-04.14 | `adl-runtime/src/distributed/projection.rs`, `adl-runtime/tests/distributed_projection.rs`, `docs/api/runtime-v3/v1/distributed.openapi.json` | Exact nonzero `distributed_projection` test and OpenAPI proof validate parity, redaction, ordering and compatibility | Disable new projection version without weakening auth or exposing state |
+| WP-04.16 | #5878 | Issue #5878: module registration, integration, adversarial and native proof | WP-04.01 through WP-04.15 | `adl-runtime/src/distributed/mod.rs`, `adl-runtime/src/lib.rs`, `adl-runtime/tests/distributed_guardian.rs`, `adl/tools/validate_v092_distributed_guardian.sh`, `adl/tools/validate_v092_distributed_native_receipts.rb` | Production Guardian/kernel multi-node API/WSS, partition, fencing, migration, recovery, shutdown and digest-bound macOS/Linux/Windows proof | Remove module registration, fence remote ownership and prove WP-03 single-node health |
 
-The gate owns only `.csdlc/prepared/issues/5821/`, its issue cards/evidence,
-`docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md`,
-`docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md`, and the retained
-16-row ledger. `WP-04-IMP` owns orchestration and reconciliation evidence only;
-it does not preclaim child product paths.
+## Exclusive Owned Paths
+
+- `.csdlc/issues/5821/`
+- `.csdlc/prepared/issues/5821/`
+- `.csdlc/evidence/5821/`
+- `docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md`
+- `docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md`
+
+The gate owns only these planning, architecture, security, and evidence paths.
+WP-04-IMP #5862 owns orchestration and reconciliation records only. WP-04.16
+#5878 exclusively owns module registration and final product integration paths.
 
 ## Dependencies And Scheduling
 
 WP-03 issue 5820 must be terminal before the architecture is approved.
-`WP-04-IMP` is a separately scheduled implementation umbrella depending on
-this gate. It must create and prepare exactly WP-04.01 through WP-04.16 before
-any child starts, preserve the dependency graph above, serialize path claims,
-and block WP-14 issue 5832 until integrated distributed contracts are stable.
+WP-04-IMP issue #5862 is the separately scheduled implementation umbrella
+depending on this gate. Its exactly sixteen live children are #5863 through
+#5878. It preserves the graph above, schedules only dependency-ready claims,
+and blocks WP-14 issue #5832 until terminal integrated output exists.
 
 ## Validation And Review
 
-Gate validation parses the architecture, threat model, and ledger; requires
-exactly sixteen unique identities; rejects duplicate or overlapping protected
-paths; verifies every dependency resolves; and confirms the implementation
-umbrella names the same denominator. Independent architecture and security
-review must have no unresolved actionable findings. Product tests and
-multi-node proof are future child and `WP-04-IMP` obligations, not commands or
-completion evidence for issue 5821.
+Gate validation parses the architecture, threat model, and seven-field ledger;
+requires exactly sixteen live mapped identities; rejects missing owner, proof,
+rollback, duplicate or overlapping paths, dependency cycles, card/readiness
+drift, and denominator mismatch against #5862. A separate architecture/security
+packet validator checks required sections, threat classes, COTS boundary,
+reviewer-authored report identity and exact packet digests. Product tests and
+multi-node proof remain child and #5862 obligations, not gate completion.
 
 ## Estimate And Rollback
 

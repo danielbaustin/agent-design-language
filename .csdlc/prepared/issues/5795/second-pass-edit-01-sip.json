@@ -1,0 +1,20 @@
+{
+  "issue": 5795,
+  "card": "sip",
+  "expected_generation": 25,
+  "expected_digest": "88a8390e273536ff84409fc098255696408dd34bdddbda50266018e4dad1f114",
+  "claim_id": "claim-5795-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "declared_scope",
+    "values": [
+      "adl-runtime-kernel/src/shepherd.rs",
+      "adl-runtime-kernel/tests/shepherd.rs",
+      "demos/html-observatory/shepherd.js",
+      "demos/html-observatory/index.html",
+      "adl/tools/validate_v092_shepherd_browser_roundtrip.mjs"
+    ]
+  }
+}

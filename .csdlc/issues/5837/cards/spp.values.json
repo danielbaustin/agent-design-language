@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-18A] Observatory/Unity consumer integration",
     "slug": "v0-92-wp-18a-observatory-unity-consumer-integration",
     "version": "v0.92",
-    "generation": 21
+    "generation": 27
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 10,
       "summary": "After 5800/5820/5832/WP-18 gates, freeze one compatibility matrix, bind both existing clients to the same redacted HTTP/WSS contract, implement authenticated control and bounded reconnect/failure behavior without UI redesign, then prove real browser and Unity interactions, restart recovery, redaction/refusal, platform limits, and exact-head review.",
       "steps": [
         {
@@ -62,10 +62,14 @@
         }
       ],
       "affected_areas": [
-        "HTML Observatory config, transport, live/offline status, and operator channel",
-        "Unity Observatory native transport, contract resource, compatibility checks, and approved UI bindings",
-        "Runtime projection/auth/schema compatibility only when necessary",
-        "Browser/native interaction and restart evidence"
+        "demos/html-observatory/app.js",
+        "demos/html-observatory/styles.css",
+        "demos/v0.91.6/unity-observatory/Assets/Scripts/RuntimeV3Client.cs",
+        "demos/v0.91.6/unity-observatory/Assets/Resources/runtime-v3-contract.json",
+        "demos/v0.91.6/unity-observatory/Assets/Tests/RuntimeV3ClientTests.cs",
+        "adl/tools/validate_v092_html_observatory_live.mjs",
+        "adl/tools/validate_v092_unity_observatory_live.sh",
+        "adl/tools/validate_v092_observatory_restart_reconnect.sh"
       ],
       "invariants": [
         "One versioned schema and ordering/correlation contract serves both clients",
@@ -102,7 +106,7 @@
         "Redaction review changes audience projection rules"
       ],
       "design_ref": ".csdlc/prepared/issues/5837/design.md",
-      "design_digest": "ed0220eb8060138d3cf9d284f77a8520cdd03e7d99b95f6aa9557fb128ca7085",
+      "design_digest": "95bc62818274a27ff835e01bd87c3c99fa807f0ad3bc3d95f823bcf00a6f34be",
       "diagram_ref": ".csdlc/prepared/issues/5837/diagram.mmd",
       "diagram_digest": "2735fcc45f0da9aacd9372d8bc46663117662848e7775310da12795fa0824105"
     }

@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-04] Distributed Guardian/polis runtime",
     "slug": "v0-92-wp-04-distributed-guardian-polis-runtime",
     "version": "v0.92",
-    "generation": 31
+    "generation": 50
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 15,
+      "plan_revision": 18,
       "summary": "After WP-03 stabilizes, freeze and review the distributed architecture and threat model, validate the exact disjoint WP-04.01 through WP-04.16 ledger, create the separate WP-04-IMP umbrella, prepare all sixteen children, and close this gate without product implementation or integration credit.",
       "steps": [
         {
@@ -56,11 +56,11 @@
         }
       ],
       "affected_areas": [
-        "Distributed Guardian architecture decision packet",
-        "Distributed Guardian security threat model",
-        "Exact WP-04.01 through WP-04.16 ownership and dependency ledger",
-        "WP-04-IMP umbrella scheduling and child preparation contract",
-        "Issue 5821 gate validation and review evidence"
+        ".csdlc/issues/5821",
+        ".csdlc/prepared/issues/5821",
+        ".csdlc/evidence/5821",
+        "docs/architecture/runtime-v3/DISTRIBUTED_GUARDIAN_ARCHITECTURE.md",
+        "docs/security/runtime-v3/DISTRIBUTED_GUARDIAN_THREAT_MODEL.md"
       ],
       "invariants": [
         "The architecture preserves exactly one authoritative owner for a Runtime lineage at any epoch",
@@ -97,7 +97,7 @@
         "WP-04-IMP or any prepared child differs from the approved sixteen-row ledger"
       ],
       "design_ref": ".csdlc/prepared/issues/5821/design.md",
-      "design_digest": "b04fce508d08c3b96ef7c9c98b5c706de8bb2d62892b642ce667411774659d46",
+      "design_digest": "47b07e77bc1525fd28a0a4a98bd1787298a0bda9a4fca052d56a46813145e7c2",
       "diagram_ref": ".csdlc/prepared/issues/5821/diagram.mmd",
       "diagram_digest": "2a57bd6f3950517bf9f5b6a5b2401c178e2b7bf15b382a271dafab50d000a77a"
     }

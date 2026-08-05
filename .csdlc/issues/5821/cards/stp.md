@@ -34,11 +34,10 @@ Freeze and independently review the distributed Guardian architecture and threat
 
 ## Dependencies
 
-- WP-03 issue 5820 terminal with stable ingress, lifecycle, state, and readiness contracts
-- Reviewed COTS transport and cryptographic boundary
-- WP-04-IMP created only after this architecture and security gate is approved
-- WP-04.01 through WP-04.16 prepared before WP-04-IMP implementation starts
-- WP-14 issue 5832 waits for stable integrated output from the later WP-04-IMP umbrella
+- WP-03 issue 5820 terminal with stable ingress, lifecycle, state, API/WSS, readiness, restart, and shutdown
+- WP-04-IMP issue 5862 mapped to exactly issues 5863 through 5878
+- All sixteen child designs approved with ready SIP/STP/SPP/VPP, truthful pre-phase SRP/SOR, and null claims
+- WP-14 issue 5832 blocked until issue 5862 terminal integrated output
 
 ## Inputs
 

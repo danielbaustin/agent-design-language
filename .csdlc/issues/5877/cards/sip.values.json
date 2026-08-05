@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5877,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04.15] Versioned distributed topology and migration projection",
+    "slug": "v0-92-wp-04-15-distributed-projection",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Expose redacted versioned topology, certificate, failure, lease, placement, and migration state through the Runtime API contract.",
+      "required_outcome": "Expose redacted versioned topology, certificate, failure, lease, placement, and migration state through the Runtime API contract.",
+      "declared_scope": [
+        "adl-runtime/src/distributed/projection.rs",
+        "adl-runtime/tests/distributed_projection.rs",
+        "docs/api/runtime-v3/v1/distributed.openapi.json"
+      ],
+      "authority_boundary": [
+        "Issue 5877 exclusively owns the declared paths",
+        "WP-04-IMP issue 5862 coordinates only",
+        "WP-04.16 alone owns final module registration",
+        "No sibling, Runtime v2, or v0.93 authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Do not start before #5821 is terminal",
+        "Bind only the exact exclusive paths",
+        "Use nonzero exact test selection",
+        "Fix all actionable pre-PR findings"
+      ]
+    }
+  }
+}

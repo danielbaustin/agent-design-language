@@ -1,0 +1,20 @@
+{
+  "action": "issue_create",
+  "repository": "danielbaustin/agent-design-language",
+  "title": "[v0.92][WP-04.16] Distributed integration, adversarial, and native-platform proof",
+  "body": "## Summary\n\nRegister and integrate the distributed module, then prove real multi-node Guardian behavior, API/WSS continuity, adversarial failures, and native macOS/Linux/Windows receipts.\n\nThis is WP-04.16 in the v0.92 distributed Guardian implementation wave coordinated by WP-04-IMP issue #5862. It may start only after the architecture/security gate in #5821 is terminal and this issue's typed design packet is current.\n\n## Dependencies\n\n- WP-04.01\n- WP-04.02\n- WP-04.03\n- WP-04.04\n- WP-04.05\n- WP-04.06\n- WP-04.07\n- WP-04.08\n- WP-04.09\n- WP-04.10\n- WP-04.11\n- WP-04.12\n- WP-04.13\n- WP-04.14\n- WP-04.15\n\n## Exclusive Owned Paths\n\n- `adl-runtime/src/distributed/mod.rs`\n- `adl-runtime/src/lib.rs`\n- `adl-runtime/tests/distributed_guardian.rs`\n- `adl/tools/validate_v092_distributed_guardian.sh`\n- `adl/tools/validate_v092_distributed_native_receipts.rb`\n\nThese product paths are exclusive to this child. Scope expansion or overlap requires architecture-gate reconciliation before binding.\n\n## Required Proof\n\nExact distributed_guardian test and live validator launch production Guardians and kernels, exercise authenticated API/WSS, partition, fencing, migration, recovery, shutdown, and digest-bound native receipts.\n\nProof must bind the exact source revision, executable argv, nonzero test count, output/artifact digests, runner identity, and platform identity where applicable. Fixtures and hand-authored success fields cannot replace live behavior.\n\n## Rollback Responsibility\n\nRemove module registration and distributed launch configuration, fence remote ownership, and prove the WP-03 single-node Guardian remains healthy from unchanged durable state.\n\n## Acceptance Criteria\n\n- The required outcome is implemented only in the exclusive paths above.\n- Positive, failure, replay/stale, bounded-resource, redaction, and authorization cases applicable to this slice are proven.\n- The exact named test target runs with `--no-tests=fail` or equivalent nonzero-test enforcement.\n- Review has no unresolved actionable findings and the child closes through its own typed lifecycle.\n\n## Non-Goals\n\n- No work owned by another WP-04 child.\n- No Runtime v2 fallback, custom cryptography, plaintext transport, or v0.93 governance work.\n- No completion credit from architecture prose, issue creation, fixtures, or retained evidence alone.\n",
+  "labels": [
+    "track:roadmap",
+    "type:feature",
+    "area:runtime",
+    "version:v0.92"
+  ],
+  "assignees": [
+
+  ],
+  "require_review": false,
+  "required_checks": [
+
+  ],
+  "operation_key": "v092-wp-04-16-integration-adversarial-native-proof"
+}

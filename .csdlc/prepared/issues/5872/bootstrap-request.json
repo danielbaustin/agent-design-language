@@ -1,0 +1,195 @@
+{
+  "issue": 5872,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5872/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5872/diagram.mmd",
+  "design_reviewer": "codex:5860-runtime-wp04-design-review",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5872-v092-preparation",
+    "owner": "codex:5860-runtime-wp04-wave",
+    "generation": 0,
+    "acquired_unix_seconds": 1785953407,
+    "expires_unix_seconds": 1786039807,
+    "heartbeat_unix_seconds": 1785953407,
+    "branch": "codex/5860-v092-execution-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5872",
+      ".csdlc/prepared/issues/5872",
+      ".csdlc/evidence/5872"
+    ],
+    "purpose": "Prepare issue 5872 design, cards, and proof contract without product implementation."
+  },
+  "initial": {
+    "title": "[v0.92][WP-04.10] Signed resource-weather advertisements",
+    "slug": "v0-92-wp-04-10-resource-weather-advertisements",
+    "version": "v0.92",
+    "goal": "Implement bounded signed resource-weather observations for placement without converting telemetry into authority.",
+    "required_outcome": "Implement bounded signed resource-weather observations for placement without converting telemetry into authority.",
+    "declared_scope": [
+      "adl-runtime/src/distributed/resource_weather.rs",
+      "adl-runtime/tests/distributed_resource_weather.rs"
+    ],
+    "authority_boundary": [
+      "Issue 5872 exclusively owns the declared paths",
+      "WP-04-IMP issue 5862 coordinates only",
+      "WP-04.16 alone owns final module registration",
+      "No sibling, Runtime v2, or v0.93 authority"
+    ],
+    "operator_constraints": [
+      "Do not start before #5821 is terminal",
+      "Bind only the exact exclusive paths",
+      "Use nonzero exact test selection",
+      "Fix all actionable pre-PR findings"
+    ],
+    "task_boundary": "Implement bounded signed resource-weather observations for placement without converting telemetry into authority.",
+    "deliverables": [
+      "Implement bounded signed resource-weather observations for placement without converting telemetry into authority.",
+      "Focused positive and negative tests",
+      "Digest-bound execution proof",
+      "Reviewed rollback evidence"
+    ],
+    "acceptance_criteria": [
+      "Implement only the declared exclusive paths",
+      "Preserve Guardian, authentication, bounds, determinism, durability, and redaction invariants",
+      "Run the exact named test with nonzero test enforcement",
+      "Prove applicable stale, replay, malformed, unauthorized, failure, and recovery cases",
+      "Bind all evidence to the exact source revision and artifact digests",
+      "Complete independent review and child-owned typed closeout"
+    ],
+    "dependencies": [
+      "WP-04.03 issue #5865",
+      "WP-04-IMP issue 5862",
+      "Architecture/security gate issue 5821 terminal"
+    ],
+    "repo_inputs": [
+      "docs/milestones/v0.92/features/DISTRIBUTED_GUARDIAN_POLIS_v0.92.md",
+      ".csdlc/prepared/issues/5821/design.md",
+      "adl-runtime/src/guardian.rs",
+      "adl-runtime/src/networking.rs",
+      "adl-runtime/src/runtime_api.rs"
+    ],
+    "non_goals": [
+      "Sibling WP-04 paths",
+      "Runtime v2 fallback",
+      "Custom cryptography or plaintext",
+      "WP-14, consumer UI, or v0.93 work",
+      "Self-attested completion"
+    ],
+    "plan_summary": "Verify gates, implement the exclusive slice, run exact proving tests and negatives, validate rollback, resolve review, and close through child authority.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify #5821 terminal ancestry, dependency receipts, exact paths, and source contracts.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement the bounded WP-04.10 outcome in the exclusive paths.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Run exact positive, negative, failure, recovery, and receipt validation.",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Resolve independent review and complete child-owned publication and closeout.",
+        "acceptance_ids": [
+          "AC-6"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Exclusive paths remain disjoint",
+      "Guardian stays process 0",
+      "No insecure or Runtime v2 fallback",
+      "Queues and waits remain bounded",
+      "Evidence is exact-revision and digest bound"
+    ],
+    "risks": [
+      "Dependency contract drift",
+      "Cross-child path overlap",
+      "False-green zero-test selection",
+      "Self-attested platform or recovery evidence"
+    ],
+    "planning_profile": "medium",
+    "stop_conditions": [
+      "#5821 is not terminal",
+      "A dependency is not terminal",
+      "Any declared path overlaps an active claim",
+      "The exact test target is absent or selects zero tests",
+      "Scope or rollback authority must widen"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "exact-child-tests",
+        "proof_role": "Exact nextest target distributed_resource_weather proves signatures, freshness, bounds, replay denial, unavailable metrics, redaction, and deterministic projection.",
+        "deterministic": true,
+        "resource_profile": "medium",
+        "parallel_group": "child",
+        "budget_seconds": 1800,
+        "budget_tokens": 8000,
+        "argv": [
+          "cargo",
+          "nextest",
+          "run",
+          "--manifest-path",
+          "adl-runtime/Cargo.toml",
+          "--test",
+          "distributed_resource_weather",
+          "--no-tests=fail"
+        ],
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ]
+      },
+      {
+        "lane": "exact-revision-proof-receipt",
+        "proof_role": "Recompute source, command, nonzero test, artifact, negative-case, and native receipt bindings.",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "receipt",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5872/validate-proof-receipt.rb"
+        ],
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6"
+        ]
+      }
+    ],
+    "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
+    "review_prompts": [
+      "Is the implementation confined to exclusive paths?",
+      "Do exact tests prove the named behavior and negatives?",
+      "Are receipts exact-revision and digest bound?",
+      "Does rollback restore one authoritative owner without weakening security?"
+    ],
+    "review_scope": "WP-04.10 exclusive implementation, tests, proof receipts, and rollback evidence."
+  }
+}

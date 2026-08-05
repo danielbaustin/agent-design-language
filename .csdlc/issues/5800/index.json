@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "01a996f3111ad433ba2731d9e465e062a862e763797a061a45c684e4a22e6ab8",
   "phase": "bound",
-  "generation": 36,
-  "digest": "35814d27cfe841578881278ac31dece2522e8b6357fa5efbb2a9cf86d25b1686",
+  "generation": 42,
+  "digest": "0578e3979da489348f699302d9b41dfc601f8e94613b56c5822d4484f2e2411f",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5800/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-readiness-repair-design-review",
-      "revision": "b763e6a678932b977803e780f2f4fa0b52a4b1b26e2a38b59af88b35203a5d4a"
+      "reviewer": "codex:5860-runtime-wp04-second-pass-design-review",
+      "revision": "57c78c786488cf64234694319e65b20d3aa4534b77def1af5994e8defee30f7a"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "c19af30ea98b3ada91b2729f0fcaaa36eb7cc1bf81ec4f8356e054194d0a2b7b",
-      "rendered_digest": "05d1efa19d495cbf163b37c9ac1d2761b8fd3fe40b2e76b0cc10b6f2662c3671",
-      "ast_digest": "0821c22f599d89013c81ff3e42b067eb660e7a8f30fe6cac6b08fbb38c703d69"
+      "values_digest": "0f8d981a1f00330275b48bd826cff309b2e774fb3f0e97652344c46ec02709c2",
+      "rendered_digest": "6143b66a1e737a548f251daed5cdca26190ec5355b0a365c7003cbb0a86fa8b6",
+      "ast_digest": "91e90f7e2ff9cc13223d9e0b2326726dae2f7062b945217e78de9c50725a798b"
     },
     "stp": {
-      "values_digest": "e33814140057211f8ff4b15f6030e4db2bae8fe4586a0e39f1ebd6efff24c6ff",
+      "values_digest": "5a05baf90b6c8a8e0e05b1fa512710c16d2ee786fa2b6cba9d8604b8935eb720",
       "rendered_digest": "b7e8321544bf20cc1015fe935798a6205189bdf4bcb5b6c773f821f4d80a8694",
       "ast_digest": "46a3653959adc3cbe7ad8df38b7bf09fbbbd77fce7ed61ce11b51282b64c19cc"
     },
     "spp": {
-      "values_digest": "90416b8a77bc9cb78dae0cefa316875f55cb2e9f8ed5b8c2ff6a3964c1c20318",
-      "rendered_digest": "745b0fcb219d7071a585db2a239d2facb962a4624960c446173ddc8ef97b9976",
-      "ast_digest": "25ac5ae2088159cfa1f5c2db8ff338edfd5d378b23f01f4677fb2b8723560c5f"
+      "values_digest": "b063b390decb46e3e28c25c4fe6f574f29626290269785d45735e0ddae990b82",
+      "rendered_digest": "3100e439b9bceb01de44ea48884d97378c22a5457839a8c2a9283d8387a33561",
+      "ast_digest": "7f6f65cea82c46e0eb73f096405e99902993bdbf9d4d09f98ff51aafa372c570"
     },
     "vpp": {
-      "values_digest": "675084c46e9bf9b5564b9524f81160146d0630fe9e7334b002b7a35f500b0aea",
+      "values_digest": "556bd2305b88891e7b27129e67915702f7f111a328697626e6d942c98e9d6a4b",
       "rendered_digest": "a20109164235d52d3fe00759adcd111e76f6208c4eb7f4824a594aee79b461e5",
       "ast_digest": "306ea4096f14fa7ad2af2f0869e7dab047af6fe3f9a4b3a4e5df60a0f5cd6fa4"
     },
     "srp": {
-      "values_digest": "c642e7dadaeb254fbde71fb4b8b5c41a878652ca3a7fc6a17afc3fe5e623a1f0",
+      "values_digest": "0bc8fe6de8f2a602f779c6b0afda041e6b92295003658a451b50f5db57c49bb3",
       "rendered_digest": "d604d83d9201ea7bfdfa7defaf344f7d9f31f19952424dc8dd5cf89a57d1c602",
       "ast_digest": "1357a28cc8559115cf7c29beef24b4ea325afa835c2c8071df4744c4d6b31627"
     },
     "sor": {
-      "values_digest": "6e7c729a5f14751ab748d3988066ea24d925a19eee06e424f25da27f404608f9",
+      "values_digest": "1ce19901f5e556dc2ffc8790743d098cf9d8badf669767bf198afe3f8bb6d6da",
       "rendered_digest": "7148b0815005ac5283ff0ca3bbe2e3f2022389e5bf225933974247be44f2c41f",
       "ast_digest": "c38cb7e2bfafaa0197f338df785a225b6c110fc6fd4ef1c4dd07401f592b351b"
     }
@@ -370,6 +370,76 @@
       "actor": "codex:5860-runtime-readiness-repair",
       "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 44,
+      "generation": 36,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5800\",\".csdlc/prepared/issues/5800\",\".csdlc/evidence/5800\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 45,
+      "generation": 37,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 46,
+      "generation": 38,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime/src/local_tls.rs\",\"adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs\",\"adl-runtime/tests/local_tls.rs\",\"demos/html-observatory/runtime-v3.config.json\",\"demos/html-observatory/README.md\",\"adl/tools/validate_v092_browser_trusted_observatory.mjs\"]}"
+    },
+    {
+      "sequence": 47,
+      "generation": 39,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime/src/local_tls.rs\",\"adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs\",\"adl-runtime/tests/local_tls.rs\",\"demos/html-observatory/runtime-v3.config.json\",\"demos/html-observatory/README.md\",\"adl/tools/validate_v092_browser_trusted_observatory.mjs\"]}"
+    },
+    {
+      "sequence": 48,
+      "generation": 39,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
+    },
+    {
+      "sequence": 49,
+      "generation": 39,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5800\",\".csdlc/prepared/issues/5800\",\".csdlc/evidence/5800\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 50,
+      "generation": 40,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 51,
+      "generation": 41,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime/src/local_tls.rs\",\"adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs\",\"adl-runtime/tests/local_tls.rs\",\"demos/html-observatory/runtime-v3.config.json\",\"demos/html-observatory/README.md\",\"adl/tools/validate_v092_browser_trusted_observatory.mjs\"]}"
+    },
+    {
+      "sequence": 52,
+      "generation": 42,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime/src/local_tls.rs\",\"adl-runtime/src/bin/adl-runtime-local-tls-bootstrap.rs\",\"adl-runtime/tests/local_tls.rs\",\"demos/html-observatory/runtime-v3.config.json\",\"demos/html-observatory/README.md\",\"adl/tools/validate_v092_browser_trusted_observatory.mjs\"]}"
+    },
+    {
+      "sequence": 53,
+      "generation": 42,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5800-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
     }
   ]
 }

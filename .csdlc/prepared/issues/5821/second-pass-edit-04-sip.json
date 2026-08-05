@@ -1,0 +1,14 @@
+{
+  "issue": 5821,
+  "card": "sip",
+  "expected_generation": 46,
+  "expected_digest": "a54fe9989ec5d662bd893b625ce63f706b5c012e54b904fa2e04831f00bdf2bf",
+  "claim_id": "claim-5821-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replan",
+    "field": "required_outcome",
+    "value": "One approved architecture and threat model plus an exact live sixteen-child ledger with owners, dependencies, exclusive paths, proof boundaries, rollback responsibilities, prepared cards, and null claims."
+  }
+}

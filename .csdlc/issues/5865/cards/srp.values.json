@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5865,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04.03] Maintained QUIC/TLS transport adapter",
+    "slug": "v0-92-wp-04-03-quic-tls-transport",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "WP-04.03 exclusive implementation, tests, proof receipts, and rollback evidence.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Is the implementation confined to exclusive paths?",
+        "Do exact tests prove the named behavior and negatives?",
+        "Are receipts exact-revision and digest bound?",
+        "Does rollback restore one authoritative owner without weakening security?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

@@ -322,7 +322,126 @@ work_packages:
     depends_on: [WP-03]
     primary_deliverable: reviewed architecture and security gate plus an exact validated 16-child implementation ledger
     proof_surface: reviewed architecture, threat model, exact child ownership and dependency ledger, protected-path disjointness, and implementation-umbrella handoff
-    follow_on: WP-04-IMP remains in v0.92 and may start only after issue 5821 passes; it prepares and executes exactly WP-04.01 through WP-04.16
+    follow_on: WP-04-IMP issue 5862 remains in v0.92 and may start only after issue 5821 passes; it coordinates exactly issues 5863 through 5878 as WP-04.01 through WP-04.16
+  - wp: WP-04-IMP
+    issue: 5862
+    title: Execute distributed Guardian child wave
+    queue: runtime_program
+    depends_on: [WP-03, WP-04]
+    primary_deliverable: dependency-aware execution and exact-head reconciliation of WP-04.01 through WP-04.16 without umbrella product-path ownership
+    proof_surface: validated live denominator, child terminal receipts, exclusive-path ledger, and WP-04.16 integrated handoff to WP-14
+  - wp: WP-04.01
+    issue: 5863
+    title: Node identity and authenticated enrollment
+    queue: runtime_security
+    depends_on: [WP-03, WP-04]
+    primary_deliverable: stable node and Guardian identities plus fail-closed trust-domain enrollment
+    proof_surface: exact distributed_identity test, restart stability, wrong-domain and replay denial
+  - wp: WP-04.02
+    issue: 5864
+    title: Distributed certificate purposes and lifecycle
+    queue: runtime_security
+    depends_on: [WP-04.01]
+    primary_deliverable: separate certificate purposes with rotation, revocation, expiry, and compromise handling
+    proof_surface: exact distributed_certificates test and last-valid-generation rollback
+  - wp: WP-04.03
+    issue: 5865
+    title: Maintained QUIC/TLS transport adapter
+    queue: runtime_networking
+    depends_on: [WP-04.02]
+    primary_deliverable: bounded mutually authenticated transport using a maintained QUIC/TLS stack
+    proof_surface: exact distributed_transport test, malformed-peer negatives, and manifest/lock parity
+  - wp: WP-04.04
+    issue: 5866
+    title: Seed discovery and authenticated join
+    queue: runtime_networking
+    depends_on: [WP-04.03]
+    primary_deliverable: bounded seed discovery and authenticated join without discovery authority
+    proof_surface: exact distributed_discovery test with timeout, stale-seed, duplicate, and wrong-domain cases
+  - wp: WP-04.05
+    issue: 5867
+    title: Membership state and topology convergence
+    queue: runtime_networking
+    depends_on: [WP-04.04]
+    primary_deliverable: deterministic membership epochs and bounded topology convergence
+    proof_surface: exact distributed_membership test with ordering and restart recovery
+  - wp: WP-04.06
+    issue: 5868
+    title: Failure detection and partition classification
+    queue: runtime_resilience
+    depends_on: [WP-04.05]
+    primary_deliverable: bounded suspicion, failure, partition, recovery, and flapping classification
+    proof_surface: exact distributed_failure_detection test and deterministic event projection
+  - wp: WP-04.07
+    issue: 5869
+    title: Epoch and lease authority
+    queue: runtime_security
+    depends_on: [WP-04.05]
+    primary_deliverable: monotonic epochs and bounded lease acquisition, renewal, expiry, and recovery
+    proof_surface: exact distributed_lease test with stale-holder and trusted-time cases
+  - wp: WP-04.08
+    issue: 5870
+    title: Fencing and single-owner enforcement
+    queue: runtime_security
+    depends_on: [WP-04.06, WP-04.07]
+    primary_deliverable: fail-closed fencing for stale, cloned, partitioned, and split-brain actors
+    proof_surface: exact distributed_fencing test and one-authoritative-owner recovery
+  - wp: WP-04.09
+    issue: 5871
+    title: Signed capability advertisements
+    queue: runtime_networking
+    depends_on: [WP-04.03]
+    primary_deliverable: bounded signed capability evidence that cannot grant authority
+    proof_surface: exact distributed_capability_advertisement test with expiry, replay, bounds, and redaction
+  - wp: WP-04.10
+    issue: 5872
+    title: Signed resource-weather advertisements
+    queue: runtime_networking
+    depends_on: [WP-04.03]
+    primary_deliverable: bounded signed fresh resource-weather evidence for placement
+    proof_surface: exact distributed_resource_weather test with no-data and stale/replay cases
+  - wp: WP-04.11
+    issue: 5873
+    title: Bounded placement decisions
+    queue: runtime
+    depends_on: [WP-04.05, WP-04.08, WP-04.09, WP-04.10]
+    primary_deliverable: deterministic bounded placement excluding stale or fenced candidates
+    proof_surface: exact distributed_placement test with capacity and no-eligible-target cases
+  - wp: WP-04.12
+    issue: 5874
+    title: Snapshot catalog and transfer manifest
+    queue: runtime_state
+    depends_on: [WP-04.02, WP-04.08]
+    primary_deliverable: authenticated digest-bound redacted snapshot catalog and transfer manifests
+    proof_surface: exact distributed_snapshot_catalog test with corruption, replay, and incomplete-transfer denial
+  - wp: WP-04.13
+    issue: 5875
+    title: Migration state machine
+    queue: runtime_state
+    depends_on: [WP-04.08, WP-04.11, WP-04.12]
+    primary_deliverable: prepare-through-commit migration retaining source authority until validation and fencing
+    proof_surface: exact distributed_migration test over every transition, interruption, and split-brain case
+  - wp: WP-04.14
+    issue: 5876
+    title: Rollback, recovery, and relocation failure
+    queue: runtime_resilience
+    depends_on: [WP-04.13]
+    primary_deliverable: deterministic rollback and one-owner recovery from failed or ambiguous relocation
+    proof_surface: exact distributed_recovery test over each failure stage and restart
+  - wp: WP-04.15
+    issue: 5877
+    title: Versioned distributed topology and migration projection
+    queue: runtime_api
+    depends_on: [WP-04.05, WP-04.08, WP-04.13, WP-04.14]
+    primary_deliverable: redacted versioned distributed API projection and OpenAPI contract
+    proof_surface: exact distributed_projection test plus schema parity, redaction, ordering, and compatibility
+  - wp: WP-04.16
+    issue: 5878
+    title: Distributed integration, adversarial, and native-platform proof
+    queue: runtime_integration
+    depends_on: [WP-04.01, WP-04.02, WP-04.03, WP-04.04, WP-04.05, WP-04.06, WP-04.07, WP-04.08, WP-04.09, WP-04.10, WP-04.11, WP-04.12, WP-04.13, WP-04.14, WP-04.15]
+    primary_deliverable: final module registration and real multi-node Guardian integration
+    proof_surface: production Guardian/kernel API/WSS, partition, fencing, migration, recovery, shutdown, and digest-bound macOS/Linux/Windows receipts
   - wp: WP-05
     issue: 5822
     title: C-SDLC estimation and cycle-time reduction

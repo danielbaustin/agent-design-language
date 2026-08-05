@@ -1,0 +1,25 @@
+{
+  "issue": 5832,
+  "card": "sip",
+  "expected_generation": 26,
+  "expected_digest": "ab1eab44d9cee0bcc45fb8ac065d78aaab440ab547c304f9aa28bf6dd6ba0264",
+  "claim_id": "claim-5832-v092-preparation",
+  "actor": "codex:5860-runtime-wp04-second-pass",
+  "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "declared_scope",
+    "values": [
+      "adl-runtime/src/acip.rs",
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime-kernel/src/acip.rs",
+      "adl-runtime-kernel/src/protocol_adapters.rs",
+      "adl-runtime/tests/runtime_api_wss.rs",
+      "schemas/acip/v1/acip.proto",
+      "schemas/acip/v1/catalog.json",
+      "docs/api/runtime-v3/v1/acip.openapi.json",
+      "adl/tools/validate_v092_acip_wss.sh",
+      "adl/tools/validate_v092_acip_native_receipts.rb"
+    ]
+  }
+}

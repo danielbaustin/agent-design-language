@@ -1,0 +1,168 @@
+{
+  "issue": 5862,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5862/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5862/diagram.mmd",
+  "design_reviewer": "codex:5860-runtime-wp04-design-review",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5862-v092-preparation",
+    "owner": "codex:5860-runtime-wp04-wave",
+    "generation": 0,
+    "acquired_unix_seconds": 1785953407,
+    "expires_unix_seconds": 1786039807,
+    "heartbeat_unix_seconds": 1785953407,
+    "branch": "codex/5860-v092-execution-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5862",
+      ".csdlc/prepared/issues/5862",
+      ".csdlc/evidence/5862"
+    ],
+    "purpose": "Prepare issue 5862 design, cards, and proof contract without product implementation."
+  },
+  "initial": {
+    "title": "[v0.92][WP-04-IMP][umbrella] Execute distributed Guardian child wave",
+    "slug": "v0-92-wp-04-imp-distributed-guardian-child-wave",
+    "version": "v0.92",
+    "goal": "Coordinate and reconcile the exact sixteen-child distributed Guardian implementation wave.",
+    "required_outcome": "All sixteen child issues execute under exclusive authority and converge in WP-04.16 real multi-node and native-platform proof.",
+    "declared_scope": [
+      ".csdlc/evidence/5862",
+      ".csdlc/prepared/issues/5862"
+    ],
+    "authority_boundary": [
+      "Umbrella owns scheduling and reconciliation only",
+      "Children own implementation, proof, review, PR, closeout, and rollback",
+      "WP-04.16 owns module registration and integration",
+      "WP-14 #5832 waits for terminal integrated output"
+    ],
+    "operator_constraints": [
+      "Start no child before #5821 is terminal",
+      "Preserve exact sixteen-child denominator",
+      "Never preclaim product paths",
+      "Use derived live terminal evidence"
+    ],
+    "task_boundary": "Schedule and reconcile exactly WP-04.01 through WP-04.16 without direct product implementation.",
+    "deliverables": [
+      "Validated live sixteen-child mapping",
+      "Dependency-aware scheduling record",
+      "Child terminal evidence matrix",
+      "WP-04.16 integrated proof handoff to #5832"
+    ],
+    "acceptance_criteria": [
+      "Exactly sixteen prepared mapped children exist",
+      "Mapping and dependencies match #5821 and canonical wave",
+      "All preparation claims are null before scheduling",
+      "Each child executes only after dependencies and path claims pass",
+      "WP-04.16 proves real multi-node API/WSS, partition, fencing, migration, recovery, shutdown, and native platforms",
+      "Final reconciliation derives exact-head terminal evidence"
+    ],
+    "dependencies": [
+      "#5821 architecture/security gate terminal",
+      "#5820 WP-03 terminal",
+      "WP-04.01 through WP-04.16 prepared"
+    ],
+    "repo_inputs": [
+      ".csdlc/prepared/issues/5821/design.md",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      "docs/milestones/v0.92/WBS_v0.92.md"
+    ],
+    "non_goals": [
+      "Direct product implementation",
+      "Child lifecycle substitution",
+      "Denominator drift",
+      "Runtime v2 or v0.93 work"
+    ],
+    "plan_summary": "Validate gates and denominator, schedule dependency-ready children, require child-owned proof and closeout, then reconcile WP-04.16 integration.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Validate #5821, #5820, exact mapping, cards, null claims, dependencies, and exclusive paths.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Schedule only dependency-ready children under their own claims and lifecycles.",
+        "acceptance_ids": [
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Require WP-04.16 real integration and native proof after children 01 through 15 are terminal.",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Derive exact-head child terminal evidence and hand stable contracts to #5832.",
+        "acceptance_ids": [
+          "AC-6"
+        ],
+        "status": "pending"
+      }
+    ],
+    "invariants": [
+      "Exactly sixteen children",
+      "No umbrella product paths",
+      "Exclusive child ownership",
+      "One authoritative Runtime owner",
+      "Exact-head derived evidence"
+    ],
+    "risks": [
+      "Denominator drift",
+      "Dependency bypass",
+      "Path collision",
+      "Self-attested terminal state",
+      "False platform proof"
+    ],
+    "planning_profile": "large",
+    "stop_conditions": [
+      "#5821 or #5820 is not terminal",
+      "Any child is missing or not prepared",
+      "Any claim is active before scheduling",
+      "Any dependency or path collision exists",
+      "WP-04.16 proof is not real and native"
+    ],
+    "validation_lanes": [
+      {
+        "lane": "live-wave-contract",
+        "proof_role": "Verify exact mapping, approved records, null claims, dependency graph, exclusive paths, and the WP-04.16 integration-proof gate.",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "planning",
+        "budget_seconds": 600,
+        "budget_tokens": 5000,
+        "argv": [
+          "ruby",
+          ".csdlc/prepared/issues/5862/validate-implementation-wave.rb"
+        ],
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3",
+          "AC-4",
+          "AC-5",
+          "AC-6"
+        ]
+      }
+    ],
+    "failure_policy": "Fail closed on missing children, denominator drift, active preparation claims, dependency bypass, path overlap, or self-attested integration.",
+    "review_prompts": [
+      "Does the live wave match #5821 exactly?",
+      "Are all child paths exclusive?",
+      "Can any child or #5832 bypass a terminal gate?",
+      "Is integration proof real, exact-head, and native?"
+    ],
+    "review_scope": "WP-04-IMP mapping, scheduling, reconciliation, and child handoff contracts."
+  }
+}

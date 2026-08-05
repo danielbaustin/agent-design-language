@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "409e16e0228f29a4e234fa3fa006087a058b5409f297ac014539fbdee6cb922a",
   "phase": "bound",
-  "generation": 21,
-  "digest": "bcabaf6fa9eb95c1496744d46c0d834f9764952352bc432ec9c4f29f9b12526e",
+  "generation": 27,
+  "digest": "1845d2c083471841505b598ba02ae1b57c99973bff57000e08e22cbda6a6b73e",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5795/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-readiness-repair-design-review",
-      "revision": "067a2a07cbb5d5efcf55cf056894a65256dca5690378110480cf777fd784f4b4"
+      "reviewer": "codex:5860-runtime-wp04-second-pass-design-review",
+      "revision": "51ef81da78702fb9b867a93ffa7f532edc2312d12ccbc472af40bea82a5124e0"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "49c2b0253906efed7e1b36ac89848df2365c43621811b60dc18e81b4c24c9dfd",
-      "rendered_digest": "cf2b287cd1d47d6f3914d93e56f2cea945c0ec095ff7b51f2fb65e7165f52312",
-      "ast_digest": "8e1a659766f7dd3de988c4dc24432f61bd97a2eabd74ab31990d08bf7d4bfc40"
+      "values_digest": "703609533e3c0c545052de56e58841031767aacacdf2340b2d88bac0324277bb",
+      "rendered_digest": "8711735ab9715d666a6ed98a42d95ced1bce438c0cdc1d2e723d8b622af12214",
+      "ast_digest": "23799561d6fbdb18697292ba3a7b0dc86cd314122af9a2cd9da41ad1cd8736a8"
     },
     "stp": {
-      "values_digest": "2e356387406bdddc0266c3d79ca55cc7674b3925c2b2829c04c9c3a20f755e03",
+      "values_digest": "b179fac0d4111fb43dfc2f46675e7d66c5615cadd8e3513ec44967ccb8ca3bf7",
       "rendered_digest": "35cc53fafbffb6049454b2b29e8b3692692ff2c0f9ae61ace2d5cedca66776bc",
       "ast_digest": "c0316a34236b0f6c806267cc6324d4fb9ffa46f1848291a9d1b01bea4b24af21"
     },
     "spp": {
-      "values_digest": "ad9a320e8144b98be7da41f7c9c46b2069ce12687c6228beaa858b4cc260e131",
-      "rendered_digest": "493a8d576dbf099a05efd544f8eeac8c513137ca0e43a2fec0586b5f3aaf827e",
-      "ast_digest": "fea858be2891c7f4722ac454ba335803b66ccec24c8b771a4d1944e911146af5"
+      "values_digest": "b55357fc398bf3734965e61a25a0093b719a44a51808447c7eb56db6290f34dd",
+      "rendered_digest": "88e59e524dd02e2980009f1a1908f8db3bc0e9a44f5d7b43c6b15959a6a33415",
+      "ast_digest": "3ac4798fc12e691b8047d407d0d80986f28aea204d013108491e048ff3caa8f8"
     },
     "vpp": {
-      "values_digest": "51e206607f0cc8bff23f505c8f757703c6868b3dad04ae3369718847c3c21a76",
+      "values_digest": "4a106922f739229b6873657b7f4b787e7f9e1db7ec6e95ddf0de16185deedc38",
       "rendered_digest": "cc89306546c10162019f53df9ef5378f064557f641d91df1c5346bcd78201571",
       "ast_digest": "b6f9b0de8d00612df512690aba76491df0988b4cfda3b504d21f23db07ddc710"
     },
     "srp": {
-      "values_digest": "a9a958213928de9899a2b37af0145edee3d87b00332b64837ca0a9af4a229e40",
+      "values_digest": "4da2d0c968cd18677c8cb8ec12c97557a5d4ad41c9a5ec91ea262cc514ae4c6b",
       "rendered_digest": "e3f361c41322cbe30f643af742a4a48adcd9aa2e84dd22c49f474180876b57eb",
       "ast_digest": "b8bdbd3e726f6e16200fdbaec307e5dcd8161488b319b5c0f2d6307623bfbc98"
     },
     "sor": {
-      "values_digest": "c7cdf0346ae19457ccba096234597e3603ce4b2b0e7d61f29307f02f64f11ce3",
+      "values_digest": "ae025cc1d734fead5b514663cfb38c85d6f9ab199323466ba9233b5af3c6fafb",
       "rendered_digest": "8dff0bc57674843f439603d89e33224b1ad639e40a0dd715390f570e1d6bd15c",
       "ast_digest": "3cb60e4ee9159c2fd215b4b7993aee24df63502aa9ed8072f8286c1faad540ed"
     }
@@ -265,6 +265,76 @@
       "actor": "codex:5860-runtime-readiness-repair",
       "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5795-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5795-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5795\",\".csdlc/prepared/issues/5795\",\".csdlc/evidence/5795\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/shepherd.rs\",\"adl-runtime-kernel/tests/shepherd.rs\",\"demos/html-observatory/shepherd.js\",\"demos/html-observatory/index.html\",\"adl/tools/validate_v092_shepherd_browser_roundtrip.mjs\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/shepherd.rs\",\"adl-runtime-kernel/tests/shepherd.rs\",\"demos/html-observatory/shepherd.js\",\"demos/html-observatory/index.html\",\"adl/tools/validate_v092_shepherd_browser_roundtrip.mjs\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 24,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5795-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 24,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5795-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5795\",\".csdlc/prepared/issues/5795\",\".csdlc/evidence/5795\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 25,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 36,
+      "generation": 26,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/shepherd.rs\",\"adl-runtime-kernel/tests/shepherd.rs\",\"demos/html-observatory/shepherd.js\",\"demos/html-observatory/index.html\",\"adl/tools/validate_v092_shepherd_browser_roundtrip.mjs\"]}"
+    },
+    {
+      "sequence": 37,
+      "generation": 27,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/shepherd.rs\",\"adl-runtime-kernel/tests/shepherd.rs\",\"demos/html-observatory/shepherd.js\",\"demos/html-observatory/index.html\",\"adl/tools/validate_v092_shepherd_browser_roundtrip.mjs\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 27,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5795-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
     }
   ]
 }

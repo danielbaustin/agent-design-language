@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8d41f336d8a8940f446bc1a8cc646c2998249b1f4bddb564ab78aa91dfb005b4",
   "phase": "bound",
-  "generation": 19,
-  "digest": "ebd5bece1edd6aadb075c6acf8a4ffa1d19da558884b884d1fb61b67c8662b26",
+  "generation": 31,
+  "digest": "67398003afe2ff691428424eb8913e81ce90998edcd4cea624f8ba6372217e2c",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5832/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-runtime-readiness-design-review",
-      "revision": "585ae0a7f6fa2a3f682bab346edf66b27aeb3528cf5b869d91bdc4ca1a7491e1"
+      "reviewer": "codex:5860-runtime-wp04-second-pass-design-review",
+      "revision": "cc10aa75a38e1544cb668d51ef931b908c9893ff7b937e4b77dea50ae3141e53"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "4d2506126c5f8905d141d8ebc99eff75a1d2c319fff140e11795c08f3f7b33ca",
-      "rendered_digest": "8e7dba4c262f9605227bfc992ab93b900a1b9a8f0ee2329e5f9f309775cc4cf5",
-      "ast_digest": "d339e3e09349659711ef814f9b7f0c4e56a54e5eadc9747efffe7031c82b64c5"
+      "values_digest": "48edfc2a45be3f18c807a035406a36bb466a7e2fc762d01d909a789a752b2fbb",
+      "rendered_digest": "6932ccddb214695469180d4a8cbc7a6bbd72a4f4512a376fb243e219bf529e58",
+      "ast_digest": "4a83eabae273e048bb433f8a7860e6138ab8dbadb1390c31aa05df7e52331afa"
     },
     "stp": {
-      "values_digest": "acd00301ebae43929e4fb9f39e24eeece93ed731ec80ed4ef1bad3a7ef003f75",
-      "rendered_digest": "f9900295b0c76b52a1a4b1f3beb7b5310793b37fc2179409c8279fb3e59f813d",
-      "ast_digest": "8ca9bcaeecbf0c37caf57c1e0c1c32f3f2857fa6ddb3daed7916a36d63153d58"
+      "values_digest": "1e4827057520968cc6fd3bc11810a114561480b443bf98952c1da2809b22d268",
+      "rendered_digest": "fcb8960a6808bfb4ae273696e3fb36104e228b63a57ef7bdea598f55f404cd31",
+      "ast_digest": "b09d7af57f31e4e58dce94f9831bf8deff19c6a8c2c8a7b40c68ada28195ca65"
     },
     "spp": {
-      "values_digest": "73d18d2b622efed681622cfd7dd7d6e29ae8f8ff068b01c3d15bfb6cde373ff3",
-      "rendered_digest": "a0c23e30077ca7773a0ba713b0c470fc07491dcc0fabf41163ea939b39aaf69d",
-      "ast_digest": "c8b31a7ff121c8ddc10820f6eae8cd3b1c9960836439c956ecacc52be1e497ef"
+      "values_digest": "ebdba299a9c9f4721ea0574b7c8e73d8da4c503d6808df7f12cd1859452474ed",
+      "rendered_digest": "5bc0403f228165cad508d336ed581cc2252661b7a923cd2263badfa2ab22b437",
+      "ast_digest": "eae0ba37e7f198311174d1acc5335a531be0e1fadb98ec90bd22a3819e46ff1d"
     },
     "vpp": {
-      "values_digest": "2e7de77c76e5a82be1e06e9edd986eb2ae3cfbcfb992bc7c8838aa86e893b80f",
-      "rendered_digest": "7d05fd90ebcd5e1cb0a7495a1b8d04d3a67ea9a1ffbe278c2ef487bfe755ee8c",
-      "ast_digest": "9f71d90b940f87c87cb595736efb063a25782821c7860e08a2307284132936bb"
+      "values_digest": "c39db58da6f9025742f5c60196ce0ef2fa3f9fcb47298004206cbfb2103723af",
+      "rendered_digest": "c3713a4692f7141e2949bc56f9734a293fefa7cfc739661967c779d3c30d69db",
+      "ast_digest": "c78bb33716e9b69a569a0e585cfe9f9f8ac384260b0e3047d89126dc32fb6481"
     },
     "srp": {
-      "values_digest": "a31a21c1aaf8354835c39c1f3b6a1b1584885c8653682816787c4d30fc5621b6",
+      "values_digest": "e91fef863ac4999a10d1514dc56d7fb83c90a155088d396295b3a24e5e8b2a4b",
       "rendered_digest": "392116f8b2844eb2b47b558a12a08332f1744646fdb5b0f4bc7c416cac8c3a6f",
       "ast_digest": "a48218debfd779486aad8db28be59e8799ba3c84d1f15ddd8d17c336df8a86a7"
     },
     "sor": {
-      "values_digest": "726fed6bea5f157945625561cd2ffc3fb6745e0fb268bca03e348466bcc781ea",
+      "values_digest": "1539d909005ef225edb5a0c93597c80687334265a9841c2ad1bc4715a425d702",
       "rendered_digest": "ca00a3cb3f454ba45ff64b773e445a3beb4be7e3336cfbe573de8d542dc1488c",
       "ast_digest": "805bf932776db506a84bc733ada010a45567e55b0d7223d73fd194d885406962"
     }
@@ -237,6 +237,118 @@
       "actor": "codex:5860-runtime-readiness",
       "reason": "Release completed preparation claim so implementation can reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5832-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-readiness\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5832-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5832\",\".csdlc/prepared/issues/5832\",\".csdlc/evidence/5832\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 20,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime/src/acip.rs\",\"adl-runtime/src/runtime_api_auth.rs\",\"adl-runtime-kernel/src/acip.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime/tests/runtime_api_wss.rs\",\"schemas/acip/v1/acip.proto\",\"schemas/acip/v1/catalog.json\",\"docs/api/runtime-v3/v1/acip.openapi.json\",\"adl/tools/validate_v092_acip_wss.sh\",\"adl/tools/validate_v092_acip_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime/src/acip.rs\",\"adl-runtime/src/runtime_api_auth.rs\",\"adl-runtime-kernel/src/acip.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime/tests/runtime_api_wss.rs\",\"schemas/acip/v1/acip.proto\",\"schemas/acip/v1/catalog.json\",\"docs/api/runtime-v3/v1/acip.openapi.json\",\"adl/tools/validate_v092_acip_wss.sh\",\"adl/tools/validate_v092_acip_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-04 gate issue 5821 terminal\",\"WP-04-IMP issue 5862 terminal after issues 5863 through 5878 integrate\",\"Current ACIP stream and trace/replay baselines requalified at the implementation revision\",\"Stable Runtime API/auth ownership before issues 5795 and 5837 integrate\"]}"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Issue 5821 architecture/security gate is not terminal\",\"Issue 5862 WP-04-IMP or any of issues 5863 through 5878 lacks terminal integrated evidence\",\"Semantic envelope, schema, catalog, JSON, or WSS authority remains ambiguous\",\"Any declared path overlaps an active owner\",\"Native macOS, Linux, or Windows proof cannot be produced\"]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 25,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"acip-schema-roundtrip-negatives\",\"proof_role\":\"Run exact nonzero ACIP schema, catalog, protobuf/JSON round-trip, negotiation, replay, malformed, oversized, and denied-dispatch tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"runtime_api_wss\",\"--no-tests=fail\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"production-acip-wss\",\"proof_role\":\"Launch production Guardian/kernel and prove real authenticated Rustls WSS binary/JSON full-duplex exchange, correlation, backpressure, reconnect, and typed errors.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"bash\",\"adl/tools/validate_v092_acip_wss.sh\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"native-acip-receipts\",\"proof_role\":\"Recompute exact-revision macOS, Linux, and native Windows ACIP/WSS receipts with binary/schema/transcript digests and nonzero exchanges/negatives.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5832/validate-acip-native-receipts.rb\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"exact-head-review-preflight\",\"proof_role\":\"Reject diff damage before exact-head review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"review\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 25,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5832-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
+    },
+    {
+      "sequence": 33,
+      "generation": 25,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reacquire issue-local preparation authority for exact-path, dependency, and proof-contract repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5832-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-second-pass\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5832\",\".csdlc/prepared/issues/5832\",\".csdlc/evidence/5832\"],\"purpose\":\"Second-pass Runtime/WP-04 readiness repair without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 26,
+      "actor": "codex:5860-runtime-wp04-second-pass-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 35,
+      "generation": 27,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime/src/acip.rs\",\"adl-runtime/src/runtime_api_auth.rs\",\"adl-runtime-kernel/src/acip.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime/tests/runtime_api_wss.rs\",\"schemas/acip/v1/acip.proto\",\"schemas/acip/v1/catalog.json\",\"docs/api/runtime-v3/v1/acip.openapi.json\",\"adl/tools/validate_v092_acip_wss.sh\",\"adl/tools/validate_v092_acip_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 36,
+      "generation": 28,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime/src/acip.rs\",\"adl-runtime/src/runtime_api_auth.rs\",\"adl-runtime-kernel/src/acip.rs\",\"adl-runtime-kernel/src/protocol_adapters.rs\",\"adl-runtime/tests/runtime_api_wss.rs\",\"schemas/acip/v1/acip.proto\",\"schemas/acip/v1/catalog.json\",\"docs/api/runtime-v3/v1/acip.openapi.json\",\"adl/tools/validate_v092_acip_wss.sh\",\"adl/tools/validate_v092_acip_native_receipts.rb\"]}"
+    },
+    {
+      "sequence": 37,
+      "generation": 29,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-04 gate issue 5821 terminal\",\"WP-04-IMP issue 5862 terminal after issues 5863 through 5878 integrate\",\"Current ACIP stream and trace/replay baselines requalified at the implementation revision\",\"Stable Runtime API/auth ownership before issues 5795 and 5837 integrate\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 30,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Issue 5821 architecture/security gate is not terminal\",\"Issue 5862 WP-04-IMP or any of issues 5863 through 5878 lacks terminal integrated evidence\",\"Semantic envelope, schema, catalog, JSON, or WSS authority remains ambiguous\",\"Any declared path overlaps an active owner\",\"Native macOS, Linux, or Windows proof cannot be produced\"]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 31,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Reconcile exact Runtime/WP-04 ownership, dependencies, and proving validation.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"acip-schema-roundtrip-negatives\",\"proof_role\":\"Run exact nonzero ACIP schema, catalog, protobuf/JSON round-trip, negotiation, replay, malformed, oversized, and denied-dispatch tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"--test\",\"runtime_api_wss\",\"--no-tests=fail\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"production-acip-wss\",\"proof_role\":\"Launch production Guardian/kernel and prove real authenticated Rustls WSS binary/JSON full-duplex exchange, correlation, backpressure, reconnect, and typed errors.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"bash\",\"adl/tools/validate_v092_acip_wss.sh\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"native-acip-receipts\",\"proof_role\":\"Recompute exact-revision macOS, Linux, and native Windows ACIP/WSS receipts with binary/schema/transcript digests and nonzero exchanges/negatives.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5832/validate-acip-native-receipts.rb\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"exact-head-review-preflight\",\"proof_role\":\"Reject diff damage before exact-head review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":6000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"review\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 40,
+      "generation": 31,
+      "actor": "codex:5860-runtime-wp04-second-pass",
+      "reason": "Release completed second-pass preparation claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5832-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-second-pass\"}"
     }
   ]
 }

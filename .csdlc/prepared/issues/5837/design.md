@@ -47,11 +47,20 @@ same Runtime schema. Neither client may invent fallback success: retained
 packets are visibly historical/offline, while live mode requires current
 Runtime correlation and freshness evidence.
 
-Candidate implementation paths are `demos/html-observatory/`,
-`demos/v0.91.6/unity-observatory/`, narrowly necessary Runtime projection/auth
-compatibility files, API schemas, focused client tools/tests, and issue
-evidence. Runtime changes require coordination with 5820/5832 and must not
-duplicate their contracts.
+## Exclusive Owned Paths
+
+- `demos/html-observatory/app.js`
+- `demos/html-observatory/styles.css`
+- `demos/v0.91.6/unity-observatory/Assets/Scripts/RuntimeV3Client.cs`
+- `demos/v0.91.6/unity-observatory/Assets/Resources/runtime-v3-contract.json`
+- `demos/v0.91.6/unity-observatory/Assets/Tests/RuntimeV3ClientTests.cs`
+- `adl/tools/validate_v092_html_observatory_live.mjs`
+- `adl/tools/validate_v092_unity_observatory_live.sh`
+- `adl/tools/validate_v092_observatory_restart_reconnect.sh`
+
+Issue 5837 owns exactly these consumer and proof paths. It reads but does not
+edit the trusted TLS configuration owned by #5800, the Shepherd channel owned
+by #5795, or Runtime/ACIP product files owned by #5820 and #5832.
 
 ## Invariants And Failure Semantics
 

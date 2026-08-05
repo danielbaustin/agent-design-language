@@ -7,7 +7,7 @@
     "title": "[v0.92][runtime][shepherd] Pull local Gemma/MLX Shepherd MVP forward",
     "slug": "v0-92-local-gemma-mlx-shepherd-mvp",
     "version": "v0.92",
-    "generation": 21
+    "generation": 27
   },
   "status": "ready",
   "content": {
@@ -147,7 +147,7 @@
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on unavailable model, timeout, malformed command, unauthorized mutation, policy bypass, status ambiguity, or fake-only success; keep the Runtime and Observatory usable after failure.",
       "design_ref": ".csdlc/prepared/issues/5795/design.md",
-      "design_digest": "067a2a07cbb5d5efcf55cf056894a65256dca5690378110480cf777fd784f4b4",
+      "design_digest": "51ef81da78702fb9b867a93ffa7f532edc2312d12ccbc472af40bea82a5124e0",
       "diagram_ref": ".csdlc/prepared/issues/5795/diagram.mmd",
       "diagram_digest": "7db206956bb1d4ac5d32aae7445ca356c16a90e7d8cc28bb40054e448880a2dd"
     }

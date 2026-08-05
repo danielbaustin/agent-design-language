@@ -7,7 +7,7 @@
     "title": "[v0.92][runtime][shepherd] Pull local Gemma/MLX Shepherd MVP forward",
     "slug": "v0-92-local-gemma-mlx-shepherd-mvp",
     "version": "v0.92",
-    "generation": 21
+    "generation": 27
   },
   "status": "ready",
   "content": {
@@ -16,11 +16,11 @@
       "goal": "Deliver one optional local-only Shepherd message path from the separate Observatory through signed Runtime v3 governed ingress to an explicitly configured MLX/Gemma adapter and back with truthful execution classification.",
       "required_outcome": "A bounded authorized operator message produces a real local model response when the configured Apple Metal/MLX model is available, while Runtime and Observatory distinguish real, deterministic-test, and unavailable outcomes and remain usable after failures.",
       "declared_scope": [
-        "adl-runtime-kernel governed ingress, control, operations, and protocol-adapter surfaces",
-        "adl-runtime Runtime API, auth, and WSS projection surfaces",
-        "A narrow explicitly configured local MLX/Gemma adapter and deterministic tests",
-        "demos/html-observatory operator channel and status projection",
-        ".csdlc/evidence/5795 real local-model and negative proof"
+        "adl-runtime-kernel/src/shepherd.rs",
+        "adl-runtime-kernel/tests/shepherd.rs",
+        "demos/html-observatory/shepherd.js",
+        "demos/html-observatory/index.html",
+        "adl/tools/validate_v092_shepherd_browser_roundtrip.mjs"
       ],
       "authority_boundary": [
         "Issue 5795 owns the local Shepherd adapter and its Runtime/Observatory integration only",

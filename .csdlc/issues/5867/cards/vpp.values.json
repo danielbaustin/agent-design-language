@@ -1,0 +1,74 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5867,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-04.05] Membership state and topology convergence",
+    "slug": "v0-92-wp-04-05-membership-topology",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "exact-child-tests",
+          "proof_role": "Exact nextest target distributed_membership proves convergence, monotonic epochs, duplicate and out-of-order handling, restart recovery, and bounded membership size.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1800,
+          "budget_tokens": 8000,
+          "argv": [
+            "cargo",
+            "nextest",
+            "run",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "--test",
+            "distributed_membership",
+            "--no-tests=fail"
+          ],
+          "parallel_group": "child",
+          "defer_reason": null
+        },
+        {
+          "lane": "exact-revision-proof-receipt",
+          "proof_role": "Recompute source, command, nonzero test, artifact, negative-case, and native receipt bindings.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5867/validate-proof-receipt.rb"
+          ],
+          "parallel_group": "receipt",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on stale dependencies, path overlap, zero tests, invalid evidence, insecure fallback, or unresolved review findings.",
+      "design_ref": ".csdlc/prepared/issues/5867/design.md",
+      "design_digest": "d021c93afe45a50811e0c4d08dca3942e5fe983af2b4c7c920af7a967b30968d",
+      "diagram_ref": ".csdlc/prepared/issues/5867/diagram.mmd",
+      "diagram_digest": "583069f1e5e23de29e40c6d6a2c6f6f2c39c31907ef9d63198e80ae2ae0a8f33"
+    }
+  }
+}
