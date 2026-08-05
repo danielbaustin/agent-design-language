@@ -1175,6 +1175,12 @@ fn derived_bind_uses_the_existing_issue_worktree_in_place() {
     )
     .expect_err("issue-local implementation work must block release");
     assert_eq!(error.code, ErrorCode::UnsafeCheckout);
+    let interrupted_release = diagnose(&store, 9001);
+    assert_eq!(
+        interrupted_release.next_operation.as_deref(),
+        Some("csdlc-bind release")
+    );
+    assert!(interrupted_release.binding_intent_digest.is_some());
     fs::remove_file(temp.path().join("src/issue-local.rs")).unwrap();
     release_derived_bind(
         &store,

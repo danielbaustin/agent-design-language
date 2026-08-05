@@ -421,6 +421,12 @@ pub fn sync_preparation(store: &Store, request: PrepareSyncRequest) -> Result<Pr
             "bound preparation must be edited through the canonical issue lifecycle",
         ));
     }
+    if store.issue_dir(request.issue).exists() {
+        return Err(V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "canonical issue authority must be migrated before preparation can be synchronized",
+        ));
+    }
     if let Some(expected) = &request.expected_manifest_digest {
         if current.as_ref().map(|value| &value.digest) != Some(expected) {
             return Err(V2Error::new(

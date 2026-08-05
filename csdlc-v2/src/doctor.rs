@@ -93,6 +93,23 @@ fn diagnose_internal(store: &Store, issue: u64, include_preparation: bool) -> Do
             .join(".csdlc/preparation/issues")
             .join(issue.to_string())
             .join("manifest.json");
+        match load_binding_intent(store, issue) {
+            Ok(Some(intent)) if intent.state == BindingIntentState::Releasing => {
+                report.preparation_state =
+                    load_manifest(store, issue).ok().map(|value| value.state);
+                report.binding_intent_digest = Some(intent.digest);
+                report.next_operation = Some("csdlc-bind release".into());
+                return report;
+            }
+            Ok(_) => {}
+            Err(error) if preparation_manifest.exists() => {
+                report.status = DoctorStatus::Corrupt;
+                report.findings.push(finding(error));
+                report.next_operation = Some("csdlc-migrate repair".into());
+                return report;
+            }
+            Err(_) => {}
+        }
         match load_manifest(store, issue) {
             Ok(manifest)
                 if store.issue_dir(issue).exists() && manifest.state != PreparationState::Bound =>
