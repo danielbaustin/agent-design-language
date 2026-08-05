@@ -1,0 +1,37 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "gemini-3.1-pro-preview",
+    "credential_ref": "env:GEMINI_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "model_ref": "gemini-3.1-pro-preview",
+    "provider_model_id": "gemini-3.1-pro-preview",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1785959359",
+      "duration_ms": 58102,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted provider text len=22]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 58103,
+  "request_id": "issue-5861-gemini-final-34b9992a962d3cd4e97432b94ca543f571f98542",
+  "output_text": "NO ACTIONABLE FINDINGS",
+  "output_text_excerpt": "[redacted provider text len=22]",
+  "artifact_ref": "<absolute>/5861-gemini-final.result.json@f8669d5496c2a208",
+  "trace_ref": "provider_adapter.circuit_breaker"
+}

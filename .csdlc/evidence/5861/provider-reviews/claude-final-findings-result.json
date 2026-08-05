@@ -1,0 +1,37 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "claude-opus-5",
+    "credential_ref": "env:ANTHROPIC_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "model_ref": "claude-opus-5",
+    "provider_model_id": "claude-opus-5",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1785959065",
+      "duration_ms": 85704,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted provider text len=3484]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 85704,
+  "request_id": "issue-5861-claude-delta-ccf117845ac7",
+  "output_text": "## Findings\n\n### 1. `sync_dir` leaves unreachable code on Windows (build/lint break, plus behavioral divergence)\n\n```rust\n#[cfg(windows)]\n{\n    let _ = path;\n    return Ok(());\n}\n#[cfg(not(windows))]\nFile::open(path)?.sync_all()?;\nOk(())      // <-- unreachable when cfg(windows)\n```\n\nOn a Windows build the function body reduces to `{ let _ = path; return Ok(()); } Ok(()) }`, so the trailing `Ok(())` is dead and rustc fires `unreachable_code`/`unreachable_expression`. Any build using `-D warnings` (or `#![deny(warnings)]` in the workspace lint config) fails on Windows only — i.e. exactly the platform this delta was supposed to fix. Additionally, `File` is now referenced only in the `cfg(not(windows))` arm; if `store.rs` has no other `File::` use outside that arm, the `use std::fs::File` import becomes an unused-import warning on Windows too (same deny-warnings exposure).\n\nFix by cfg-splitting the whole body rather than early-returning out of a `cfg`'d block, e.g.:\n\n```rust\n#[cfg(windows)]\npub(crate) fn sync_dir(_path: &Path) -> Result<()> { Ok(()) }   // FlushFileBuffers is unsupported on dir handles\n\n#[cfg(not(windows))]\npub(crate) fn sync_dir(path: &Path) -> Result<()> { File::open(path)?.sync_all()?; Ok(()) }\n```\n\nSecondary note on the same change: the previous implementation propagated `ENOENT`/open failures on Windows; the no-op version now returns `Ok(())` for a path that does not exist, so a caller that (intentionally or accidentally) relied on `sync_dir` to surface a missing/renamed directory now silently succeeds on Windows while still erroring on Unix. If any caller uses `sync_dir` as an existence assertion after a rename, that assertion is now platform-conditional.\n\n### 2. Bound-retry topology check still omits branch verification for the `worktree == \".\"` (root) case\n\nThe new guard is gated on `intent.worktree != \".\"`:\n\n```rust\nif intent.worktree != \".\" {\n    let expected = expected_worktree_path(...)?;\n    ... registered branch → path must equal expected ...\n}\nlet target_store = Store::new(&target);\nlet record = target_store.load_record(request.issue)?;\nif record.claim... != Some(&intent.claim_id)\n    || record.phase != Bound\n    || git::run(&target, &[\"rev-parse\", \"HEAD\"])?.stdout != intent.base_revision\n```\n\nFor the in-place (root) topology, the only revision assertion is `rev-parse HEAD == intent.base_revision`. Revision equality does **not** imply HEAD is on `intent.branch`:\n\n- Immediately after `git branch <intent.branch>`, the pre-existing branch (e.g. `main`) and `intent.branch` point at the same commit, so a root worktree still checked out on `main` passes.\n- A detached HEAD at `base_revision` also passes.\n- A user/agent `git checkout main` between the crash and the retry passes.\n\nIn all three cases the retry proceeds to `update_manifest_state(&target_store, issue, PreparationState::Bound)`, recording the issue as bound while the working tree is not on the durable intent branch — the same class of topology drift the non-root guard was added to catch, just on the other side of the `if`.\n\nAdd a symmetric assertion for the root case, e.g. require `git symbolic-ref --short HEAD` (or `rev-parse --abbrev-ref HEAD`) in `target` to equal `intent.branch` (and treat detached HEAD as `ReconciliationRequired`), and additionally verify that `intent.branch`'s registered worktree in `git::worktrees(store.root())` is the root itself, so a branch that has since been moved into a linked worktree is also rejected.",
+  "output_text_excerpt": "[redacted provider text len=3484]",
+  "artifact_ref": "<absolute>/5861-claude-delta.result.json@ec867e2611275657",
+  "trace_ref": "provider_adapter.circuit_breaker"
+}
