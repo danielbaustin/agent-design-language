@@ -14,6 +14,7 @@ pub mod lifecycle;
 pub mod migration;
 pub mod model;
 pub mod operator;
+pub mod preparation;
 pub mod proof;
 pub mod publication;
 pub mod pvf;
@@ -70,6 +71,19 @@ pub use model::{
 pub use operator::{
     build_and_install_binaries, install_binaries, resolve_operator_generation, verify_coexistence,
     CoexistenceInventory, InstallReceipt, SkillManifest,
+};
+pub use preparation::{
+    create_issue_draft, load_binding_intent, load_manifest as load_preparation_manifest,
+    migrate_legacy_preparation, release_derived_bind, repair_legacy_preparation, run_derived_bind,
+    run_preparation, run_preparation_batch, seal_preparation, sync_preparation, BatchChildOutcome,
+    BatchChildResult, BindReleaseRequest, BindReleaseResult, BindingIntent, BindingIntentState,
+    DependencyRevision, DerivedBindRequest, DerivedBindResult, ExecutionReadinessReceipt,
+    IssueCreateRequest, IssueDraft, LegacyPreparationDisposition,
+    LegacyPreparationMigrationRequest, LegacyPreparationMigrationResult,
+    LegacyPreparationRepairDisposition, LegacyPreparationRepairRequest,
+    LegacyPreparationRepairResult, PreparationManifest, PreparationState, PrepareBatchRequest,
+    PrepareBatchResult, PrepareRunRequest, PrepareRunResult, PrepareSealRequest,
+    PrepareSyncRequest, PreparedGeneration,
 };
 pub use proof::{run_pre_switch_proof, PreSwitchEvidence, ProofManifest, ProofStep};
 pub use publication::{

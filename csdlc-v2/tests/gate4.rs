@@ -104,6 +104,7 @@ fn bound_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
                 review_prompts: vec!["review atomicity".into()],
                 review_scope: "csdlc-v2".into(),
             },
+            prepared_cards: None,
         })
         .unwrap(),
     )

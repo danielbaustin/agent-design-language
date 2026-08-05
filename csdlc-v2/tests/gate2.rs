@@ -111,6 +111,7 @@ fn request() -> BootstrapRequest {
             review_prompts: vec!["Review correctness.".into()],
             review_scope: "fixture".into(),
         },
+        prepared_cards: None,
     }
 }
 
@@ -1358,10 +1359,9 @@ fn released_claim_reacquires_without_phase_or_audit_rewind() {
     assert_eq!(doctor.status, DoctorStatus::Block);
     assert_eq!(doctor.next_operation.as_deref(), Some("reacquire_claim"));
 
-    let request_path = temp.path().join("reacquire.json");
-    fs::write(
-        &request_path,
-        serde_json::to_vec(&ReacquireClaimRequest {
+    let result = csdlc_v2::reacquire_claim(
+        &store,
+        ReacquireClaimRequest {
             issue: 42,
             expected_generation: dormant.generation,
             expected_digest: released.digest,
@@ -1369,26 +1369,19 @@ fn released_claim_reacquires_without_phase_or_audit_rewind() {
             actor: "next-owner".into(),
             reason: "resume accepted work".into(),
             replacement: reacquired_claim(dormant.generation),
-        })
-        .expect("serialize request"),
+        },
     )
-    .expect("write request");
+    .expect("historical authority repair remains library-only");
     let output = std::process::Command::new(env!("CARGO_BIN_EXE_csdlc-bind"))
         .args([
             "--root",
             temp.path().to_str().expect("root"),
             "--reacquire-request",
-            request_path.to_str().expect("request"),
+            "removed.json",
         ])
         .output()
         .expect("run csdlc-bind");
-    assert!(
-        output.status.success(),
-        "{}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let result: csdlc_v2::ReacquireClaimResult =
-        serde_json::from_slice(&output.stdout).expect("typed result");
+    assert!(!output.status.success());
     let resumed = store.load_record(42).expect("resumed");
     assert_eq!(resumed.phase, dormant.phase);
     assert_eq!(resumed.audit.len(), dormant_audit_len + 1);

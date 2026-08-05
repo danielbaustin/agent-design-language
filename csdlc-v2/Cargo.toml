@@ -19,12 +19,20 @@ name = "csdlc-doctor"
 path = "src/bin/csdlc-doctor.rs"
 
 [[bin]]
-name = "csdlc-init"
-path = "src/bin/csdlc-init.rs"
-
-[[bin]]
 name = "csdlc-bind"
 path = "src/bin/csdlc-bind.rs"
+
+[[bin]]
+name = "csdlc-issue"
+path = "src/bin/csdlc-issue.rs"
+
+[[bin]]
+name = "csdlc-prepare"
+path = "src/bin/csdlc-prepare.rs"
+
+[[bin]]
+name = "csdlc-migrate"
+path = "src/bin/csdlc-migrate.rs"
 
 [[bin]]
 name = "csdlc-validate"

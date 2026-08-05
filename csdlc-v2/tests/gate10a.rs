@@ -45,7 +45,9 @@ fn current_operator_guidance_has_no_sunset_v1_route() {
 
     let workflow = fs::read_to_string(repo.join("docs/default_workflow.md")).unwrap();
     assert!(workflow.starts_with("# Default C-SDLC v2 workflow"));
-    assert!(workflow.contains("csdlc-init"));
+    assert!(workflow.contains("`csdlc-init` command is deleted"));
+    assert!(!workflow.contains("csdlc-init --"));
+    assert!(workflow.contains("csdlc-issue create"));
     assert!(workflow.contains("csdlc-finish"));
     assert!(!workflow.contains("csdlc-closeout"));
     assert!(current_guidance_is_v2_only(
@@ -143,7 +145,7 @@ fn installer_records_provenance_without_replacing_other_files() {
     {
         use std::os::unix::fs::PermissionsExt;
         assert_ne!(
-            fs::metadata(destination.join("csdlc-init"))
+            fs::metadata(destination.join("csdlc-issue"))
                 .unwrap()
                 .permissions()
                 .mode()
@@ -166,10 +168,10 @@ fn installer_records_provenance_without_replacing_other_files() {
         .present_forbidden_v1_paths
         .contains(&"adl/tools/pr.sh".into()));
     fs::remove_file(repo.join("adl/tools/pr.sh")).unwrap();
-    fs::write(destination.join("csdlc-init"), b"tampered").unwrap();
+    fs::write(destination.join("csdlc-issue"), b"tampered").unwrap();
     let tampered = verify_coexistence(&repo, &destination, &inventory).unwrap();
     assert!(!tampered.pass);
-    assert!(tampered.missing_v2_binaries.contains(&"csdlc-init".into()));
+    assert!(tampered.missing_v2_binaries.contains(&"csdlc-issue".into()));
 
     #[cfg(unix)]
     {
@@ -542,6 +544,7 @@ fn bootstrap_request() -> BootstrapRequest {
             review_prompts: vec!["Review correctness.".into()],
             review_scope: "fixture".into(),
         },
+        prepared_cards: None,
     }
 }
 
@@ -621,11 +624,11 @@ fn symlinked_installed_binaries_fail_coexistence() {
     let bins = parent.path().join("csdlc-v2");
     install_binaries(prebuilt_binaries(), &bins).unwrap();
     stamp_current_revision(&repo, &bins);
-    fs::remove_file(bins.join("csdlc-init")).unwrap();
-    symlink("/bin/true", bins.join("csdlc-init")).unwrap();
+    fs::remove_file(bins.join("csdlc-issue")).unwrap();
+    symlink("/bin/true", bins.join("csdlc-issue")).unwrap();
     let report = verify_coexistence(&repo, &bins, &CoexistenceInventory::load().unwrap()).unwrap();
     assert!(!report.pass);
-    assert_eq!(report.missing_v2_binaries, vec!["csdlc-init"]);
+    assert_eq!(report.missing_v2_binaries, vec!["csdlc-issue"]);
 }
 
 fn prebuilt_binaries() -> &'static std::path::Path {

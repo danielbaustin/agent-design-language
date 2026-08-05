@@ -257,6 +257,7 @@ pub fn import_legacy(request: LegacyImportRequest) -> Result<ImportReport> {
             design_approved: true,
             claim: request.claim,
             initial,
+            prepared_cards: None,
         },
     )?;
     let compatibility_path = format!(".csdlc/compat/{}.md", request.issue);

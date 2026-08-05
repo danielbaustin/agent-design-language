@@ -125,6 +125,7 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
                 review_prompts: vec!["review correctness".into()],
                 review_scope: "fixture".into(),
             },
+            prepared_cards: None,
         },
     )
     .expect("init");

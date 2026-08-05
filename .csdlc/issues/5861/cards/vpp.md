@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5861/diagram.mmd
 [
   {
     "lane": "csdlc-v2-preparation-binding-focused",
-    "proof_role": "Prove state, receipt, concurrency, crash recovery, release, batch, and migration contracts in focused Rust tests",
+    "proof_role": "Prove draft, generation, readiness, dependency drift, session authority, concurrency, recovery, release, batch, migration, corruption, and path-hardening behavior.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -36,7 +36,8 @@ Diagram: .csdlc/prepared/issues/5861/diagram.mmd
       "AC-7",
       "AC-8",
       "AC-9",
-      "AC-10"
+      "AC-10",
+      "AC-11"
     ],
     "deterministic": true,
     "resource_profile": "medium",
@@ -45,6 +46,33 @@ Diagram: .csdlc/prepared/issues/5861/diagram.mmd
     "argv": [
       "cargo",
       "test",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--test",
+      "preparation"
+    ],
+    "parallel_group": "csdlc-v2-focused",
+    "defer_reason": null
+  },
+  {
+    "lane": "csdlc-v2-lifecycle-compatibility",
+    "proof_role": "Prove the new preparation path preserves canonical lifecycle behavior needed after binding.",
+    "acceptance_ids": [
+      "AC-6",
+      "AC-7",
+      "AC-8",
+      "AC-10",
+      "AC-11"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 12000,
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
       "--manifest-path",
       "csdlc-v2/Cargo.toml",
       "--test",
@@ -55,7 +83,7 @@ Diagram: .csdlc/prepared/issues/5861/diagram.mmd
   },
   {
     "lane": "csdlc-v2-public-contract-focused",
-    "proof_role": "Prove typed command, schema, operator skill, compatibility, and deletion boundaries",
+    "proof_role": "Prove typed commands, schemas, operator skills, installer inventory, compatibility, and deletion boundaries.",
     "acceptance_ids": [
       "AC-1",
       "AC-4",
@@ -70,10 +98,36 @@ Diagram: .csdlc/prepared/issues/5861/diagram.mmd
     "argv": [
       "cargo",
       "test",
+      "--locked",
       "--manifest-path",
       "csdlc-v2/Cargo.toml",
       "--test",
       "gate10a"
+    ],
+    "parallel_group": "csdlc-v2-contract",
+    "defer_reason": null
+  },
+  {
+    "lane": "csdlc-v2-strict-lints",
+    "proof_role": "Prove strict Rust lint cleanliness across the touched crate and tests.",
+    "acceptance_ids": [
+      "AC-11",
+      "AC-12"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 8000,
+    "argv": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--manifest-path",
+      "csdlc-v2/Cargo.toml",
+      "--tests",
+      "--",
+      "-D",
+      "warnings"
     ],
     "parallel_group": "csdlc-v2-contract",
     "defer_reason": null
@@ -92,8 +146,10 @@ Tokens: 50000
 
 ## Commands
 
-- `cargo test --manifest-path csdlc-v2/Cargo.toml --test gate2`
-- `cargo test --manifest-path csdlc-v2/Cargo.toml --test gate10a`
+- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test preparation`
+- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate2`
+- `cargo test --locked --manifest-path csdlc-v2/Cargo.toml --test gate10a`
+- `cargo clippy --locked --manifest-path csdlc-v2/Cargo.toml --tests -- -D warnings`
 
 ## Failure Semantics
 

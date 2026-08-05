@@ -14,5 +14,5 @@
     "adl/src/csdlc_prompt_editor.rs",
     "csdlc-v2/src/bin/csdlc-import.rs"
   ],
-  "required_v2_binaries":["csdlc-bind","csdlc-clean","csdlc-cutover","csdlc-doctor","csdlc-edit","csdlc-eligibility","csdlc-finish","csdlc-github","csdlc-github-issue","csdlc-github-pr","csdlc-init","csdlc-install","csdlc-pr-state","csdlc-proof","csdlc-publish","csdlc-review","csdlc-schedule","csdlc-shadow","csdlc-shepherd","csdlc-soak","csdlc-validate"]
+  "required_v2_binaries":["csdlc-bind","csdlc-clean","csdlc-cutover","csdlc-doctor","csdlc-edit","csdlc-eligibility","csdlc-finish","csdlc-github","csdlc-github-issue","csdlc-github-pr","csdlc-install","csdlc-issue","csdlc-migrate","csdlc-pr-state","csdlc-prepare","csdlc-proof","csdlc-publish","csdlc-review","csdlc-schedule","csdlc-shadow","csdlc-shepherd","csdlc-soak","csdlc-validate"]
 }

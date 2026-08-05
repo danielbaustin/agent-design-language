@@ -116,6 +116,35 @@ impl Store {
         Ok(file)
     }
 
+    pub(crate) fn remove_unstarted_binding_projection(
+        &self,
+        issue: u64,
+        claim_id: &str,
+        expected_digest: &str,
+    ) -> Result<()> {
+        let _lock = self.lock(issue)?;
+        self.recover_if_needed(issue)?;
+        let record = self.load_record(issue)?;
+        if record.digest != expected_digest
+            || record.claim.as_ref().map(|claim| claim.id.as_str()) != Some(claim_id)
+            || !matches!(
+                record.phase,
+                LifecyclePhase::Initialized | LifecyclePhase::Ready | LifecyclePhase::Bound
+            )
+            || record.publication.is_some()
+            || record.review.is_some()
+            || record.terminal.is_some()
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "binding projection has execution or mismatched ownership and cannot be released",
+            ));
+        }
+        fs::remove_dir_all(self.issue_dir(issue))?;
+        sync_dir(&self.root.join(".csdlc/issues"))?;
+        Ok(())
+    }
+
     pub fn load_record(&self, issue: u64) -> Result<IssueRecord> {
         let record: IssueRecord = read_json(&self.issue_dir(issue).join("index.json"))?;
         if record.issue != issue {
@@ -1233,6 +1262,8 @@ pub struct BootstrapRequest {
     pub design_approved: bool,
     pub claim: Claim,
     pub initial: InitialCardInput,
+    #[serde(default)]
+    pub prepared_cards: Option<BTreeMap<CardKind, CardValues>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -1381,15 +1412,29 @@ pub(crate) fn bootstrap_issue(store: &Store, request: BootstrapRequest) -> Resul
     let bootstrap_actor = request.claim.owner.clone();
     let design_digest = digest(&fs::read(store.root.join(&request.design_path))?);
     let diagram_digest = digest(&fs::read(store.root.join(&request.diagram_path))?);
-    let cards = initial_cards(
-        request.issue,
-        &request.repository,
-        &request.design_path,
-        &design_digest,
-        &request.diagram_path,
-        &diagram_digest,
-        request.initial,
-    )?;
+    let cards = if let Some(mut cards) = request.prepared_cards {
+        for values in cards.values_mut() {
+            values.identity.generation = 0;
+        }
+        validate_cross_card(
+            &cards,
+            &request.design_path,
+            &design_digest,
+            &request.diagram_path,
+            &diagram_digest,
+        )?;
+        cards
+    } else {
+        initial_cards(
+            request.issue,
+            &request.repository,
+            &request.design_path,
+            &design_digest,
+            &request.diagram_path,
+            &diagram_digest,
+            request.initial,
+        )?
+    };
     let mut record = IssueRecord {
         schema: "csdlc.issue.index.v1".into(),
         issue: request.issue,
@@ -2389,7 +2434,7 @@ fn canonical_path_metadata_beneath(root: &Path, relative: &Path) -> Result<Optio
     Ok(None)
 }
 
-fn require_canonical_parent_beneath(root: &Path, relative: &Path) -> Result<()> {
+pub(crate) fn require_canonical_parent_beneath(root: &Path, relative: &Path) -> Result<()> {
     if !crate::pvf::clean_relative(relative) {
         return Err(V2Error::new(
             ErrorCode::UnsafeCheckout,
@@ -2429,7 +2474,7 @@ fn require_canonical_parent_beneath(root: &Path, relative: &Path) -> Result<()> 
     Ok(())
 }
 
-fn require_regular_or_absent_beneath(root: &Path, relative: &Path) -> Result<()> {
+pub(crate) fn require_regular_or_absent_beneath(root: &Path, relative: &Path) -> Result<()> {
     if let Some(metadata) = canonical_path_metadata_beneath(root, relative)? {
         if !metadata.is_file() {
             return Err(V2Error::new(

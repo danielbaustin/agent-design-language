@@ -17,6 +17,14 @@ use crate::lifecycle::{
 use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, ShadowComparison};
 use crate::model::IssueRecord;
 use crate::model::TerminalReceipt;
+use crate::preparation::{
+    BindReleaseRequest, BindReleaseResult, BindingIntent, DerivedBindRequest, DerivedBindResult,
+    ExecutionReadinessReceipt, IssueCreateRequest, IssueDraft, LegacyPreparationMigrationRequest,
+    LegacyPreparationMigrationResult, LegacyPreparationRepairRequest,
+    LegacyPreparationRepairResult, PreparationManifest, PrepareBatchRequest, PrepareBatchResult,
+    PrepareRunRequest, PrepareRunResult, PrepareSealRequest, PrepareSyncRequest,
+    PreparedGeneration,
+};
 use crate::publication::{PublicationIntent, PublicationRequest, RemotePullRequest};
 use crate::pvf::{
     ExecutionReport, ExecutionRequest, FinalizeRequest, PvfManifest, ScheduleReport, ShepherdReport,
@@ -41,6 +49,26 @@ pub fn public_schema_bundle() -> Value {
         "edit_request": schemars::schema_for!(EditRequest),
         "bind_request": schemars::schema_for!(BindRequest),
         "bind_result": schemars::schema_for!(BindResult),
+        "issue_create_request": schemars::schema_for!(IssueCreateRequest),
+        "issue_draft": schemars::schema_for!(IssueDraft),
+        "prepare_sync_request": schemars::schema_for!(PrepareSyncRequest),
+        "prepare_seal_request": schemars::schema_for!(PrepareSealRequest),
+        "prepare_run_request": schemars::schema_for!(PrepareRunRequest),
+        "prepare_run_result": schemars::schema_for!(PrepareRunResult),
+        "prepare_batch_request": schemars::schema_for!(PrepareBatchRequest),
+        "prepare_batch_result": schemars::schema_for!(PrepareBatchResult),
+        "prepared_generation": schemars::schema_for!(PreparedGeneration),
+        "preparation_manifest": schemars::schema_for!(PreparationManifest),
+        "legacy_preparation_migration_request": schemars::schema_for!(LegacyPreparationMigrationRequest),
+        "legacy_preparation_migration_result": schemars::schema_for!(LegacyPreparationMigrationResult),
+        "legacy_preparation_repair_request": schemars::schema_for!(LegacyPreparationRepairRequest),
+        "legacy_preparation_repair_result": schemars::schema_for!(LegacyPreparationRepairResult),
+        "execution_readiness_receipt": schemars::schema_for!(ExecutionReadinessReceipt),
+        "derived_bind_request": schemars::schema_for!(DerivedBindRequest),
+        "derived_bind_result": schemars::schema_for!(DerivedBindResult),
+        "binding_intent": schemars::schema_for!(BindingIntent),
+        "bind_release_request": schemars::schema_for!(BindReleaseRequest),
+        "bind_release_result": schemars::schema_for!(BindReleaseResult),
         "recover_claim_request": schemars::schema_for!(RecoverClaimRequest),
         "reacquire_claim_request": schemars::schema_for!(ReacquireClaimRequest),
         "reacquire_claim_result": schemars::schema_for!(ReacquireClaimResult),

@@ -506,6 +506,20 @@ fn materialize_bound_issue_state(source: &Store, target_root: &Path, issue: u64)
         "bound worktree already contains different prepared lifecycle state",
     )?;
     copy_dir_recursive(&source_prepared, &target_prepared)?;
+    let source_preparation = source
+        .root()
+        .join(".csdlc/preparation/issues")
+        .join(issue.to_string());
+    let target_preparation = target
+        .root()
+        .join(".csdlc/preparation/issues")
+        .join(issue.to_string());
+    require_matching_tree(
+        &source_preparation,
+        &target_preparation,
+        "bound worktree already contains different claim-free preparation state",
+    )?;
+    copy_dir_recursive(&source_preparation, &target_preparation)?;
     let source_evidence = source
         .root()
         .join(".csdlc/evidence")
@@ -525,7 +539,7 @@ fn materialize_bound_issue_state(source: &Store, target_root: &Path, issue: u64)
     Ok(target)
 }
 
-pub(crate) fn initialize_issue(
+fn initialize_issue_under_binding_lock(
     store: &Store,
     mut request: BootstrapRequest,
 ) -> Result<crate::IssueRecord> {
@@ -553,7 +567,6 @@ pub(crate) fn initialize_issue(
             ));
         }
     }
-    let _binding_lock = store.binding_lock()?;
     let now_unix_seconds = unix_now()?;
     for (other_store, other) in active_issue_records_across_worktrees(store)? {
         if other.issue != request.issue {
@@ -617,6 +630,22 @@ pub(crate) fn initialize_issue(
     bootstrap_issue(store, request)
 }
 
+pub(crate) fn initialize_issue(
+    store: &Store,
+    request: BootstrapRequest,
+) -> Result<crate::IssueRecord> {
+    let _binding_lock = store.binding_lock()?;
+    initialize_issue_under_binding_lock(store, request)
+}
+
+pub(crate) fn initialize_prepared_issue_under_binding_lock(
+    store: &Store,
+    request: BootstrapRequest,
+) -> Result<crate::IssueRecord> {
+    crate::registry::validate_native_registry(store.root())?;
+    initialize_issue_under_binding_lock(store, request)
+}
+
 fn initialize_native_issue(store: &Store, request: BootstrapRequest) -> Result<crate::IssueRecord> {
     crate::registry::validate_native_registry(store.root())?;
     initialize_issue(store, request)
@@ -647,7 +676,7 @@ pub fn initialize_native_json(store: &Store, bytes: &[u8]) -> Result<crate::Issu
     initialize_native_issue(store, request)
 }
 
-fn validate_validation_lanes(
+pub(crate) fn validate_validation_lanes(
     root: &std::path::Path,
     lanes: &[crate::cards::ValidationLane],
 ) -> Result<()> {
@@ -830,6 +859,19 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
                     &target_prepared,
                     "bound worktree already contains different prepared lifecycle state",
                 )?;
+                let source_preparation = store
+                    .root()
+                    .join(".csdlc/preparation/issues")
+                    .join(request.issue.to_string());
+                let target_preparation = target
+                    .root()
+                    .join(".csdlc/preparation/issues")
+                    .join(request.issue.to_string());
+                require_matching_tree(
+                    &source_preparation,
+                    &target_preparation,
+                    "bound worktree already contains different claim-free preparation state",
+                )?;
                 let source_evidence = store
                     .root()
                     .join(".csdlc/evidence")
@@ -862,7 +904,7 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         ));
     }
     if record.phase == crate::LifecyclePhase::Initialized {
-        if !crate::diagnose(store, request.issue).ready {
+        if !crate::doctor::diagnose_canonical(store, request.issue).ready {
             return Err(V2Error::new(
                 ErrorCode::InvalidTransition,
                 "issue is not design/card ready for binding",

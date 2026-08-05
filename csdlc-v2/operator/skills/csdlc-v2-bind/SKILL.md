@@ -1,5 +1,10 @@
 ---
 name: csdlc-v2-bind
-description: Bind a prepared C-SDLC v2 issue to a claim, branch, and worktree.
+description: Bind an execution-ready C-SDLC v2 issue from issue and session identity, or release an unstarted binding.
 ---
-Invoke `csdlc-bind` with typed argv and report its typed result. Do not create hidden claims, edit cards, or fall back to shell/Python lifecycle mutation.
+Invoke `csdlc-bind run` or `csdlc-bind release` with typed argv and report its
+typed result. The run request contains issue and governed session identity, not
+a copied claim, branch, worktree, or protected-path reservation. Do not create
+hidden operator claims, edit cards, or fall back to shell/Python lifecycle
+mutation. The full legacy bind request remains compatibility-only during
+v0.92 parity.
