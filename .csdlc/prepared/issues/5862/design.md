@@ -51,9 +51,14 @@ proof. WP-14 #5832 waits for this umbrella's terminal integrated output.
 
 The issue-local validator compares the exact mapping against the canonical
 v0.92 wave, local typed records, approved design digests, null preparation
-claims, child dependencies, and exclusive paths. Final reconciliation must
-derive live issue/PR/merge/terminal receipts and exact-head evidence; status
-booleans and umbrella prose are not authority.
+claims, child dependencies, and exact owned paths. Final reconciliation must
+query each live PR through the typed GitHub client, require the GitHub closing
+relation, match the PR head and merge commit to the child's terminal record,
+recompute the terminal receipt digest, and prove the merge is ancestral to the
+candidate head. WP-04.16's integrated execution proof, production validator,
+native validator, command logs, artifacts, and digests are a separate mandatory
+gate before the WP-14 handoff. Status booleans and umbrella prose are not
+authority.
 
 ## Rollback
 

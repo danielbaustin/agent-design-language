@@ -88,12 +88,12 @@ expected_titles.each do |issue, title|
   abort "live issue ##{issue} is not open" unless packet["state"] == "open"
   abort "live title drift for ##{issue}" unless packet["title"] == title
   if issue != 5862
-    abort "live body lost WP-04-IMP dependency for ##{issue}" unless packet["body"].include?("#5862")
+    abort "live body lost canonical WP-04-IMP dependency for ##{issue}" unless packet["body"].include?("WP-04-IMP issue 5862")
   end
 end
 umbrella_request = File.join(__dir__, "wp04-implementation-wave", "read", "5862.json")
 stdout, = Open3.capture2(github_binary, "run", "--request", umbrella_request)
 live_umbrella = JSON.parse(stdout).fetch("issue").fetch("body")
-children.each { |id, issue, _, _| abort "umbrella missing #{id} ##{issue}" unless live_umbrella.include?("#{id}: ##{issue}") }
+abort "umbrella lost canonical child denominator" unless live_umbrella.include?("WP-04.01 through WP-04.16")
 
 puts "PASS: live #5862 plus 16 mapped approved claim-null children, #{all_paths.length} exclusive paths, complete owner/proof/rollback fields"

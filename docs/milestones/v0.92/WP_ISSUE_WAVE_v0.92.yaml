@@ -182,13 +182,16 @@ execution_sprints:
     session_prompt_path: .adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md
     execution_mode: hybrid
     goal: Deliver one resilient Runtime and Observatory path, then distributed, protocol, provider, and consumer integration.
-    members: [issue-5800, WP-03, issue-5795, WP-04, WP-14, WP-18A]
+    members: [issue-5800, WP-03, issue-5795, WP-04, WP-04-IMP, WP-04.01, WP-04.02, WP-04.03, WP-04.04, WP-04.05, WP-04.06, WP-04.07, WP-04.08, WP-04.09, WP-04.10, WP-04.11, WP-04.12, WP-04.13, WP-04.14, WP-04.15, WP-04.16, WP-14, WP-18A]
     serial_gates:
       - issue-5800 and WP-03 establish the local launch and browser-trust baseline
       - issue-5795 integrates only after issue-5800 and WP-03 stabilize the Runtime/Observatory path
+      - WP-04-IMP begins only after WP-04 passes, and each WP-04.01 through WP-04.16 child observes its declared dependency graph
+      - WP-04.16 integrates only after WP-04.01 through WP-04.15 are terminal; WP-14 waits for the exact-head terminal WP-04-IMP reconciliation
       - WP-18A integrates only after WP-03, WP-14, and WP-18 are ready
     parallel_lanes:
       - WP-04 architecture and security preparation after WP-03 contracts stabilize
+      - dependency-ready WP-04 implementation children with disjoint exact owned paths
       - WP-14 protocol reconciliation after Runtime ingress contracts stabilize
       - issue-5795 local-provider preparation before its final integration gate
     write_surface: Runtime launch, Observatory HTTPS/WSS, local provider, distributed polis, ACIP/A2A, and consumer integration

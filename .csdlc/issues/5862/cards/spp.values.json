@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-04-IMP][umbrella] Execute distributed Guardian child wave",
     "slug": "v0-92-wp-04-imp-distributed-guardian-child-wave",
     "version": "v0.92",
-    "generation": 2
+    "generation": 3
   },
   "status": "ready",
   "content": {
@@ -84,7 +84,7 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5862/design.md",
-      "design_digest": "7a054dcb8473bd85e221f9cf176993574f04e05487dc48a0d71208161c926ac5",
+      "design_digest": "783d67114364b3c723c85ce00a216479274c8f4ae4644acc1d475e540ef4af90",
       "diagram_ref": ".csdlc/prepared/issues/5862/diagram.mmd",
       "diagram_digest": "4a0fcf3358b4acc39bfbb4146c36ca0a0bc2dd89ec137659580fe30a08a15eee"
     }

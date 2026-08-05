@@ -1,0 +1,21 @@
+{
+  "issue": 5795,
+  "card": "spp",
+  "expected_generation": 30,
+  "expected_digest": "43d8c853ecc216e64d7ff8fee4a7914561e370ca2981086c4e758147a21b7a1a",
+  "claim_id": "claim-5795-v092-runtime-wp04-repair",
+  "actor": "codex:5860-runtime-wp04-repair",
+  "reason": "Align the operative plan with the real local-model proving target.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "affected_areas",
+    "values": [
+      "adl-runtime-kernel/src/shepherd.rs",
+      "adl-runtime-kernel/tests/shepherd.rs",
+      "adl-runtime/tests/shepherd_local_model.rs",
+      "demos/html-observatory/shepherd.js",
+      "demos/html-observatory/index.html",
+      "adl/tools/validate_v092_shepherd_browser_roundtrip.mjs"
+    ]
+  }
+}

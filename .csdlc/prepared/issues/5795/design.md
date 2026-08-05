@@ -47,6 +47,7 @@ public read stream usable.
 
 - `adl-runtime-kernel/src/shepherd.rs`
 - `adl-runtime-kernel/tests/shepherd.rs`
+- `adl-runtime/tests/shepherd_local_model.rs`
 - `demos/html-observatory/shepherd.js`
 - `demos/html-observatory/index.html`
 - `adl/tools/validate_v092_shepherd_browser_roundtrip.mjs`

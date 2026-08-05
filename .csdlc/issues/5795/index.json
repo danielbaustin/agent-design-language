@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "409e16e0228f29a4e234fa3fa006087a058b5409f297ac014539fbdee6cb922a",
   "phase": "bound",
-  "generation": 29,
-  "digest": "c80cdb4fb51cde3f52075bbc69ad6549d689b680724fac3f6d6b3b697b442f8b",
+  "generation": 31,
+  "digest": "b0ba82d31ff2dc66be454b25ce34c9a0ebd583e2bddd009994481d1f27f0c303",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5795/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-v092-ownership-design-review",
-      "revision": "61f97abdaa3054ef846c6473ec503e70213950e96392884aa4d3d08fe881e48a"
+      "reviewer": "codex:5860-runtime-wp04-repair-design-review",
+      "revision": "89fe1dc1292243e40a2ec48d47040e901ac91451a8d5d99945fb154d8b3d1037"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "03554f7007bc3427ee9634967d2b3f4c4a373875a3d9f7eb31c9a01003797569",
+      "values_digest": "adf86664e097e6f9ff91543af9edd4a03e8cceb197dd024ea4e30f59f4e18f92",
       "rendered_digest": "8711735ab9715d666a6ed98a42d95ced1bce438c0cdc1d2e723d8b622af12214",
       "ast_digest": "23799561d6fbdb18697292ba3a7b0dc86cd314122af9a2cd9da41ad1cd8736a8"
     },
     "stp": {
-      "values_digest": "053a61199ba3939aecca798082db06cb790994bafbfda57f31a95970a273c7d4",
+      "values_digest": "cdb195c9e09a6a804afaccaf6eb34d373a3b70ae6040f4570abb55dbb4f73a5f",
       "rendered_digest": "35cc53fafbffb6049454b2b29e8b3692692ff2c0f9ae61ace2d5cedca66776bc",
       "ast_digest": "c0316a34236b0f6c806267cc6324d4fb9ffa46f1848291a9d1b01bea4b24af21"
     },
     "spp": {
-      "values_digest": "c3fa83c8fde1a3adb4b91f918591f797f2d0f0c6d440ce391d800b80d0291dd3",
-      "rendered_digest": "d7831b13427dc9e3381d2cf70af1a1c1337e36ad00a0340648f6af36a9efdb97",
-      "ast_digest": "3fc70e60d915528185edd9d6ba6d6e7edddcc42e4ec918cec82f4df370271d4c"
+      "values_digest": "41ce2646fce3b313eb59b70b84fc1fd757e91a17aa810597316b52c764596b91",
+      "rendered_digest": "c0e630b1cd0094fbf684846c934b4d3fc9101c6f3d52cf393bb4493934f3b538",
+      "ast_digest": "f44026f3423b55792fd074517d18d139465c1235d7ea71dbbc29727a7ddcbd87"
     },
     "vpp": {
-      "values_digest": "a189659f0973ea5247ecd0e33d02c41c5c22fc99f924fe1de84f2f0c53fbd5e4",
+      "values_digest": "a2ac36f3b37fc4f3535a1d5e62c4c16a9bb8cf5563175e1428bb9eb90360fb39",
       "rendered_digest": "cc89306546c10162019f53df9ef5378f064557f641d91df1c5346bcd78201571",
       "ast_digest": "b6f9b0de8d00612df512690aba76491df0988b4cfda3b504d21f23db07ddc710"
     },
     "srp": {
-      "values_digest": "f39514bcbec72f871aeb92275e106b4e8d64231c0070760516fcb8c6cf1975fd",
+      "values_digest": "ed0ce774e1ffc7b1ed098afb792734015d7eb4d3c438870d4c52aba8bc5446cb",
       "rendered_digest": "e3f361c41322cbe30f643af742a4a48adcd9aa2e84dd22c49f474180876b57eb",
       "ast_digest": "b8bdbd3e726f6e16200fdbaec307e5dcd8161488b319b5c0f2d6307623bfbc98"
     },
     "sor": {
-      "values_digest": "c0b82dd8954458a73bee422cc3302084031d66d274cb87bf7fdbc6a1c75086cf",
+      "values_digest": "bf33f3b2785c352b3b728a163f252779483aab05e5a65a3e48565c065c06b719",
       "rendered_digest": "8dff0bc57674843f439603d89e33224b1ad639e40a0dd715390f570e1d6bd15c",
       "ast_digest": "3cb60e4ee9159c2fd215b4b7993aee24df63502aa9ed8072f8286c1faad540ed"
     }
@@ -363,6 +363,34 @@
       "actor": "codex:5860-v092-ownership-normalization",
       "reason": "Release the temporary ownership-normalization claim after typed card regeneration and exact-digest design reapproval.",
       "operation": "{\"claim_id\":\"claim-5795-v092-ownership-normalization\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-ownership-normalization\",\"previous_owner\":\"codex:5860-v092-ownership-normalization\"}"
+    },
+    {
+      "sequence": 43,
+      "generation": 29,
+      "actor": "codex:5860-runtime-wp04-repair",
+      "reason": "Acquire issue-local preparation claim for scoped execution-readiness repair of issue 5795.",
+      "operation": "{\"branch\":\"codex/5860-runtime-wp04-repair\",\"claim_id\":\"claim-5795-v092-runtime-wp04-repair\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-runtime-wp04-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5795\",\".csdlc/prepared/issues/5795\",\".csdlc/evidence/5795\"],\"purpose\":\"Repair execution-readiness contracts for issue 5795 without product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 44,
+      "generation": 30,
+      "actor": "codex:5860-runtime-wp04-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 45,
+      "generation": 31,
+      "actor": "codex:5860-runtime-wp04-repair",
+      "reason": "Align the operative plan with the real local-model proving target.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/shepherd.rs\",\"adl-runtime-kernel/tests/shepherd.rs\",\"adl-runtime/tests/shepherd_local_model.rs\",\"demos/html-observatory/shepherd.js\",\"demos/html-observatory/index.html\",\"adl/tools/validate_v092_shepherd_browser_roundtrip.mjs\"]}"
+    },
+    {
+      "sequence": 46,
+      "generation": 31,
+      "actor": "codex:5860-runtime-wp04-repair",
+      "reason": "Release completed Runtime/WP-04 execution-readiness repair claim for just-in-time implementation handoff.",
+      "operation": "{\"claim_id\":\"claim-5795-v092-runtime-wp04-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-runtime-wp04-repair\"}"
     }
   ]
 }

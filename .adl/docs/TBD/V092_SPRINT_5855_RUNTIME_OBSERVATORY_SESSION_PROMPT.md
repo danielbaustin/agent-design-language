@@ -40,6 +40,8 @@ Exact child wave:
 - #5820, WP-03: Runtime launch and resilience consolidation
 - #5795: governed local Gemma/MLX Shepherd MVP
 - #5821, WP-04: distributed Guardian/polis runtime program
+- #5862, WP-04-IMP: distributed Guardian implementation umbrella
+- #5863-#5878, WP-04.01-WP-04.16: exact distributed Guardian implementation children
 - #5832, WP-14: ACIP/A2A contract reconciliation and transport readiness
 - #5837, WP-18A: Observatory and Unity consumer integration
 
@@ -51,6 +53,12 @@ Serial gates:
 - #5800 and #5820 establish the trusted local launch baseline.
 - #5795 integrates only after #5800 and #5820 stabilize the path and WP-14
   #5832 establishes stable protocol contracts.
+- #5862 begins only after #5821 passes. Its #5863-#5878 children execute by
+  their canonical dependency DAG; #5878 runs only after #5863-#5877 are
+  terminal and must produce the integrated production/native/adversarial proof.
+- WP-14 #5832 cannot cross its final integration gate until #5862 has
+  reconciled all child PRs, merge heads, terminal receipts, and #5878 proof at
+  the exact candidate head.
 - #5837 integrates only after #5820, #5832, and its WP-18 dependency are ready.
 
 Safe preparation and parallelism:
@@ -59,6 +67,9 @@ Safe preparation and parallelism:
   stabilize. #5832 is a later lane and must wait for #5821 plus its declared
   ACIP substrate and trace baselines; do not run these dependent children in
   parallel.
+- Within #5862, only dependency-ready children whose exact owned paths are
+  disjoint may overlap. A child retains its own claim and closeout authority;
+  the umbrella may not self-attest completion or close a child on its behalf.
 - #5795 may prepare local-provider work before its final integration gate, but
   it may not redefine Runtime, Observatory, or WP-14 protocol contracts.
 

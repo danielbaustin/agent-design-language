@@ -1,0 +1,24 @@
+{
+  "issue": 5878,
+  "expected_generation": 2,
+  "expected_digest": "e05c7c36e5f8c2a747276ac23d0288d4f8dda7592ccc34f40719fc17d3f5959b",
+  "now_unix_seconds": 1785956815,
+  "actor": "codex:5860-runtime-wp04-repair",
+  "reason": "Acquire issue-local preparation claim for scoped execution-readiness repair of issue 5878.",
+  "replacement": {
+    "id": "claim-5878-v092-runtime-wp04-repair",
+    "owner": "codex:5860-runtime-wp04-repair",
+    "generation": 2,
+    "acquired_unix_seconds": 1785956815,
+    "expires_unix_seconds": 1786043215,
+    "heartbeat_unix_seconds": 1785956815,
+    "branch": "codex/5860-runtime-wp04-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5878",
+      ".csdlc/prepared/issues/5878",
+      ".csdlc/evidence/5878"
+    ],
+    "purpose": "Repair execution-readiness contracts for issue 5878 without product implementation."
+  }
+}

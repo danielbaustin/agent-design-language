@@ -1,0 +1,7 @@
+{
+  "issue": 5795,
+  "expected_generation": 29,
+  "expected_digest": "e61b8850c2abcbc69f767d5ef083b5fd4ba832cbfcf097905f4ed21c1db79008",
+  "claim_id": "claim-5795-v092-runtime-wp04-repair",
+  "reviewer": "codex:5860-runtime-wp04-repair-design-review"
+}

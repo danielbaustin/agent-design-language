@@ -1,0 +1,11 @@
+{
+  "issue": 5862,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5862-v092-runtime-wp04-repair",
+  "expected_generation": 3,
+  "expected_digest": "518f534190e51fe7f5345a453a2f9875f7910244159b7e2bc9f667e3dc35069c",
+  "now_unix_seconds": 1785956964,
+  "actor": "codex:5860-runtime-wp04-repair",
+  "operator_authority": "operator:daniel-issue-5860-preparation-only",
+  "reason": "Release completed Runtime/WP-04 execution-readiness repair claim for just-in-time implementation handoff."
+}

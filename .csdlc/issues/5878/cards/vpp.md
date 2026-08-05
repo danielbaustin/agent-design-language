@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5878/diagram.mmd
 [
   {
     "lane": "exact-child-tests",
-    "proof_role": "Exact distributed_guardian test and live validator launch production Guardians and kernels, exercise authenticated API/WSS, partition, fencing, migration, recovery, shutdown, and digest-bound native receipts.",
+    "proof_role": "Run the exact nonzero distributed_guardian integration target at the candidate head.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -34,8 +34,8 @@ Diagram: .csdlc/prepared/issues/5878/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 1800,
-    "budget_tokens": 8000,
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
     "argv": [
       "cargo",
       "nextest",
@@ -50,8 +50,48 @@ Diagram: .csdlc/prepared/issues/5878/diagram.mmd
     "defer_reason": null
   },
   {
+    "lane": "production-distributed-guardian",
+    "proof_role": "Launch production Guardians and kernels and prove authenticated API/WSS, partition, fencing, migration, recovery, and shutdown with retained logs.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
+    "argv": [
+      "bash",
+      "adl/tools/validate_v092_distributed_guardian.sh"
+    ],
+    "parallel_group": "integration",
+    "defer_reason": null
+  },
+  {
+    "lane": "native-distributed-receipts",
+    "proof_role": "Recompute digest-bound macOS, Linux, and native Windows production receipts from actual command logs and artifacts.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 900,
+    "budget_tokens": 6000,
+    "argv": [
+      "ruby",
+      "adl/tools/validate_v092_distributed_native_receipts.rb"
+    ],
+    "parallel_group": "native",
+    "defer_reason": null
+  },
+  {
     "lane": "exact-revision-proof-receipt",
-    "proof_role": "Recompute source, command, nonzero test, artifact, negative-case, and native receipt bindings.",
+    "proof_role": "Reject self-attestation by recomputing exact-head command logs, artifacts, negative cases, and native receipt digests.",
     "acceptance_ids": [
       "AC-3",
       "AC-4",
@@ -84,6 +124,8 @@ Tokens: 25000
 ## Commands
 
 - `cargo nextest run --manifest-path adl-runtime/Cargo.toml --test distributed_guardian --no-tests=fail`
+- `bash adl/tools/validate_v092_distributed_guardian.sh`
+- `ruby adl/tools/validate_v092_distributed_native_receipts.rb`
 - `ruby .csdlc/prepared/issues/5878/validate-proof-receipt.rb`
 
 ## Failure Semantics
