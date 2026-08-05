@@ -495,7 +495,7 @@ work_packages:
     issue: 5829
     title: Capability envelope
     queue: tools_docs
-    depends_on: [WP-09]
+    depends_on: [WP-08, WP-09]
     primary_deliverable: provider, model, tool, skill, authority, and limit envelope
     proof_surface: capability-envelope fixtures and validation report
   - wp: WP-13
@@ -523,14 +523,14 @@ work_packages:
     issue: 5833
     title: Birth witnesses and receipts
     queue: tools_docs
-    depends_on: [WP-09, WP-10, WP-11, WP-12]
+    depends_on: [WP-09, WP-10, WP-11, WP-12, WP-13]
     primary_deliverable: witness set and citizen-facing receipt contract
     proof_surface: witness fixtures, receipt fixtures, and validation report
   - wp: WP-16
     issue: 5834
     title: Birthday review packet
     queue: docs_tools
-    depends_on: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15]
+    depends_on: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-13A, WP-14, WP-15]
     primary_deliverable: reviewer-facing birthday evidence packet
     proof_surface: integrated review packet and claim-boundary scan
   - wp: WP-17
