@@ -3,42 +3,10 @@
   "issue": 5818,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ed0c16b82a7c094d6474b27313bfc4d63eaabcae5bedee51d7e839e9c8534fd",
-  "phase": "implemented",
-  "generation": 26,
-  "digest": "5dcac54db7279bb4e673fd0d3b4498f9811c410bc983985311b9fa5ddedeec76",
-  "claim": {
-    "id": "claim-5818-sprint1-execution",
-    "owner": "codex:sprint1-5818",
-    "generation": 26,
-    "acquired_unix_seconds": 1785972077,
-    "expires_unix_seconds": 1785986477,
-    "heartbeat_unix_seconds": 1785972077,
-    "branch": "codex/5818-v0-92-wp-01b-canonical-documentation-and-version-activation",
-    "worktree": ".worktrees/adl-wp-5818-v0-92-wp-01b-canonical-documentation-and-version-activation",
-    "protected_paths": [
-      "README.md",
-      "docs/README.md",
-      "docs/planning/ADL_FEATURE_LIST.md",
-      "adl/README.md",
-      "AGENTS.md",
-      "REVIEW.md",
-      "docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md",
-      "docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md",
-      "adl/Cargo.toml",
-      "adl/Cargo.lock",
-      "adl-v2/Cargo.toml",
-      "adl-v2/Cargo.lock",
-      "adl-runtime/Cargo.toml",
-      "adl-runtime/Cargo.lock",
-      "adl-runtime-kernel/Cargo.toml",
-      "adl-runtime-kernel/Cargo.lock",
-      "adl-resilience/Cargo.toml",
-      "adl-resilience/Cargo.lock",
-      "adl-characterization/Cargo.toml",
-      "adl-characterization/Cargo.lock"
-    ],
-    "purpose": "Execute #5818 canonical documentation and version activation only."
-  },
+  "phase": "bound",
+  "generation": 25,
+  "digest": "d65b5aa52a81c69ff2366b887966b24c9a72320cfe9e19ec8aad6bb788bb8898",
+  "claim": null,
   "review_assignment": null,
   "review": null,
   "publication": null,
@@ -55,34 +23,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "32bf5a058403d3ad2bb506942323e32f134d9faba28e5662b98c934891717e6d",
+      "values_digest": "bcea8a77274b933ce5a38d25a7c7f49a6feba76897241547c0cb3865db25219b",
       "rendered_digest": "7497385431a0397c1dbead85e28d4294d7efcb2caaff6b14f342826caeeb6bb0",
       "ast_digest": "23098f1f67be5cc90995f6aec88db71ec06a8b4914e8e36d34a1939b4fa6a2e8"
     },
     "stp": {
-      "values_digest": "0be1194d7c33c100a4fded3bed2d6f065bf333d1b62d41ef152499d41a3cfeab",
+      "values_digest": "06f8b7db0f4eeecfa7218cf773e0ce22ab6a2ad3fa75cf287e0240a3c3629ead",
       "rendered_digest": "84cf6f84323564dc85587aa765eb4d8bbf7c78df060f1f19541475dcdb4f25ea",
       "ast_digest": "7dd9272ed6007eb2ac9028b947a6a6c46dcf96d10d5d7555bf501f7721714787"
     },
     "spp": {
-      "values_digest": "32cf8652446f6c2dabf041fd24cd1bea7a5427349b79dff14be35bcdaa6db22a",
+      "values_digest": "c8a3f2adc41b47dbed2a9f0587cd119c3b4cbe1f4b9b4ead22ee6c314a45dae0",
       "rendered_digest": "e7b3c7af5f1ac5bdcf70060e526360b4534ec3691d8513f4dbf9c52f0c7ac54e",
       "ast_digest": "dd9dff3d0d9f1b06cad4dac76bdeafae85e6b5cd0b2a18b761fc5a931fa0a57b"
     },
     "vpp": {
-      "values_digest": "eb4560c91a2604078030683547dd87beb97a5e1795125eea9cf9c0e74b747e89",
+      "values_digest": "b651f8688bdbea291fd8c5f68593694c7c5b94a7079a34e0934c72aa88a0ff7f",
       "rendered_digest": "4a7ab5d4d75e6c7483178d1f7f81d4024fee0b14d86bce3db7244cad85a99661",
       "ast_digest": "22831f882f0a83f66ced019d95dc8c168b5cc712e890c1dfeb4e32c7b3954e6c"
     },
     "srp": {
-      "values_digest": "f2db24c419e7889fe8528efa3e74de2b7df2ef20ed7f67c0dfe33c33a787bd57",
+      "values_digest": "ed72246d15b858fa664bf8f647d2121598bf14c6c55764b3387c7942ff936100",
       "rendered_digest": "850bf908b77990370d184fe9ee2bf1f084431dcf2706ebffe5dec935345b2b4e",
       "ast_digest": "3e71138cb5d788546c289c6f05d2f941b1373f21ac7150406dbc2f07d8c5af6a"
     },
     "sor": {
-      "values_digest": "17e9172ced35e1915d593fea2ed29903354fec3883318e6543a676e04dafd7f0",
-      "rendered_digest": "dd68b096308829b3c4c6ede8283580df9f18a10b8162b42a1feccd749421b8c6",
-      "ast_digest": "d438d5f6cb5bb7c7cd66c4d819fb8e4d5dad05dac737433d4d1a96b122e88d94"
+      "values_digest": "bf19669796849ba170f0a7da3aa1ff992bd3cea469f02c44482e45f88b25f5f7",
+      "rendered_digest": "bd15fe44fe2ca1bceaa2ed905a0b6cb117e1b973e9553ca9cb3fa825bc8a10d6",
+      "ast_digest": "a228ec470a1b6243cc39ed9b70888478cf0b6d452147c0160d50b928ec42e7b7"
     }
   },
   "transitions": [
@@ -99,13 +67,6 @@
       "to": "bound",
       "actor": "codex:5860-foundation-readiness",
       "reason": "verified Git worktree binding"
-    },
-    {
-      "sequence": 3,
-      "from": "bound",
-      "to": "implemented",
-      "actor": "codex:sprint1-5818",
-      "reason": "execution and passing validation finalized atomically"
     }
   ],
   "audit": [
@@ -416,20 +377,6 @@
       "actor": "codex:5860-vpp-preexecution-contracts",
       "reason": "Release issue-local authority after typed VPP contract replacement.",
       "operation": "{\"claim_id\":\"claim-5818-v092-preexec-contract\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-preparation-only\",\"previous_owner\":\"codex:5860-vpp-preexecution-contracts\"}"
-    },
-    {
-      "sequence": 45,
-      "generation": 25,
-      "actor": "codex:sprint1-5818",
-      "reason": "Begin operator-authorized Sprint 1 execution of #5818 in its exact issue worktree.",
-      "operation": "{\"branch\":\"codex/5818-v0-92-wp-01b-canonical-documentation-and-version-activation\",\"claim_id\":\"claim-5818-sprint1-execution\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:sprint1-5818\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\"README.md\",\"docs/README.md\",\"docs/planning/ADL_FEATURE_LIST.md\",\"adl/README.md\",\"AGENTS.md\",\"REVIEW.md\",\"docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md\",\"docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md\",\"adl/Cargo.toml\",\"adl/Cargo.lock\",\"adl-v2/Cargo.toml\",\"adl-v2/Cargo.lock\",\"adl-runtime/Cargo.toml\",\"adl-runtime/Cargo.lock\",\"adl-runtime-kernel/Cargo.toml\",\"adl-runtime-kernel/Cargo.lock\",\"adl-resilience/Cargo.toml\",\"adl-resilience/Cargo.lock\",\"adl-characterization/Cargo.toml\",\"adl-characterization/Cargo.lock\"],\"purpose\":\"Execute #5818 canonical documentation and version activation only.\",\"worktree\":\".worktrees/adl-wp-5818-v0-92-wp-01b-canonical-documentation-and-version-activation\"}"
-    },
-    {
-      "sequence": 46,
-      "generation": 26,
-      "actor": "codex:sprint1-5818",
-      "reason": "atomically record execution, validation, and implemented phase",
-      "operation": "finalize_implementation"
     }
   ]
 }

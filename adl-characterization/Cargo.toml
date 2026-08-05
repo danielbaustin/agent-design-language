@@ -1,6 +1,6 @@
 [package]
 name = "adl-characterization"
-version = "0.92.0"
+version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Independent black-box characterization harness for pinned ADL v1 behavior"

@@ -7,60 +7,16 @@
     "title": "[v0.92][WP-01B] Canonical documentation and version activation",
     "slug": "v0-92-wp-01b-canonical-documentation-and-version-activation",
     "version": "v0.92",
-    "generation": 26
+    "generation": 25
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "sor",
     "values": {
-      "summary": "Activated v0.92 as current development truth across canonical documentation and package manifests without claiming planned features complete.",
-      "actual_changes": [
-        "Updated canonical README, review, documentation index, and feature-list status truth for v0.92.",
-        "Aligned authoritative Rust package and workspace-member versions to 0.92.0.",
-        "Added a canonical-surface inventory and focused activation validator with Cargo metadata proof."
-      ],
-      "artifacts": [
-        "README.md",
-        "REVIEW.md",
-        "docs/README.md",
-        "docs/planning/ADL_FEATURE_LIST.md",
-        ".csdlc/evidence/5818"
-      ],
-      "actual_validation": [
-        {
-          "command": [
-            "ruby",
-            ".csdlc/prepared/issues/5818/validate-activation.rb"
-          ],
-          "purpose": "Validate inventory, versions, links, and historical preservation.",
-          "outcome": "passed",
-          "evidence_ref": "activation-contract.log"
-        },
-        {
-          "command": [
-            "cargo",
-            "check",
-            "--manifest-path",
-            "adl-v2/Cargo.toml",
-            "--workspace",
-            "--locked",
-            "--offline"
-          ],
-          "purpose": "Check every ADL v2 workspace member against the committed lockfile.",
-          "outcome": "passed",
-          "evidence_ref": "adl-v2-locked-check.log"
-        },
-        {
-          "command": [
-            "git",
-            "diff",
-            "--check"
-          ],
-          "purpose": "Reject whitespace errors.",
-          "outcome": "passed",
-          "evidence_ref": "diff-hygiene.log"
-        }
-      ],
+      "summary": "Pre-execution output record.",
+      "actual_changes": [],
+      "artifacts": [],
+      "actual_validation": [],
       "integration_state": "not_started",
       "publication_state": "not_published",
       "merge_state": "not_merged",

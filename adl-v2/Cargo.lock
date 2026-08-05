@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "adl-adapters"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "adl-engine",
  "adl-records",
@@ -19,7 +19,7 @@ dependencies = [
 
 [[package]]
 name = "adl-cli"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "adl-compiler",
  "adl-engine",
@@ -37,7 +37,7 @@ dependencies = [
 
 [[package]]
 name = "adl-compiler"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "adl-language",
  "hex",
@@ -48,7 +48,7 @@ dependencies = [
 
 [[package]]
 name = "adl-engine"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "adl-compiler",
  "adl-language",
@@ -60,7 +60,7 @@ dependencies = [
 
 [[package]]
 name = "adl-language"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "jsonschema",
  "schemars",
@@ -71,7 +71,7 @@ dependencies = [
 
 [[package]]
 name = "adl-records"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "ed25519-dalek 2.2.0",
  "hex",
@@ -122,7 +122,7 @@ dependencies = [
 
 [[package]]
 name = "adl-runtime-v3-adapter"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "adl-engine",
  "adl-records",
@@ -135,7 +135,7 @@ dependencies = [
 
 [[package]]
 name = "adl-workcell-conductor"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "blake3",
  "petgraph 0.8.3",
@@ -146,7 +146,7 @@ dependencies = [
 
 [[package]]
 name = "adl-workcell-convergence"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "adl-workcell-conductor",
  "blake3",
@@ -157,7 +157,7 @@ dependencies = [
 
 [[package]]
 name = "adl-workcell-task-adapter"
-version = "0.92.0"
+version = "0.1.0"
 dependencies = [
  "blake3",
  "futures",

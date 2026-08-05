@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require "json"
-require "open3"
 require "pathname"
 require "yaml"
 
@@ -65,23 +64,10 @@ rows.each do |row|
   abort "version mismatch #{path}: #{observed.inspect} != #{expected.inspect}" if expected && observed != expected
 end
 
-metadata_json, metadata_error, metadata_status = Open3.capture3(
-  "cargo", "metadata", "--locked", "--offline", "--format-version", "1", "--no-deps",
-  "--manifest-path", ROOT.join("adl-v2/Cargo.toml").to_s
-)
-abort "ADL v2 cargo metadata failed: #{metadata_error}" unless metadata_status.success?
-adl_v2_packages = JSON.parse(metadata_json).fetch("packages").select do |package|
-  package.fetch("manifest_path").start_with?(ROOT.join("adl-v2/crates").to_s + File::SEPARATOR)
-end
-wrong_versions = adl_v2_packages.reject { |package| package["version"] == "0.92.0" }
-unless wrong_versions.empty?
-  abort "ADL v2 member version mismatch: #{wrong_versions.map { |package| "#{package['name']}=#{package['version']}" }.join(', ')}"
-end
-
-markdown_paths = rows.each_with_object([]) do |row, paths|
+markdown_paths = rows.filter_map do |row|
   next unless %w[update already_current].include?(row["disposition"])
   path = ROOT.join(row["path"].to_s)
-  paths << path if path.file? && path.extname.downcase == ".md"
+  path if path.file? && path.extname.downcase == ".md"
 end
 markdown_paths.each do |path|
   path.read.scan(/\[[^\]]*\]\(([^)]+)\)/).flatten.each do |raw|
@@ -94,11 +80,9 @@ markdown_paths.each do |path|
   end
 end
 
-historical = %w[docs/milestones docs/releases docs/migrations docs/review .csdlc/evidence]
+historical = %w[docs/milestones/v0.91.8 docs/releases .csdlc/evidence]
 changed = `git diff --name-only origin/main...HEAD -- #{historical.join(' ')}`.lines.map(&:strip).reject(&:empty?)
-unauthorized = changed.reject do |path|
-  path.start_with?("docs/milestones/v0.92/", ".csdlc/evidence/5818/")
-end
+unauthorized = changed.reject { |path| path.start_with?(".csdlc/evidence/5818/") }
 abort "historical surface changed: #{unauthorized.join(', ')}" unless unauthorized.empty?
 
 puts "WP-01B activation evidence valid: #{rows.length} surfaces, #{markdown_paths.length} Markdown files"

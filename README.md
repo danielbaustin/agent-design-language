@@ -338,8 +338,10 @@ production markets.
 - Foundation sprint umbrella: #5858
 - Upstream handoff: v0.92 consumes the retained exact-revision v0.91.8
   acceptance and handoff
-- Current ADL, Runtime, Runtime Kernel, Resilience, Characterization, and
-  C-SDLC v2 package version: 0.92.0
+- Package versions remain owned by their manifests: ADL and Runtime are
+  `0.91.8`, Runtime Kernel is `0.92.0`, and the independent Resilience,
+  Characterization, and C-SDLC v2 crates remain `0.1.0`. This documentation
+  activation does not change package versions.
 - Most recently completed implementation/readiness tranche and public release:
   v0.91.7 ([GitHub release](https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91.7))
 - Current milestone state: the v0.92 package and issue wave are active; feature
