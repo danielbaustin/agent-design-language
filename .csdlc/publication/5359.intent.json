@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5359,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5359-v0918-preparation",
+  "title": "[v0.91.8][WP-22] Review and schedule the v0.92 milestone plan",
+  "body": "Closes #5359\n\n## Summary\n- publishes a 35-WP v0.92 candidate plan while preserving `draft_pre_open`\n- schedules the Agent Logic GitHub organization repository migration as WP-01A before substantive work\n- starts the Medium launch article early as a living draft and retains WP-23 final claim alignment\n- schedules approved Runtime, distributed-polis, workflow, protocol, consumer, proof, cleanup, and release work\n- records explicit technical deferrals and later publication/research backlog without dropping source pointers\n\n## Validation\n- v0.92 package validator PASS: 35 WPs and 21 source dispositions\n- typed C-SDLC doctor PASS at reviewed generation 11\n- three independently replayable SOR validation commands PASS\n- diff hygiene PASS\n- bounded GPT-5.5 exact-head review PASS with zero blockers\n\n## Boundaries\n- planning only; no v0.92 issue wave or implementation is opened here\n- `danielbaustin/asksifu` remains personal and is excluded from the repository migration\n- capability taxonomy and MLX/OCI model distribution remain explicitly deferred",
+  "draft": false,
+  "revision": "git-blake3:17ff7b7c60e910b3625b6d2aa915996ab7b84416:567dab79a4e97763988cebfdbb89931e6c7b4a97d66b2d052d6c167a192a77ed",
+  "commit_sha": "17ff7b7c60e910b3625b6d2aa915996ab7b84416"
+}
