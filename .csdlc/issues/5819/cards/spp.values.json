@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
     "slug": "v0-92-wp-01a-agent-logic-github-organization-repository-migration",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 9,
       "summary": "Verify organization gates, transfer exactly five repositories serially with assignee-aware manifests and zero unexplained drift, execute the ADL website/integration cutover last, prove exclusions, and retain a reviewed final report.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify organization readiness, plan lineage, exact scope, and per-repository assignee-aware manifests",
+          "action": "Verify organization readiness, plan lineage, exact five-repository scope, and per-repository assignee-aware manifests",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -28,7 +28,7 @@
         },
         {
           "id": "S2",
-          "action": "Transfer and verify each repository serially, stopping on any unexplained drift",
+          "action": "Transfer and independently verify each of the five destination repositories serially, stopping on any unexplained drift",
           "acceptance_ids": [
             "AC-3",
             "AC-4"
@@ -37,7 +37,7 @@
         },
         {
           "id": "S3",
-          "action": "Complete the ADL and website cutover, negative controls, final report, and exact-revision review",
+          "action": "Complete the exact agent-logic.ai production and beta cutover, both negative controls, final report, validator, and exact-revision review",
           "acceptance_ids": [
             "AC-5",
             "AC-6",
@@ -87,7 +87,7 @@
         "Transfer-back becomes the organization-owner recovery decision"
       ],
       "design_ref": ".csdlc/prepared/issues/5819/design.md",
-      "design_digest": "0f509a4269de24b7f78958acc43dd121f141d1c5bfa97a5b94f5ffed47ee0593",
+      "design_digest": "dd0933f96f45a243b17ad7d5cb4e3cfed18a492e3297a5e2e7826d7cbe964afb",
       "diagram_ref": ".csdlc/prepared/issues/5819/diagram.mmd",
       "diagram_digest": "204d0f3b1c0bcb0a1821d0253e340cb71a0f802ace72f599bcca643f8bb3bf4b"
     }

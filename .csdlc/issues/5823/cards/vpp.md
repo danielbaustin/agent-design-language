@@ -88,8 +88,8 @@ Diagram: .csdlc/prepared/issues/5823/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "platform-contract-matrix",
-    "proof_role": "Retain Linux remote, local macOS, and Windows path/quoting outcomes with explicit live or fixture qualification.",
+    "lane": "native-platform-contract-matrix",
+    "proof_role": "Require native live Linux and macOS receipts plus live-native or explicitly non-native fixture Windows proof; reject blocked rows.",
     "acceptance_ids": [
       "AC-6",
       "AC-7",
@@ -101,9 +101,7 @@ Diagram: .csdlc/prepared/issues/5823/diagram.mmd
     "budget_tokens": 6000,
     "argv": [
       "ruby",
-      "-rjson",
-      "-e",
-      "r=JSON.parse(File.read('.csdlc/evidence/5823/platform-matrix.json')); %w[linux macos windows].each{|p| x=r[p]||abort(\"missing #{p}\"); abort(\"unqualified #{p}\") unless %w[live fixture blocked_with_evidence].include?(x['qualification'])}"
+      ".csdlc/prepared/issues/5823/validate-platform-matrix.rb"
     ],
     "parallel_group": "platform",
     "defer_reason": null
@@ -143,7 +141,7 @@ Tokens: 25000
 - `cargo test --locked --manifest-path tools/aws_remote_validation/Cargo.toml`
 - `bash adl/tools/test_run_aws_spot_remote_validation_lane.sh`
 - `bash adl/tools/test_run_nessus_remote_validation.sh`
-- `ruby -rjson -e r=JSON.parse(File.read('.csdlc/evidence/5823/platform-matrix.json')); %w[linux macos windows].each{|p| x=r[p]||abort("missing #{p}"); abort("unqualified #{p}") unless %w[live fixture blocked_with_evidence].include?(x['qualification'])}`
+- `ruby .csdlc/prepared/issues/5823/validate-platform-matrix.rb`
 - `git diff --check`
 
 ## Failure Semantics

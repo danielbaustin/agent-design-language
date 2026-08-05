@@ -33,7 +33,7 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 450,
+    "budget_seconds": 400,
     "budget_tokens": 2000,
     "argv": [
       "cargo",
@@ -56,7 +56,7 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 600,
+    "budget_seconds": 500,
     "budget_tokens": 2000,
     "argv": [
       "cargo",
@@ -81,7 +81,7 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 120,
+    "budget_seconds": 100,
     "budget_tokens": 500,
     "argv": [
       "cargo",
@@ -96,8 +96,26 @@ Diagram: .csdlc/prepared/issues/5812/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "scope-negative-and-diff",
-    "proof_role": "Reject lockfile, dependency, Google Drive, or unrelated source changes and support exact-revision review.",
+    "lane": "exact-path-scope-negative",
+    "proof_role": "Reject Cargo metadata, dependency, Google Drive, and every unrelated product path rather than checking whitespace only.",
+    "acceptance_ids": [
+      "AC-6",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 60,
+    "budget_tokens": 1000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5812/validate-path-scope.rb"
+    ],
+    "parallel_group": "issue-local",
+    "defer_reason": null
+  },
+  {
+    "lane": "diff-hygiene",
+    "proof_role": "Reject whitespace errors after the exact-path gate passes.",
     "acceptance_ids": [
       "AC-6",
       "AC-7"
@@ -131,6 +149,7 @@ Tokens: 10000
 - `cargo test --locked --manifest-path adl/Cargo.toml --lib csm_freedom_gate::tests`
 - `cargo clippy --locked --manifest-path adl/Cargo.toml --bin adl-gws-context-mirror -- -D warnings`
 - `cargo fmt --manifest-path adl/Cargo.toml --all -- --check`
+- `ruby .csdlc/prepared/issues/5812/validate-path-scope.rb`
 - `git diff --check`
 
 ## Failure Semantics

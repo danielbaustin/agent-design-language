@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02A] CI and coverage reliability",
     "slug": "v0-92-wp-02-ci-and-coverage-reliability",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -24,13 +24,13 @@
         "Linux, macOS, and Windows-facing path/platform contract evidence"
       ],
       "acceptance_criteria": [
-        "A retained review packet maps current CI, coverage, and lifecycle-publication findings to bounded dispositions",
+        "A retained Gemini 3.1 Pro review packet binds provider/model identity, exact reviewed revision, prompt and response digests, findings, and dispositions to the current CI topology",
         "One deterministic policy classifies docs/review, lifecycle metadata, tooling, ordinary source, runtime-critical, unknown, and mixed changes into explicit PVF lanes",
         "Focused and slow test families are separated and unknown changes fail to the stronger proving lane",
         "Coverage runs once per PR class with complete exact-SHA shard provenance and one authoritative aggregation gate",
         "Metadata-only reconciliation reuses source proof only under typed unchanged-source lineage while substantive drift retains exact-head validation",
         "Superseded runs cancel without converting a cancelled or missing final required state into success",
-        "Focused policy, coverage, lifecycle-lineage, Linux/macOS/Windows contract, and exact-head CI proof passes"
+        "Focused Gemini-review, policy, coverage, lifecycle-lineage, Linux/macOS/Windows contract, and exact-head CI proof passes"
       ],
       "dependencies": [
         "WP-02 issue #5819 repository migration verified",

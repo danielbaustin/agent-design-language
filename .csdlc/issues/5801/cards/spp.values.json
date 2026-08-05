@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-02A] CI and coverage reliability",
     "slug": "v0-92-wp-02-ci-and-coverage-reliability",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 9,
       "summary": "Review the current topology, centralize deterministic path/PVF classification, deduplicate heavy and coverage lanes, preserve exact-head source safety, bound metadata-only reuse, prove stale-run behavior, and validate platform contracts.",
       "steps": [
         {
           "id": "S1",
-          "action": "Retain the topology review and define the single deterministic change-class and PVF lane map",
+          "action": "Retain and validate the required Gemini 3.1 Pro topology review, dispose every actionable finding, and define the single deterministic change-class and PVF lane map",
           "acceptance_ids": [
             "AC-1",
             "AC-2"
@@ -39,7 +39,7 @@
         },
         {
           "id": "S3",
-          "action": "Run policy, coverage, lifecycle, platform, and exact-head integration proof and resolve bounded review",
+          "action": "Run Gemini packet, policy, coverage, lifecycle, platform, and exact-head integration proof and resolve bounded review",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -93,7 +93,7 @@
         "A platform contract exposes a path or shell portability gap"
       ],
       "design_ref": ".csdlc/prepared/issues/5801/design.md",
-      "design_digest": "c80718ee74f652704495d26bba6ab1a5682564ed5a7fcc7a7d6c05a60b47e977",
+      "design_digest": "0732e464036716c0a0f881f3dec516a1d2dfd2798a815901624c40d8caca1458",
       "diagram_ref": ".csdlc/prepared/issues/5801/diagram.mmd",
       "diagram_digest": "38d2b37695ebf0a973ad18715373b5388f65f5eb6d61f68fafb821966de2ecb2"
     }

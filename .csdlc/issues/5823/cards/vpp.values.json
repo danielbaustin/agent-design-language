@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-06] Remote validation/build runner",
     "slug": "v0-92-wp-06-remote-validation-build-runner",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -80,8 +80,8 @@
           "defer_reason": null
         },
         {
-          "lane": "platform-contract-matrix",
-          "proof_role": "Retain Linux remote, local macOS, and Windows path/quoting outcomes with explicit live or fixture qualification.",
+          "lane": "native-platform-contract-matrix",
+          "proof_role": "Require native live Linux and macOS receipts plus live-native or explicitly non-native fixture Windows proof; reject blocked rows.",
           "acceptance_ids": [
             "AC-6",
             "AC-7",
@@ -93,9 +93,7 @@
           "budget_tokens": 6000,
           "argv": [
             "ruby",
-            "-rjson",
-            "-e",
-            "r=JSON.parse(File.read('.csdlc/evidence/5823/platform-matrix.json')); %w[linux macos windows].each{|p| x=r[p]||abort(\"missing #{p}\"); abort(\"unqualified #{p}\") unless %w[live fixture blocked_with_evidence].include?(x['qualification'])}"
+            ".csdlc/prepared/issues/5823/validate-platform-matrix.rb"
           ],
           "parallel_group": "platform",
           "defer_reason": null
@@ -123,7 +121,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5823/design.md",
-      "design_digest": "95946a208ce7fca949dbbe9423e7708e4658a7f22d987d2e5cd135b3bf531534",
+      "design_digest": "cc489f7e9478bae98ddaec1e41354153478b6c960dc3aea01e22ef69c2076e1f",
       "diagram_ref": ".csdlc/prepared/issues/5823/diagram.mmd",
       "diagram_digest": "24b36a7dc64ffb0ae6f13c33c638f96389ffb5b4711ac2e8027a2606508b73ca"
     }

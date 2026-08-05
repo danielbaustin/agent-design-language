@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02] Agent Logic GitHub organization repository migration",
     "slug": "v0-92-wp-01a-agent-logic-github-organization-repository-migration",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -17,68 +17,41 @@
       "lanes": [
         {
           "lane": "migration-evidence-contract",
-          "proof_role": "Validate exact repository order, before/after manifest digests, assignee dispositions, transfer times, and zero unexplained drift.",
+          "proof_role": "Validate the exact ordered five-repository destination set, per-destination receipts, zero unexplained drift, both untouched negative controls, and the two-file four-link website cutover.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
             "AC-3",
             "AC-4",
+            "AC-5",
+            "AC-6",
             "AC-7"
           ],
           "deterministic": true,
           "resource_profile": "medium",
           "budget_seconds": 300,
-          "budget_tokens": 3000,
+          "budget_tokens": 4000,
           "argv": [
             "ruby",
-            "-rjson",
-            "-e",
-            "p='.csdlc/evidence/5819/migration-report.json'; r=JSON.parse(File.read(p)); exp=%w[cognitive-sdlc-paper godel-hadamard-bayes-paper general-intelligence-paper-private universal-tool-schema agent-design-language]; abort('wrong order') unless r['repositories'].map{|x|x['name']}==exp; abort('incomplete') unless r['repositories'].all?{|x|x['before_digest']&&x['after_digest']&&x['exact_head']&&x['assignees_verified']==true&&x['unexplained_drift']==[]}; abort('secret leakage flag') unless r['secret_values_retained']==false"
+            ".csdlc/prepared/issues/5819/validate-migration-evidence.rb"
           ],
           "parallel_group": "migration-contract",
           "defer_reason": null
         },
         {
-          "lane": "github-live-destination-platform",
-          "proof_role": "Verify the five live agent-logic destinations and preserved GitHub repository surfaces after each transfer.",
+          "lane": "github-five-destination-live-proof",
+          "proof_role": "Run the retained execution script that queries and records all five live agent-logic destinations, never only ADL.",
           "acceptance_ids": [
             "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-4"
           ],
           "deterministic": false,
           "resource_profile": "medium",
           "budget_seconds": 1800,
           "budget_tokens": 5000,
           "argv": [
-            "gh",
-            "repo",
-            "view",
-            "agent-logic/agent-design-language",
-            "--json",
-            "nameWithOwner,visibility,defaultBranchRef"
-          ],
-          "parallel_group": "github-live",
-          "defer_reason": null
-        },
-        {
-          "lane": "migration-negative-controls",
-          "proof_role": "Prove asksifu remains under danielbaustin and Horust was not transferred or modified.",
-          "acceptance_ids": [
-            "AC-6",
-            "AC-7"
-          ],
-          "deterministic": false,
-          "resource_profile": "small",
-          "budget_seconds": 120,
-          "budget_tokens": 1000,
-          "argv": [
-            "gh",
-            "repo",
-            "view",
-            "danielbaustin/asksifu",
-            "--json",
-            "nameWithOwner,visibility"
+            "ruby",
+            ".csdlc/prepared/issues/5819/verify-live-repositories.rb"
           ],
           "parallel_group": "github-live",
           "defer_reason": null
@@ -106,7 +79,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5819/design.md",
-      "design_digest": "0f509a4269de24b7f78958acc43dd121f141d1c5bfa97a5b94f5ffed47ee0593",
+      "design_digest": "dd0933f96f45a243b17ad7d5cb4e3cfed18a492e3297a5e2e7826d7cbe964afb",
       "diagram_ref": ".csdlc/prepared/issues/5819/diagram.mmd",
       "diagram_digest": "204d0f3b1c0bcb0a1821d0253e340cb71a0f802ace72f599bcca643f8bb3bf4b"
     }

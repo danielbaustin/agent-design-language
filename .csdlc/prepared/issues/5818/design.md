@@ -43,6 +43,12 @@ Generated or vendored files are changed only through their owning generator.
 5. Run focused format, link, structured-data, Cargo metadata, version-parity,
    stale-reference, and historical-preservation checks.
 
+The issue-local validator at
+`.csdlc/prepared/issues/5818/validate-activation.rb` owns the deterministic
+inventory, Markdown-link, YAML/JSON parse, version-parity, and historical-diff
+checks. Historical preservation excludes only `.csdlc/evidence/5818/`, which
+is new proof owned by this issue; it does not exempt any pre-existing evidence.
+
 ## Invariants And Failure Policy
 
 - No v0.92 feature becomes complete merely because its documentation is active.

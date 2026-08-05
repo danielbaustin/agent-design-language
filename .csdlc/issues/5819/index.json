@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8f38743f59dd814a09097b78e17331ac66a04b30cc584dab53d682d1e1d4ea34",
   "phase": "bound",
-  "generation": 15,
-  "digest": "57d23982276da72dfc564e40d88291fbdcdd603236eb99d2e52f58efd905e360",
+  "generation": 17,
+  "digest": "d275a222c62a82c84cc9ecc7a70766c842dc9414fa3ebee7f1b18b25b150cce5",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5819/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-design-review",
-      "revision": "0f509a4269de24b7f78958acc43dd121f141d1c5bfa97a5b94f5ffed47ee0593"
+      "reviewer": "codex:5860-foundation-readiness-repair-review",
+      "revision": "dd0933f96f45a243b17ad7d5cb4e3cfed18a492e3297a5e2e7826d7cbe964afb"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "61f59773a0fe551b9e993ca4835b2563445cb928df71604e316dcedacb1c880c",
+      "values_digest": "3e20cc113d14fbf65b9cc595b72e4f31f7898fc114ecb42d5c45f9cc2084cae4",
       "rendered_digest": "44e6d8cf86fd0800f426b743c58bc2352661d9beeea3551cfdbb579e08a05dfc",
       "ast_digest": "dadf91013f912bb3f6d459708baa2117f193b2c4eeb7b7ef1e1bbee61995e981"
     },
     "stp": {
-      "values_digest": "8e8123ae644bf122389ff70d9bd3c4b31b38f90478ed3e692a4860425437eb06",
-      "rendered_digest": "5528444e8fd589da8c62740f08525b29bcd153e279cf0d1a04f955782349ac7b",
-      "ast_digest": "e955da3f367a6f0ec8be61464cec1e41f202b8a98c0c38354c2781a9c3429e94"
+      "values_digest": "24e281f94103915ceb174334ff8f81500b2bdd55f2468970d8268e6638cc11db",
+      "rendered_digest": "0c8c686afd8fe43c75c5fb128a94f0943271fb042ece477bcc5a88b973f5fd96",
+      "ast_digest": "5c773f2294b8f3fb0ed235f59ba90dab38263b3c858cd09966fce576ccf8919f"
     },
     "spp": {
-      "values_digest": "74593b407b34f1363ac6a29696d57d693020cc640734d6c3779344d0786e7f77",
-      "rendered_digest": "61531b0ec78c42f390f25d3c873c25470017299282feb25c3d3339b3b57721b0",
-      "ast_digest": "5ac36d6e50f5d2b4a31c5e95d36fd2489a08606554758e3aa82c82b748ccb51d"
+      "values_digest": "9a99294e7e21d6fb938f9b6ffdb4b8116c7d0b6837d8b1de6e877858ce5ae986",
+      "rendered_digest": "a006a568f602abbc03d077b31b8ab4bf447ca2a369335453cd2ee8bd733a7946",
+      "ast_digest": "eb657a993376233af2cb9ca416d7e0dff7ec253a32bc01a30faf988e951e6ede"
     },
     "vpp": {
-      "values_digest": "a0e300013b86f33a834680cc553b7ceb19559fd1ddf73aea65da3a4dc83ecdeb",
-      "rendered_digest": "4b7dbb9233b1eee3044ceb4774a10eb08e26d25515f61f49f3892476f97cd8ae",
-      "ast_digest": "437742607c9c4fa7228ca9ee9b0835ccc5ffa7f8acf1d04d5350212490ae93c9"
+      "values_digest": "d588a0dca6b3878ec3761b3ca02022d3579b3016db2cf1ee065836ff312931e6",
+      "rendered_digest": "b9d47e10df1b61d03a68c787343ade1f163e9bfc035fd00d4dc2fd33c143ca35",
+      "ast_digest": "716774f4e3e6150382319c86b758ac1a58a7b0d2d75095fcc2ababf9be12af97"
     },
     "srp": {
-      "values_digest": "1df32513a5b41b70cc65f4f48c18367ce9cca04e6078ea44b4b30f308b4b83e5",
+      "values_digest": "de37ae74da5b9a3840ece9bb0241528cf5822cfd0931314e7c27fe1f33df1f01",
       "rendered_digest": "734056ebfca5125e98986cbbfd83620c219853a8db268ceba6b4d30dec8df33b",
       "ast_digest": "3e8f2043f792c6d62e42f6a5ca496e340b8a9f6d1a040cf8c72371ec3148c862"
     },
     "sor": {
-      "values_digest": "7fd899c070c89b5021773c8e0e93271b4fb5921f65503fa9bcbebf452fc5ef0d",
+      "values_digest": "f9dc0b448be95875833f2f10884729132d215b876a968ba864f6861ca2f5ad9a",
       "rendered_digest": "b9d02042c58382c56857864e90a725014418ad564516ddde5a0559f85a2a1e9b",
       "ast_digest": "2d4882273217ccc6b33a14cd0d057b992c48a401a63dfe2680b0ca6254180916"
     }
@@ -208,6 +208,34 @@
       "generation": 15,
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5819\",\".csdlc/issues/5819\",\".csdlc/locks/5819.lock\",\".csdlc/prepared/issues/5819\"],\"purpose\":\"Prepare issue 5819 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:5860-foundation-readiness-repair-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Require five destination receipts, both negative controls, and the exact production and beta website cutover.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Organization owners, recovery, billing, policy, permissions, destination names, and exact five-repository scope are verified\",\"Every repository has a reviewed redacted before-manifest at an exact HEAD and complete assignee membership or reassignment plan\",\"Exactly cognitive-sdlc-paper, godel-hadamard-bayes-paper, general-intelligence-paper-private, universal-tool-schema, and agent-design-language transfer in that order to agent-logic with names, visibility, and history preserved\",\"Every one of the five agent-logic destinations has its own live destination receipt and passes manifest comparison for GitHub surfaces, security, packages, Pages, LFS, Actions, and external integrations before the next transfer\",\"ADL transfers last; agent-logic/agent-logic.ai updates exactly site/index.html and site/beta/index.html, removes all four old ADL links, and retains source and publication receipts under that repository's ownership\",\"danielbaustin/asksifu remains personal and danielbaustin/Horust is neither transferred nor settings-mutated, with an observation receipt for each negative control\",\"Final evidence contains no secret values, no unexplained drift, and one exact-revision bounded review\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify organization readiness, plan lineage, exact five-repository scope, and per-repository assignee-aware manifests\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Transfer and independently verify each of the five destination repositories serially, stopping on any unexplained drift\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Complete the exact agent-logic.ai production and beta cutover, both negative controls, final report, validator, and exact-revision review\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"migration-evidence-contract\",\"proof_role\":\"Validate the exact ordered five-repository destination set, per-destination receipts, zero unexplained drift, both untouched negative controls, and the two-file four-link website cutover.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":4000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5819/validate-migration-evidence.rb\"],\"parallel_group\":\"migration-contract\",\"defer_reason\":null},{\"lane\":\"github-five-destination-live-proof\",\"proof_role\":\"Run the retained execution script that queries and records all five live agent-logic destinations, never only ADL.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":1800,\"budget_tokens\":5000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5819/verify-live-repositories.rb\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors in tracked integration and evidence changes.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5819-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]

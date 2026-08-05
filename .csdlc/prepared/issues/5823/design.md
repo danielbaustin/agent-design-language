@@ -35,9 +35,10 @@ contains repo-relative paths and redacts host/user paths and credentials.
    collection, timeout/cancellation, and cleanup semantics.
 3. Implement fail-closed adapter selection and an explicit no-network local
    fallback that runs the same command profile.
-4. Prove Linux remote execution and local macOS behavior; exercise native
-   Windows path/quoting and result fixtures, using live Windows execution only
-   when an approved runner is available.
+4. Prove native Linux remote execution and native local macOS behavior. Both
+   are mandatory live gates. Exercise Windows path/quoting and result handling
+   with a native approved Windows runner when available, otherwise with
+   deterministic fixtures explicitly qualified as non-native Windows proof.
 5. Retain failure, interruption, unreachable-provider, stale-revision,
    malformed-result, path-leakage, and cleanup-negative evidence.
 
@@ -57,6 +58,8 @@ contains repo-relative paths and redacts host/user paths and credentials.
 Focused contract tests cover request/result round trips, adapter selection,
 provenance mismatch, malformed output, redaction, timeout, cancellation, and
 no-network fallback. Platform lanes cover local macOS, remote Linux, and
-Windows path/quoting fixtures or a live approved Windows runner. Existing AWS
+Windows path/quoting fixtures or a live approved Windows runner. A platform
+matrix cannot pass with a blocked Linux or macOS row, and no row may use an
+unqualified `blocked_with_evidence` success. Existing AWS
 and Nessus wrapper tests prove adapter compatibility, not the entire portable
 contract.

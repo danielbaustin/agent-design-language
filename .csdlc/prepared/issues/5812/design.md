@@ -21,6 +21,12 @@ retained-artifact rejection. They are the behavioral proof surface. The named
 4. Inspect the exact diff for lockfile, dependency, formatting, or unrelated
    source churn.
 
+The issue-local validator at
+`.csdlc/prepared/issues/5812/validate-path-scope.rb` fails unless the product
+diff is limited to `adl/src/csm_freedom_gate.rs` and issue-owned C-SDLC
+artifacts. It explicitly rejects Cargo manifests, lockfiles, dependency files,
+Google Drive code, and every unrelated product path.
+
 ## Invariants And Stop Conditions
 
 - Runtime output and fail-closed behavior do not change.

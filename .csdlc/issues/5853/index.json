@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "30c5e01cd7aaa0c008930afafb3d1c037c58ffe34866399d13f29b55d2f8d503",
   "phase": "bound",
-  "generation": 6,
-  "digest": "5b15dafd598e7c9ba3961a6bf67f3cd9fddc00fabd8e1d0069d41a499ec026cf",
+  "generation": 8,
+  "digest": "2cd4b346d8e32fc55c421b5e17c20f9d44bfb95cd01838cab17efa500b51e97e",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5853/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-design-review",
-      "revision": "f5be4e21e235dcbbfea8d4483057a9d0b3b60bc653b6955dc3799e6e85989525"
+      "reviewer": "codex:5860-foundation-readiness-repair-review",
+      "revision": "b55bff65678838b3f435b8b1cfc4b03935f93eb71ad270bf35906404df9702e6"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "beff11a0f7d3f898b38e88f5fd95c395c90334461dcb47ef4a033e8339ab7e09",
+      "values_digest": "768524b0625e6b2ad05f87b53d5def322bad98bb6f4ad13ceea7a89434e95a7c",
       "rendered_digest": "718b77d5b1f856b60e25fae5100d133ef18c17c723d1361c324c12fa4af50fce",
       "ast_digest": "437de793a48b3ec154bcbfbe384ac1d81457087ed3eb36e7b8b8579aa6faae0c"
     },
     "stp": {
-      "values_digest": "646c33387463d2d3ade558f00ed6a784d6d3eafc46362bfa7095bcf6bfc8d34e",
-      "rendered_digest": "2133e45aa569f9c797ff2f52318966de9f25857cee4e31ab284b754479f5c1a5",
-      "ast_digest": "98fc540675582b42af2ca5a36b2ee377b46f4f641635bd6adc8837f872ac5ffa"
+      "values_digest": "92163b2f50fe609117eaa4ac0ff9f5f44acfcefcb6c135fe43f85dc3e7692505",
+      "rendered_digest": "aab3dd6d24e27e81593638966c67ac446cece4bc1d638d2f240cdc91d7ce74d8",
+      "ast_digest": "5cdefbef900312258e583e2df22ae160d5d53b571be8298c5bbce8d46af7d3b7"
     },
     "spp": {
-      "values_digest": "201a72b7437eabc813fec8bf259e9571558b07e41641120f634a712140a76964",
-      "rendered_digest": "131e435d5fcf7556cf053d05796088140055d88773954dd6edf61e53fae3067c",
-      "ast_digest": "42693222354e6f5362a45edbbbe2ec443e5614207430d5a1d57ad8b8cd66dc51"
+      "values_digest": "b132cfc22a806c18489d74a2c854aad762cdffaac5f269f19b1e93cc50900916",
+      "rendered_digest": "872fdfb6d04fba6c72eba109070071562286168374a7fabf01b53021405693df",
+      "ast_digest": "0d01224eccf3a49a7eedecb4f0392e2f72de2c754ae20bd7643f2c0eeeaa753e"
     },
     "vpp": {
-      "values_digest": "9c41c2e24252ce09a0f11064ff0fa8a1ab2bc16148fa57eb86beccebb1e15cfb",
-      "rendered_digest": "1ea8157866df53500fc094d1a552c64a453f507c09c1da5148a1e87765d689cf",
-      "ast_digest": "43d146a95c19fc32fd02c2b1f2bb6379c0734e08c3930d6509fb718b18ac9ec1"
+      "values_digest": "b0ffb8ad93df981b9ad21a8ad6d5410852c112557ae64b7859035ce1f84f1f67",
+      "rendered_digest": "1df4c1cce9002f6e9a2481eb137bb9f51b4cd4cfd124c3b5dc3b10d485dd2f70",
+      "ast_digest": "704238e8bba773589cab381ba73b1d8040f8bd43d4a6bfef6c1a95b84cc64d0c"
     },
     "srp": {
-      "values_digest": "2ca1d4ee9057ea9708d2dcb64cd84959d1074853884f009e3735c9910570df2b",
+      "values_digest": "77123f9067f4896c9776f1a4804389f2825a1ede819ccdff05d38c3ed879f894",
       "rendered_digest": "b697a1894e90439d6a5d7b5c5b3954a52a9766c17bf612204b20287c993ae387",
       "ast_digest": "191d41e27dcd0b8037611c604f1d89297c6d224c576055534d242e69ce6a35aa"
     },
     "sor": {
-      "values_digest": "3c9af82fcef09847d4d2cc57ff9e905c6a702c5206e07050a0b073564c38a399",
+      "values_digest": "2a99eb8e83e2c27919dfe9a2a3e64f00a39bab9bc96db01435790c1cdef011e1",
       "rendered_digest": "c8c0658069791fed33a7be33428288105be9227795586c3ab67ca9b5c6c9272f",
       "ast_digest": "c376bbd4d55aa0d818ef44f2c187ea3875d728095d27dddd352d43798c8fa825"
     }
@@ -145,6 +145,34 @@
       "generation": 6,
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5853-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 6,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5853-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5853\",\".csdlc/issues/5853\",\".csdlc/locks/5853.lock\",\".csdlc/prepared/issues/5853\"],\"purpose\":\"Prepare issue 5853 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 7,
+      "actor": "codex:5860-foundation-readiness-repair-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 14,
+      "generation": 8,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Bind decisions to finite nonnegative raw metrics, recomputed statistics, reliability, and frozen adoption thresholds.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"WP-02, WP-02A, organization plan, owner budget and alerts, selected-repository access, concurrency-one, and rollback entry gates are verified\",\"Control and candidate runs freeze one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, proof inputs, required checks, workloads, and numeric adoption thresholds before measurement\",\"Five cold and ten warm trials per selected workload and platform retain finite nonnegative metrics, cache evidence, queue delay, failures, retries, cancellations, and justified outliers with internally consistent totals\",\"Result, artifact, validation, and required-check parity passes before exactly one production-semantics canary\",\"The issue-local validator recomputes p50, p95, means, critical-path and queue deltas, reliability, cost per run, and cost per minute saved from raw trials and rejects reported-statistic or threshold-disposition drift\",\"Adoption requires every predeclared reliability, p95, queue, critical-path, cost, proof-parity, and canary gate; adopted routing has ten-run observation and fallback while rejected or deferred routing is removed\",\"Untrusted code cannot reach privileged runner context and no required-check, branch-protection, validation-breadth, or proof semantic changes occur\",\"The issue-local validator, workflow contracts, diff hygiene, and exact-head review pass\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify entry gates and freeze exact workloads, environment, permissions, cost, cache, proof topology, and numeric adoption thresholds\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Capture complete ubuntu-latest and restricted 16-core cold/warm raw trials and proof parity evidence\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Recompute statistics, apply every frozen threshold, run one canary, retain observation or cleanup/fallback proof, validate, and review\",\"acceptance_ids\":[\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"experiment-evidence-contract\",\"proof_role\":\"Validate entry gates, frozen numeric thresholds, finite nonnegative and internally consistent raw samples, recomputed statistics and reliability, parity, threshold-bound decisions, and observation-or-cleanup state.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":5000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5853/validate-experiment.rb\"],\"parallel_group\":\"experiment-analysis\",\"defer_reason\":null},{\"lane\":\"runner-security-negative\",\"proof_role\":\"Reject broad repository access, concurrency expansion, untrusted fork privilege, missing fallback, changed required-check identity, or incomplete cleanup.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"e=JSON.parse(File.read('.csdlc/evidence/5853/eligibility.json')); f=JSON.parse(File.read('.csdlc/evidence/5853/final-state.json')); abort('security boundary') unless e['selected_repository_access']==true&&e['concurrency_one']==true&&e['untrusted_fork_privilege']==false&&f['standard_runner_fallback']==true&&f['required_check_identity_preserved']==true\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"workflow-routing-platform-contract\",\"proof_role\":\"Prove Linux larger-runner routing remains a machine-selection detail and preserves workflow/check semantics.\",\"acceptance_ids\":[\"AC-2\",\"AC-4\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"parallel_group\":\"workflow\",\"defer_reason\":null},{\"lane\":\"exact-head-diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 8,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5853-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]

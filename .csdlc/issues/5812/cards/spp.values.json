@@ -7,13 +7,13 @@
     "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
     "slug": "v0-92-freedom-gate-clippy-cleanliness",
     "version": "v0.92",
-    "generation": 4
+    "generation": 6
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Change only the two defaults, run focused behavior and lint proof, review the exact diff, and publish with closing linkage.",
       "steps": [
         {
@@ -29,7 +29,7 @@
         },
         {
           "id": "S2",
-          "action": "Apply only the two eager-default substitutions and run focused test, format, and Clippy proof",
+          "action": "Apply only the two eager-default substitutions and run focused test, format, Clippy, and exact-path scope proof",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -42,7 +42,7 @@
         },
         {
           "id": "S3",
-          "action": "Review the exact two-line candidate and publish with closing linkage",
+          "action": "Review the exact two-line product candidate and publish with closing linkage",
           "acceptance_ids": [
             "AC-6",
             "AC-7"
@@ -81,7 +81,7 @@
         "The named production binary no longer compiles the affected module"
       ],
       "design_ref": ".csdlc/prepared/issues/5812/design.md",
-      "design_digest": "e6684cc405f9772581c043ab4a87b8513800988539344974fa0ac4390d0bad44",
+      "design_digest": "2ba06f131edeb273db5d8a9eb8c8b98bd7ad4fe1d21a7e281de15ade5875d531",
       "diagram_ref": ".csdlc/prepared/issues/5812/diagram.mmd",
       "diagram_digest": "ecc400f15bce3baa144b59854cd774554bc04d7e8747d44fecb4093ad83cbc82"
     }

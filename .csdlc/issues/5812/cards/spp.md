@@ -16,7 +16,7 @@ Change only the two defaults, run focused behavior and lint proof, review the ex
 
 ## Plan
 
-Revision 4
+Revision 5
 
 ## Steps
 
@@ -34,7 +34,7 @@ Revision 4
   },
   {
     "id": "S2",
-    "action": "Apply only the two eager-default substitutions and run focused test, format, and Clippy proof",
+    "action": "Apply only the two eager-default substitutions and run focused test, format, Clippy, and exact-path scope proof",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -47,7 +47,7 @@ Revision 4
   },
   {
     "id": "S3",
-    "action": "Review the exact two-line candidate and publish with closing linkage",
+    "action": "Review the exact two-line product candidate and publish with closing linkage",
     "acceptance_ids": [
       "AC-6",
       "AC-7"
@@ -80,7 +80,7 @@ Revision 4
 
 .csdlc/prepared/issues/5812/design.md
 
-Digest: e6684cc405f9772581c043ab4a87b8513800988539344974fa0ac4390d0bad44
+Digest: 2ba06f131edeb273db5d8a9eb8c8b98bd7ad4fe1d21a7e281de15ade5875d531
 
 ## Diagram
 

@@ -1,0 +1,7 @@
+{
+  "issue": 5823,
+  "expected_generation": 15,
+  "expected_digest": "63c161a62dbd384565febb29e0696c2efcb9aa99fe42aad44bbc7fe40e994801",
+  "claim_id": "claim-5823-v092-preparation",
+  "reviewer": "codex:5860-foundation-readiness-repair-review"
+}

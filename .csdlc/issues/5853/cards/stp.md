@@ -26,11 +26,11 @@ Deliver a measured and reversible post-migration build acceleration decision for
 ## Acceptance
 
 1. WP-02, WP-02A, organization plan, owner budget and alerts, selected-repository access, concurrency-one, and rollback entry gates are verified
-2. Control and candidate runs freeze one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, proof inputs, and required checks
-3. Five cold and ten warm trials per selected workload and platform retain cache evidence, queue delay, failures, retries, cancellations, and justified outliers
+2. Control and candidate runs freeze one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, proof inputs, required checks, workloads, and numeric adoption thresholds before measurement
+3. Five cold and ten warm trials per selected workload and platform retain finite nonnegative metrics, cache evidence, queue delay, failures, retries, cancellations, and justified outliers with internally consistent totals
 4. Result, artifact, validation, and required-check parity passes before exactly one production-semantics canary
-5. Every lane decision reports p50, p95, critical-path and queue deltas, reliability, cost, proof parity, and a predeclared threshold disposition
-6. Adopted routing has a successful canary, ten-run observation, and standard-runner fallback; rejected or deferred routing is removed
+5. The issue-local validator recomputes p50, p95, means, critical-path and queue deltas, reliability, cost per run, and cost per minute saved from raw trials and rejects reported-statistic or threshold-disposition drift
+6. Adoption requires every predeclared reliability, p95, queue, critical-path, cost, proof-parity, and canary gate; adopted routing has ten-run observation and fallback while rejected or deferred routing is removed
 7. Untrusted code cannot reach privileged runner context and no required-check, branch-protection, validation-breadth, or proof semantic changes occur
 8. The issue-local validator, workflow contracts, diff hygiene, and exact-head review pass
 

@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-02B][build] Run the post-migration build acceleration experiment",
     "slug": "v0-92-wp-02b-post-migration-build-acceleration",
     "version": "v0.92",
-    "generation": 6
+    "generation": 8
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 4,
+      "plan_revision": 5,
       "summary": "Verify migration and CI entry gates, freeze the comparison, capture standard and 16-core cold/warm trials, prove parity, run one canary, apply predeclared thresholds, retain the decision, and prove fallback or cleanup.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify entry gates and freeze exact workloads, environment, permissions, cost, cache, and proof topology",
+          "action": "Verify entry gates and freeze exact workloads, environment, permissions, cost, cache, proof topology, and numeric adoption thresholds",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -28,7 +28,7 @@
         },
         {
           "id": "S2",
-          "action": "Capture complete ubuntu-latest and restricted 16-core cold/warm trials and parity evidence",
+          "action": "Capture complete ubuntu-latest and restricted 16-core cold/warm raw trials and proof parity evidence",
           "acceptance_ids": [
             "AC-3",
             "AC-4",
@@ -38,7 +38,7 @@
         },
         {
           "id": "S3",
-          "action": "Run one canary, decide each lane, retain observation or cleanup and fallback proof, validate, and review",
+          "action": "Recompute statistics, apply every frozen threshold, run one canary, retain observation or cleanup/fallback proof, validate, and review",
           "acceptance_ids": [
             "AC-5",
             "AC-6",
@@ -90,7 +90,7 @@
         "The organization owner changes thresholds before the first measured run"
       ],
       "design_ref": ".csdlc/prepared/issues/5853/design.md",
-      "design_digest": "f5be4e21e235dcbbfea8d4483057a9d0b3b60bc653b6955dc3799e6e85989525",
+      "design_digest": "b55bff65678838b3f435b8b1cfc4b03935f93eb71ad270bf35906404df9702e6",
       "diagram_ref": ".csdlc/prepared/issues/5853/diagram.mmd",
       "diagram_digest": "17d5a853df6d07718c8495e9076f622572dea08eba574fccccf450a39131a966"
     }

@@ -1,0 +1,64 @@
+{
+  "issue": 5819,
+  "card": "spp",
+  "expected_generation": 16,
+  "expected_digest": "794e02c2277a433594369734086c6d473142d224e9e3db240dfbd25c8e8ff8d0",
+  "claim_id": "claim-5819-v092-preparation",
+  "actor": "codex:5860-foundation-readiness",
+  "reason": "Require five destination receipts, both negative controls, and the exact production and beta website cutover.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "Organization owners, recovery, billing, policy, permissions, destination names, and exact five-repository scope are verified",
+      "Every repository has a reviewed redacted before-manifest at an exact HEAD and complete assignee membership or reassignment plan",
+      "Exactly cognitive-sdlc-paper, godel-hadamard-bayes-paper, general-intelligence-paper-private, universal-tool-schema, and agent-design-language transfer in that order to agent-logic with names, visibility, and history preserved",
+      "Every one of the five agent-logic destinations has its own live destination receipt and passes manifest comparison for GitHub surfaces, security, packages, Pages, LFS, Actions, and external integrations before the next transfer",
+      "ADL transfers last; agent-logic/agent-logic.ai updates exactly site/index.html and site/beta/index.html, removes all four old ADL links, and retains source and publication receipts under that repository's ownership",
+      "danielbaustin/asksifu remains personal and danielbaustin/Horust is neither transferred nor settings-mutated, with an observation receipt for each negative control",
+      "Final evidence contains no secret values, no unexplained drift, and one exact-revision bounded review"
+    ],
+    "steps": [
+      {"id":"S1","action":"Verify organization readiness, plan lineage, exact five-repository scope, and per-repository assignee-aware manifests","acceptance_ids":["AC-1","AC-2","AC-6"],"status":"pending"},
+      {"id":"S2","action":"Transfer and independently verify each of the five destination repositories serially, stopping on any unexplained drift","acceptance_ids":["AC-3","AC-4"],"status":"pending"},
+      {"id":"S3","action":"Complete the exact agent-logic.ai production and beta cutover, both negative controls, final report, validator, and exact-revision review","acceptance_ids":["AC-5","AC-6","AC-7"],"status":"pending"}
+    ],
+    "validation_lanes": [
+      {
+        "lane":"migration-evidence-contract",
+        "proof_role":"Validate the exact ordered five-repository destination set, per-destination receipts, zero unexplained drift, both untouched negative controls, and the two-file four-link website cutover.",
+        "acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7"],
+        "deterministic":true,
+        "resource_profile":"medium",
+        "budget_seconds":300,
+        "budget_tokens":4000,
+        "argv":["ruby",".csdlc/prepared/issues/5819/validate-migration-evidence.rb"],
+        "parallel_group":"migration-contract",
+        "defer_reason":null
+      },
+      {
+        "lane":"github-five-destination-live-proof",
+        "proof_role":"Run the retained execution script that queries and records all five live agent-logic destinations, never only ADL.",
+        "acceptance_ids":["AC-3","AC-4"],
+        "deterministic":false,
+        "resource_profile":"medium",
+        "budget_seconds":1800,
+        "budget_tokens":5000,
+        "argv":["ruby",".csdlc/prepared/issues/5819/verify-live-repositories.rb"],
+        "parallel_group":"github-live",
+        "defer_reason":null
+      },
+      {
+        "lane":"diff-hygiene",
+        "proof_role":"Reject whitespace errors in tracked integration and evidence changes.",
+        "acceptance_ids":["AC-7"],
+        "deterministic":true,
+        "resource_profile":"small",
+        "budget_seconds":30,
+        "budget_tokens":500,
+        "argv":["git","diff","--check"],
+        "parallel_group":"issue-local",
+        "defer_reason":null
+      }
+    ]
+  }
+}

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-02A] CI and coverage reliability",
     "slug": "v0-92-wp-02-ci-and-coverage-reliability",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -15,6 +15,24 @@
     "values": {
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
+        {
+          "lane": "gemini-3-1-pro-review-contract",
+          "proof_role": "Require retained Gemini 3.1 Pro identity, exact revision and prompt/response digests, and dispositions for every actionable finding.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 2000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5801/validate-gemini-review.rb"
+          ],
+          "parallel_group": "review",
+          "defer_reason": null
+        },
         {
           "lane": "ci-path-policy-contract",
           "proof_role": "Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.",
@@ -99,7 +117,7 @@
         },
         {
           "lane": "exact-head-ci-platform",
-          "proof_role": "GitHub required checks prove the final exact head on the migrated Linux-hosted CI substrate while contract fixtures cover macOS and Windows boundaries.",
+          "proof_role": "GitHub required checks prove the final exact head while contract fixtures cover macOS and Windows boundaries.",
           "acceptance_ids": [
             "AC-1",
             "AC-4",
@@ -109,7 +127,7 @@
           "deterministic": false,
           "resource_profile": "large",
           "budget_seconds": 1200,
-          "budget_tokens": 10000,
+          "budget_tokens": 8000,
           "argv": [
             "gh",
             "pr",
@@ -142,7 +160,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5801/design.md",
-      "design_digest": "c80718ee74f652704495d26bba6ab1a5682564ed5a7fcc7a7d6c05a60b47e977",
+      "design_digest": "0732e464036716c0a0f881f3dec516a1d2dfd2798a815901624c40d8caca1458",
       "diagram_ref": ".csdlc/prepared/issues/5801/diagram.mmd",
       "diagram_digest": "38d2b37695ebf0a973ad18715373b5388f65f5eb6d61f68fafb821966de2ecb2"
     }

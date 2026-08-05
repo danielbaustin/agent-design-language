@@ -25,7 +25,7 @@ Diagram: .csdlc/prepared/issues/5853/diagram.mmd
 [
   {
     "lane": "experiment-evidence-contract",
-    "proof_role": "Validate entry gates, frozen inputs, complete platform samples, warm-cache evidence, parity, decisions, and observation-or-cleanup state.",
+    "proof_role": "Validate entry gates, frozen numeric thresholds, finite nonnegative and internally consistent raw samples, recomputed statistics and reliability, parity, threshold-bound decisions, and observation-or-cleanup state.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",

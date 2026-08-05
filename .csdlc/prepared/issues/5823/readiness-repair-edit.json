@@ -1,0 +1,34 @@
+{
+  "issue": 5823,
+  "card": "spp",
+  "expected_generation": 16,
+  "expected_digest": "e6ff3f96608cc0245a7c2999d4c9c1c913ebaa6ea023cf6d9e2d9ba044abf339",
+  "claim_id": "claim-5823-v092-preparation",
+  "actor": "codex:5860-foundation-readiness",
+  "reason": "Require native live Linux and macOS platform proof and reject blocked-as-success platform rows.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "A typed portable request identifies exact revision, command profile digest, environment allowlist, resource and budget, artifact policy, timeout, and fallback",
+      "A typed result identifies adapter, platform, exact revision, profile digest, timing, exit, artifact digests, redaction, cleanup, and fallback outcome",
+      "Local, Nessus, and AWS adapters preserve one request/result contract and fail closed on unsupported or ambiguous selection",
+      "Network or provider failure runs or explicitly offers the same-profile local fallback without claiming remote proof",
+      "Stale revision, malformed result, timeout, cancellation, unreachable provider, path leakage, and incomplete cleanup are rejected or retained as blockers",
+      "Native live remote Linux and native live local macOS proof are mandatory; Windows is live-native when approved or a deterministic fixture explicitly marked non-native, and no blocked row can pass",
+      "Machine output, adl_event diagnostics, secrets, paths, provenance, and artifacts obey the repository observability and privacy boundary",
+      "Focused adapter, negative, native-platform, no-network, diff, and exact-revision review proof passes"
+    ],
+    "steps": [
+      {"id":"S1","action":"Define typed portable request/result, provenance, redaction, cleanup, and local-fallback contracts","acceptance_ids":["AC-1","AC-2","AC-7"],"status":"pending"},
+      {"id":"S2","action":"Integrate local, Nessus, and AWS adapters with fail-closed selection, timeout, cancellation, artifacts, and fallback","acceptance_ids":["AC-3","AC-4","AC-5","AC-7"],"status":"pending"},
+      {"id":"S3","action":"Run mandatory native Linux and macOS proof, qualified Windows proof, no-network/failure/cleanup checks, and exact-revision review","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7","AC-8"],"status":"pending"}
+    ],
+    "validation_lanes": [
+      {"lane":"portable-runner-contract","proof_role":"Prove typed request/result round trips, exact revision and profile binding, adapter selection, artifacts, redaction, timeout, and cleanup semantics.","acceptance_ids":["AC-1","AC-2","AC-3","AC-7","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":600,"budget_tokens":4000,"argv":["cargo","test","--locked","--manifest-path","tools/aws_remote_validation/Cargo.toml"],"parallel_group":"runner-contract","defer_reason":null},
+      {"lane":"aws-adapter-negative","proof_role":"Exercise unreachable provider, stale revision, malformed output, timeout, cancellation, redaction, and cleanup failures without a live paid run.","acceptance_ids":["AC-3","AC-5","AC-7","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":400,"budget_tokens":3000,"argv":["bash","adl/tools/test_run_aws_spot_remote_validation_lane.sh"],"parallel_group":"adapter-fixtures","defer_reason":null},
+      {"lane":"nessus-and-local-fallback","proof_role":"Prove the existing owned-runner adapter and same-profile local/no-network fallback contract.","acceptance_ids":["AC-3","AC-4","AC-5","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":400,"budget_tokens":3000,"argv":["bash","adl/tools/test_run_nessus_remote_validation.sh"],"parallel_group":"adapter-fixtures","defer_reason":null},
+      {"lane":"native-platform-contract-matrix","proof_role":"Require native live Linux and macOS receipts plus live-native or explicitly non-native fixture Windows proof; reject blocked rows.","acceptance_ids":["AC-6","AC-7","AC-8"],"deterministic":false,"resource_profile":"large","budget_seconds":1200,"budget_tokens":6000,"argv":["ruby",".csdlc/prepared/issues/5823/validate-platform-matrix.rb"],"parallel_group":"platform","defer_reason":null},
+      {"lane":"diff-hygiene","proof_role":"Reject whitespace errors and support exact-revision review.","acceptance_ids":["AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":30,"budget_tokens":500,"argv":["git","diff","--check"],"parallel_group":"issue-local","defer_reason":null}
+    ]
+  }
+}

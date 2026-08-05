@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "7c3bcca3a89242a98791c5d0a2391d199e3e2a088e3fa577d270275ae22c2571",
   "phase": "bound",
-  "generation": 15,
-  "digest": "22e2947dd1c3696924b30d844b3143764f1df67a8bb4920de684c700f04b9d02",
+  "generation": 17,
+  "digest": "f1cfae4d061e7da9b896f843660f9a418854ab5b38bf51c4ea5ef064a3c460fb",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5823/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-design-review",
-      "revision": "95946a208ce7fca949dbbe9423e7708e4658a7f22d987d2e5cd135b3bf531534"
+      "reviewer": "codex:5860-foundation-readiness-repair-review",
+      "revision": "cc489f7e9478bae98ddaec1e41354153478b6c960dc3aea01e22ef69c2076e1f"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "14abe3fd31b8373cd3a3e62073c7a1fb7d5addef0e69d6dc9fad54910ab13e2b",
+      "values_digest": "a4cd525c0f5622f8d4f42b31c504376738ee47a5d2d31f6d4a07cd786af7b344",
       "rendered_digest": "3a521d5361568d36e6e58f2b1548dbe24b6deedb254c5106942ee132edda129d",
       "ast_digest": "c753f60486959e5674018050c5085ce087467ae6c749eefa4ed399b678129b0c"
     },
     "stp": {
-      "values_digest": "85fddb4eb621a5df5513a4e648a4160ea2ddd5fe87a5c9712091507902f43c4d",
-      "rendered_digest": "81f10cde5a18696fd632178780075b2e29c94448a7cf29f417462a06882c3c5b",
-      "ast_digest": "33ea4f31db594349079ee1711ec417e28962e942e44795150ad446f53a473fe4"
+      "values_digest": "e2652fe40d1549710e89e81b34a96443fe609607b8dd2b4542ba317b871a4886",
+      "rendered_digest": "26a93a4af8877e02ec404514a74bfc23902ac3cbe536343ef04a7cad5dfabb85",
+      "ast_digest": "0b73a4514b346098dad1a34949ea16795bc21fbf9f49c10c610ac39d3e5af291"
     },
     "spp": {
-      "values_digest": "4d288b7435293fbcd04e25e53c5b1b6fb8cb11d6f60d14cdd201cd18b4af24c0",
-      "rendered_digest": "a47c1eba568c4dbde2078ab7a253d8f1a50a431e2234d57fdaea9e79a26515dc",
-      "ast_digest": "2440d51a6a3dd545c5375e10619227ba625d3d9eecb194c69c4c62949e94ad4a"
+      "values_digest": "782676a57adafe16ebc02b349f8ba6357fbe078090c7742824d04798a0586cb0",
+      "rendered_digest": "a0db2ba788c54085dc8624d084276167fdc2e16456d09ff9777ebcb7875c3c90",
+      "ast_digest": "4be873404ebe474ae641787df6896c01bc0d229cb52293607300dce811127871"
     },
     "vpp": {
-      "values_digest": "1d67837cd2b0558abb619f8a8bd98780159097cf12f5e1fcbc13650b4d612018",
-      "rendered_digest": "29d51d761b9233004cfcc6aa56444787783092e36260442ad639a1c0a6e741db",
-      "ast_digest": "a841f9c40eba5c7010ae4131a1e35cf6f568cb6c4ee926f50b47247e38961904"
+      "values_digest": "e88fe9c9967069e111059cbf300d6255976008bc7a7890e9446d51681da9e92a",
+      "rendered_digest": "da836235e4132c3231b19e3a43bb58da80fe524ffde87149bfde852a0e6c16d8",
+      "ast_digest": "118ad945dc7a7b16fc4c32a45bcc4f220072cf1884f68f34bc337c1198ac3636"
     },
     "srp": {
-      "values_digest": "e86ec36f018cf6f650e6f8341ae4f20d5fb5a89ae55486d937d89833eba7fa99",
+      "values_digest": "39c9979b6c6bfd98ae7ef39c6d35d3079303b66c6c25d0d954b9343795d8c34d",
       "rendered_digest": "d75b392680f254c5218c7ac6d47f1f0dab88c8d5975c5f9dcc312a58048cc045",
       "ast_digest": "fa8a9f100c7618edbbdd6de56dbf5ca70b1f4dfe33d7cccf069ed303d921ba71"
     },
     "sor": {
-      "values_digest": "42c45390e9eba97df695cfe6df7017efc5bad69d5734851940f6d96b22f0eb29",
+      "values_digest": "97c9d609f633abb01d478b4a3d56592adf5ec4302fd96f8791497dc29a92d67a",
       "rendered_digest": "918dde528a114bce7b991e20381cf7cd3f7c83daf40a3822786b937728ef41d3",
       "ast_digest": "d44360186e739b1c36a6a1fd09a920ea5520e8b6f6203480950507a0168fb57c"
     }
@@ -208,6 +208,34 @@
       "generation": 15,
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5823-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5823-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5823\",\".csdlc/issues/5823\",\".csdlc/locks/5823.lock\",\".csdlc/prepared/issues/5823\"],\"purpose\":\"Prepare issue 5823 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:5860-foundation-readiness-repair-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Require native live Linux and macOS platform proof and reject blocked-as-success platform rows.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"A typed portable request identifies exact revision, command profile digest, environment allowlist, resource and budget, artifact policy, timeout, and fallback\",\"A typed result identifies adapter, platform, exact revision, profile digest, timing, exit, artifact digests, redaction, cleanup, and fallback outcome\",\"Local, Nessus, and AWS adapters preserve one request/result contract and fail closed on unsupported or ambiguous selection\",\"Network or provider failure runs or explicitly offers the same-profile local fallback without claiming remote proof\",\"Stale revision, malformed result, timeout, cancellation, unreachable provider, path leakage, and incomplete cleanup are rejected or retained as blockers\",\"Native live remote Linux and native live local macOS proof are mandatory; Windows is live-native when approved or a deterministic fixture explicitly marked non-native, and no blocked row can pass\",\"Machine output, adl_event diagnostics, secrets, paths, provenance, and artifacts obey the repository observability and privacy boundary\",\"Focused adapter, negative, native-platform, no-network, diff, and exact-revision review proof passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Define typed portable request/result, provenance, redaction, cleanup, and local-fallback contracts\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Integrate local, Nessus, and AWS adapters with fail-closed selection, timeout, cancellation, artifacts, and fallback\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-7\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run mandatory native Linux and macOS proof, qualified Windows proof, no-network/failure/cleanup checks, and exact-revision review\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"portable-runner-contract\",\"proof_role\":\"Prove typed request/result round trips, exact revision and profile binding, adapter selection, artifacts, redaction, timeout, and cleanup semantics.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"tools/aws_remote_validation/Cargo.toml\"],\"parallel_group\":\"runner-contract\",\"defer_reason\":null},{\"lane\":\"aws-adapter-negative\",\"proof_role\":\"Exercise unreachable provider, stale revision, malformed output, timeout, cancellation, redaction, and cleanup failures without a live paid run.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_run_aws_spot_remote_validation_lane.sh\"],\"parallel_group\":\"adapter-fixtures\",\"defer_reason\":null},{\"lane\":\"nessus-and-local-fallback\",\"proof_role\":\"Prove the existing owned-runner adapter and same-profile local/no-network fallback contract.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_run_nessus_remote_validation.sh\"],\"parallel_group\":\"adapter-fixtures\",\"defer_reason\":null},{\"lane\":\"native-platform-contract-matrix\",\"proof_role\":\"Require native live Linux and macOS receipts plus live-native or explicitly non-native fixture Windows proof; reject blocked rows.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":6000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5823/validate-platform-matrix.rb\"],\"parallel_group\":\"platform\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision review.\",\"acceptance_ids\":[\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5823-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]

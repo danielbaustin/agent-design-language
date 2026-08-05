@@ -30,9 +30,9 @@ Deliver portable bounded runner with provenance and failover.
 3. Local, Nessus, and AWS adapters preserve one request/result contract and fail closed on unsupported or ambiguous selection
 4. Network or provider failure runs or explicitly offers the same-profile local fallback without claiming remote proof
 5. Stale revision, malformed result, timeout, cancellation, unreachable provider, path leakage, and incomplete cleanup are rejected or retained as blockers
-6. Linux remote, local macOS, and Windows path/quoting or approved live-runner proof is retained with truthful fixture/live qualification
+6. Native live remote Linux and native live local macOS proof are mandatory; Windows is live-native when approved or a deterministic fixture explicitly marked non-native, and no blocked row can pass
 7. Machine output, adl_event diagnostics, secrets, paths, provenance, and artifacts obey the repository observability and privacy boundary
-8. Focused adapter, negative, platform, no-network, diff, and exact-revision review proof passes
+8. Focused adapter, negative, native-platform, no-network, diff, and exact-revision review proof passes
 
 ## Dependencies
 

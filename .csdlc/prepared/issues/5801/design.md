@@ -23,8 +23,10 @@ complete. Any product/source drift retains exact-head validation.
 
 ## Execution Design
 
-1. Retain a bounded external review packet of the current topology and convert
-   actionable findings into a source-grounded lane map.
+1. Retain the required Gemini 3.1 Pro review packet of the current topology,
+   including model identity, exact reviewed revision, prompt digest, response
+   digest, findings, and dispositions, then convert actionable findings into a
+   source-grounded lane map.
 2. Centralize path classification and remove duplicate heavy lane triggers.
 3. Keep fast and slow test families explicit; preserve fail-closed handling for
    unknown source paths and coverage-impact mappings.
@@ -50,3 +52,5 @@ runtime-critical, unknown, mixed, stale-run, and metadata-lineage cases.
 Coverage tests prove one authoritative aggregation with complete shard
 provenance. Platform syntax and path handling are checked for Linux, macOS, and
 Windows-facing contracts; required GitHub checks prove the final exact head.
+The retained Gemini 3.1 Pro packet is a required review input, not replaceable
+by an unnamed generic external review.

@@ -16,7 +16,7 @@ Extract a provider-neutral exact-revision request/result contract over current a
 
 ## Plan
 
-Revision 8
+Revision 9
 
 ## Steps
 
@@ -44,7 +44,7 @@ Revision 8
   },
   {
     "id": "S3",
-    "action": "Run Linux, macOS, Windows, no-network, failure, cleanup, and exact-revision review proof",
+    "action": "Run mandatory native Linux and macOS proof, qualified Windows proof, no-network/failure/cleanup checks, and exact-revision review",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -87,7 +87,7 @@ Revision 8
 
 .csdlc/prepared/issues/5823/design.md
 
-Digest: 95946a208ce7fca949dbbe9423e7708e4658a7f22d987d2e5cd135b3bf531534
+Digest: cc489f7e9478bae98ddaec1e41354153478b6c960dc3aea01e22ef69c2076e1f
 
 ## Diagram
 

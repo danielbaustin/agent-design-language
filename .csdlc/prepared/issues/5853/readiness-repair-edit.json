@@ -1,0 +1,33 @@
+{
+  "issue": 5853,
+  "card": "spp",
+  "expected_generation": 7,
+  "expected_digest": "9f1f8a34714c098a87f98b4034dbe3656d1597ab234b1934c02fd233389e556b",
+  "claim_id": "claim-5853-v092-preparation",
+  "actor": "codex:5860-foundation-readiness",
+  "reason": "Bind decisions to finite nonnegative raw metrics, recomputed statistics, reliability, and frozen adoption thresholds.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "WP-02, WP-02A, organization plan, owner budget and alerts, selected-repository access, concurrency-one, and rollback entry gates are verified",
+      "Control and candidate runs freeze one exact commit, workflow, toolchain, lockfiles, commands, permissions, cache design, proof inputs, required checks, workloads, and numeric adoption thresholds before measurement",
+      "Five cold and ten warm trials per selected workload and platform retain finite nonnegative metrics, cache evidence, queue delay, failures, retries, cancellations, and justified outliers with internally consistent totals",
+      "Result, artifact, validation, and required-check parity passes before exactly one production-semantics canary",
+      "The issue-local validator recomputes p50, p95, means, critical-path and queue deltas, reliability, cost per run, and cost per minute saved from raw trials and rejects reported-statistic or threshold-disposition drift",
+      "Adoption requires every predeclared reliability, p95, queue, critical-path, cost, proof-parity, and canary gate; adopted routing has ten-run observation and fallback while rejected or deferred routing is removed",
+      "Untrusted code cannot reach privileged runner context and no required-check, branch-protection, validation-breadth, or proof semantic changes occur",
+      "The issue-local validator, workflow contracts, diff hygiene, and exact-head review pass"
+    ],
+    "steps": [
+      {"id":"S1","action":"Verify entry gates and freeze exact workloads, environment, permissions, cost, cache, proof topology, and numeric adoption thresholds","acceptance_ids":["AC-1","AC-2","AC-7"],"status":"pending"},
+      {"id":"S2","action":"Capture complete ubuntu-latest and restricted 16-core cold/warm raw trials and proof parity evidence","acceptance_ids":["AC-3","AC-4","AC-7"],"status":"pending"},
+      {"id":"S3","action":"Recompute statistics, apply every frozen threshold, run one canary, retain observation or cleanup/fallback proof, validate, and review","acceptance_ids":["AC-5","AC-6","AC-7","AC-8"],"status":"pending"}
+    ],
+    "validation_lanes": [
+      {"lane":"experiment-evidence-contract","proof_role":"Validate entry gates, frozen numeric thresholds, finite nonnegative and internally consistent raw samples, recomputed statistics and reliability, parity, threshold-bound decisions, and observation-or-cleanup state.","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":5000,"argv":["ruby",".csdlc/prepared/issues/5853/validate-experiment.rb"],"parallel_group":"experiment-analysis","defer_reason":null},
+      {"lane":"runner-security-negative","proof_role":"Reject broad repository access, concurrency expansion, untrusted fork privilege, missing fallback, changed required-check identity, or incomplete cleanup.","acceptance_ids":["AC-1","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":300,"budget_tokens":3000,"argv":["ruby","-rjson","-e","e=JSON.parse(File.read('.csdlc/evidence/5853/eligibility.json')); f=JSON.parse(File.read('.csdlc/evidence/5853/final-state.json')); abort('security boundary') unless e['selected_repository_access']==true&&e['concurrency_one']==true&&e['untrusted_fork_privilege']==false&&f['standard_runner_fallback']==true&&f['required_check_identity_preserved']==true"],"parallel_group":"negative","defer_reason":null},
+      {"lane":"workflow-routing-platform-contract","proof_role":"Prove Linux larger-runner routing remains a machine-selection detail and preserves workflow/check semantics.","acceptance_ids":["AC-2","AC-4","AC-6","AC-7","AC-8"],"deterministic":true,"resource_profile":"medium","budget_seconds":900,"budget_tokens":4000,"argv":["bash","adl/tools/test_ci_runtime_contracts.sh"],"parallel_group":"workflow","defer_reason":null},
+      {"lane":"exact-head-diff-hygiene","proof_role":"Reject whitespace errors and support exact-revision review.","acceptance_ids":["AC-8"],"deterministic":true,"resource_profile":"small","budget_seconds":30,"budget_tokens":500,"argv":["git","diff","--check"],"parallel_group":"issue-local","defer_reason":null}
+    ]
+  }
+}

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "9ed0c16b82a7c094d6474b27313bfc4d63eaabcae5bedee51d7e839e9c8534fd",
   "phase": "bound",
-  "generation": 15,
-  "digest": "e4da07fed628e95c7754b4ffb027f19f0fac7977d90fd6a11f815b449519fa71",
+  "generation": 17,
+  "digest": "ce0f2bf65c8ac959da12ea038a13cf2ae8d07ba7cba1fd8668affffa4ddc0286",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5818/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-design-review",
-      "revision": "99e1b12457133a819381491865811286cafd3d5fa45563f790569e0970e1183a"
+      "reviewer": "codex:5860-foundation-readiness-repair-review",
+      "revision": "f7cff126362e2ea4eaba3de3571258967683b9bce1fc1da91503392f4d24a9e2"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "2cc8e4ddbdde7c56b4acdf290ad021016ae5110885ba93b3aa09d070ed2fdc1d",
+      "values_digest": "c6e046d12c83e1b75c6b5b0f3216485aba287ff22f61e2cc7b54774f904fc7df",
       "rendered_digest": "7497385431a0397c1dbead85e28d4294d7efcb2caaff6b14f342826caeeb6bb0",
       "ast_digest": "23098f1f67be5cc90995f6aec88db71ec06a8b4914e8e36d34a1939b4fa6a2e8"
     },
     "stp": {
-      "values_digest": "7234f730ea70ebef57bd3b89c6ceeb7d167c2fbd3abcb20f15e297a79b8fd0bc",
-      "rendered_digest": "dc9ca2e6873748ad0c2f07ac2bc1401c2adc838b0ac2cdea1b32a274f662257d",
-      "ast_digest": "80b74024d9352f60c19693bf2f9bf68bf911645eaf5e0f6a570662eb8371c0a4"
+      "values_digest": "9f5602d6b61feaac9e7585e75764e1e03e39b47750be2ca6cdbd6d75a15ac284",
+      "rendered_digest": "57f45f72cc93eef32a9a9ec310aa35308b1c544937050abd7a96f582aeda6ec9",
+      "ast_digest": "2bc5cb5bb15c53c2a2202201f8717bcd003364cce6a8692b06358c10c8951942"
     },
     "spp": {
-      "values_digest": "06504bb38501c2977bb6747c3dc2cad406fe74972c7dffa29ca431e5952f5637",
-      "rendered_digest": "78251796eea742739da53e6bdcb6ed7c3ab4a598677ee3529046c659df953906",
-      "ast_digest": "cbffd8850c8d36f04e7a851dd08efd5c549dd168c6b419014ebd257d2a318e71"
+      "values_digest": "97534846b6db9b9bcc8811403253efbdc9dabb65cb7037462ad31611ecfdd2da",
+      "rendered_digest": "fb5e3d3d225985c34ec551f8ec6bafb57db6aabf3105a624e73c79ec0add6a1d",
+      "ast_digest": "815f3bfc4c9bdf8055eac7a3c4f9181f6b5a86c1c48f8bdfd6716159ed77b4d7"
     },
     "vpp": {
-      "values_digest": "c493a4c4e46b6762fdf3c988839a1da7aa726cf54332e90c3ec3e03ab80fdbeb",
-      "rendered_digest": "3bdf1624c8562feb15b3c841ee9524ced73f05f7a61d791d155dbde0dd80468c",
-      "ast_digest": "333decf93eafd5f27b2c4fc62d1d38466de4dd448f67f8a80da340c0b82d0d09"
+      "values_digest": "32b72eb99cf85de8693144a81808da305676c6ed8ebd9de46ade3e6a2ceede0d",
+      "rendered_digest": "8eb8958f8eea104e941bc469bf04bdfd920868db2a7c87f642571b2ecc9f32e0",
+      "ast_digest": "b2baa8a687c373db7693673771c65412ec8d42b3ca1f0c91d71dbc3e34cce6b5"
     },
     "srp": {
-      "values_digest": "5dde62b32973dac9813aac90c59827bcb71974c36455233987475ffebb1dc520",
+      "values_digest": "f14183c1f3d6bcfc3eddbd8d75ba6d17b0de0848cc3e6bcde8b55104059b9326",
       "rendered_digest": "850bf908b77990370d184fe9ee2bf1f084431dcf2706ebffe5dec935345b2b4e",
       "ast_digest": "3e71138cb5d788546c289c6f05d2f941b1373f21ac7150406dbc2f07d8c5af6a"
     },
     "sor": {
-      "values_digest": "c9335a3b820bc2a62455a26294767ea1745c801298fe4561bb594fcd95efa094",
+      "values_digest": "418240596c30d96595b4d9b0572c1ae2d6540b3142e0568cf5ec9ea5fb08a7ad",
       "rendered_digest": "bd15fe44fe2ca1bceaa2ed905a0b6cb117e1b973e9553ca9cb3fa825bc8a10d6",
       "ast_digest": "a228ec470a1b6243cc39ed9b70888478cf0b6d452147c0160d50b928ec42e7b7"
     }
@@ -208,6 +208,34 @@
       "generation": 15,
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5818\",\".csdlc/issues/5818\",\".csdlc/locks/5818.lock\",\".csdlc/prepared/issues/5818\"],\"purpose\":\"Prepare issue 5818 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:5860-foundation-readiness-repair-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Replace non-proving activation lanes with issue-local inventory, structured-data, link, version, and historical-boundary proof.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"Canonical inventory classifies every checked current or historical surface and names its owner and disposition\",\"docs/planning/ADL_FEATURE_LIST.md and current entrypoints identify v0.92 as active without claiming planned features complete\",\"All authoritative current version declarations record an observed version equal to their declared v0.92 or 0.92.0 expectation and Cargo metadata is internally consistent\",\"Historical milestone, release, review, migration, and pre-existing evidence records retain their original version and claims while new .csdlc/evidence/5818 proof remains allowed\",\"Every inventoried current JSON and YAML file parses and every local Markdown link in the declared current boundary resolves\",\"Current AGENTS.md, REVIEW.md, skills, and runbooks agree with final C-SDLC v2 authority\",\"Focused diff, lockfile, placeholder, stale-reference, and exact-revision review checks pass\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Build and review the classified canonical-surface and version-authority inventory, including expected and observed versions for declarations\",\"acceptance_ids\":[\"AC-1\",\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Update current documentation, feature inventory, links, and authoritative version metadata without historical drift\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run the issue-local activation validator, locked Cargo metadata, diff hygiene, and exact-revision review\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"activation-evidence-contract\",\"proof_role\":\"Parse inventoried YAML/JSON, resolve current Markdown links, compare expected and observed versions, and reject historical changes except new issue-owned evidence.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5818/validate-activation.rb\"],\"parallel_group\":\"docs-contract\",\"defer_reason\":null},{\"lane\":\"cargo-version-parity\",\"proof_role\":\"Prove locked workspace/package metadata is internally consistent after authoritative version activation.\",\"acceptance_ids\":[\"AC-3\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"metadata\",\"--locked\",\"--format-version\",\"1\"],\"parallel_group\":\"metadata\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors and support exact-revision bounded review.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5818-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]

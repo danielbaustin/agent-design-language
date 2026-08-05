@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d161c9886615d203d6b83404683281ca21b58925bbbf7d1f8e8339098c2ef07b",
   "phase": "bound",
-  "generation": 15,
-  "digest": "159d9ed28f60e9154dc1edffb97085f3713aad3ca181e9b4d0b77e2ffe01f19f",
+  "generation": 17,
+  "digest": "99a66905374f833188ef07905a5ecc636f2a0632c11d5a482a8f3cf60ef855f5",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5801/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-foundation-design-review",
-      "revision": "c80718ee74f652704495d26bba6ab1a5682564ed5a7fcc7a7d6c05a60b47e977"
+      "reviewer": "codex:5860-foundation-readiness-repair-review",
+      "revision": "0732e464036716c0a0f881f3dec516a1d2dfd2798a815901624c40d8caca1458"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "c0d3b0b2b5563f1ac8195e3faaccee150ef0b771c902c9e1751331611b179c85",
+      "values_digest": "e87b397887b91fc8a483d4ff8be11cde4c1499a587345dbf9931c6dc0a7b4edf",
       "rendered_digest": "657fd9d5f272245476015fc6c7996cf3c879bea80c113a649a095df5f2d870c4",
       "ast_digest": "e87314878eb145d12ee48dee595db92db566fa77e4d91fb5746e1e6c546a64e3"
     },
     "stp": {
-      "values_digest": "82369c73439098b36febfceca1c6d39a44e4526884b5fa13e7f9894c22fab386",
-      "rendered_digest": "c6e1788a580308dc2b65d18c5227af1e33b40c035fcdc36168e54638f8da482b",
-      "ast_digest": "29b4f536fef1dad62cb9ae3a238935d12900db1451535bf2cd960623c1bc940f"
+      "values_digest": "0e27b678b2e9670c928a2f9abf69ec9e96b05157bbe619f7302bd72cbac56130",
+      "rendered_digest": "261e6b5e545812be713edf99b0ba29a76aa35cb6e1c1e108de3a88e08d128da1",
+      "ast_digest": "0f01f927e53df90cb4f685bb5aeb59a1df4f55e6338bd961554fdd9b532c3d10"
     },
     "spp": {
-      "values_digest": "6826c920aac8c25f4e708c4d829aade940b58f66bb3ddc7291dd04b0970702fa",
-      "rendered_digest": "00b63d4fa3c77286a41821ab211ec02ace8d63bd6f31079e82ab754fe1208e6c",
-      "ast_digest": "a9bfe11a960017a784c8fe79e08c61c3cfb65f3d44d728b3e6270467f15d6168"
+      "values_digest": "7beb19ae744544c947ee3244c7e2df5973c7aaa2e7c9a079ac319799eb82180b",
+      "rendered_digest": "16f39fb620542e6d11a3e6762c57d5de51f6ff8e1a4b18953ac9651495df260e",
+      "ast_digest": "db0425d11f3ea12f2ac3c4d67646757b0a0c46b39785db433112d121b939563b"
     },
     "vpp": {
-      "values_digest": "0a7b0b5c485a58192bea2ab23fe5a58226db34141c8eecd0051cca69df6f0a88",
-      "rendered_digest": "21d78c388edd19b08296f8931e68ed36fba39586a4c2d080ee907098887f8776",
-      "ast_digest": "ea72667b9eb3a96becf5ae3b3ae552f5a5ecdfca6da0b934308c5e06924c036e"
+      "values_digest": "a7491e8ff600a526c4d33770cc71cb211793e067843df4dbedb5ed0c87bed8bb",
+      "rendered_digest": "d700e1f754d70415bfc2813eedbc567e4b52d6da966bb8787d94e655a7886323",
+      "ast_digest": "f01ab824417c405be3148d2c7c4e1a5809c82c0f22f9235ea7121aa344055c45"
     },
     "srp": {
-      "values_digest": "8efcfb79dab02818ffccf054b93b1ddbb3a5a0535e3f776ac826f3c3e0c2e8c0",
+      "values_digest": "8c4a17f80575bcb36b2459f2ea57a0ab2d54eeb2ace73d2dec62101777d80288",
       "rendered_digest": "bfa2844b186a214901b2166fe826c9f490ac70e1a20c76d3b788e5270b4b388f",
       "ast_digest": "3624c633f28a9bf2de7d0b7eda4c1a63698aaabc372467a25545a996dd8db923"
     },
     "sor": {
-      "values_digest": "f20d4edb58152dd2aad928b2f5622b149e29dded46ae32cb7b3f099c1ed13e68",
+      "values_digest": "431e6df2ca88137895d8679a2f67821da52ed1709d69e134b9c51ead3aecd977",
       "rendered_digest": "014507d61b21b426b14a44883b044863dab9590297ae704f65ce363803f7459b",
       "ast_digest": "2543e6a3a620c7d2ff382d35157473896b403f624ce7f3d53b57df629afcb3b2"
     }
@@ -208,6 +208,34 @@
       "generation": 15,
       "actor": "codex:5860-foundation-readiness",
       "reason": "Release the temporary preparation-only binding after typed card validation and exact-digest design approval so implementation can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Reacquire the exact WP-01-released child preparation claim for the operator-authorized issue #5860 Foundation readiness repair.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-foundation-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5801\",\".csdlc/issues/5801\",\".csdlc/locks/5801.lock\",\".csdlc/prepared/issues/5801\"],\"purpose\":\"Prepare issue 5801 design and typed cards without product implementation\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 22,
+      "generation": 16,
+      "actor": "codex:5860-foundation-readiness-repair-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 23,
+      "generation": 17,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Restore the live issue's explicit retained Gemini 3.1 Pro review requirement and prove packet identity and finding disposition.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"A retained Gemini 3.1 Pro review packet binds provider/model identity, exact reviewed revision, prompt and response digests, findings, and dispositions to the current CI topology\",\"One deterministic policy classifies docs/review, lifecycle metadata, tooling, ordinary source, runtime-critical, unknown, and mixed changes into explicit PVF lanes\",\"Focused and slow test families are separated and unknown changes fail to the stronger proving lane\",\"Coverage runs once per PR class with complete exact-SHA shard provenance and one authoritative aggregation gate\",\"Metadata-only reconciliation reuses source proof only under typed unchanged-source lineage while substantive drift retains exact-head validation\",\"Superseded runs cancel without converting a cancelled or missing final required state into success\",\"Focused Gemini-review, policy, coverage, lifecycle-lineage, Linux/macOS/Windows contract, and exact-head CI proof passes\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Retain and validate the required Gemini 3.1 Pro topology review, dispose every actionable finding, and define the single deterministic change-class and PVF lane map\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement focused/slow routing, coverage deduplication, metadata-lineage reuse, and cancellation safety\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run Gemini packet, policy, coverage, lifecycle, platform, and exact-head integration proof and resolve bounded review\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"gemini-3-1-pro-review-contract\",\"proof_role\":\"Require retained Gemini 3.1 Pro identity, exact revision and prompt/response digests, and dispositions for every actionable finding.\",\"acceptance_ids\":[\"AC-1\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5801/validate-gemini-review.rb\"],\"parallel_group\":\"review\",\"defer_reason\":null},{\"lane\":\"ci-path-policy-contract\",\"proof_role\":\"Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"ci-runtime-and-coverage-contract\",\"proof_role\":\"Prove workflow graph, stale-run behavior, one coverage authority, shard provenance, and aggregation semantics.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"parallel_group\":\"policy\",\"defer_reason\":null},{\"lane\":\"coverage-impact-negative\",\"proof_role\":\"Reject unmapped or insufficient source coverage and prevent broad basename fallback.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":500,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/test_check_coverage_impact.sh\"],\"parallel_group\":\"coverage\",\"defer_reason\":null},{\"lane\":\"metadata-lineage-negative\",\"proof_role\":\"Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head source drift.\",\"acceptance_ids\":[\"AC-5\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate_finish\",\"metadata\"],\"parallel_group\":\"lifecycle\",\"defer_reason\":null},{\"lane\":\"exact-head-ci-platform\",\"proof_role\":\"GitHub required checks prove the final exact head while contract fixtures cover macOS and Windows boundaries.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-6\",\"AC-7\"],\"deterministic\":false,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":8000,\"argv\":[\"gh\",\"pr\",\"checks\",\"--watch\"],\"parallel_group\":\"github-live\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace and unintended policy-surface churn.\",\"acceptance_ids\":[\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"issue-local\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:5860-foundation-readiness",
+      "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time.",
       "operation": "{\"claim_id\":\"claim-5801-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-foundation-readiness\"}"
     }
   ]

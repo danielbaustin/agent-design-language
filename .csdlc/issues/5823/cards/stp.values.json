@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-06] Remote validation/build runner",
     "slug": "v0-92-wp-06-remote-validation-build-runner",
     "version": "v0.92",
-    "generation": 15
+    "generation": 17
   },
   "status": "ready",
   "content": {
@@ -28,9 +28,9 @@
         "Local, Nessus, and AWS adapters preserve one request/result contract and fail closed on unsupported or ambiguous selection",
         "Network or provider failure runs or explicitly offers the same-profile local fallback without claiming remote proof",
         "Stale revision, malformed result, timeout, cancellation, unreachable provider, path leakage, and incomplete cleanup are rejected or retained as blockers",
-        "Linux remote, local macOS, and Windows path/quoting or approved live-runner proof is retained with truthful fixture/live qualification",
+        "Native live remote Linux and native live local macOS proof are mandatory; Windows is live-native when approved or a deterministic fixture explicitly marked non-native, and no blocked row can pass",
         "Machine output, adl_event diagnostics, secrets, paths, provenance, and artifacts obey the repository observability and privacy boundary",
-        "Focused adapter, negative, platform, no-network, diff, and exact-revision review proof passes"
+        "Focused adapter, negative, native-platform, no-network, diff, and exact-revision review proof passes"
       ],
       "dependencies": [
         "WP-02A issue #5801 complete with stable local command profiles and CI/PVF semantics",

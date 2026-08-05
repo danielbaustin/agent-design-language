@@ -1,0 +1,11 @@
+{
+  "issue": 5818,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5818-v092-preparation",
+  "expected_generation": 17,
+  "expected_digest": "ba7221da7cedc0346fa7282848a7f3817df9057f38f5948e941456d73f762e40",
+  "now_unix_seconds": 1785952600,
+  "actor": "codex:5860-foundation-readiness",
+  "operator_authority": "operator:daniel-issue-5860-readiness-repair",
+  "reason": "Release the Foundation readiness-repair claim after typed card regeneration, design approval, and focused validation; child execution must reacquire authority just in time."
+}

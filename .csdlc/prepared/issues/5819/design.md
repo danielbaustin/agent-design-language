@@ -42,6 +42,13 @@ ADL transfers last. Its window includes the prepared `agent-logic.ai` link
 cutover, ADL clone/remote updates, and bounded CI/publication smoke after the
 destination exists.
 
+The website cutover is owned in the separate `agent-logic/agent-logic.ai`
+repository and changes exactly `site/index.html` and `site/beta/index.html`.
+Those two files contain the four current `danielbaustin/agent-design-language`
+links identified by the reviewed migration plan. Their publication remains an
+`agent-logic.ai` deployment responsibility; this issue records the source and
+deployed-link receipts after that repository's own reviewed change lands.
+
 ## Invariants And Negative Controls
 
 - No destination is recreated and no history is rewritten.
@@ -65,4 +72,7 @@ membership/reassignment evidence, transfer observations, integration checks,
 the two negative controls, final old-owner reference disposition, and one
 exact-revision migration report. A typed evidence validator must fail on a
 missing repository, reordered transfer, unexplained drift, leaked secret value,
-or absent negative control.
+absent negative control, missing destination verification for any of the five
+repositories, or missing production/beta website cutover receipt. The
+issue-local validator is
+`.csdlc/prepared/issues/5819/validate-migration-evidence.rb`.

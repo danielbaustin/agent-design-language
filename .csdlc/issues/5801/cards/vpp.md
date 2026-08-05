@@ -24,6 +24,24 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
 
 [
   {
+    "lane": "gemini-3-1-pro-review-contract",
+    "proof_role": "Require retained Gemini 3.1 Pro identity, exact revision and prompt/response digests, and dispositions for every actionable finding.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-7"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 2000,
+    "argv": [
+      "ruby",
+      ".csdlc/prepared/issues/5801/validate-gemini-review.rb"
+    ],
+    "parallel_group": "review",
+    "defer_reason": null
+  },
+  {
     "lane": "ci-path-policy-contract",
     "proof_role": "Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.",
     "acceptance_ids": [
@@ -107,7 +125,7 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
   },
   {
     "lane": "exact-head-ci-platform",
-    "proof_role": "GitHub required checks prove the final exact head on the migrated Linux-hosted CI substrate while contract fixtures cover macOS and Windows boundaries.",
+    "proof_role": "GitHub required checks prove the final exact head while contract fixtures cover macOS and Windows boundaries.",
     "acceptance_ids": [
       "AC-1",
       "AC-4",
@@ -117,7 +135,7 @@ Diagram: .csdlc/prepared/issues/5801/diagram.mmd
     "deterministic": false,
     "resource_profile": "large",
     "budget_seconds": 1200,
-    "budget_tokens": 10000,
+    "budget_tokens": 8000,
     "argv": [
       "gh",
       "pr",
@@ -159,6 +177,7 @@ Tokens: 25000
 
 ## Commands
 
+- `ruby .csdlc/prepared/issues/5801/validate-gemini-review.rb`
 - `bash adl/tools/test_ci_path_policy.sh`
 - `bash adl/tools/test_ci_runtime_contracts.sh`
 - `bash adl/tools/test_check_coverage_impact.sh`

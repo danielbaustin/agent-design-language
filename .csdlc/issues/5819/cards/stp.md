@@ -27,10 +27,10 @@ Deliver five serially transferred company repositories with danielbaustin/asksif
 
 1. Organization owners, recovery, billing, policy, permissions, destination names, and exact five-repository scope are verified
 2. Every repository has a reviewed redacted before-manifest at an exact HEAD and complete assignee membership or reassignment plan
-3. Exactly five repositories transfer in the declared order with names, visibility, and history preserved
-4. Every destination passes manifest comparison for GitHub surfaces, security, packages, Pages, LFS, Actions, and external integrations before the next transfer
-5. ADL transfers last and current agent-logic.ai links, clone remotes, OIDC, packages, and critical consumers use the canonical destination
-6. asksifu remains personal and Horust is neither transferred nor modified
+3. Exactly cognitive-sdlc-paper, godel-hadamard-bayes-paper, general-intelligence-paper-private, universal-tool-schema, and agent-design-language transfer in that order to agent-logic with names, visibility, and history preserved
+4. Every one of the five agent-logic destinations has its own live destination receipt and passes manifest comparison for GitHub surfaces, security, packages, Pages, LFS, Actions, and external integrations before the next transfer
+5. ADL transfers last; agent-logic/agent-logic.ai updates exactly site/index.html and site/beta/index.html, removes all four old ADL links, and retains source and publication receipts under that repository's ownership
+6. danielbaustin/asksifu remains personal and danielbaustin/Horust is neither transferred nor settings-mutated, with an observation receipt for each negative control
 7. Final evidence contains no secret values, no unexplained drift, and one exact-revision bounded review
 
 ## Dependencies

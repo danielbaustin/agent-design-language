@@ -1,0 +1,35 @@
+{
+  "issue": 5801,
+  "card": "spp",
+  "expected_generation": 16,
+  "expected_digest": "92b05dc6117d47cf46140eab7e847dd32cd8bfb55caf5552db411504e20ecdd7",
+  "claim_id": "claim-5801-v092-preparation",
+  "actor": "codex:5860-foundation-readiness",
+  "reason": "Restore the live issue's explicit retained Gemini 3.1 Pro review requirement and prove packet identity and finding disposition.",
+  "operation": {
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "A retained Gemini 3.1 Pro review packet binds provider/model identity, exact reviewed revision, prompt and response digests, findings, and dispositions to the current CI topology",
+      "One deterministic policy classifies docs/review, lifecycle metadata, tooling, ordinary source, runtime-critical, unknown, and mixed changes into explicit PVF lanes",
+      "Focused and slow test families are separated and unknown changes fail to the stronger proving lane",
+      "Coverage runs once per PR class with complete exact-SHA shard provenance and one authoritative aggregation gate",
+      "Metadata-only reconciliation reuses source proof only under typed unchanged-source lineage while substantive drift retains exact-head validation",
+      "Superseded runs cancel without converting a cancelled or missing final required state into success",
+      "Focused Gemini-review, policy, coverage, lifecycle-lineage, Linux/macOS/Windows contract, and exact-head CI proof passes"
+    ],
+    "steps": [
+      {"id":"S1","action":"Retain and validate the required Gemini 3.1 Pro topology review, dispose every actionable finding, and define the single deterministic change-class and PVF lane map","acceptance_ids":["AC-1","AC-2"],"status":"pending"},
+      {"id":"S2","action":"Implement focused/slow routing, coverage deduplication, metadata-lineage reuse, and cancellation safety","acceptance_ids":["AC-2","AC-3","AC-4","AC-5","AC-6"],"status":"pending"},
+      {"id":"S3","action":"Run Gemini packet, policy, coverage, lifecycle, platform, and exact-head integration proof and resolve bounded review","acceptance_ids":["AC-1","AC-2","AC-3","AC-4","AC-5","AC-6","AC-7"],"status":"pending"}
+    ],
+    "validation_lanes": [
+      {"lane":"gemini-3-1-pro-review-contract","proof_role":"Require retained Gemini 3.1 Pro identity, exact revision and prompt/response digests, and dispositions for every actionable finding.","acceptance_ids":["AC-1","AC-7"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":2000,"argv":["ruby",".csdlc/prepared/issues/5801/validate-gemini-review.rb"],"parallel_group":"review","defer_reason":null},
+      {"lane":"ci-path-policy-contract","proof_role":"Exercise docs, metadata, tooling, source, runtime, unknown, mixed, and Windows-path classifications.","acceptance_ids":["AC-2","AC-3","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":400,"budget_tokens":3000,"argv":["bash","adl/tools/test_ci_path_policy.sh"],"parallel_group":"policy","defer_reason":null},
+      {"lane":"ci-runtime-and-coverage-contract","proof_role":"Prove workflow graph, stale-run behavior, one coverage authority, shard provenance, and aggregation semantics.","acceptance_ids":["AC-3","AC-4","AC-6","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":500,"budget_tokens":4000,"argv":["bash","adl/tools/test_ci_runtime_contracts.sh"],"parallel_group":"policy","defer_reason":null},
+      {"lane":"coverage-impact-negative","proof_role":"Reject unmapped or insufficient source coverage and prevent broad basename fallback.","acceptance_ids":["AC-3","AC-4","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":500,"budget_tokens":4000,"argv":["bash","adl/tools/test_check_coverage_impact.sh"],"parallel_group":"coverage","defer_reason":null},
+      {"lane":"metadata-lineage-negative","proof_role":"Prove metadata-only reuse rejects substantive, renamed, stale-review, or different-head source drift.","acceptance_ids":["AC-5","AC-7"],"deterministic":true,"resource_profile":"medium","budget_seconds":400,"budget_tokens":3000,"argv":["cargo","test","--locked","--manifest-path","csdlc-v2/Cargo.toml","--test","gate_finish","metadata"],"parallel_group":"lifecycle","defer_reason":null},
+      {"lane":"exact-head-ci-platform","proof_role":"GitHub required checks prove the final exact head while contract fixtures cover macOS and Windows boundaries.","acceptance_ids":["AC-1","AC-4","AC-6","AC-7"],"deterministic":false,"resource_profile":"large","budget_seconds":1200,"budget_tokens":8000,"argv":["gh","pr","checks","--watch"],"parallel_group":"github-live","defer_reason":null},
+      {"lane":"diff-hygiene","proof_role":"Reject whitespace and unintended policy-surface churn.","acceptance_ids":["AC-7"],"deterministic":true,"resource_profile":"small","budget_seconds":30,"budget_tokens":500,"argv":["git","diff","--check"],"parallel_group":"issue-local","defer_reason":null}
+    ]
+  }
+}

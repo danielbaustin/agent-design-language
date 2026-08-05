@@ -16,14 +16,14 @@ Verify migration and CI entry gates, freeze the comparison, capture standard and
 
 ## Plan
 
-Revision 4
+Revision 5
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify entry gates and freeze exact workloads, environment, permissions, cost, cache, and proof topology",
+    "action": "Verify entry gates and freeze exact workloads, environment, permissions, cost, cache, proof topology, and numeric adoption thresholds",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -33,7 +33,7 @@ Revision 4
   },
   {
     "id": "S2",
-    "action": "Capture complete ubuntu-latest and restricted 16-core cold/warm trials and parity evidence",
+    "action": "Capture complete ubuntu-latest and restricted 16-core cold/warm raw trials and proof parity evidence",
     "acceptance_ids": [
       "AC-3",
       "AC-4",
@@ -43,7 +43,7 @@ Revision 4
   },
   {
     "id": "S3",
-    "action": "Run one canary, decide each lane, retain observation or cleanup and fallback proof, validate, and review",
+    "action": "Recompute statistics, apply every frozen threshold, run one canary, retain observation or cleanup/fallback proof, validate, and review",
     "acceptance_ids": [
       "AC-5",
       "AC-6",
@@ -83,7 +83,7 @@ Revision 4
 
 .csdlc/prepared/issues/5853/design.md
 
-Digest: f5be4e21e235dcbbfea8d4483057a9d0b3b60bc653b6955dc3799e6e85989525
+Digest: b55bff65678838b3f435b8b1cfc4b03935f93eb71ad270bf35906404df9702e6
 
 ## Diagram
 

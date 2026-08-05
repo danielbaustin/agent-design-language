@@ -54,3 +54,10 @@ Completion requires `eligibility.json`, `frozen-manifest.json`, complete
 accepted by the tracked validator, plus workflow contract checks, diff hygiene,
 and a clean exact-head review. Provisioning a runner or producing planning
 prose is not completion.
+
+`frozen-manifest.json` must predeclare numeric adoption thresholds for minimum
+critical-path improvement, minimum reliability, maximum candidate p95
+regression, maximum queue increase, and maximum cost per minute saved. The
+validator recomputes p50, p95, means, reliability, deltas, and cost efficiency
+from finite nonnegative raw samples; it rejects inconsistent totals, mismatched
+reported statistics, threshold-free adoption, or adoption below any gate.
