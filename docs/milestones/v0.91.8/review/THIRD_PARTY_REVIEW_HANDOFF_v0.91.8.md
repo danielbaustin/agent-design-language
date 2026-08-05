@@ -32,7 +32,7 @@ GitHub truth:
 | Gate | Required state before send |
 | --- | --- |
 | Exact target revision | Fill `Repository`, `PR`, `base`, `head`, and exact commit SHA in the Target Revision section. If any source changes after that SHA, fail closed and refresh this handoff. |
-| Predecessor gates | WP-16 quality-gate evidence must remain ancestral to the target revision. WP-17 documentation alignment and both WP-18 review passes must remain closed. WP-19 / `#5357` returned blocked findings on 2026-08-04. WP-20 / `#5363` must land remediation before any refreshed approval review. WP-21 through WP-23 remain downstream and must not be treated as prerequisites unless later live truth says otherwise. |
+| Predecessor gates | WP-16 quality-gate evidence must remain ancestral to the target revision. WP-17 documentation alignment, both WP-18 review passes, WP-19 / `#5357`, WP-20 / `#5363`, WP-21 / `#5362`, and WP-21A / `#5355` must remain closed at the target revision. WP-22 / `#5359` and WP-23 / `#5348` remain downstream and must not be treated as prerequisites unless later live truth says otherwise. |
 | Source packet | Every path in the Source And Evidence Manifest must exist at the target revision. |
 | Implementation and proof packet | For send-time review, landed WP-02 through WP-16 implementation, tests, deployment/observatory/runtime/C-SDLC/ADL surfaces, and proof packets must be enumerated in the Implementation And Proof Manifest below from closed issue evidence. Fail closed if owner surfaces or proof packets are missing. |
 | Live issue truth | Issue and PR state must match [../WP_ISSUE_WAVE_v0.91.8.yaml](../WP_ISSUE_WAVE_v0.91.8.yaml) and [../WP_EXECUTION_READINESS_v0.91.8.md](../WP_EXECUTION_READINESS_v0.91.8.md). |
@@ -117,12 +117,12 @@ integrated quality source is WP-16 at
 `2e9d2dd7c4260dcf6ec6af954b0eea97554212df`; WP-17 closed the documentation
 alignment to that merged evidence. WP-18 closed its first review through PR
 `#5781` and its final second pass through PR `#5799`. WP-19 `#5357` returned
-blocked findings on 2026-08-04 because the packet was not frozen to an exact
-PR/head SHA/digest. WP-20 `#5363` owns the remediation before any refreshed
-approval review or release closeout.
+blocked findings on 2026-08-04, and WP-20 `#5363` remediated the accepted
+findings through PR #5806. WP-21 `#5362` and WP-21A `#5355` then landed the
+handoff and closeout-planning packets through PRs #5807 and #5808.
 
 This is not a release handoff and not release approval. The retained WP-19
-result is a blocked finding packet that must be remediated before a future
+finding packet and WP-20 remediation are inputs to any future refreshed
 approval review.
 
 ## Reviewer Authority
@@ -298,16 +298,19 @@ Before send, refresh:
 - PR state for the target review packet;
 - #5408 remains closed and PR #5419 remains merged;
 - #4906 retained blocker state is not accidentally marked resolved;
-- WP-19 / `#5357` returned blocked findings and WP-20 / `#5363` owns their
-  remediation; WP-21 through WP-23 remain downstream unless live issue truth
-  changes;
+- WP-19 / `#5357` returned blocked findings, WP-20 / `#5363` remediated the
+  accepted findings, and WP-21 / `#5362` plus WP-21A / `#5355` landed the
+  handoff planning packets; WP-22 through WP-23 remain downstream unless live
+  issue truth changes;
 - focused validation from [../CANONICAL_DOC_INVENTORY_v0.91.8.md](../CANONICAL_DOC_INVENTORY_v0.91.8.md).
 
 Live GitHub truth refreshed on 2026-08-04: the open `version:v0.91.8` issues are
-`#5348`, `#5355`, `#5357`, `#5359`, `#5362`, `#5363`, and sprint umbrella
-`#5595`. Prerequisite repair `#5804` is closed through merged PR `#5805`. All
-other issue inputs named by the implementation manifest are closed or retained
-historical evidence unless a later live refresh says otherwise.
+WP-21 evidence follow-up `#5809`, WP-22 `#5359`, WP-23 `#5348`, and sprint
+umbrella `#5595`. Prerequisite repair `#5804` is closed through merged PR
+`#5805`. WP-19 `#5357`, WP-20 `#5363`, WP-21 `#5362`, and WP-21A `#5355` are
+closed by merged PRs. All other issue inputs named by the implementation
+manifest are closed or retained historical evidence unless a later live refresh
+says otherwise.
 
 ## Required Review Questions
 

@@ -3,26 +3,10 @@
   "issue": 5362,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "49dd51058366e60d5fb9ca712cb57e8db94cf86b4f1be8d6dc61eb0ac220a0c5",
-  "phase": "published",
-  "generation": 13,
-  "digest": "c9bd19f3c37d0ea3a7f1fdee38dd6cb0f3472acffe0f2e51e7856463b5469219",
-  "claim": {
-    "id": "claim-5362-v0918-preparation-20260804",
-    "owner": "codex:5362-preparation-owner",
-    "generation": 13,
-    "acquired_unix_seconds": 1785865601,
-    "expires_unix_seconds": 1786470401,
-    "heartbeat_unix_seconds": 1785865601,
-    "branch": "codex/5362-v0918-preparation",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/issues/5362",
-      ".csdlc/locks/5362.lock",
-      ".csdlc/prepared/issues/5362",
-      ".csdlc/evidence/5362"
-    ],
-    "purpose": "Prepare #5362 WP-21 feature-list and v0.92 planning-truth handoff only; consume closed/completed WP-21 sidecar evidence from current origin/main; no execution, publication, PR, product implementation, predecessor mutation, or version:v0.92 issue mutation"
-  },
+  "phase": "closed_out",
+  "generation": 14,
+  "digest": "b471fa648bbb8b7c16e6a34dfc8b07159fc95a4f8f5c0232a86f27be402d50e3",
+  "claim": null,
   "review_assignment": {
     "reviewer": "subagent:gpt-5.5:Locke",
     "assigned_by": "codex:wp21-conductor",
@@ -72,10 +56,24 @@
     "head": "codex/5362-v0918-preparation",
     "revision": "git-blake3:7a639a3e988cdf58d2f3abfb390044a4cb094ecd:8547ac0e537b29945ecc67c5a45a57781e90dab2f344d734e28275e4af58c782",
     "draft": false,
-    "observed_state": "open"
+    "observed_state": "merged"
   },
   "readiness": null,
-  "terminal": null,
+  "terminal": {
+    "pull_request": 5807,
+    "disposition": "merged",
+    "observed_sha": "f1ddeacf5e91a1c8da690b2940e4125937aa57a3",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5362.json",
+    "released_branch": "codex/5362-v0918-preparation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5362",
+      ".csdlc/locks/5362.lock",
+      ".csdlc/prepared/issues/5362",
+      ".csdlc/evidence/5362"
+    ]
+  },
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5362/design.md",
   "diagram_path": ".csdlc/prepared/issues/5362/diagram.mmd",
@@ -87,34 +85,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "07deca37af6783cde69ca124feb1221230f0ce462a4e589d7beafb774e9fe9eb",
+      "values_digest": "1adaac29255db0b163e4a2d3ba264ffd17ae03d503669969cb9b93a9b5e9cfa4",
       "rendered_digest": "5f7ba2fa3c47b35b5287dad36410eb01bb0c75ee3d297d317614d8968c560059",
       "ast_digest": "6239cfa6fe6b6624af27645f0f321f9bdc0ec296fb0ad67bf3f85619d6899fc2"
     },
     "stp": {
-      "values_digest": "d4478dab66f26d9720915af3f962207272f1af045315c763587f37426b2d2c15",
+      "values_digest": "b413577e08d4525304825acda1003479c3a010349c89b8b786f63d6ff17cf822",
       "rendered_digest": "0999b283c24c36153d7e1596722e0a45e6bb36d0ed5d73b1d10b474f589fb940",
       "ast_digest": "b0d24b551bbb72be629ae8b3e404ca1af3eaa5d651c567dd477cbcf8730e1d21"
     },
     "spp": {
-      "values_digest": "c2f2f4b9bda06e3900782302a6cc37b2ddae73f5fb4d6f16ffd528304323c043",
+      "values_digest": "ab3ba2a02b5eda861385eab3770f778d3aefcf1cea1f2dfdcd1658eb03f2751a",
       "rendered_digest": "1f4945733487ce994f83f3dfb3460a6b84f736a1f86a94a19f8e1c68b6ca4f6e",
       "ast_digest": "d569e8f6426b9986f1f44d16aba7248cc1182518205610f68f261e21a3125b4b"
     },
     "vpp": {
-      "values_digest": "a74c5607c64197048a142d5b89b13795b7279a90cd44d2c50a506d067f133f03",
+      "values_digest": "d3d4a211c0e6efb834a50b3ccb588530f76be9c670fd9f525169b6fd1ab7ede6",
       "rendered_digest": "4d1659280ab6ff25e708850377e092251695f8dc70f6e85f7f383c7913814e3c",
       "ast_digest": "510252c5e447569ef27c87370be9e38cdb78670487be86b2702a1827c3f29aea"
     },
     "srp": {
-      "values_digest": "b4a3c0e734347c4dd952ba622288d246582606fa705a158ff9d004809c7d5fba",
+      "values_digest": "f27037c7dc8369a7c05c0767fe1456d64fd34bda292a35ed0b26ebdd1fbf979c",
       "rendered_digest": "3b731bcdfd08f86ccc4383292ecb258cd3a10f33e878f232810bbee3ee638040",
       "ast_digest": "4bd0c18ec1fb8c4fc54f92e759fed031854fc507a641af0e9d583a88bcc6853e"
     },
     "sor": {
-      "values_digest": "4d732658f3fce56dcfbb9f177323b819cb4fcabcf9009c2cc6433beaba7c97d6",
-      "rendered_digest": "c624980d4bde4fbb537f97469b72b58e4f03f86af2cf1b40407bfa16d93fee43",
-      "ast_digest": "b6f0776e0ba81e14429aebf22460219a6aa8c8c2a5e4216a7b6aa741f897845a"
+      "values_digest": "74523aa20e72a8d4105e5736481447edba03db5bfb5abb30ef5339d3f4f91dab",
+      "rendered_digest": "06a365ab29bb60d164298098df307a38e4a08a70157cc12ced237a03b1cef13e",
+      "ast_digest": "032b43e76d575f43f42c12a3d2441365bf2bdeda12e23493f4365c1e6ec2255f"
     }
   },
   "transitions": [
@@ -152,6 +150,27 @@
       "to": "published",
       "actor": "codex:wp21-conductor",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5355-5362-closeout-repair",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5355-5362-closeout-repair",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5355-5362-closeout-repair",
+      "reason": "terminal truth recorded from merged PR #5807 and derived terminal authority"
     }
   ],
   "audit": [
@@ -280,6 +299,13 @@
       "actor": "codex:wp21-conductor",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:5355-5362-closeout-repair",
+      "reason": "terminal truth recorded from merged PR #5807 and derived terminal authority",
+      "operation": "materialize_derived_terminal"
     }
   ]
 }

@@ -3,26 +3,10 @@
   "issue": 5355,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "624106bf52f25a8a94eb0717fe157e89f3023d6e610c0ed2ca2f6f9d257233f4",
-  "phase": "published",
-  "generation": 10,
-  "digest": "6b8874224de5f371c9831f5fb5c38d73ba174170b8ff9a92304869100dca965a",
-  "claim": {
-    "id": "claim-5355-v0918-preparation",
-    "owner": "codex:5355-preparation-owner",
-    "generation": 10,
-    "acquired_unix_seconds": 1785865720,
-    "expires_unix_seconds": 1786470520,
-    "heartbeat_unix_seconds": 1785865720,
-    "branch": "codex/5355-v0918-preparation",
-    "worktree": ".",
-    "protected_paths": [
-      ".csdlc/issues/5355",
-      ".csdlc/locks/5355.lock",
-      ".csdlc/prepared/issues/5355",
-      ".csdlc/evidence/5355"
-    ],
-    "purpose": "Prepare #5355 WP-21A v0.91.8 next-milestone closeout-planning handoff only; no execution until WP-21 #5362 is live-merged and ancestral"
-  },
+  "phase": "closed_out",
+  "generation": 11,
+  "digest": "d4302997b4cb460ed73b2b95841141bdca5f63f042156bb3a24aa2936022934c",
+  "claim": null,
   "review_assignment": {
     "reviewer": "subagent:gpt-5.5:WP21A-reviewer",
     "assigned_by": "codex:wp21a-conductor",
@@ -68,10 +52,24 @@
     "head": "codex/5355-v0918-preparation",
     "revision": "git-blake3:52765450b5379f545ff95b70de5aceb6eda9b396:081095755a29b5838276925bd69f8b39ec7e948e6a408d3616af6d2ec61991ad",
     "draft": false,
-    "observed_state": "open"
+    "observed_state": "merged"
   },
   "readiness": null,
-  "terminal": null,
+  "terminal": {
+    "pull_request": 5808,
+    "disposition": "merged",
+    "observed_sha": "1aabee8c57bdeb0e7d0a53a6f9da8f1e2597c7b6",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5355.json",
+    "released_branch": "codex/5355-v0918-preparation",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5355",
+      ".csdlc/locks/5355.lock",
+      ".csdlc/prepared/issues/5355",
+      ".csdlc/evidence/5355"
+    ]
+  },
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5355/design.md",
   "diagram_path": ".csdlc/prepared/issues/5355/diagram.mmd",
@@ -83,34 +81,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "653d60f7357144efbecda23bbb81f23aa864a9eabd3277244d7a67e49045ca87",
+      "values_digest": "63d8ec0a943bb5c8c918dc36593061a9b0ac2daa0df1dfecef192b26ff79b634",
       "rendered_digest": "425ea6fe39456e84cb7df142f9f6de1bc71f749be3badba3d0745e90e1f0b523",
       "ast_digest": "c18fa3c30281bcbc676c36a17c9236e70a8d62fca6038ed848ed3b70d7ef72e7"
     },
     "stp": {
-      "values_digest": "65e3dc4b5250356756af425847c22c2f4290ea73bceb592499f170e8500f8d44",
+      "values_digest": "31b8cd261b9e78cc6b3a60ab58754661d27b51d4f5aca0bf009a833fff532fd3",
       "rendered_digest": "363e89456263bb797673d2c8a31bbf81c021af93db236ec70569244dbcb628ad",
       "ast_digest": "89ac830e0e28c75f05821dec5fc2695bde978758e4c862f9d959ac3c237b0bcb"
     },
     "spp": {
-      "values_digest": "d93038af6adc806f8b404916ea751faae15050a7ae94f16f6004b4f1940ead96",
+      "values_digest": "9ef0045128ce74176fdcc9a14de18816963b19b5517a6ca22a35f6a0a93cf500",
       "rendered_digest": "6bc14d7154db99d829a59058ac07ee8c31ebf78bc1d6d27749c01c49cfce6082",
       "ast_digest": "ed103aa81ff791df04ef3c9f34ea896538216b12b4669db9bd22f9d40211480d"
     },
     "vpp": {
-      "values_digest": "1f24485d65c920366be81c83d31aee4a6f133eef227ec566c4d329b44346ae31",
+      "values_digest": "cbb46f0705f9de2bd306a2135472704c4f22fe45ceeb16de6aaffe332492f83b",
       "rendered_digest": "c37020001a2b54d9beed6d92218c3eee48972c22883709f82f8bbfbbedaba980",
       "ast_digest": "5aceabafb5a775c75ab527a3e701a8c2cdf6a9693aa4787a438bef00ae2198ee"
     },
     "srp": {
-      "values_digest": "d495e2580a3c9b1b04ac51d959a368b55f2de680dfb1aa4ec4fbb5ec2bc89f86",
+      "values_digest": "4b42eb7a23ae173bba8b0f0e0309b95e61e05b2285ee78d2c2a6c812d0b05b2b",
       "rendered_digest": "123aefa3afe6e1e9c94b9cc406a064ce654410c022ce6671079824140ea482bb",
       "ast_digest": "76798f0fd121bd8b60befe8640fe142851bf7af27d11431be18e45a49b6712f1"
     },
     "sor": {
-      "values_digest": "cc012248a883bd04c5daf78b2fd1a4dbe271056f6df6200157d43669f3a5a64b",
-      "rendered_digest": "d7a727d33ec384c616a59e9a68e1b65cd2ed819045fc83c3d3ae09ad8af417de",
-      "ast_digest": "01b2ae6e379ea3b88bc27e33e256ddf9f6e36d6a2dd6ba22e54b48009a6318ea"
+      "values_digest": "353b536dc38201a0cd7f166fd94a3e662a6aaaf1563c93e57a4e11e2d3aff5a2",
+      "rendered_digest": "313843c5fe10f776982bcf6792953e1a7622ad7307cf23713f79e8f36e919edb",
+      "ast_digest": "0ac7b7f1115eb1bc2bdcab776c303afe0896f446abe8fc92d4e8bde5b785265a"
     }
   },
   "transitions": [
@@ -148,6 +146,27 @@
       "to": "published",
       "actor": "codex:wp21a-conductor",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:5355-5362-closeout-repair",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:5355-5362-closeout-repair",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:5355-5362-closeout-repair",
+      "reason": "terminal truth recorded from merged PR #5808 and derived terminal authority"
     }
   ],
   "audit": [
@@ -255,6 +274,13 @@
       "actor": "codex:wp21a-conductor",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:5355-5362-closeout-repair",
+      "reason": "terminal truth recorded from merged PR #5808 and derived terminal authority",
+      "operation": "materialize_derived_terminal"
     }
   ]
 }

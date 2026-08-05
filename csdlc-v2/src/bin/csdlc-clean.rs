@@ -3,8 +3,8 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 use csdlc_v2::cleanup::{
-    build_legacy_terminal_index, execute_cleanup, validate_terminal_census, CleanupRequest,
-    LegacyTerminalIndexRequest,
+    build_legacy_terminal_index, execute_cleanup, materialize_terminal, validate_terminal_census,
+    CleanupRequest, LegacyTerminalIndexRequest, TerminalMaterializeRequest,
 };
 
 #[derive(Parser)]
@@ -30,6 +30,12 @@ enum Command {
         #[arg(long)]
         request: PathBuf,
     },
+    MaterializeTerminal {
+        #[arg(long)]
+        root: PathBuf,
+        #[arg(long)]
+        request: PathBuf,
+    },
     ValidateCensus {
         #[arg(long)]
         root: PathBuf,
@@ -48,6 +54,11 @@ fn main() {
         Command::CompatibilityIndex { root, request } => {
             read::<LegacyTerminalIndexRequest>(&request)
                 .and_then(|request| build_legacy_terminal_index(&root, &request))
+                .and_then(json_value)
+        }
+        Command::MaterializeTerminal { root, request } => {
+            read::<TerminalMaterializeRequest>(&request)
+                .and_then(|request| materialize_terminal(&root, &request))
                 .and_then(json_value)
         }
         Command::ValidateCensus { root, audit } => {

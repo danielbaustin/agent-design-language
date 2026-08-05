@@ -21,11 +21,11 @@
 | WP-16 | WP-15 convergence proof | Passed at `2e9d2dd7c`; see `evidence/wp16/QUALITY_GATE.md`. |
 | WP-17 | WP-16 quality gate | Closed documentation and release-truth alignment. |
 | WP-18 | WP-17 merge; final pass after residual coding | Both #5356 and final second pass #5791 are closed. |
-| WP-19 | WP-18 #5791 merge | Ready to freeze; external review is not dispatched. |
-| WP-20 | WP-19 merge | Pending remediation and release preflight. |
-| WP-21 | WP-20 merge | Pending exact-revision v0.92 handoff ledger. |
-| WP-21A | WP-21 merge | Pending next-milestone closeout plan. |
-| WP-22 | WP-21A merge | Pending next-milestone planning review. |
+| WP-19 | WP-18 #5791 merge | Closed; external review findings are retained under `review/external_review_5357/`. |
+| WP-20 | WP-19 merge | Closed; remediation and release preflight landed through PR #5806. |
+| WP-21 | WP-20 merge | Closed; exact-revision v0.92 handoff ledger landed through PR #5807. |
+| WP-21A | WP-21 merge | Closed; next-milestone closeout plan landed through PR #5808. |
+| WP-22 | WP-21A merge | Ready for next-milestone planning review. |
 | WP-23 | WP-22 merge | Pending release ceremony and lifecycle closeout. |
 
 ## Historical Card-Factory Wave
@@ -37,7 +37,7 @@ gate pass evidence.
 
 ## Remaining Readiness Rule
 
-The final WP-18 second pass through WP-23 remain serial and must refresh live
-issue and PR truth before each release-tail action. WP-16 and the first WP-18
-pass do not approve external review, release, v0.92 activation, or ceremony by
+The remaining WP-22 through WP-23 release-tail work remains serial and must
+refresh live issue and PR truth before each action. WP-16, WP-18, WP-19, WP-20,
+WP-21, and WP-21A do not approve v0.92 activation or release ceremony by
 themselves.

@@ -107,17 +107,17 @@ Implemented and validated the WP-21A next-milestone closeout-planning packet aft
 
 ## Integration
 
-pr_open
+merged
 
 ## Publication
 
-Publication: ready
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 
