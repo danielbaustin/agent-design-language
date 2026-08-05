@@ -77,9 +77,16 @@ Each envelope binds identity root and evidence revision to explicit provider/mod
 
 WP-08/#5825 and WP-09/#5826 must be terminal, and #4761 evidence must remain verifiable. The `lib.rs` registration claim is additionally serialized after WP-11/#5828 integration; this is a write-collision gate, not a semantic substitution for WP-08 or WP-09. Capability is descriptive and bounded; it does not grant authority, prove invocation, expose credentials, or imply unlimited capacity.
 
-## Validation And Rollback
+## Validation
 
-The exact `capability_envelope` integration-test target must run a nonzero count proving complete deterministic envelopes and stale-provenance, unsupported-provider/model, unauthorized-capability, omitted-limit, secret-like-content, and path-portability failures. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes the v0.92 envelope while preserving #4761 evidence unchanged.
+The exact `capability_envelope` integration-test target must run a nonzero count proving complete deterministic envelopes and stale-provenance, unsupported-provider/model, unauthorized-capability, omitted-limit, secret-like-content, and path-portability failures. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden.
+
+## Rollback
+
+Remove only the WP-12 capability-envelope module, registration, integration
+test, fixtures, and owned feature-document edits. Preserve retained #4761
+evidence, rejected envelopes, and native receipts; rollback must not grant a
+capability, relax a denial or limit, or expose credential material.
 
 ## Non-Goals
 

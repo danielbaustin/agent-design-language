@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1bed306513e72500abe5d143e2ec479191780e44a02561af7742f761bc958f89",
   "phase": "bound",
-  "generation": 47,
-  "digest": "cdc0c59b5dcf576edc7f87e56471f46b1b8f541483501dee925935aa796cfc60",
+  "generation": 49,
+  "digest": "04ec3df526a26a02d27118ac28373c7d99d5212ce0fafffc1fde8235fbe9e1c7",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5826/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-birthday-publication-final-design-review",
-      "revision": "53a190501144dc14801ab53a2a627d04fdbc2111413d0d45b4e6f094d5b37d2e"
+      "reviewer": "codex:5860-birthday-publication-followup-design-review",
+      "revision": "ba2ad2f62ab40d2e0a1b86240ffdac8fe3f07431993fb1f818bc8e36d3e493c1"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "a96a1084ead1687d72e9d99efe4284962190faad6cba16f72eb77be66d7712e9",
+      "values_digest": "6453a8f3ad4bc81297c89082e837a7d45ccf4278c02de832d616174ae3d8c8ea",
       "rendered_digest": "4d6883dc887631fca3e3cc56735a43aa8d4e52499d6a201bdb17b9872178282b",
       "ast_digest": "9f49fdd6b50b3ed26db9a41e22370c5568a5d071bec8fef8b05e8c5251fd9c6d"
     },
     "stp": {
-      "values_digest": "6d1dd464cf6de669cf1cce01d49fca2df6a45b1f88aa35d50917a43eefad01cc",
+      "values_digest": "7fcb7a0b7f99fbf8d86eced0c67e0a6ae9451ee7593567ee178bdb3fc02c8204",
       "rendered_digest": "3f3295be0def022de32df4e069c949b2d588214c7440de52603ef21115b883f6",
       "ast_digest": "29238666ae341873bf753b14a92c0b07ac5c3b1c9f132794acd1cc52529a2cf4"
     },
     "spp": {
-      "values_digest": "8fb7d214685a3eaffa0259d8e4385d7d587c67c02cae16f281c69732c6ca92e7",
-      "rendered_digest": "f2a1e368c9d512e3aa1af9d7c50dfc34c1aee7d733455cb413c737aa09132a29",
-      "ast_digest": "c7594dd94f4fddb0dbe31c610274d349f5e64aba1068d5f1df4f17a6e7feb900"
+      "values_digest": "281eecf308e7a52710cc25b6828ecba616fb1208b0e2a7313292adb9cf1c7196",
+      "rendered_digest": "39ec88462344b07ba9883c32eb8a13cd86810b04d3930d1eee8814203f15b1c1",
+      "ast_digest": "ba794812fe9cb9abf503703cc0e7e720dc74924008ea7223ecf0cf204dce2a17"
     },
     "vpp": {
-      "values_digest": "dbec4bc98b9e9cda4e6c137bcaab955f916a14979391bc697e7a584dd21d4400",
+      "values_digest": "65910619e4c210cd270796c72104283cab855b2c70df0e38b77060848af82868",
       "rendered_digest": "ff948713e1f0c166a8c0e223c319360106deb01073fc5225b1071c51fe908795",
       "ast_digest": "f4850dc36a244b4d04d7032395ebc17150572a7aa0730dbfb1755e9c1a163399"
     },
     "srp": {
-      "values_digest": "03d876c9d0f391d689b000c24657d20a5f1c58768f8ab526940f65ad4cc345a5",
+      "values_digest": "d3c5981fd946e301b9900fc0cfad66f130c95049117882a28590d602bd0e15c1",
       "rendered_digest": "f0e9b963f02bbd8867ff6ecc4de02958433c3ddfaaf01c327402594a46d267dc",
       "ast_digest": "65f6b23f51b9fa521a69b132fb0c73f834514dcf3ee2be2ebd378966acae6071"
     },
     "sor": {
-      "values_digest": "ddcc968722a43a19a4feb08866afc21e1eefd6599cb9298bafeed9a89b060001",
+      "values_digest": "c89553b56a618621e157dac7e8fa9c23d3260920f91958398f28a367e4bf7c12",
       "rendered_digest": "73285c147df2070352a736b49dc7cc813558574b83098912c14f34893ea55a9a",
       "ast_digest": "bfc21804e100d80c16cdcb8e3e07b883c104866725478b9e1cc69a392af6a002"
     }
@@ -503,6 +503,34 @@
       "actor": "codex:5860-birthday-publication-repair",
       "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
       "operation": "{\"claim_id\":\"claim-5826-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
+    },
+    {
+      "sequence": 63,
+      "generation": 47,
+      "actor": "codex:5860-birthday-publication-followup",
+      "reason": "Reacquire the released issue-local preparation claim for explicit rollback and exact ownership projection repair.",
+      "operation": "{\"branch\":\"codex/5860-birthday-publication-repair\",\"claim_id\":\"claim-5826-v092-birthday-publication-followup\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-publication-followup\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5826\",\".csdlc/prepared/issues/5826\",\".csdlc/evidence/5826\",\".csdlc/locks/5826.lock\"],\"purpose\":\"Issue-local execution-readiness follow-up only: explicit rollback and exact SPP ownership projection; no product, live GitHub, aggregate, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 64,
+      "generation": 48,
+      "actor": "codex:5860-birthday-publication-followup-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 65,
+      "generation": 49,
+      "actor": "codex:5860-birthday-publication-followup",
+      "reason": "Project current Owned Paths followed by canonical Serialization Gates exactly into SPP affected_areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/birthday_identity.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/birthday_identity.rs\",\"adl-runtime-kernel/tests/fixtures/birthday_identity\",\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\".csdlc/prepared/issues/5826/validate-native-receipts.rb\",\".csdlc/prepared/issues/5826/produce-native-receipt.rb\",\".csdlc/evidence/5826\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-birthday-kernel-registration-v1\\\",\\\"paths\\\":[\\\"adl-runtime-kernel/src/lib.rs\\\"],\\\"issues\\\":[5825,5826,5827,5828,5829,5830,5831,5833],\\\"order\\\":[5825,5826,5827,5828,5829,5830,5831,5833]}\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-identity-feature-doc-v1\\\",\\\"paths\\\":[\\\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\\\"],\\\"issues\\\":[5826,5827],\\\"order\\\":[5826,5827]}\"]}"
+    },
+    {
+      "sequence": 66,
+      "generation": 49,
+      "actor": "codex:5860-birthday-publication-followup",
+      "reason": "Release the issue-local follow-up claim after rollback, exact ownership projection, design approval, and validation.",
+      "operation": "{\"claim_id\":\"claim-5826-v092-birthday-publication-followup\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-followup\",\"previous_owner\":\"codex:5860-birthday-publication-followup\"}"
     }
   ]
 }

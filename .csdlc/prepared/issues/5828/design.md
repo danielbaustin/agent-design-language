@@ -63,9 +63,16 @@ Declared memory records and citation hashes form a canonical context topology. B
 
 WP-09/#5826 and WP-10/#5827 must be terminal. Before editing, record exact source revisions and digests for `adl/src/obsmem_contract/models.rs`, `adl-runtime-kernel/src/observability.rs`, and `adl-runtime-kernel/src/proof.rs` in `obsmem-trace-integration-receipt.json`; that receipt also names the fixture digest, trace ID, ObsMem citation IDs, and Runtime v3 test output digest. Same normalized ObsMem records, trace refs, identity root, continuity head, observation time, and bounds produce byte-equivalent semantic output. No raw private state enters the packet; all references remain repo-relative and witnessed.
 
-## Validation And Rollback
+## Validation
 
-The exact `memory_palace` Runtime v3 integration-test target must run a nonzero count and prove normalized ObsMem ingestion, trace/receipt binding, deterministic replay, bounded overflow, and stale/hash/continuity/redaction failures. `validate-obsmem-trace-integration.rb` recomputes source, authority, fixture-tree, and output digests and binds exact HEAD, argv, runner, trace, and citation identity rather than trusting declared fields. The issue-local native producer must run the same target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent native validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes the new Runtime v3 module and fixture schema while preserving the integration receipt and emitted historical packets as evidence.
+The exact `memory_palace` Runtime v3 integration-test target must run a nonzero count and prove normalized ObsMem ingestion, trace/receipt binding, deterministic replay, bounded overflow, and stale/hash/continuity/redaction failures. `validate-obsmem-trace-integration.rb` recomputes source, authority, fixture-tree, and output digests and binds exact HEAD, argv, runner, trace, and citation identity rather than trusting declared fields. The issue-local native producer must run the same target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent native validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden.
+
+## Rollback
+
+Remove only the WP-11 Runtime v3 Memory Palace module, registration,
+integration test, fixtures, and owned feature-document edits. Preserve the
+ObsMem authority inputs, integration receipts, rejected traces, and emitted
+historical packets; rollback must not erase or reinterpret memory evidence.
 
 ## Non-Goals
 

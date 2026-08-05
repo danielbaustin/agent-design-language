@@ -77,9 +77,16 @@ Stable name is a label bound to an identity root, never the root itself. Aliases
 
 WP-08/#5825 must be terminal before implementation; prior citizen-state lineage remains authoritative substrate. Serialization and identity-root derivation are deterministic. Raw private state is never required for review, and a display name, boot admission, wake, snapshot, or copied state cannot establish identity alone.
 
-## Validation And Rollback
+## Validation
 
-The exact `birthday_identity` integration-test target must run a nonzero test count covering canonical records, deterministic ordering, missing roots, alias collision, provenance mismatch, substituted continuity heads, and private-path disclosure. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes the v0.92 record/fixtures while retaining prior lineage primitives and WP-08 outputs.
+The exact `birthday_identity` integration-test target must run a nonzero test count covering canonical records, deterministic ordering, missing roots, alias collision, provenance mismatch, substituted continuity heads, and private-path disclosure. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden.
+
+## Rollback
+
+Remove only the WP-09 identity record module, registration, integration test,
+fixtures, and owned feature-document edits. Preserve prior lineage primitives,
+WP-08 outputs, rejected identity records, and native receipt evidence; rollback
+must not rename an identity root or rewrite continuity history.
 
 ## Non-Goals
 

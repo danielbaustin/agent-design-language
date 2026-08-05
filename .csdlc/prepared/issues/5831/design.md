@@ -62,9 +62,16 @@ Evaluation bindings connect one loop iteration to feedback source, confidence, e
 
 WP-01/#5817, WP-13/#5830, merged #5104 semantics, and current Runtime v3 qualification must be verified. WP-01B/#5818 is a distinct documentation activation package and cannot satisfy the WP-01 gate. Same durable inputs replay identically. Missing evidence never becomes feedback; resume requires prefix continuity; rejected proposals cannot mutate state; bounds and cancellation remain Runtime authority.
 
-## Validation And Rollback
+## Validation
 
-The exact `adaptive_learning` Runtime v3 integration-test target must run a nonzero count proving accepted/rejected mutation, deterministic replay, forged/substituted history rejection, invalid graph bindings, discontinuous resume, recurrence bounds, missing evidence, unauthorized mutation, and rollback mismatch. The lane uses `adl-runtime-kernel/Cargo.toml`, not `adl/Cargo.toml`. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback replays the recorded inverse or restores prior graph/state hashes without deleting rejected proposal history.
+The exact `adaptive_learning` Runtime v3 integration-test target must run a nonzero count proving accepted/rejected mutation, deterministic replay, forged/substituted history rejection, invalid graph bindings, discontinuous resume, recurrence bounds, missing evidence, unauthorized mutation, and rollback mismatch. The lane uses `adl-runtime-kernel/Cargo.toml`, not `adl/Cargo.toml`. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden.
+
+## Rollback
+
+Replay the accepted WP-13A mutation's recorded inverse or restore the exact
+prior graph and state hashes, then remove only the new module registration,
+test, fixtures, and owned feature-document edits. Preserve rejected proposals,
+mutation history, and native receipts; rollback mismatch remains a hard failure.
 
 ## Non-Goals
 

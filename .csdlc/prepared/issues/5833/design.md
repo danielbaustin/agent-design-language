@@ -77,9 +77,16 @@ Witnesses must be distinct where policy requires, bind the exact birthday candid
 
 WP-09/#5826 through WP-13/#5830 must be terminal as required by sprint gate 3, and #4762 evidence remains an input rather than current birth proof. Receipts are review surfaces, not authority substitutes.
 
-## Validation And Rollback
+## Validation
 
-The exact `birth_witness` Runtime v3 integration-test target must run a nonzero count proving valid witness sets, deterministic receipts, and equivocation, duplicate identity, stale digest, missing authority, forged integrity ref, redaction leakage, and premature-birth rejection. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden. Rollback removes new schemas while retaining #4762 and all emitted audit evidence unchanged.
+The exact `birth_witness` Runtime v3 integration-test target must run a nonzero count proving valid witness sets, deterministic receipts, and equivocation, duplicate identity, stale digest, missing authority, forged integrity ref, redaction leakage, and premature-birth rejection. The issue-local producer must run that target on native GitHub Actions macOS and Linux jobs at exact candidate HEAD and retain a hashed source manifest, complete nextest log, and canonical semantic-output artifact. The independent validator recomputes those files and producer digest, parses the positive test count, verifies workflow/run/job identity, and requires byte-identical semantic outputs; ancestral SHA equivalence is forbidden.
+
+## Rollback
+
+Remove only the WP-15 witness module, registration, integration test, fixtures,
+and owned feature-document edits. Preserve retained #4762 evidence, all emitted
+audit receipts, rejected witness sets, and native CI receipts; rollback must
+not erase equivocation evidence or authorize a premature birth.
 
 ## Non-Goals
 

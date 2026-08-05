@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d92e8e7b58695fd938ff38397f6cc6e3a2c3fda5ecb26fa32cb1d552e29f74f9",
   "phase": "bound",
-  "generation": 44,
-  "digest": "9da2c8b525fb3c2ecb2524b0d9e43303a02db969acee1e918724f04e0f5cfca6",
+  "generation": 46,
+  "digest": "f9626c71595968324443e435be0d3ede6c53b4f43696d762dd43d5bf50b1c91e",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5830/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5860-birthday-publication-final-design-review",
-      "revision": "f35675dba50b2e158321cae3f89231cdd773760df44ad578251150d8a9626def"
+      "reviewer": "codex:5860-birthday-publication-followup-design-review",
+      "revision": "f02bc64fc2119cdf4a142b52830e2ac84dbbb8b451292465c36abd6a7e4964df"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "b181a454b3c3ecb93e81b7b7343229d7b56d4c554ab0538f32dcc3684492a570",
+      "values_digest": "814eb64b81c4551e11014fe419f4177b392c95118876c79ea06c387a92f15395",
       "rendered_digest": "f693dd3d3ed034e3ffbaff3348331e986f4f5cc9ae5fce166acecd4f23918b30",
       "ast_digest": "3fd878ebfe7fe0596cb55885b39a06ca0f8b84f87406ef8b718c3f501ba84fa1"
     },
     "stp": {
-      "values_digest": "c2e709a2e07c7a4cf694c4782501f8d0e0c9c23cfcd09840cfab9147dd5c3a25",
+      "values_digest": "608ae27194021df6b129b482610456e38f8f2e73e2d86b85cf975c50f9a2000f",
       "rendered_digest": "fd8dce747c315f38887093f1ca7f78f40a0a717c2adea3ef1c2e910fb00e000e",
       "ast_digest": "a6776fd2b7988e12ebfb3180b974a23e81a2c5a85415af812f34310817b29558"
     },
     "spp": {
-      "values_digest": "496cc71b87cc458eeb0b223d3e272bd27a93fdecd1a68c86276d8a0a3919a727",
-      "rendered_digest": "15551bea2539350cdb4d4eb5d7c813c7c34e52494e09eb8c4367607f4f82ffd6",
-      "ast_digest": "247cfe3d46acf50a376ab5e1f5c93a009648c8c50349ee0c622d5165d23c3321"
+      "values_digest": "d6d366f47bc907b7391e02b6e2630366f11c1edba52397474cd3c714762039e1",
+      "rendered_digest": "dd3444f4f45edd9c2bb786e582cf91183d37d3f68c07989b746531f542c191fd",
+      "ast_digest": "29af754196b0046af937fbad1842e5e23dfc42058b982c5f7469127b9ce6b64a"
     },
     "vpp": {
-      "values_digest": "734b50b8a2d8b1be0a89e25ba8e9f88abfdb1559e307bc46529e65aae9f11da1",
+      "values_digest": "4fe351cb81e956ffafb608fdbe6cffad54717c78c41581a4c89e1cb1ff2d071c",
       "rendered_digest": "b0a3140c6e8cfe0885a6657e63d5915856ecf5f388c1bb69e946e94a4a9f0fbd",
       "ast_digest": "e42f2bb8373136730967311b01222073b57f5c500d721cf3aca2d5448b495d3c"
     },
     "srp": {
-      "values_digest": "bff76ab5e8d6bd92d6b143fb127b0acb964909c5046a76da3415a5edb44f3c9e",
+      "values_digest": "fa70c4f0eb35ff491b4a2b80cd1ef4d2e644d0c6e3c576ebc2a16d9ff123a4ee",
       "rendered_digest": "5cf1d14625cc5c42441e85503a8ba2347ee72f5b8a6c55327ebb7b4d02773ec8",
       "ast_digest": "a0c0d5d841942e9187eedd87886ba119301e1a7842960f3b8e41ca367ba925ca"
     },
     "sor": {
-      "values_digest": "fb38138db63c0d35f5834896c3d1e10613467135c385e479a90b70eaf0c1b131",
+      "values_digest": "aac826a4652e71dbef5dddb58411107d6683d920fa1b25a86aab94fd5ff60eee",
       "rendered_digest": "8dbf031f6e2f727893acd7c4297a6e74d21ecc2bad913bb38629f4c172994b2e",
       "ast_digest": "80a35a095cda2e9920e7a586f841529fd4f683612c6d4f7f185bba3eddcdef26"
     }
@@ -482,6 +482,34 @@
       "actor": "codex:5860-birthday-publication-repair",
       "reason": "Release the temporary preparation claim after typed card regeneration, exact-digest design approval, and lane validation.",
       "operation": "{\"claim_id\":\"claim-5830-v092-birthday-publication-repair\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-repair\",\"previous_owner\":\"codex:5860-birthday-publication-repair\"}"
+    },
+    {
+      "sequence": 60,
+      "generation": 44,
+      "actor": "codex:5860-birthday-publication-followup",
+      "reason": "Reacquire the released issue-local preparation claim for explicit rollback and exact ownership projection repair.",
+      "operation": "{\"branch\":\"codex/5860-birthday-publication-repair\",\"claim_id\":\"claim-5830-v092-birthday-publication-followup\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-publication-followup\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5830\",\".csdlc/prepared/issues/5830\",\".csdlc/evidence/5830\",\".csdlc/locks/5830.lock\"],\"purpose\":\"Issue-local execution-readiness follow-up only: explicit rollback and exact SPP ownership projection; no product, live GitHub, aggregate, publication, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 61,
+      "generation": 45,
+      "actor": "codex:5860-birthday-publication-followup-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 62,
+      "generation": 46,
+      "actor": "codex:5860-birthday-publication-followup",
+      "reason": "Project current Owned Paths followed by canonical Serialization Gates exactly into SPP affected_areas.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/cognitive_profile.rs\",\"adl-runtime-kernel/src/lib.rs\",\"adl-runtime-kernel/tests/cognitive_profile.rs\",\"adl-runtime-kernel/tests/fixtures/cognitive_profile\",\"docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md\",\".csdlc/prepared/issues/5830/validate-native-receipts.rb\",\".csdlc/prepared/issues/5830/produce-native-receipt.rb\",\".csdlc/evidence/5830\",\"SERIALIZATION_GATE {\\\"schema\\\":\\\"csdlc.serialization_gate.v1\\\",\\\"id\\\":\\\"v092-birthday-kernel-registration-v1\\\",\\\"paths\\\":[\\\"adl-runtime-kernel/src/lib.rs\\\"],\\\"issues\\\":[5825,5826,5827,5828,5829,5830,5831,5833],\\\"order\\\":[5825,5826,5827,5828,5829,5830,5831,5833]}\"]}"
+    },
+    {
+      "sequence": 63,
+      "generation": 46,
+      "actor": "codex:5860-birthday-publication-followup",
+      "reason": "Release the issue-local follow-up claim after rollback, exact ownership projection, design approval, and validation.",
+      "operation": "{\"claim_id\":\"claim-5830-v092-birthday-publication-followup\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-birthday-publication-followup\",\"previous_owner\":\"codex:5860-birthday-publication-followup\"}"
     }
   ]
 }

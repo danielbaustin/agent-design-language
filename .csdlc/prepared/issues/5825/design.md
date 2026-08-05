@@ -62,9 +62,16 @@ A birth result requires stable name and identity root, continuity head across bo
 
 WP-01/#5817 and WP-02A/#5801 must be terminally proven before execution. WP-01B/#5818 and WP-02/#5819 are distinct work packages and cannot satisfy those gates. The decision is deterministic over canonical inputs, fails closed on missing or contradictory evidence, and never upgrades existing v0.91.x birthday non-claims by implication.
 
-## Validation And Rollback
+## Validation
 
-Focused tests must invoke the exact `birthday` integration-test target, assert that at least one test ran, and prove one valid packet plus every table-driven disqualifier and missing-evidence case. A claim-boundary scan rejects personhood, consciousness, production citizenship, governance, migration, and transport overclaims. The issue-local native producer must run that exact target on native GitHub Actions macOS and Linux jobs at the exact candidate HEAD, emit a hashed source manifest, preserve the complete nextest log, and require the test to write a canonical semantic-output artifact. The independent validator recomputes every digest, parses a positive test count from the retained log, validates workflow/run/job identity, and requires byte-identical semantic outputs; an ancestral or source-equivalent SHA is not accepted. Rollback removes the new module/fixtures and restores the feature doc without altering historical evidence.
+Focused tests must invoke the exact `birthday` integration-test target, assert that at least one test ran, and prove one valid packet plus every table-driven disqualifier and missing-evidence case. A claim-boundary scan rejects personhood, consciousness, production citizenship, governance, migration, and transport overclaims. The issue-local native producer must run that exact target on native GitHub Actions macOS and Linux jobs at the exact candidate HEAD, emit a hashed source manifest, preserve the complete nextest log, and require the test to write a canonical semantic-output artifact. The independent validator recomputes every digest, parses a positive test count from the retained log, validates workflow/run/job identity, and requires byte-identical semantic outputs; an ancestral or source-equivalent SHA is not accepted.
+
+## Rollback
+
+Remove only the WP-08 birthday module, its registration, integration test, and
+fixtures, then restore the owned feature-document revision. Preserve all
+historical birth-decision evidence and failed native receipts; rollback must
+not alter predecessor records or convert a rejected candidate into a birth.
 
 ## Non-Goals
 

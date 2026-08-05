@@ -16,7 +16,7 @@ Implement and prove WP-15 exact-candidate witness consensus and deterministic re
 
 ## Plan
 
-Revision 17
+Revision 18
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 17
 
 .csdlc/prepared/issues/5833/design.md
 
-Digest: 8e0278683ad4ad77939534ba8b896e3531e813263cb638c3f8422e53d5be37f5
+Digest: 03a5c8906927d3af970da1061ec00f53abbd3d56275f83f8809de2d184268bde
 
 ## Diagram
 

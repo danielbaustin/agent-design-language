@@ -16,7 +16,7 @@ Implement and prove WP-12 canonical capability envelopes with explicit providers
 
 ## Plan
 
-Revision 25
+Revision 26
 
 ## Steps
 
@@ -90,7 +90,7 @@ Revision 25
 
 .csdlc/prepared/issues/5829/design.md
 
-Digest: 186ceac72b256612758f121177c944d42c80f610f6a22242760d3aeca3e890d4
+Digest: d72c5d0f7868815302fc8369a3e8f3d65ab63cd3e28ac0f8cf112bfb7870ed2c
 
 ## Diagram
 
