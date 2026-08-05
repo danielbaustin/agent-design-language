@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5860,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
+    "slug": "v092-all-issue-execution-readiness",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "v092-readiness-matrix",
+          "proof_role": "Reject placeholder/generic cards and verify exact design/card/dependency readiness for all 41 children",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 1200,
+          "budget_tokens": 12000,
+          "argv": [
+            "ruby",
+            ".csdlc/prepared/issues/5860/validate-v092-readiness.rb"
+          ],
+          "parallel_group": "readiness-integration",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed on any placeholder, generic plan, pending design approval, invalid card, active preparation claim, or product path change.",
+      "design_ref": ".csdlc/prepared/issues/5860/design.md",
+      "design_digest": "e1cfff83f30931bbc2de3fa7624859c0924b5661a45f6af7e416a90d45a3a707",
+      "diagram_ref": ".csdlc/prepared/issues/5860/diagram.mmd",
+      "diagram_digest": "6f53c3e4107b7adf7e298a31c25674d8c8be3b2d3ac51ae58d82ed73ade33021"
+    }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5860,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "55ede2c3738e4bf11b1ccb5c475e5b9703bea3faabc6e4d568d4cd61d96e7886",
+  "phase": "bound",
+  "generation": 0,
+  "digest": "6ccc097242f48769cbcf8501a22f274c4f83bd7720aca24d366f8f7e80eb8bf8",
+  "claim": {
+    "id": "claim-5860-v092-execution-readiness",
+    "owner": "codex:5860-readiness-integration",
+    "generation": 0,
+    "acquired_unix_seconds": 1785948596,
+    "expires_unix_seconds": 1786553396,
+    "heartbeat_unix_seconds": 1785948596,
+    "branch": "codex/5860-v092-execution-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5860",
+      ".csdlc/locks/5860.lock",
+      ".csdlc/prepared/issues/5860",
+      ".csdlc/evidence/5860"
+    ],
+    "purpose": "Integrate and prove design-time execution readiness for all 41 v0.92 child issues without product implementation"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5860/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5860/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator:daniel-all-issues-ready-before-start",
+      "revision": "e1cfff83f30931bbc2de3fa7624859c0924b5661a45f6af7e416a90d45a3a707"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "49a66ed9219a22634a2bf8a16013631bc8b0b5fad12545e34d9183f005541942",
+      "rendered_digest": "84224fe6b2dbf908847f946d76bfe6a1ed36c3ec91562ae1ed6880150869dc28",
+      "ast_digest": "6a7bf860a06eb99e664452614deda2a9d25705e794790f80f80aa00464ddfd83"
+    },
+    "stp": {
+      "values_digest": "d6a483d6567d1b191ba668202fd79ebea93fdf23a4a1a0c6340470192d1014e5",
+      "rendered_digest": "aeb28e3bac1a1f0425c479f31a6f61bbea269814b6334c096f0b6cba2f215a7b",
+      "ast_digest": "a44d7f72dbbd92253c0f2d38f5ab0c688b76df7c733fb6a9b83ad4692e920a4a"
+    },
+    "spp": {
+      "values_digest": "6df94e1354421b2ea317fe07554b42da880f64fab338e86c4906e3f64ffe9469",
+      "rendered_digest": "eff1760281ddaf1b2bb815ec80b3d3a7495438fcdcf52752cdd7485c5c4c0fed",
+      "ast_digest": "b133c00589387951b13f8fbf9b2b03761b09ae89ef23662d6196c74ae6bc49df"
+    },
+    "vpp": {
+      "values_digest": "d674e6a93b19c97b3f54a26615591537eb4a15f903bdea13c4344fbbc423a37a",
+      "rendered_digest": "690e8244a1d614f525965ef1d493a9b5cc2416925b6fab9491a1bf4a03d678a9",
+      "ast_digest": "063c86fb613f0246319698ab96f3ec0bac16c8f886da6cd750d57eaf4c7debc6"
+    },
+    "srp": {
+      "values_digest": "789149f8fbb25f71e4070df8b7e3d376d3818b63fe5f1ca617fb8c4cbee737a6",
+      "rendered_digest": "cabf432d913e8a9dced5a580bb4b20ba7fb67db0a5373af5369f2b0cfac12c93",
+      "ast_digest": "d001f4f5fad9aaffa86656d1d338d49cb1eeaa7119255f428281bb171a3f23e1"
+    },
+    "sor": {
+      "values_digest": "65428bc0b4f26bd700ad292ba61d40f1db568c1da3c36d8937b907883eb3ff92",
+      "rendered_digest": "e5c23d520fdb2039cc289c6e10700a41dcc06cee612b2c66a204f054853b7fc0",
+      "ast_digest": "223f1066bd695acf41a77dd6529663934aab79c15f0fc409eba3fd6fe4ade01f"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-readiness-integration",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-readiness-integration",
+      "reason": "verified Git worktree binding"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    }
+  ]
+}

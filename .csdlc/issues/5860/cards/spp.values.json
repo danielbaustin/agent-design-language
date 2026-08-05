@@ -1,0 +1,98 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5860,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
+    "slug": "v092-all-issue-execution-readiness",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Audit all children, prepare five disjoint sprint sets, integrate typed designs/cards, validate every packet and released claim, then run one independent exact-head review.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Audit all 41 children and preserve exact defect/readiness baseline",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-5"
+          ],
+          "status": "in_progress"
+        },
+        {
+          "id": "S2",
+          "action": "Prepare source-grounded designs and typed cards in five disjoint sprint lanes",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Integrate results, release preparation claims, and generate the 41-row readiness matrix",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Run typed validation and independent exact-head readiness review; repair every finding",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No product path changes",
+        "No generic card accepted as ready",
+        "No unapproved design accepted",
+        "No active preparation claim left behind",
+        "No child implementation begins"
+      ],
+      "risks": [
+        "Large card count can hide generic or contradictory prose",
+        "Parallel lanes can drift from canonical dependency truth",
+        "Typed card edits can expose schema or claim-control defects"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "Any proposed product implementation",
+        "Any unresolved child scope contradiction",
+        "Any typed validation bypass",
+        "Any overlapping preparation claim"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5860/design.md",
+      "design_digest": "e1cfff83f30931bbc2de3fa7624859c0924b5661a45f6af7e416a90d45a3a707",
+      "diagram_ref": ".csdlc/prepared/issues/5860/diagram.mmd",
+      "diagram_digest": "6f53c3e4107b7adf7e298a31c25674d8c8be3b2d3ac51ae58d82ed73ade33021"
+    }
+  }
+}

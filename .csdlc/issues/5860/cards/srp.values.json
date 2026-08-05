@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5860,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
+    "slug": "v092-all-issue-execution-readiness",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "All 41 child readiness packets, #5860 matrix, and no-product-diff boundary.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can every child bind after only just-in-time claim reacquisition?",
+        "Are all designs and plans issue-specific and source-grounded?",
+        "Do VPPs name real proving and negative lanes without claiming execution?",
+        "Are SRP/SOR and all non-claims truthful?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

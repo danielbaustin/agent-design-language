@@ -1,0 +1,23 @@
+{
+  "issue": 5860,
+  "base_branch": "main",
+  "branch": "codex/5860-v092-execution-readiness",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5860-v092-execution-readiness",
+    "owner": "codex:5860-readiness-integration",
+    "generation": 0,
+    "acquired_unix_seconds": 1785948596,
+    "expires_unix_seconds": 1786553396,
+    "heartbeat_unix_seconds": 1785948596,
+    "branch": "codex/5860-v092-execution-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5860",
+      ".csdlc/locks/5860.lock",
+      ".csdlc/prepared/issues/5860",
+      ".csdlc/evidence/5860"
+    ],
+    "purpose": "Integrate and prove design-time execution readiness for all 41 v0.92 child issues without product implementation"
+  }
+}
