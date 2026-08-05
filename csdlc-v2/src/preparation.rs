@@ -524,6 +524,15 @@ pub fn seal_preparation(
     let _lock = preparation_lock(store, request.issue)?;
     let manifest_path = issue_preparation_dir(store, request.issue).join("manifest.json");
     let current = load_manifest(store, request.issue)?;
+    if !matches!(
+        current.state,
+        PreparationState::Prepared | PreparationState::ExecutionReady
+    ) {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "only a prepared or already execution-ready generation can be sealed",
+        ));
+    }
     if current.digest != request.expected_manifest_digest
         || current.current_generation.as_deref() != Some(&request.expected_generation)
         || current.semantic_digest.as_deref() != Some(&request.expected_semantic_digest)
@@ -631,6 +640,7 @@ pub fn run_preparation_batch(
             "batch_id and at least one child are required",
         ));
     }
+    validate_component(&request.batch_id, "batch_id")?;
     let mut issues = BTreeSet::new();
     for child in &request.children {
         if !issues.insert(child.sync.issue) {
@@ -696,7 +706,6 @@ pub fn run_preparation_batch(
         children,
         next_operation: next_operation.into(),
     };
-    validate_component(&result.batch_id, "batch_id")?;
     write_immutable_json(
         &store
             .root()
@@ -746,7 +755,7 @@ pub fn migrate_legacy_preparation(
                 "interrupted migration snapshot does not match canonical authority",
             ));
         }
-        fs::remove_dir_all(&preparation_dir)?;
+        remove_mutable_preparation_state(&preparation_dir)?;
     }
     if matches!(
         record.phase,
@@ -879,7 +888,10 @@ pub fn migrate_legacy_preparation(
         ".csdlc/preparation/issues/{}/migration/legacy-{}.json",
         request.issue, record.digest
     );
-    write_immutable_json(&store.root().join(&snapshot_relative), &record)?;
+    let snapshot_path = store.root().join(&snapshot_relative);
+    if !snapshot_path.exists() {
+        write_immutable_json(&snapshot_path, &record)?;
+    }
     write_generation(store, &generation, &design, &diagram)?;
     let next = manifest(
         record.issue,
@@ -897,7 +909,7 @@ pub fn migrate_legacy_preparation(
         store.remove_unstarted_binding_projection(record.issue, &claim.id, &record.digest)
     {
         if issue_preparation_dir(store, request.issue).exists() {
-            fs::remove_dir_all(issue_preparation_dir(store, request.issue))?;
+            remove_mutable_preparation_state(&issue_preparation_dir(store, request.issue))?;
         }
         return Err(error);
     }
@@ -969,6 +981,12 @@ pub fn repair_legacy_preparation(
             }
         }
         LegacyPreparationRepairDisposition::TombstoneStalePreparation => {
+            if load_binding_intent(store, request.issue)?.is_some() {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidTransition,
+                    "cannot tombstone preparation while a binding intent exists",
+                ));
+            }
             if store.issue_dir(request.issue).exists() {
                 return Err(V2Error::new(
                     ErrorCode::InvalidTransition,
@@ -1331,6 +1349,12 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
                     "existing binding intent is owned by different session truth",
                 ));
             }
+            if existing.expires_unix_seconds <= trusted_now {
+                return Err(V2Error::new(
+                    ErrorCode::ReconciliationRequired,
+                    "expired binding intent must be released with exact digest before retry",
+                ));
+            }
             (
                 existing.owner.clone(),
                 existing.claim_id.clone(),
@@ -1404,7 +1428,20 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
         initial: generation.initial.clone(),
         prepared_cards: Some(generation.cards.clone()),
     };
-    if let Err(error) = initialize_prepared_issue_under_binding_lock(store, bootstrap) {
+    let initialization = if store.issue_dir(request.issue).exists() {
+        let existing = store.load_record(request.issue)?;
+        if existing.claim.as_ref().map(|value| value.id.as_str()) != Some(&claim_id) {
+            Err(V2Error::new(
+                ErrorCode::ClaimCollision,
+                "existing canonical projection does not match binding intent",
+            ))
+        } else {
+            Ok(existing)
+        }
+    } else {
+        initialize_prepared_issue_under_binding_lock(store, bootstrap)
+    };
+    if let Err(error) = initialization {
         if error.code == ErrorCode::ClaimCollision {
             let path = binding_intent_path(store, request.issue)?;
             if path.exists() {
@@ -1440,6 +1477,9 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
     }
     intent.created_artifacts.sort();
     intent.created_artifacts.dedup();
+    intent.digest.clear();
+    intent.digest = object_digest(&intent)?;
+    write_binding_intent(store, &intent)?;
     update_manifest_state(store, request.issue, PreparationState::Bound)?;
     if bind.created {
         update_manifest_state(
@@ -1566,7 +1606,18 @@ pub fn release_derived_bind(
             ));
         }
         let target = PathBuf::from(registered);
-        validate_release_target(&target, request.issue, &intent)?;
+        if target.exists() {
+            validate_release_target(&target, request.issue, &intent)?;
+        } else {
+            let revision =
+                crate::git::run(store.root(), &["rev-parse", intent.branch.as_str()])?.stdout;
+            if revision != intent.base_revision {
+                return Err(V2Error::new(
+                    ErrorCode::ReconciliationRequired,
+                    "missing intent-owned worktree has an advanced branch",
+                ));
+            }
+        }
         crate::git::run(
             store.root(),
             &["worktree", "remove", "--force", registered.as_str()],
@@ -1628,8 +1679,7 @@ fn recover_interrupted_artifact_evidence(store: &Store, intent: &mut BindingInte
         .iter()
         .find(|(branch, _)| branch == &intent.branch)
     {
-        let expected = store.root().join(&intent.worktree);
-        let expected = expected.canonicalize()?.to_string_lossy().to_string();
+        let expected = expected_worktree_path(store.root(), &intent.worktree)?;
         if branch != &intent.branch || registered != &expected {
             return Err(V2Error::new(
                 ErrorCode::ReconciliationRequired,
@@ -1829,6 +1879,11 @@ fn validate_bind_dirty_paths(root: &Path, _issue: u64) -> Result<()> {
     let canonical_root = root.canonicalize()?;
     for (_, registered) in crate::git::worktrees(root)? {
         let registered = PathBuf::from(registered);
+        let registered = if registered.exists() {
+            registered.canonicalize()?
+        } else {
+            registered
+        };
         if let Ok(relative) = registered.strip_prefix(&canonical_root) {
             let prefix = format!("{}/", relative.to_string_lossy().trim_end_matches('/'));
             if prefix != "./" {
@@ -1854,6 +1909,16 @@ fn validate_bind_dirty_paths(root: &Path, _issue: u64) -> Result<()> {
         ));
     }
     Ok(())
+}
+
+fn expected_worktree_path(root: &Path, relative: &str) -> Result<String> {
+    let expected = root.canonicalize()?.join(relative);
+    let expected = if expected.exists() {
+        expected.canonicalize()?
+    } else {
+        expected
+    };
+    Ok(expected.to_string_lossy().to_string())
 }
 
 pub fn load_manifest(store: &Store, issue: u64) -> Result<PreparationManifest> {
@@ -2274,7 +2339,11 @@ fn initial_from_cards(cards: &BTreeMap<CardKind, CardValues>) -> Result<InitialC
             ))
         }
     };
-    let stp = match &cards[&CardKind::Stp].content {
+    let stp = match &cards
+        .get(&CardKind::Stp)
+        .ok_or_else(|| V2Error::new(ErrorCode::CardInvalid, "STP card is missing"))?
+        .content
+    {
         CardContent::Stp(value) => value,
         _ => {
             return Err(V2Error::new(
@@ -2283,7 +2352,11 @@ fn initial_from_cards(cards: &BTreeMap<CardKind, CardValues>) -> Result<InitialC
             ))
         }
     };
-    let spp = match &cards[&CardKind::Spp].content {
+    let spp = match &cards
+        .get(&CardKind::Spp)
+        .ok_or_else(|| V2Error::new(ErrorCode::CardInvalid, "SPP card is missing"))?
+        .content
+    {
         CardContent::Spp(value) => value,
         _ => {
             return Err(V2Error::new(
@@ -2292,7 +2365,11 @@ fn initial_from_cards(cards: &BTreeMap<CardKind, CardValues>) -> Result<InitialC
             ))
         }
     };
-    let vpp = match &cards[&CardKind::Vpp].content {
+    let vpp = match &cards
+        .get(&CardKind::Vpp)
+        .ok_or_else(|| V2Error::new(ErrorCode::CardInvalid, "VPP card is missing"))?
+        .content
+    {
         CardContent::Vpp(value) => value,
         _ => {
             return Err(V2Error::new(
@@ -2301,7 +2378,11 @@ fn initial_from_cards(cards: &BTreeMap<CardKind, CardValues>) -> Result<InitialC
             ))
         }
     };
-    let srp = match &cards[&CardKind::Srp].content {
+    let srp = match &cards
+        .get(&CardKind::Srp)
+        .ok_or_else(|| V2Error::new(ErrorCode::CardInvalid, "SRP card is missing"))?
+        .content
+    {
         CardContent::Srp(value) => value,
         _ => {
             return Err(V2Error::new(
@@ -2379,16 +2460,17 @@ fn dependency_cycle_issues(children: &[PrepareRunRequest]) -> BTreeSet<u64> {
         .collect::<BTreeMap<_, _>>();
     let mut cyclic = BTreeSet::new();
     for start in graph.keys().copied() {
-        let mut stack = vec![(start, vec![start])];
-        while let Some((node, path)) = stack.pop() {
+        let mut stack = vec![start];
+        let mut visited = BTreeSet::new();
+        while let Some(node) = stack.pop() {
+            if !visited.insert(node) {
+                continue;
+            }
             for next in graph.get(&node).into_iter().flatten().copied() {
                 if next == start {
-                    cyclic.extend(path.iter().copied());
-                    cyclic.insert(next);
-                } else if !path.contains(&next) {
-                    let mut successor = path.clone();
-                    successor.push(next);
-                    stack.push((next, successor));
+                    cyclic.insert(start);
+                } else {
+                    stack.push(next);
                 }
             }
         }
@@ -2457,8 +2539,12 @@ fn validate_live_dependencies(store: &Store, dependencies: &[DependencyRevision]
             let manifest = load_manifest(store, dependency.issue)?;
             let receipt: ExecutionReadinessReceipt = read_json(&preparation_receipt)?;
             verify_receipt(&receipt)?;
-            if manifest.state != PreparationState::ExecutionReady
-                || manifest.receipt_digest.as_deref() != Some(&receipt.digest)
+            if !matches!(
+                manifest.state,
+                PreparationState::ExecutionReady
+                    | PreparationState::Binding
+                    | PreparationState::Bound
+            ) || manifest.receipt_digest.as_deref() != Some(&receipt.digest)
             {
                 return Err(V2Error::new(
                     ErrorCode::StaleDigest,
@@ -2571,18 +2657,31 @@ fn write_immutable_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
     }
 }
 
+fn remove_mutable_preparation_state(issue_dir: &Path) -> Result<()> {
+    for name in [
+        "draft.json",
+        "manifest.json",
+        "receipt.json",
+        "generations",
+        "receipts",
+    ] {
+        let path = issue_dir.join(name);
+        if path.is_dir() {
+            fs::remove_dir_all(path)?;
+        } else if path.exists() {
+            fs::remove_file(path)?;
+        }
+    }
+    Ok(())
+}
+
 fn preparation_root_and_relative(path: &Path) -> Result<(&Path, PathBuf)> {
     let namespace = path
         .ancestors()
         .find(|ancestor| ancestor.file_name().is_some_and(|name| name == ".csdlc"))
         .or_else(|| {
-            path.ancestors().find(|ancestor| {
-                ancestor.file_name().is_some_and(|name| name == "csdlc-v2")
-                    && ancestor
-                        .parent()
-                        .and_then(Path::file_name)
-                        .is_some_and(|name| name == ".git")
-            })
+            path.ancestors()
+                .find(|ancestor| ancestor.file_name().is_some_and(|name| name == "csdlc-v2"))
         })
         .ok_or_else(|| {
             V2Error::new(
@@ -2590,12 +2689,7 @@ fn preparation_root_and_relative(path: &Path) -> Result<(&Path, PathBuf)> {
                 "preparation path is outside governed lifecycle namespaces",
             )
         })?;
-    let root = if namespace.file_name().is_some_and(|name| name == ".csdlc") {
-        namespace.parent()
-    } else {
-        namespace.parent().and_then(Path::parent)
-    }
-    .ok_or_else(|| {
+    let root = namespace.parent().ok_or_else(|| {
         V2Error::new(
             ErrorCode::UnsafeCheckout,
             "preparation namespace has no repository root",

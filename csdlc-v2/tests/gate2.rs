@@ -1362,7 +1362,7 @@ fn released_claim_reacquires_without_phase_or_audit_rewind() {
     assert_eq!(doctor.status, DoctorStatus::Block);
     assert_eq!(
         doctor.next_operation.as_deref(),
-        Some("csdlc-migrate repair")
+        Some("csdlc-bind --recover-request <request.json>")
     );
 
     let result = reacquire_claim(

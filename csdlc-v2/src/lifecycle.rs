@@ -691,6 +691,18 @@ pub(crate) fn validate_validation_lanes(
                 format!("validation lane {} has no executable", lane.lane),
             )
         })?;
+        if matches!(
+            executable.rsplit('/').next(),
+            Some("true" | "false" | "echo" | "printf" | "sleep")
+        ) {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                format!(
+                    "validation lane {} uses non-proving executable {}",
+                    lane.lane, executable
+                ),
+            ));
+        }
         let executable_exists = if executable.contains('/') {
             let path = if Path::new(executable).is_absolute() {
                 Path::new(executable).to_path_buf()

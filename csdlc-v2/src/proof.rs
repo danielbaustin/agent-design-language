@@ -7,6 +7,7 @@ use std::time::Instant;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{ErrorCode, Result, V2Error};
+use crate::operator::SkillManifest;
 use crate::{select_generation, Generation, GenerationSelector};
 
 const REQUIRED_STEPS: [&str; 5] = [
@@ -16,24 +17,6 @@ const REQUIRED_STEPS: [&str; 5] = [
     "quality",
     "v2_install_verify",
 ];
-const BINARY_NAMES: [&str; 15] = [
-    "csdlc-bind",
-    "csdlc-clean",
-    "csdlc-doctor",
-    "csdlc-edit",
-    "csdlc-finish",
-    "csdlc-init",
-    "csdlc-install",
-    "csdlc-proof",
-    "csdlc-publish",
-    "csdlc-review",
-    "csdlc-schedule",
-    "csdlc-shadow",
-    "csdlc-shepherd",
-    "csdlc-soak",
-    "csdlc-validate",
-];
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ProofManifest {
@@ -330,15 +313,15 @@ fn measure(repo: &Path, steps: &[StepEvidence]) -> Result<ProofMeasurements> {
     }
     let target = crate::operator::external_cargo_target(repo)?.join("debug");
     let mut debug_binary_bytes = Vec::new();
-    for name in BINARY_NAMES.into_iter().collect::<BTreeSet<_>>() {
-        let path = target.join(name);
+    for name in SkillManifest::load()?.required_binaries() {
+        let path = target.join(&name);
         if !regular_file(&path) || !executable_file(&path) {
             return Err(V2Error::new(
                 ErrorCode::ValidationFailed,
                 format!("revision-current binary measurement is missing {name}"),
             ));
         }
-        debug_binary_bytes.push((name.into(), fs::metadata(path)?.len()));
+        debug_binary_bytes.push((name, fs::metadata(path)?.len()));
     }
     debug_binary_bytes.sort();
     Ok(ProofMeasurements {

@@ -97,7 +97,7 @@ fn bound_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
                     resource_profile: csdlc_v2::cards::ResourceProfile::Small,
                     budget_seconds: 30,
                     budget_tokens: 10,
-                    argv: vec!["true".into()],
+                    argv: vec!["cargo".into(), "--version".into()],
                     parallel_group: "local".into(),
                     defer_reason: None,
                 }],

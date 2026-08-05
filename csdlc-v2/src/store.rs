@@ -1415,6 +1415,17 @@ pub(crate) fn bootstrap_issue(store: &Store, request: BootstrapRequest) -> Resul
     let diagram_digest = digest(&fs::read(store.root.join(&request.diagram_path))?);
     let cards = if let Some(mut cards) = request.prepared_cards {
         for values in cards.values_mut() {
+            if values.identity.issue != request.issue
+                || values.identity.repository != request.repository
+                || values.identity.title != request.initial.title
+                || values.identity.slug != request.initial.slug
+                || values.identity.version != request.initial.version
+            {
+                return Err(V2Error::new(
+                    ErrorCode::CardInvalid,
+                    "prepared card identity does not match bootstrap authority",
+                ));
+            }
             values.identity.generation = 0;
         }
         validate_cross_card(

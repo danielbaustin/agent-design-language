@@ -93,24 +93,45 @@ fn diagnose_internal(store: &Store, issue: u64, include_preparation: bool) -> Do
             .join(".csdlc/preparation/issues")
             .join(issue.to_string())
             .join("manifest.json");
-        match load_binding_intent(store, issue) {
+        let binding_intent = match load_binding_intent(store, issue) {
             Ok(Some(intent)) if intent.state == BindingIntentState::Releasing => {
-                report.preparation_state =
-                    load_manifest(store, issue).ok().map(|value| value.state);
+                let manifest = match load_manifest(store, issue) {
+                    Ok(manifest) => manifest,
+                    Err(error) => {
+                        report.status = DoctorStatus::Corrupt;
+                        report.findings.push(finding(error));
+                        report.next_operation = Some("csdlc-migrate repair".into());
+                        return report;
+                    }
+                };
+                report.preparation_state = Some(manifest.state);
                 report.binding_intent_digest = Some(intent.digest);
                 report.next_operation = Some("csdlc-bind release".into());
                 return report;
             }
-            Ok(_) => {}
+            Ok(intent) => intent,
             Err(error) if preparation_manifest.exists() => {
                 report.status = DoctorStatus::Corrupt;
                 report.findings.push(finding(error));
                 report.next_operation = Some("csdlc-migrate repair".into());
                 return report;
             }
-            Err(_) => {}
-        }
+            Err(error) => {
+                report.status = DoctorStatus::Corrupt;
+                report.findings.push(finding(error));
+                report.next_operation = Some("csdlc-migrate repair".into());
+                return report;
+            }
+        };
         match load_manifest(store, issue) {
+            Ok(manifest)
+                if manifest.state == PreparationState::Binding && binding_intent.is_some() =>
+            {
+                report.preparation_state = Some(manifest.state);
+                report.binding_intent_digest = binding_intent.map(|intent| intent.digest);
+                report.next_operation = Some("csdlc-bind run".into());
+                return report;
+            }
             Ok(manifest)
                 if store.issue_dir(issue).exists() && manifest.state != PreparationState::Bound =>
             {
@@ -228,7 +249,7 @@ fn diagnose_internal(store: &Store, issue: u64, include_preparation: bool) -> Do
                 if report.findings.iter().any(|finding| {
                     finding.code == "claim_dormant" || finding.code == "claim_not_live"
                 }) {
-                    "csdlc-migrate repair"
+                    "csdlc-bind --recover-request <request.json>"
                 } else {
                     "repair_design_readiness"
                 }

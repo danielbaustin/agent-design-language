@@ -248,8 +248,9 @@ Recommended multi-issue pattern:
 
 ## Preferred Commands
 
-Use `csdlc-init --root <worktree> --request <bootstrap-request.json>` for typed
-issue initialization; use `csdlc-github-issue run --request <request.json>`
+Use `csdlc-issue --root <worktree> create --request <issue-request.json>` and
+`csdlc-prepare --root <worktree> run --request <prepare-request.json>` for typed
+issue preparation; use `csdlc-github-issue run --request <request.json>`
 when GitHub issue creation is explicitly required.
 
 For caller payload shape, prefer the canonical tracked template:

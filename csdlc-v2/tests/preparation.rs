@@ -530,6 +530,16 @@ fn seal_rejects_an_unavailable_validation_executable() {
     assert_eq!(result.error_code.as_deref(), Some("invalid_input"));
 }
 
+#[test]
+fn seal_rejects_a_successful_noop_validation_executable() {
+    let (_temp, store) = fixture();
+    let mut request = sync_request(&store, "Reject a successful no-op validation lane.");
+    request.initial.validation_lanes[0].argv = vec!["true".into()];
+    let result = run_preparation(&store, PrepareRunRequest { sync: request }).unwrap();
+    assert!(result.receipt.is_none());
+    assert_eq!(result.error_code.as_deref(), Some("invalid_input"));
+}
+
 #[cfg(unix)]
 #[test]
 fn seal_rejects_a_validation_file_without_an_executable_bit() {
@@ -1143,6 +1153,27 @@ fn derived_bind_uses_the_existing_issue_worktree_in_place() {
     .expect("issue-local bind");
     assert!(!result.bind.created);
     assert_eq!(result.worktree, ".");
+    let receipt: csdlc_v2::ExecutionReadinessReceipt = serde_json::from_slice(
+        &fs::read(
+            temp.path()
+                .join(".csdlc/preparation/issues/9001/receipt.json"),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let bound_manifest = load_preparation_manifest(&store, 9001).unwrap();
+    let error = seal_preparation(
+        &store,
+        PrepareSealRequest {
+            issue: 9001,
+            expected_generation: receipt.generation_id,
+            expected_semantic_digest: receipt.semantic_digest,
+            expected_manifest_digest: bound_manifest.digest,
+            dependencies: receipt.dependencies,
+        },
+    )
+    .expect_err("bound preparation cannot be downgraded by sealing again");
+    assert_eq!(error.code, ErrorCode::InvalidTransition);
     let mut post_bind_initial = initial("Do not edit claim-free state after bind.");
     post_bind_initial.slug = "issue-local".into();
     let error = sync_preparation(
@@ -1181,6 +1212,18 @@ fn derived_bind_uses_the_existing_issue_worktree_in_place() {
         Some("csdlc-bind release")
     );
     assert!(interrupted_release.binding_intent_digest.is_some());
+    let manifest_path = temp
+        .path()
+        .join(".csdlc/preparation/issues/9001/manifest.json");
+    let manifest_bytes = fs::read(&manifest_path).unwrap();
+    fs::write(&manifest_path, b"{}\n").unwrap();
+    let corrupt_release = diagnose(&store, 9001);
+    assert_eq!(corrupt_release.status, DoctorStatus::Corrupt);
+    assert_eq!(
+        corrupt_release.next_operation.as_deref(),
+        Some("csdlc-migrate repair")
+    );
+    fs::write(&manifest_path, manifest_bytes).unwrap();
     fs::remove_file(temp.path().join("src/issue-local.rs")).unwrap();
     release_derived_bind(
         &store,

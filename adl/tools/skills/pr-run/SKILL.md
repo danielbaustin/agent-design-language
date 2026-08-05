@@ -327,7 +327,7 @@ Canonical machine surface:
 - `csdlc-doctor --repo <repo> --issue <issue>`
 
 Execution surface:
-- `csdlc-bind --root <worktree> --request <bind-request.json>`
+- `csdlc-bind --root <worktree> run --request <bind-request.json>`
 
 Removed compatibility aliases are not valid fallbacks.
 
