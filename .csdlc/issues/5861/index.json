@@ -3,13 +3,13 @@
   "issue": 5861,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "bd0f74de382b941c962968626ec47c9841184670eb31eb9e17a30d7c0f0f6cee",
-  "phase": "implemented",
-  "generation": 4,
-  "digest": "2fa948bb12a89132730ec05faa241370000a4bbcfcdba8cc991ad87db649e6f2",
+  "phase": "reviewed",
+  "generation": 5,
+  "digest": "917dc7874078796b60f74a3c45c6241d84e25e2848233c963419ecd02f0f7bea",
   "claim": {
     "id": "claim-5861-v092-simple-preparation-binding",
     "owner": "codex:5861",
-    "generation": 4,
+    "generation": 5,
     "acquired_unix_seconds": 1785950070,
     "expires_unix_seconds": 1786554870,
     "heartbeat_unix_seconds": 1785950070,
@@ -25,7 +25,46 @@
     "purpose": "Implement claim-free preparation and recoverable execution binding after explicit operator authorization"
   },
   "review_assignment": null,
-  "review": null,
+  "review": {
+    "reviewer": "multi-model:claude-opus-5+gemini-3.1-pro+subagent",
+    "scope": [
+      "csdlc-v2",
+      "docs/architecture/csdlc-v2",
+      "docs/tooling/C_SDLC_V2_ISSUE_PREPARATION_AND_BINDING_RUNBOOK.md",
+      ".csdlc/issues/5861",
+      ".csdlc/evidence/5861",
+      ".csdlc/prepared/issues/5861"
+    ],
+    "reviewed_revision": "git-blake3:ae98c6f4957fa905194a80ff028fbccb64909ff5:309e94bac7fca2cf0df97aef93a323bd360f056e1215ebc2e842669205db9f61",
+    "findings": [
+      {
+        "id": "CLAUDE-WINDOWS-SYNC-CFG",
+        "severity": "p1",
+        "summary": "Windows directory sync used an early return that left unreachable code under strict warnings.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:ae98c6f4957fa905194a80ff028fbccb64909ff5:309e94bac7fca2cf0df97aef93a323bd360f056e1215ebc2e842669205db9f61",
+        "route": null
+      },
+      {
+        "id": "CLAUDE-ROOT-BOUND-RETRY-TOPOLOGY",
+        "severity": "p1",
+        "summary": "In-place bound retry did not symmetrically verify the durable intent branch and registered root worktree.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:ae98c6f4957fa905194a80ff028fbccb64909ff5:309e94bac7fca2cf0df97aef93a323bd360f056e1215ebc2e842669205db9f61",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Windows cross-target compilation was not available locally; cfg-split code was reviewed by Gemini and strict host all-target lint passed.",
+      "Two final Claude rerun calls returned empty provider output at HTTP 200; the preceding successful Claude findings were remediated and the post-fix Gemini and independent reviews reported no actionable findings."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
   "publication": null,
   "readiness": null,
   "terminal": null,
@@ -40,32 +79,32 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "73abf9d87625b77102bf89c75f52b7b49c0b8b1dded1b5f712f6556e9c5d78b5",
+      "values_digest": "2a2384c82e90cb1d5d7acff837848b029c4052d9a179b55c11e4202eb7911631",
       "rendered_digest": "6e39e0f8deba7bbc3536f44f9bfb50758098d82521083b0bc0df09ab85168db5",
       "ast_digest": "6fd523d645506b07936ef6dbb9bdbe6f75bf70c8363734ccc7eb730957b83dd0"
     },
     "stp": {
-      "values_digest": "3317d28f7a1afa40cb9b71caa5deac7ae2507e9dcadb9394fe1a3901c8b9986e",
+      "values_digest": "8a3b6c49b7d19fb2c0e78ee46508c9d35a92e86a6fa417cc686da2cfa6a606bf",
       "rendered_digest": "2fdefde547f40eac8f3a8396226b54fe247b94e209b5c95a39013b32895076d9",
       "ast_digest": "240dd4d1331ae906ff12eb675bee3e86a25623957075a68aeea5959fd85374a7"
     },
     "spp": {
-      "values_digest": "99f20844e2041feb93e0e97fa5e66532fafccdbaff642df9c4bba9250987026d",
+      "values_digest": "da3fbb9481652ca693da314e5a4039c79e5c9a4aa403f1601c361ba9600de228",
       "rendered_digest": "dbda70beb272ed138d651ed1a14054f2be4f7b1b8bfa6524afd4f21d28dc7982",
       "ast_digest": "59282205f7916a0b9e848c2c86fa06809fc3a537f82a5f479347a14f24f59bf0"
     },
     "vpp": {
-      "values_digest": "f0375d92e3a59aec7c0fad65e72477754849ec059d5fea0e63efda03aca7859b",
+      "values_digest": "c05d7eb0024e756caa5822a04b0d6c0332a57ac5c04229717d1f1a68e2a32427",
       "rendered_digest": "353c9944a14a2c4cf93390edac7e4f778415ec5f36a6771a1abb259615d66197",
       "ast_digest": "c49629db18b908195cbc2ddf1fb01ca263de0d02a4281c2eeedf231fdd701b75"
     },
     "srp": {
-      "values_digest": "a1e0ee3689a22eaebb88e27fa5cd19ba9209c2dca116fab89a832e1c5102245f",
-      "rendered_digest": "e1b387d9beb7748fff215455a939c62615aaea9b308a64d3dfa60d7bb85c5f7d",
-      "ast_digest": "3e842568e55505feddaa42414c71667eb0f327402f302b10ffb5a69a25483126"
+      "values_digest": "7459e236d821b9af951d6b8d0adb25199226ead9a1b12753d77e80c20874f682",
+      "rendered_digest": "2d5445e24bdee4a0536c3dae16173708f5321d6861d8bdeed371657d982c3a24",
+      "ast_digest": "1743c8b0aff09ffa3bfbdd60f25ca9a9fa6ab8ae59254cbbd0e8fffc20989639"
     },
     "sor": {
-      "values_digest": "45e61e14d441e2e3c719bdbfb8679bb86feb31ccb0923f72c23a38740c529bc2",
+      "values_digest": "a9c19615ca939b1fd552da74130560b7fc9ceeea1fc247d500beed915147d905",
       "rendered_digest": "67221da4cdc7602dfd00dc61014a8102d869db1e4f04fd8a1034f88315c25105",
       "ast_digest": "8e81f70787c7db67c144b57aeaa74bde84119b33b0a9f735bd2716eee20af1ff"
     }
@@ -91,6 +130,13 @@
       "to": "implemented",
       "actor": "codex:5861",
       "reason": "execution and passing validation finalized atomically"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:5861",
+      "reason": "exact scoped review passed"
     }
   ],
   "audit": [
@@ -135,6 +181,13 @@
       "actor": "codex:5861",
       "reason": "atomically record execution, validation, and implemented phase",
       "operation": "finalize_implementation"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:5861",
+      "reason": "atomically record exact review evidence and reviewed phase",
+      "operation": "record_review"
     }
   ]
 }

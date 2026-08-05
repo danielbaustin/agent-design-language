@@ -12,7 +12,12 @@ Status: pre_phase
 
 ## Scope
 
-Only issue 5861's C-SDLC v2 creation, preparation, readiness, binding, release, migration, batch, focused tests, schemas, operator skills, and architecture contracts.
+csdlc-v2
+docs/architecture/csdlc-v2
+docs/tooling/C_SDLC_V2_ISSUE_PREPARATION_AND_BINDING_RUNBOOK.md
+.csdlc/issues/5861
+.csdlc/evidence/5861
+.csdlc/prepared/issues/5861
 
 ## Prompts
 
@@ -26,7 +31,28 @@ Only issue 5861's C-SDLC v2 creation, preparation, readiness, binding, release, 
 
 ## Findings
 
-[]
+[
+  {
+    "id": "CLAUDE-WINDOWS-SYNC-CFG",
+    "severity": "p1",
+    "summary": "Windows directory sync used an early return that left unreachable code under strict warnings.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:ae98c6f4957fa905194a80ff028fbccb64909ff5:309e94bac7fca2cf0df97aef93a323bd360f056e1215ebc2e842669205db9f61",
+    "route": null
+  },
+  {
+    "id": "CLAUDE-ROOT-BOUND-RETRY-TOPOLOGY",
+    "severity": "p1",
+    "summary": "In-place bound retry did not symmetrically verify the durable intent branch and registered root worktree.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:ae98c6f4957fa905194a80ff028fbccb64909ff5:309e94bac7fca2cf0df97aef93a323bd360f056e1215ebc2e842669205db9f61",
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -34,12 +60,13 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Windows cross-target compilation was not available locally; cfg-split code was reviewed by Gemini and strict host all-target lint passed.
+- Two final Claude rerun calls returned empty provider output at HTTP 200; the preceding successful Claude findings were remediated and the post-fix Gemini and independent reviews reported no actionable findings.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:ae98c6f4957fa905194a80ff028fbccb64909ff5:309e94bac7fca2cf0df97aef93a323bd360f056e1215ebc2e842669205db9f61")
 
-Reviewer: None
+Reviewer: Some("multi-model:claude-opus-5+gemini-3.1-pro+subagent")
 
-Result: pre_review
+Result: pass
