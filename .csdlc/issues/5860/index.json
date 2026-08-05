@@ -5,7 +5,7 @@
   "initialization_digest": "55ede2c3738e4bf11b1ccb5c475e5b9703bea3faabc6e4d568d4cd61d96e7886",
   "phase": "bound",
   "generation": 8,
-  "digest": "8ed3feabc19977f9ed909a00ed0c7d7e2b55cc624e2f30d58894db66fcda3ec6",
+  "digest": "f3a7f6b7382347bb0be5dc8de6be31b5b31d33d872fe6f8c05f2b6c79ac92b03",
   "claim": {
     "id": "claim-5860-v092-execution-readiness",
     "owner": "codex:5860-readiness-integration",
@@ -16,10 +16,12 @@
     "branch": "codex/5860-v092-execution-readiness",
     "worktree": ".",
     "protected_paths": [
+      ".adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md",
       ".csdlc/evidence/5860",
       ".csdlc/issues/5860",
       ".csdlc/locks/5860.lock",
-      ".csdlc/prepared/issues/5860"
+      ".csdlc/prepared/issues/5860",
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml"
     ],
     "purpose": "Integrate and prove design-time execution readiness for all 58 v0.92 execution issues, including #5862-#5878 and excluding #5861, without product implementation"
   },
@@ -162,6 +164,13 @@
       "actor": "codex:5860-readiness-58-issue-reconciliation",
       "reason": "Reconcile active ownership with the canonical 58-issue readiness denominator and explicit #5861 exclusion.",
       "operation": "{\"add_protected_paths\":[\".csdlc/issues/5860\"],\"expected_owner\":\"codex:5860-readiness-integration\",\"expected_purpose\":\"Integrate and prove design-time execution readiness for all 41 v0.92 child issues without product implementation\",\"operation\":\"transition_active_claim\",\"previous_purpose\":\"Integrate and prove design-time execution readiness for all 41 v0.92 child issues without product implementation\",\"purpose\":\"Integrate and prove design-time execution readiness for all 58 v0.92 execution issues, including #5862-#5878 and excluding #5861, without product implementation\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-readiness-integration",
+      "reason": "Protect the canonical v0.92 wave and Runtime operator prompt before reconciling explicit WP-04 sprint membership and execution gates; #5861 remains externally owned and excluded.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml\",\".adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md\"],\"operation\":\"amend_claim_scope\"}"
     }
   ]
 }

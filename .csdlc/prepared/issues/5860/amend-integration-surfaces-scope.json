@@ -1,0 +1,13 @@
+{
+  "issue": 5860,
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "expected_generation": 8,
+  "expected_digest": "8ed3feabc19977f9ed909a00ed0c7d7e2b55cc624e2f30d58894db66fcda3ec6",
+  "now_unix_seconds": 1785956571,
+  "actor": "codex:5860-readiness-integration",
+  "reason": "Protect the canonical v0.92 wave and Runtime operator prompt before reconciling explicit WP-04 sprint membership and execution gates; #5861 remains externally owned and excluded.",
+  "add_protected_paths": [
+    "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+    ".adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md"
+  ]
+}
