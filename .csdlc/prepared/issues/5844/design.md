@@ -50,6 +50,19 @@ author owns it.
 5. Review the ten-article arc for duplication, sequencing, terminology, and audience fit.
 6. After #5843, update only release-dependent claims and record a publication disposition.
 
+## Production Wave Budget
+
+The ten articles are ten bounded production waves, not one two-hour writing
+task. Each article wave budgets 4 hours and 74,000 model tokens: 60 minutes and
+20,000 tokens for source-packet research, 90 minutes and 30,000 tokens for the
+complete draft, 45 minutes and 12,000 tokens for editorial/claim review, 30
+minutes and 8,000 tokens for revisions, and 15 minutes and 4,000 tokens for
+validation and packaging. The aggregate effort budget is 40 agent-hours and
+740,000 tokens. With five non-overlapping article owners, allow 8-12 hours of
+parallel drafting plus 4-6 hours for cross-series review, revisions, final
+validation, and #5843 reconciliation. A wave that exhausts its budget stops for
+re-estimation rather than producing an outline or half-reviewed article.
+
 ## Negative Cases
 
 - Outline, topic card, generated summary, or partial draft is not complete.

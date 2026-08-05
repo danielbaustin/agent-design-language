@@ -2,7 +2,7 @@
   "goal": "Produce ten complete Podcast Studio episode packages with final audio, metadata, feed records, and human and machine QA.",
   "required_outcome": "Each of the first ten episodes is independently reviewable and contains final script, audio, transcript, notes, metadata, RSS enclosure data, redaction proof, listen-check evidence, and editorial/audio review.",
   "task_boundary": "Create and validate the ten review-ready production packages using retained Podcast Studio v2 proof and the approved route/storage decision; do not deploy, submit to directories, verify mailboxes, or claim publication.",
-  "plan_summary": "Verify #5819, #3223/#3256, and route/storage authority; lock episode and guest truth; produce ten complete packages; validate audio, metadata, RSS parity, redaction, consent, and platform playback; resolve exact-head editorial/audio review.",
+  "plan_summary": "Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 agent-hours and 700,000 tokens aggregate), covering source/script work, audio production, transcript/show notes/artwork/metadata, listen review, revisions, validation, feed-wide consistency, and platform playback; five parallel owners target 20-30 hours wall-clock and stop before deployment or publication.",
   "review_scope": "Review all ten episode packages, final audio and manifests, feed parity, guest and consent truth, redaction, artwork/ID3 metadata, platform evidence, route/storage boundary, and exact candidate paths for completeness and no publication overclaim.",
   "operator_constraints": ["Historical smoke WAV/feed proof is not final episode proof", "Human guests remain draft until consent and participation are evidenced", "Episode 002 may invite DeepSeek but cannot imply acceptance or persistent identity", "All test temporary files stay under .csdlc/evidence/5845", "No deployment or directory submission without separate authority", "Release the preparation claim before implementation handoff"],
   "collections": {
@@ -27,11 +27,12 @@
   },
   "acceptance_criteria": ["AC-1: All ten episodes contain every required script, audio, transcript, note, metadata, artwork, enclosure, redaction, QA, and review artifact.", "AC-2: Audio digests, duration, sample rate, channels, loudness, peak, ID3/artwork, listen check, and archive records are internally consistent.", "AC-3: Feed/enclosure records match episode specs and reject local paths, drafts, unstable GUIDs, missing bytes, and MIME/duration mismatches.", "AC-4: Guest consent, DeepSeek invitation language, source rights, credentials, and redaction remain truthful and privacy-safe.", "AC-5: macOS, Linux, desktop-browser, and iOS Safari evidence is recorded where required, with no deployment or publication claim."],
   "steps": [
-    {"id":"S1","action":"Verify #5819, #3223/#3256, route/storage authority, and ten episode briefs","acceptance_ids":["AC-1","AC-4"],"status":"pending"},
-    {"id":"S2","action":"Produce ten complete scripts, audio masters, transcripts, notes, metadata, artwork, and manifests","acceptance_ids":["AC-1","AC-2"],"status":"pending"},
-    {"id":"S3","action":"Generate RSS enclosure records and prove episode-to-feed parity without deployment","acceptance_ids":["AC-3"],"status":"pending"},
-    {"id":"S4","action":"Run audio, redaction, consent, metadata, missing-asset, and platform checks","acceptance_ids":["AC-2","AC-4","AC-5"],"status":"pending"},
-    {"id":"S5","action":"Resolve exact-head editorial/audio review with publication still gated","acceptance_ids":["AC-5"],"status":"pending"}
+    {"id":"S1","action":"Verify #5819, #3223/#3256, route/storage authority, and budget 10 x 2-hour/24,000-token source-and-script waves","acceptance_ids":["AC-1","AC-4"],"status":"pending"},
+    {"id":"S2","action":"Budget 10 x 2.5-hour/18,000-token production waves for generation, editing, and mastered audio","acceptance_ids":["AC-1","AC-2"],"status":"pending"},
+    {"id":"S3","action":"Budget 10 x 1.5-hour/14,000-token packaging waves for transcripts, notes, artwork, metadata, manifests, and RSS enclosures","acceptance_ids":["AC-1","AC-2","AC-3"],"status":"pending"},
+    {"id":"S4","action":"Budget 10 x 1.5-hour/10,000-token listen-review and revision waves, including consent and redaction review","acceptance_ids":["AC-2","AC-4","AC-5"],"status":"pending"},
+    {"id":"S5","action":"Budget 10 x 30-minute/4,000-token validation waves and prove feed parity, missing-asset rejection, and platform playback","acceptance_ids":["AC-2","AC-3","AC-5"],"status":"pending"},
+    {"id":"S6","action":"Resolve feed-wide consistency and exact-head editorial/audio review within the 4-6 hour integration reserve, with publication still gated","acceptance_ids":["AC-5"],"status":"pending"}
   ],
   "validation_lanes": [
     {"lane":"wp24a-package-positive","proof_role":"Prove all ten packages, final audio manifests, and feed records are complete and internally consistent.","acceptance_ids":["AC-1","AC-2","AC-3"],"deterministic":true,"resource_profile":"medium","budget_seconds":400,"budget_tokens":4000,"argv":["env","TMPDIR=.csdlc/evidence/5845/tmp","bash","adl/tools/test_podcast_launch_packet.sh","--ten-episode-positive"],"parallel_group":"podcast","defer_reason":null},

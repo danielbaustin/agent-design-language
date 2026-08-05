@@ -1,18 +1,18 @@
 {
   "issue": 5836,
-  "expected_generation": 21,
-  "expected_digest": "f69b1941809ae1d53c7b2da0a945dc6428ec9e5dd5c4dd70c17adcf76ad631fd",
-  "now_unix_seconds": 1785949624,
-  "actor": "codex:5854-preparation",
-  "reason": "Reacquire the exact released preparation claim to refresh typed diagram projections.",
+  "expected_generation": 22,
+  "expected_digest": "9930d762f5a09838cdfd95f4202b68c7fee39843ee99afa503cdb5d90bc965fa",
+  "now_unix_seconds": 1785951545,
+  "actor": "codex:5860-demo-publication-repair",
+  "reason": "Reacquire the released preparation claim to repair reviewed WP-18 readiness findings.",
   "replacement": {
     "id": "claim-5836-v092-preparation",
-    "owner": "codex:5854-preparation",
-    "generation": 21,
-    "acquired_unix_seconds": 1785949624,
-    "expires_unix_seconds": 1786036024,
-    "heartbeat_unix_seconds": 1785949624,
-    "branch": "codex/5854-demo-publication-preparation",
+    "owner": "codex:5860-demo-publication-repair",
+    "generation": 22,
+    "acquired_unix_seconds": 1785951545,
+    "expires_unix_seconds": 1786037945,
+    "heartbeat_unix_seconds": 1785951545,
+    "branch": "codex/5860-v092-execution-readiness",
     "worktree": ".",
     "protected_paths": [
       ".csdlc/issues/5836",
@@ -20,6 +20,6 @@
       ".csdlc/evidence/5836",
       ".csdlc/locks/5836.lock"
     ],
-    "purpose": "design-time readiness preparation only"
+    "purpose": "review-finding readiness repair only"
   }
 }

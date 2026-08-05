@@ -16,7 +16,7 @@ Build one repeatable integrated Runtime proof of a valid first birthday plus a f
 
 ## Required Outcome
 
-A real Runtime-produced birthday packet, deterministic validator, retained reviewer index, and typed rejection evidence for every named negative case.
+A real Runtime-produced birthday packet, deterministic validator, retained reviewer index, typed rejection evidence for every named negative case, reconciled canonical launch copy and reviewer FAQ, and a fail-closed publication-gate checklist.
 
 ## Scope
 
@@ -25,6 +25,10 @@ A real Runtime-produced birthday packet, deterministic validator, retained revie
 - adl/tools/test_v092_first_birthday_demo.sh
 - demos/v0.92/first-birthday/
 - docs/milestones/v0.92/DEMO_MATRIX_v0.92.md
+- docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md
+- docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md
+- .csdlc/evidence/5836/publication-gate-checklist.json
+- .csdlc/evidence/5836/validate-publication-gate.rb
 - .csdlc/evidence/5836/
 
 ## Authority

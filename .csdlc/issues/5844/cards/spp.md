@@ -12,18 +12,18 @@ Status: ready
 
 ## Summary
 
-Verify dependencies; build ten bounded source packets; author all ten complete articles; validate claims, citations, links, privacy, and historical/current posture; review the series arc; record a stop-before-publish disposition.
+Run ten bounded article waves budgeted at 4 hours and 74,000 tokens each (40 agent-hours and 740,000 tokens aggregate), with source research, complete drafting, editorial review, revisions, validation, cross-series review, #5843 reconciliation, and a stop-before-publish disposition; five parallel owners target 12-18 hours wall-clock without reducing any article to an outline.
 
 ## Plan
 
-Revision 8
+Revision 10
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5819 and establish ten bounded source packets",
+    "action": "Budget 10 x 60-minute/20,000-token source-research waves and establish ten bounded source packets",
     "acceptance_ids": [
       "AC-1",
       "AC-2"
@@ -32,7 +32,7 @@ Revision 8
   },
   {
     "id": "S2",
-    "action": "Author all ten complete canonical articles",
+    "action": "Budget 10 x 90-minute/30,000-token drafting waves and author all ten complete canonical articles",
     "acceptance_ids": [
       "AC-1",
       "AC-3"
@@ -41,7 +41,7 @@ Revision 8
   },
   {
     "id": "S3",
-    "action": "Run per-article claim, citation, link, privacy, and history/current review",
+    "action": "Budget 10 x 45-minute/12,000-token editorial waves for claim, citation, link, privacy, and history/current review",
     "acceptance_ids": [
       "AC-2",
       "AC-4"
@@ -50,15 +50,26 @@ Revision 8
   },
   {
     "id": "S4",
-    "action": "Review the ten-article series arc and resolve duplication or terminology drift",
+    "action": "Budget 10 x 30-minute/8,000-token revision waves and resolve all per-article findings",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
       "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S5",
-    "action": "Reconcile #5843-dependent truth and record stop-before-publish disposition",
+    "action": "Budget 10 x 15-minute/4,000-token validation waves, review the series arc, and resolve duplication or terminology drift",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S6",
+    "action": "Reconcile #5843-dependent truth and record stop-before-publish disposition within the 4-6 hour integration reserve",
     "acceptance_ids": [
       "AC-5"
     ],
@@ -91,7 +102,7 @@ Revision 8
 
 .csdlc/prepared/issues/5844/design.md
 
-Digest: caf97377e1ac67efb5654eed761b04b5b433e194b37af252d10d0a0f5e500264
+Digest: cc4ee89a1ccf570fb46098e8736c6e31288385e840d9769cbbae761951255b48
 
 ## Diagram
 

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "62cfffa47d080caf69fa1b1d20e49542e7f455d7c847aae132ae93191d1913fd",
   "phase": "bound",
-  "generation": 21,
-  "digest": "c2dc2c5d1c8555070ba3c21a8648f3deff1b9b9944a03d96659c680604c899eb",
+  "generation": 24,
+  "digest": "378c29f7bf890c83b74f5b92be445eb77a3b8e6d5d31769e9d42137a958f5618",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5845/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex:5854-design-review",
-      "revision": "48be0a274ea1dc4ae4cef401ff486919f975323374808ac3e440564583822e71"
+      "reviewer": "codex:5860-demo-publication-repair",
+      "revision": "e21f22c0955601f844d6796ed2e3763ac64b019ea236d6fd2734de9e2f53f6a2"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "7effd5217a66f150a51443827cdbfadf178a9ea417485aed60a0ecfeca8a2391",
+      "values_digest": "e3a399f8dde602b6507475647f48d97c915f529db91b531c06ffeee48e5194a4",
       "rendered_digest": "6404ed059784ae16bb1ddf0594e48c6834b7272f82bfacbfb2883e1fe7d75f6b",
       "ast_digest": "82b54069472e970a520197f3752ed83b93ad00cad4394a3940e60b24e268e29d"
     },
     "stp": {
-      "values_digest": "784895e565641cbbe3147791ef0cc7b28223879422ed93c05914dc84d59b33f6",
+      "values_digest": "a368c4e9648d14b58b191a7405dfd341406e9c066ce6ef9726696a314f92277d",
       "rendered_digest": "5aa91469c37e633840b4db0b059749c0d28f7bc3fe35e76ffc3ff30a3136255c",
       "ast_digest": "857b96a2d41484f71d242a0c8adc0db952463875f185faa6d1aa95acfbb4851f"
     },
     "spp": {
-      "values_digest": "18f19e488524db0d03716a3412022ea552f2063aff88ec11a763b57cd8c29fc7",
-      "rendered_digest": "d2503362eb784b8a05f93753df288d44d4f022fdc8d9e04233250911804a16f7",
-      "ast_digest": "23b59cea1868387ac25f16bb0025c618d35c8e94b18452f5103af8fcc1ba83ae"
+      "values_digest": "7e2b7c629b3be2afa011bd34171a707fecf976466628deef7fb07f4d4e5b36e0",
+      "rendered_digest": "fd62e042202c7f7a566088fc507fe77a19ec85559a1467fbdde5cc77bca789b8",
+      "ast_digest": "d3d26e8f3f14e13d040f65ff136cd4104d42917c8c69bc06edc5da01bfc24968"
     },
     "vpp": {
-      "values_digest": "ee34d77d2a37df0232878918954ad22c0ffb0eb5ee722280d1705a882e9d2001",
+      "values_digest": "71321d66ceae0d28a1109f2b11bbf04cf5738f48fe51aa06d4863c4f57b37967",
       "rendered_digest": "eab910b63762ad3229f7bcf3b23d520b93b55a218cc13ab8479fc2205c1f8c54",
       "ast_digest": "b0a86d4fad6c2f5ef38ee8244eb4108100dc81c608bd4d85f812752a27229e2c"
     },
     "srp": {
-      "values_digest": "fd39a217e65f167ee8d6f009004c8b5e30acb3e1b55333425831efcd86fd2881",
+      "values_digest": "690893755d8c1d02a6eb7fdb6c831283f048728a8ff3cab73d694761c43e5654",
       "rendered_digest": "66584b02c22d0bbd0817ef755e84c0fd40420199f03ce8fe7b33a5b7b8a75a9f",
       "ast_digest": "f5b2ec19198beddd171eda9407d02c311e89b54ced36ac7aaead57db2f9f06a0"
     },
     "sor": {
-      "values_digest": "093cdf94eeeeb1e3de13c82dd0a20cb65150a11d435a59fb02c5663528db5c23",
+      "values_digest": "e456ae2b0136feb1552149019ca81d929204453a61a85355b5b62287aad44894",
       "rendered_digest": "b6559a50b406e113d4bdecd7b46d6236777db7e3bd028391abdfeba5acae375d",
       "ast_digest": "63307f804d1711e04428b4b653b5230947299d891caf3ed6bdf972e7f4042d49"
     }
@@ -251,6 +251,41 @@
       "actor": "codex:5854-preparation",
       "reason": "Release temporary design-time preparation binding so implementation can bind just in time",
       "operation": "{\"claim_id\":\"claim-5845-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5854-preparation\"}"
+    },
+    {
+      "sequence": 27,
+      "generation": 21,
+      "actor": "codex:5860-demo-publication-repair",
+      "reason": "Reacquire the released preparation claim to repair reviewed WP-24A readiness estimates.",
+      "operation": "{\"branch\":\"codex/5860-v092-execution-readiness\",\"claim_id\":\"claim-5845-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-demo-publication-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5845\",\".csdlc/prepared/issues/5845\",\".csdlc/evidence/5845\",\".csdlc/locks/5845.lock\"],\"purpose\":\"review-finding readiness repair only\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 28,
+      "generation": 22,
+      "actor": "codex:5860-demo-publication-repair",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 29,
+      "generation": 23,
+      "actor": "codex:5860-demo-publication-repair",
+      "reason": "Repair reviewed demo/publication readiness finding from retained readiness spec.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 agent-hours and 700,000 tokens aggregate), covering source/script work, audio production, transcript/show notes/artwork/metadata, listen review, revisions, validation, feed-wide consistency, and platform playback; five parallel owners target 20-30 hours wall-clock and stop before deployment or publication.\",\"operation\":\"replan\",\"previous_value\":\"Verify #5819, #3223/#3256, and route/storage authority; lock episode and guest truth; produce ten complete packages; validate audio, metadata, RSS parity, redaction, consent, and platform playback; resolve exact-head editorial/audio review.\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 24,
+      "actor": "codex:5860-demo-publication-repair",
+      "reason": "Repair reviewed demo/publication readiness finding from retained readiness spec.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: All ten episodes contain every required script, audio, transcript, note, metadata, artwork, enclosure, redaction, QA, and review artifact.\",\"AC-2: Audio digests, duration, sample rate, channels, loudness, peak, ID3/artwork, listen check, and archive records are internally consistent.\",\"AC-3: Feed/enclosure records match episode specs and reject local paths, drafts, unstable GUIDs, missing bytes, and MIME/duration mismatches.\",\"AC-4: Guest consent, DeepSeek invitation language, source rights, credentials, and redaction remain truthful and privacy-safe.\",\"AC-5: macOS, Linux, desktop-browser, and iOS Safari evidence is recorded where required, with no deployment or publication claim.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5819, #3223/#3256, route/storage authority, and budget 10 x 2-hour/24,000-token source-and-script waves\",\"acceptance_ids\":[\"AC-1\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Budget 10 x 2.5-hour/18,000-token production waves for generation, editing, and mastered audio\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Budget 10 x 1.5-hour/14,000-token packaging waves for transcripts, notes, artwork, metadata, manifests, and RSS enclosures\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Budget 10 x 1.5-hour/10,000-token listen-review and revision waves, including consent and redaction review\",\"acceptance_ids\":[\"AC-2\",\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Budget 10 x 30-minute/4,000-token validation waves and prove feed parity, missing-asset rejection, and platform playback\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S6\",\"action\":\"Resolve feed-wide consistency and exact-head editorial/audio review within the 4-6 hour integration reserve, with publication still gated\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"wp24a-package-positive\",\"proof_role\":\"Prove all ten packages, final audio manifests, and feed records are complete and internally consistent.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":4000,\"argv\":[\"env\",\"TMPDIR=.csdlc/evidence/5845/tmp\",\"bash\",\"adl/tools/test_podcast_launch_packet.sh\",\"--ten-episode-positive\"],\"parallel_group\":\"podcast\",\"defer_reason\":null},{\"lane\":\"wp24a-package-negative\",\"proof_role\":\"Reject missing or silent audio, digest and metadata mismatch, local feed paths, draft guests, unsafe text, and publication overclaims.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":4000,\"argv\":[\"env\",\"TMPDIR=.csdlc/evidence/5845/tmp\",\"bash\",\"adl/tools/test_podcast_launch_packet.sh\",\"--ten-episode-negative\"],\"parallel_group\":\"podcast\",\"defer_reason\":null},{\"lane\":\"wp24a-platform-playback\",\"proof_role\":\"Record non-synthetic macOS, Linux, desktop-browser, and iOS Safari playback evidence for required episodes.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":false,\"resource_profile\":\"medium\",\"budget_seconds\":400,\"budget_tokens\":2000,\"argv\":[\"python3\",\".csdlc/evidence/5845/validate-platform-playback.py\"],\"parallel_group\":\"platform\",\"defer_reason\":\"Run only where the required operating systems and browser/device targets are available; absence blocks publication readiness.\"}]}"
+    },
+    {
+      "sequence": 31,
+      "generation": 24,
+      "actor": "codex:5860-demo-publication-repair",
+      "reason": "Release the temporary WP-24A review-finding repair claim after typed card validation",
+      "operation": "{\"claim_id\":\"claim-5845-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator-authorized:5860-preparation-clarification\",\"previous_owner\":\"codex:5860-demo-publication-repair\"}"
     }
   ]
 }

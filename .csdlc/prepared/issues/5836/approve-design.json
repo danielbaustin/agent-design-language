@@ -1,7 +1,7 @@
 {
   "issue": 5836,
-  "expected_generation": 21,
-  "expected_digest": "5e54b216eeba1663316f23ee0ad6920339b0676a3598a1eca30c752b3fcacc51",
+  "expected_generation": 22,
+  "expected_digest": "3a1336bae1d56dfe5711fd0685093cada9c61eaabe696e7478b7ad08b4768a3d",
   "claim_id": "claim-5836-v092-preparation",
-  "reviewer": "codex:5854-design-review"
+  "reviewer": "codex:5860-demo-publication-repair"
 }

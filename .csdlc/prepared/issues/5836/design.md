@@ -24,6 +24,10 @@ events and incomplete evidence.
 - `demos/v0.92/first-birthday/`
 - `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md`
 - `docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md`
+- `docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md`
+- `docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md`
+- `.csdlc/evidence/5836/publication-gate-checklist.json`
+- `.csdlc/evidence/5836/validate-publication-gate.rb`
 - `.csdlc/evidence/5836/`
 
 ## Proof Architecture
@@ -45,13 +49,23 @@ capability envelope. Every negative case must produce a typed rejection reason.
 2. Bind the proof runner to those real outputs without duplicating feature logic.
 3. Implement the positive harness and deterministic packet validator.
 4. Implement the negative matrix and ensure failures do not become shell-only success.
-5. Update D1-D6 with exact commands, artifacts, and status only after proof passes.
-6. Run focused tests, redaction/path hygiene, replay, and exact-head review.
+5. Reconcile the canonical public launch copy and reviewer FAQ against accepted
+   packet evidence, then emit a fail-closed publication-gate checklist without
+   authorizing publication.
+6. Update D1-D6 with exact commands, artifacts, and status only after proof passes.
+7. Run focused tests, redaction/path hygiene, replay, native macOS and Linux
+   proof, publication-gate validation, and exact-head review.
 
 ## Failure And Platform Lanes
 
-- Linux and macOS run the same packet validator; platform-specific command
-  differences are recorded rather than hidden.
+- Linux and macOS each run a native lane over the same packet contract;
+  platform-specific command differences and source revisions are retained
+  rather than hidden. A local compatibility check cannot substitute for either
+  native receipt.
+- The publication-gate validator rejects absent accepted witness/receipt proof,
+  unresolved negative cases, stale exact-head review, missing launch documents,
+  unsupported claims, or absent operator authorization. Passing it prepares a
+  checklist and never publishes.
 - Missing Runtime binary, dependency artifact, or schema is a blocker.
 - Private memory, credentials, provider payloads, and machine-local paths must
   not enter retained or reviewer-facing artifacts.

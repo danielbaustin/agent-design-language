@@ -7,25 +7,29 @@
     "title": "[v0.92][WP-18] First birthday demo",
     "slug": "v0-92-wp-18-first-birthday-demo",
     "version": "v0.92",
-    "generation": 22
+    "generation": 31
   },
   "status": "ready",
   "content": {
     "card_kind": "stp",
     "values": {
-      "task_boundary": "Add the WP-18 demo runner, validator, fixtures, artifacts, and D1-D6 matrix updates without absorbing consumer integration, provider comparison, governance, or publication.",
+      "task_boundary": "Add the WP-18 demo runner, validator, fixtures, artifacts, D1-D6 matrix updates, canonical launch-copy reconciliation, reviewer FAQ reconciliation, and publication-gate checklist without absorbing consumer integration, provider comparison, governance completion, or publication authority.",
       "deliverables": [
         "Runnable integrated first-birthday command",
         "Runtime-produced positive packet and deterministic validator",
         "Not-a-birthday fixture matrix and rejection report",
-        "Reviewer index and D1-D6 exact command/artifact updates"
+        "Reviewer index and D1-D6 exact command/artifact updates",
+        "Reconciled PUBLIC_LAUNCH_COPY_v0.92.md",
+        "Reconciled REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md",
+        "Machine-readable publication-gate checklist and fail-closed validator"
       ],
       "acceptance_criteria": [
         "AC-1: One documented command emits a structurally complete Runtime-produced birthday packet.",
         "AC-2: Startup, wake, restore, snapshot, admission, copied state, simulation, named fixture, and missing-evidence cases reject with typed reasons.",
-        "AC-3: Replay, interruption, redaction, and macOS/Linux packet validation pass with allowed nondeterminism declared.",
-        "AC-4: D1-D6 and the reviewer index cite exact commands, artifacts, and revisions without publication overclaim.",
-        "AC-5: Exact-head review has no unresolved actionable finding."
+        "AC-3: Replay, interruption, redaction, and separate native macOS and Linux packet validation pass with allowed nondeterminism declared and pinned receipts.",
+        "AC-4: D1-D6, PUBLIC_LAUNCH_COPY_v0.92.md, REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md, and the reviewer index cite exact commands, artifacts, and revisions without publication overclaim.",
+        "AC-5: A machine-readable publication-gate checklist rejects missing accepted witness/receipt proof, stale review, unsupported claims, unresolved negatives, or absent operator authorization and cannot publish.",
+        "AC-6: Exact-head review has no unresolved actionable finding."
       ],
       "dependencies": [
         "#5825, #5826, #5827, #5828, #5829, and #5830 complete",
@@ -35,6 +39,8 @@
         "docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md",
         "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md",
         "docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md",
+        "docs/milestones/v0.92/external_launch/PUBLIC_LAUNCH_COPY_v0.92.md",
+        "docs/milestones/v0.92/external_launch/REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md",
         "docs/milestones/v0.91.8/review/v092_handoff_4762/"
       ],
       "non_goals": [

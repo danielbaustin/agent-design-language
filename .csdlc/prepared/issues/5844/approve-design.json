@@ -1,7 +1,7 @@
 {
   "issue": 5844,
-  "expected_generation": 21,
-  "expected_digest": "1b626c8a46fa8d97ef34820fcb4dbd1751e788baa2c70186b12a45e4fa95a136",
+  "expected_generation": 22,
+  "expected_digest": "babcb0d571b9c20ca6dc8c4e17e3da02ba1acf92c5bc762594488e5c8fb395d1",
   "claim_id": "claim-5844-v092-preparation",
-  "reviewer": "codex:5854-design-review"
+  "reviewer": "codex:5860-demo-publication-repair"
 }

@@ -12,18 +12,18 @@ Status: ready
 
 ## Summary
 
-Verify #5819, #3223/#3256, and route/storage authority; lock episode and guest truth; produce ten complete packages; validate audio, metadata, RSS parity, redaction, consent, and platform playback; resolve exact-head editorial/audio review.
+Run ten bounded episode waves budgeted at 8 hours and 70,000 tokens each (80 agent-hours and 700,000 tokens aggregate), covering source/script work, audio production, transcript/show notes/artwork/metadata, listen review, revisions, validation, feed-wide consistency, and platform playback; five parallel owners target 20-30 hours wall-clock and stop before deployment or publication.
 
 ## Plan
 
-Revision 8
+Revision 10
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5819, #3223/#3256, route/storage authority, and ten episode briefs",
+    "action": "Verify #5819, #3223/#3256, route/storage authority, and budget 10 x 2-hour/24,000-token source-and-script waves",
     "acceptance_ids": [
       "AC-1",
       "AC-4"
@@ -32,7 +32,7 @@ Revision 8
   },
   {
     "id": "S2",
-    "action": "Produce ten complete scripts, audio masters, transcripts, notes, metadata, artwork, and manifests",
+    "action": "Budget 10 x 2.5-hour/18,000-token production waves for generation, editing, and mastered audio",
     "acceptance_ids": [
       "AC-1",
       "AC-2"
@@ -41,15 +41,17 @@ Revision 8
   },
   {
     "id": "S3",
-    "action": "Generate RSS enclosure records and prove episode-to-feed parity without deployment",
+    "action": "Budget 10 x 1.5-hour/14,000-token packaging waves for transcripts, notes, artwork, metadata, manifests, and RSS enclosures",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
       "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S4",
-    "action": "Run audio, redaction, consent, metadata, missing-asset, and platform checks",
+    "action": "Budget 10 x 1.5-hour/10,000-token listen-review and revision waves, including consent and redaction review",
     "acceptance_ids": [
       "AC-2",
       "AC-4",
@@ -59,7 +61,17 @@ Revision 8
   },
   {
     "id": "S5",
-    "action": "Resolve exact-head editorial/audio review with publication still gated",
+    "action": "Budget 10 x 30-minute/4,000-token validation waves and prove feed parity, missing-asset rejection, and platform playback",
+    "acceptance_ids": [
+      "AC-2",
+      "AC-3",
+      "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S6",
+    "action": "Resolve feed-wide consistency and exact-head editorial/audio review within the 4-6 hour integration reserve, with publication still gated",
     "acceptance_ids": [
       "AC-5"
     ],
@@ -94,7 +106,7 @@ Revision 8
 
 .csdlc/prepared/issues/5845/design.md
 
-Digest: 48be0a274ea1dc4ae4cef401ff486919f975323374808ac3e440564583822e71
+Digest: e21f22c0955601f844d6796ed2e3763ac64b019ea236d6fd2734de9e2f53f6a2
 
 ## Diagram
 

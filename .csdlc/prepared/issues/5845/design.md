@@ -52,6 +52,20 @@ credentials.
 5. Run audio QA, redaction, missing-asset, guest-consent, metadata, and platform playback checks.
 6. Complete editorial/audio review and exact-head issue review.
 
+## Production Wave Budget
+
+The ten episodes are ten full production waves. Each episode budgets 8
+agent-hours and 70,000 model tokens: 2 hours and 24,000 tokens for source work
+and the final script; 2.5 hours and 18,000 tokens for generation, editing, and
+audio mastering; 1.5 hours and 14,000 tokens for transcript, show notes,
+artwork, metadata, and enclosure data; 1.5 hours and 10,000 tokens for listen
+review and revisions; and 30 minutes and 4,000 tokens for machine validation
+and packaging. The aggregate is 80 agent-hours and 700,000 tokens. With five
+independent episode owners, allow 16-24 hours wall-clock plus 4-6 hours for
+feed-wide consistency, platform playback, exact-head review, and final
+revisions. Budget exhaustion blocks the episode instead of permitting smoke
+audio, draft metadata, or skipped listen review.
+
 ## Negative And Platform Lanes
 
 - Missing/silent/clipped audio, digest mismatch, invalid ID3/artwork, or failed listen check blocks the episode.

@@ -1,19 +1,174 @@
 {
   "issue": 5836,
-  "expected_generation": 20,
-  "expected_digest": "462cdcda9b3415c0f535a0bc6e9f6c7dfb82fdc9ebec54b0edf126abfe8fd5d6",
+  "expected_generation": 30,
+  "expected_digest": "ac2ae0a3575c7c947d31e3eb3b0c60f715c0c7969578a36b4eec4880d66108e3",
   "claim_id": "claim-5836-v092-preparation",
-  "actor": "codex:5854-card-editor",
-  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
-  "card": "srp",
+  "actor": "codex:5860-demo-publication-repair",
+  "reason": "Repair reviewed demo/publication readiness finding from retained readiness spec.",
+  "card": "spp",
   "operation": {
-    "operation": "replace_planning_collection",
-    "field": "review_prompts",
-    "values": [
-      "Is positive proof emitted by the real integrated Runtime rather than a fixture or lifecycle artifact?",
-      "Does every named ordinary lifecycle or missing-evidence case reject with an inspectable reason?",
-      "Are replay, interruption, platform, and redaction boundaries proven?",
-      "Do D1-D6 and launch-adjacent text avoid unsupported birthday or publication claims?"
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "AC-1: One documented command emits a structurally complete Runtime-produced birthday packet.",
+      "AC-2: Startup, wake, restore, snapshot, admission, copied state, simulation, named fixture, and missing-evidence cases reject with typed reasons.",
+      "AC-3: Replay, interruption, redaction, and separate native macOS and Linux packet validation pass with allowed nondeterminism declared and pinned receipts.",
+      "AC-4: D1-D6, PUBLIC_LAUNCH_COPY_v0.92.md, REVIEWER_FAQ_AND_CLAIM_BOUNDARY_v0.92.md, and the reviewer index cite exact commands, artifacts, and revisions without publication overclaim.",
+      "AC-5: A machine-readable publication-gate checklist rejects missing accepted witness/receipt proof, stale review, unsupported claims, unresolved negatives, or absent operator authorization and cannot publish.",
+      "AC-6: Exact-head review has no unresolved actionable finding."
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify all WP-18 dependency revisions, schemas, and commands",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Implement the integrated positive runner and deterministic packet validator",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Implement and retain the complete not-a-birthday matrix",
+        "acceptance_ids": [
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run replay, interruption, redaction, separate native macOS and Linux, and D1-D6 artifact checks",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Reconcile both canonical launch documents and validate the fail-closed publication-gate checklist",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S6",
+        "action": "Resolve exact-head review and retain the reviewer index",
+        "acceptance_ids": [
+          "AC-6"
+        ],
+        "status": "pending"
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "wp18-positive-runtime",
+        "proof_role": "Prove the integrated Runtime emits one complete birthday packet.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 400,
+        "budget_tokens": 3000,
+        "argv": [
+          "bash",
+          "adl/tools/test_v092_first_birthday_demo.sh",
+          "--positive"
+        ],
+        "parallel_group": "birthday",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp18-negative-replay",
+        "proof_role": "Prove all not-a-birthday, interruption, replay, and redaction cases fail closed.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 400,
+        "budget_tokens": 3000,
+        "argv": [
+          "bash",
+          "adl/tools/test_v092_first_birthday_demo.sh",
+          "--negative"
+        ],
+        "parallel_group": "birthday",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp18-native-macos",
+        "proof_role": "Run the packet contract on a native macOS host and pin host class, source revision, argv, result, and artifact digests.",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-6"
+        ],
+        "deterministic": false,
+        "resource_profile": "small",
+        "budget_seconds": 600,
+        "budget_tokens": 3000,
+        "argv": [
+          "bash",
+          "adl/tools/test_v092_first_birthday_demo.sh",
+          "--native-platform",
+          "macos"
+        ],
+        "parallel_group": "platform",
+        "defer_reason": "Requires a native macOS runner; absence or a non-native substitute blocks readiness."
+      },
+      {
+        "lane": "wp18-native-linux",
+        "proof_role": "Run the packet contract on a native Linux host and pin host class, source revision, argv, result, and artifact digests.",
+        "acceptance_ids": [
+          "AC-3",
+          "AC-6"
+        ],
+        "deterministic": false,
+        "resource_profile": "small",
+        "budget_seconds": 600,
+        "budget_tokens": 3000,
+        "argv": [
+          "bash",
+          "adl/tools/test_v092_first_birthday_demo.sh",
+          "--native-platform",
+          "linux"
+        ],
+        "parallel_group": "platform",
+        "defer_reason": "Requires a native Linux runner; absence or a non-native substitute blocks readiness."
+      },
+      {
+        "lane": "wp18-publication-gate",
+        "proof_role": "Validate both canonical launch documents and fail closed on missing accepted proof, stale review, unsupported claims, unresolved negatives, or absent operator authorization without publishing.",
+        "acceptance_ids": [
+          "AC-4",
+          "AC-5",
+          "AC-6"
+        ],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 300,
+        "budget_tokens": 3000,
+        "argv": [
+          "ruby",
+          ".csdlc/evidence/5836/validate-publication-gate.rb",
+          "--check-only"
+        ],
+        "parallel_group": "publication",
+        "defer_reason": null
+      }
     ]
   }
 }

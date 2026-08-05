@@ -1,19 +1,141 @@
 {
   "issue": 5845,
-  "expected_generation": 20,
-  "expected_digest": "9959d5de5edbac1ce7b26db8307cac5716f51ccec3ec253f16025fc22b1cff2e",
+  "expected_generation": 23,
+  "expected_digest": "ed96ff1a91fe0d094b7fd9b4956cf45f395bbec01937f77b05581a1a12b528b3",
   "claim_id": "claim-5845-v092-preparation",
-  "actor": "codex:5854-card-editor",
-  "reason": "Replace pre-execution review prompts from the reviewed readiness spec.",
-  "card": "srp",
+  "actor": "codex:5860-demo-publication-repair",
+  "reason": "Repair reviewed demo/publication readiness finding from retained readiness spec.",
+  "card": "spp",
   "operation": {
-    "operation": "replace_planning_collection",
-    "field": "review_prompts",
-    "values": [
-      "Is every episode a complete final production package rather than a topic card or smoke artifact?",
-      "Do audio, manifest, ID3/artwork, enclosure, transcript, and feed values agree exactly?",
-      "Are guest consent, DeepSeek invitation language, source rights, and redaction truthful?",
-      "Does platform evidence prove playback without implying deployment or publication?"
+    "operation": "replace_acceptance_plan",
+    "acceptance_criteria": [
+      "AC-1: All ten episodes contain every required script, audio, transcript, note, metadata, artwork, enclosure, redaction, QA, and review artifact.",
+      "AC-2: Audio digests, duration, sample rate, channels, loudness, peak, ID3/artwork, listen check, and archive records are internally consistent.",
+      "AC-3: Feed/enclosure records match episode specs and reject local paths, drafts, unstable GUIDs, missing bytes, and MIME/duration mismatches.",
+      "AC-4: Guest consent, DeepSeek invitation language, source rights, credentials, and redaction remain truthful and privacy-safe.",
+      "AC-5: macOS, Linux, desktop-browser, and iOS Safari evidence is recorded where required, with no deployment or publication claim."
+    ],
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Verify #5819, #3223/#3256, route/storage authority, and budget 10 x 2-hour/24,000-token source-and-script waves",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-4"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Budget 10 x 2.5-hour/18,000-token production waves for generation, editing, and mastered audio",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Budget 10 x 1.5-hour/14,000-token packaging waves for transcripts, notes, artwork, metadata, manifests, and RSS enclosures",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Budget 10 x 1.5-hour/10,000-token listen-review and revision waves, including consent and redaction review",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-4",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S5",
+        "action": "Budget 10 x 30-minute/4,000-token validation waves and prove feed parity, missing-asset rejection, and platform playback",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3",
+          "AC-5"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "S6",
+        "action": "Resolve feed-wide consistency and exact-head editorial/audio review within the 4-6 hour integration reserve, with publication still gated",
+        "acceptance_ids": [
+          "AC-5"
+        ],
+        "status": "pending"
+      }
+    ],
+    "validation_lanes": [
+      {
+        "lane": "wp24a-package-positive",
+        "proof_role": "Prove all ten packages, final audio manifests, and feed records are complete and internally consistent.",
+        "acceptance_ids": [
+          "AC-1",
+          "AC-2",
+          "AC-3"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 400,
+        "budget_tokens": 4000,
+        "argv": [
+          "env",
+          "TMPDIR=.csdlc/evidence/5845/tmp",
+          "bash",
+          "adl/tools/test_podcast_launch_packet.sh",
+          "--ten-episode-positive"
+        ],
+        "parallel_group": "podcast",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp24a-package-negative",
+        "proof_role": "Reject missing or silent audio, digest and metadata mismatch, local feed paths, draft guests, unsafe text, and publication overclaims.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-3",
+          "AC-4"
+        ],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 400,
+        "budget_tokens": 4000,
+        "argv": [
+          "env",
+          "TMPDIR=.csdlc/evidence/5845/tmp",
+          "bash",
+          "adl/tools/test_podcast_launch_packet.sh",
+          "--ten-episode-negative"
+        ],
+        "parallel_group": "podcast",
+        "defer_reason": null
+      },
+      {
+        "lane": "wp24a-platform-playback",
+        "proof_role": "Record non-synthetic macOS, Linux, desktop-browser, and iOS Safari playback evidence for required episodes.",
+        "acceptance_ids": [
+          "AC-2",
+          "AC-5"
+        ],
+        "deterministic": false,
+        "resource_profile": "medium",
+        "budget_seconds": 400,
+        "budget_tokens": 2000,
+        "argv": [
+          "python3",
+          ".csdlc/evidence/5845/validate-platform-playback.py"
+        ],
+        "parallel_group": "platform",
+        "defer_reason": "Run only where the required operating systems and browser/device targets are available; absence blocks publication readiness."
+      }
     ]
   }
 }

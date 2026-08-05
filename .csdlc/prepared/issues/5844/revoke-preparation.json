@@ -2,10 +2,10 @@
   "issue": 5844,
   "repository": "danielbaustin/agent-design-language",
   "expected_claim_id": "claim-5844-v092-preparation",
-  "expected_generation": 22,
-  "expected_digest": "bafa459d954b772e34e5c5cc7f158c1aaa662d38caeb26bcffee182364b4ceb8",
-  "now_unix_seconds": 1785949665,
-  "actor": "codex:5854-preparation",
+  "expected_generation": 25,
+  "expected_digest": "33a0bd6ad55ba5a46f2d5eca394ed3154ce671fe4614b3a67f0c66644349c758",
+  "now_unix_seconds": 1785951922,
+  "actor": "codex:5860-demo-publication-repair",
   "operator_authority": "operator-authorized:5860-preparation-clarification",
-  "reason": "Release temporary design-time preparation binding after typed diagram projection refresh"
+  "reason": "Release the temporary WP-24 review-finding repair claim after typed card validation"
 }

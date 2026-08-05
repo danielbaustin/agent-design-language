@@ -12,11 +12,11 @@ Status: ready
 
 ## Summary
 
-Verify #5825-#5830 and #5832-#5834; bind to landed schemas; implement the positive Runtime harness and negative matrix; run replay, redaction, macOS/Linux, and interruption proof; update D1-D6 only from accepted evidence; then review exact head.
+Verify #5825-#5830 and #5832-#5834; bind to landed schemas; implement the positive Runtime harness and negative matrix; run replay, redaction, separate native macOS and Linux, and interruption proof; reconcile the two canonical launch documents; validate a fail-closed publication-gate checklist; update D1-D6 only from accepted evidence; then review exact head.
 
 ## Plan
 
-Revision 8
+Revision 11
 
 ## Steps
 
@@ -49,7 +49,7 @@ Revision 8
   },
   {
     "id": "S4",
-    "action": "Run replay, interruption, redaction, platform, and D1-D6 artifact checks",
+    "action": "Run replay, interruption, redaction, separate native macOS and Linux, and D1-D6 artifact checks",
     "acceptance_ids": [
       "AC-3",
       "AC-4"
@@ -58,9 +58,18 @@ Revision 8
   },
   {
     "id": "S5",
+    "action": "Reconcile both canonical launch documents and validate the fail-closed publication-gate checklist",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S6",
     "action": "Resolve exact-head review and retain the reviewer index",
     "acceptance_ids": [
-      "AC-5"
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -91,7 +100,7 @@ Revision 8
 
 .csdlc/prepared/issues/5836/design.md
 
-Digest: 6bfcd42e50a0009144b66283310fa4f0fa0511050a86d7c746b727fe1a9b2654
+Digest: c43c901f8f49fff5dc423ccd7d261ad798d70591d0157cd77119a0bdb7d9b092
 
 ## Diagram
 

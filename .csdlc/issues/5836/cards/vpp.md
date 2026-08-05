@@ -62,22 +62,63 @@ Diagram: .csdlc/prepared/issues/5836/diagram.mmd
     "defer_reason": null
   },
   {
-    "lane": "wp18-platform-contract",
-    "proof_role": "Prove the packet validator and command contract on required macOS/Linux lanes.",
+    "lane": "wp18-native-macos",
+    "proof_role": "Run the packet contract on a native macOS host and pin host class, source revision, argv, result, and artifact digests.",
     "acceptance_ids": [
       "AC-3",
-      "AC-5"
+      "AC-6"
+    ],
+    "deterministic": false,
+    "resource_profile": "small",
+    "budget_seconds": 600,
+    "budget_tokens": 3000,
+    "argv": [
+      "bash",
+      "adl/tools/test_v092_first_birthday_demo.sh",
+      "--native-platform",
+      "macos"
+    ],
+    "parallel_group": "platform",
+    "defer_reason": "Requires a native macOS runner; absence or a non-native substitute blocks readiness."
+  },
+  {
+    "lane": "wp18-native-linux",
+    "proof_role": "Run the packet contract on a native Linux host and pin host class, source revision, argv, result, and artifact digests.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-6"
+    ],
+    "deterministic": false,
+    "resource_profile": "small",
+    "budget_seconds": 600,
+    "budget_tokens": 3000,
+    "argv": [
+      "bash",
+      "adl/tools/test_v092_first_birthday_demo.sh",
+      "--native-platform",
+      "linux"
+    ],
+    "parallel_group": "platform",
+    "defer_reason": "Requires a native Linux runner; absence or a non-native substitute blocks readiness."
+  },
+  {
+    "lane": "wp18-publication-gate",
+    "proof_role": "Validate both canonical launch documents and fail closed on missing accepted proof, stale review, unsupported claims, unresolved negatives, or absent operator authorization without publishing.",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-5",
+      "AC-6"
     ],
     "deterministic": true,
     "resource_profile": "small",
     "budget_seconds": 300,
-    "budget_tokens": 2000,
+    "budget_tokens": 3000,
     "argv": [
-      "bash",
-      "adl/tools/test_v092_first_birthday_demo.sh",
-      "--platform-contract"
+      "ruby",
+      ".csdlc/evidence/5836/validate-publication-gate.rb",
+      "--check-only"
     ],
-    "parallel_group": "platform",
+    "parallel_group": "publication",
     "defer_reason": null
   }
 ]
@@ -96,7 +137,9 @@ Tokens: 25000
 
 - `bash adl/tools/test_v092_first_birthday_demo.sh --positive`
 - `bash adl/tools/test_v092_first_birthday_demo.sh --negative`
-- `bash adl/tools/test_v092_first_birthday_demo.sh --platform-contract`
+- `bash adl/tools/test_v092_first_birthday_demo.sh --native-platform macos`
+- `bash adl/tools/test_v092_first_birthday_demo.sh --native-platform linux`
+- `ruby .csdlc/evidence/5836/validate-publication-gate.rb --check-only`
 
 ## Failure Semantics
 
