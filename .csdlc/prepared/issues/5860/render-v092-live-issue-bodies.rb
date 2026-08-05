@@ -26,6 +26,14 @@ def owned_paths(issue)
   paths
 end
 
+def required_design_section(issue, heading)
+  design = File.read(".csdlc/prepared/issues/#{issue}/design.md")
+  section = markdown_section(design, heading).to_s.strip
+  abort "##{issue}: missing nonempty #{heading} section" if section.empty?
+
+  section
+end
+
 def values(issue, card)
   JSON.parse(File.read(".csdlc/issues/#{issue}/cards/#{card}.values.json"))
     .fetch("content").fetch("values")
@@ -56,6 +64,12 @@ rows.select { |row| selected.include?(row.fetch("issue")) }.sort_by { |row| row.
   wp = row["wp"] || row["owner_wp"] || "supporting"
   lanes = Array(vpp["lanes"]).map { |lane| lane.fetch("proof_role") }
   path_lines = owned_paths(issue).map { |path| "- `#{path}`" }.join("\n")
+  read_only_inputs = required_design_section(issue, "Read-Only Inputs")
+  rollback = required_design_section(issue, "Rollback")
+  serialization_gates = markdown_section(
+    File.read(".csdlc/prepared/issues/#{issue}/design.md"),
+    "Serialization Gates"
+  ).to_s.strip
   outcome = row["primary_deliverable"] || stp.fetch("task_boundary")
 
   body = <<~MARKDOWN
@@ -81,6 +95,14 @@ rows.select { |row| selected.include?(row.fetch("issue")) }.sort_by { |row| row.
 
     #{path_lines}
 
+    ## Read-Only Inputs
+
+    #{read_only_inputs}
+
+    ## Serialization Gates
+
+    #{serialization_gates.empty? ? "None. The exact owned paths are exclusive within the v0.92 execution wave." : serialization_gates}
+
     ## Validation And Proof
 
     #{bullets(lanes)}
@@ -92,6 +114,10 @@ rows.select { |row| selected.include?(row.fetch("issue")) }.sort_by { |row| row.
     ## Non-Goals
 
     #{bullets(stp.fetch("non_goals"))}
+
+    ## Rollback
+
+    #{rollback}
 
     ## Execution Boundary
 
