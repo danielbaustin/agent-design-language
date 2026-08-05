@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 21
+    "generation": 31
   },
   "status": "ready",
   "content": {
@@ -23,11 +23,12 @@
       "acceptance_criteria": [
         "The WP-13A DAG durably links loop event, evaluation, evidence-backed state delta, graph proposal, policy decision, accepted or rejected mutation, replay, and rollback/inverse record.",
         "WP-01/#5818, WP-13/#5830, merged #5104 semantics, and current Runtime v3 requalification are verified before implementation.",
-        "Changes remain in narrow adaptive-learning modules, versioned shared schemas, tests/fixtures, optional Runtime v3 command integration, and .csdlc/evidence/5831/.",
+        "Implementation is confined to current Runtime v3 authority: adl-runtime-kernel/src/adaptive_learning.rs, lib.rs module registration, tests/adaptive_learning.rs, tests/fixtures/adaptive_learning/, the feature contract, and .csdlc/evidence/5831/; adl/src/runtime_v2/ is excluded from implementation.",
         "Same durable inputs replay to identical proposal, policy disposition, state/graph hashes, and retained exact-revision history.",
         "Missing/forged evidence, substituted state, invalid graph binding, discontinuous resume, unbounded recurrence, unauthorized mutation, rejected-proposal mutation, and rollback mismatch fail closed.",
         "One bounded exact-head SRP review records no unresolved actionable findings.",
-        "The implementation PR targets the intended base and includes Closes #5831 without claiming completion of downstream Birthday work."
+        "The implementation PR targets the intended base and includes Closes #5831 without claiming completion of downstream Birthday work.",
+        "The exact adaptive_learning nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
       ],
       "dependencies": [
         "WP-01 / issue #5818 terminal proof",
@@ -37,12 +38,12 @@
       ],
       "repo_inputs": [
         "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
-        "adl/src/runtime_v2/loop_runtime.rs",
-        "adl/src/runtime_v2/reasoning_graph.rs",
-        "adl/src/runtime_v2/reasoning_runtime_bridge.rs",
-        "adl/src/runtime_v2/ governed-learning boundary",
-        "adl/src/cli/runtime_v3_cmd.rs",
-        ".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md"
+        "adl-runtime-kernel/src/reasoning.rs",
+        "adl-runtime-kernel/src/cognition.rs",
+        "adl-runtime-kernel/src/governance.rs",
+        "adl-runtime-kernel/src/durable_state.rs",
+        ".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md",
+        "adl/src/runtime_v2/ (read-only compatibility evidence only)"
       ],
       "non_goals": [
         "Unconstrained self-modification, autonomous retraining, hidden model-memory mutation, or policy bypass",

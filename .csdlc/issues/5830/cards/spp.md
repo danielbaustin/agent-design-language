@@ -16,14 +16,14 @@ Implement and prove WP-13 canonical evidence maps with revision-linked updates, 
 
 ## Plan
 
-Revision 8
+Revision 13
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5827, #5828, #5829 and bounded ToM/intelligence/governed-learning inputs, then narrow exact protected paths.",
+    "action": "Verify #5827/#5828/#5829 and current Runtime v3 cognition/governance inputs, then claim the exact cognitive_profile.rs, lib.rs, tests, fixture, feature, and evidence paths.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -52,8 +52,14 @@ Revision 8
     "id": "S4",
     "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5830 linkage.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "status": "pending"
   }
@@ -83,7 +89,7 @@ Revision 8
 
 .csdlc/prepared/issues/5830/design.md
 
-Digest: e9f8fe4c982a1ad3fc18454c2d3e976efee028804c64dd65067fee2bf573cc87
+Digest: af18b5f377a88b49556fcd5314db9f1a94ab53c81156e5b0482e750e58130b78
 
 ## Diagram
 

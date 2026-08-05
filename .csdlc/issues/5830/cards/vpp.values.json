@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-13] ACP / cognitive profiles",
     "slug": "v0-92-wp-13-acp-cognitive-profiles",
     "version": "v0.92",
-    "generation": 21
+    "generation": 32
   },
   "status": "ready",
   "content": {
@@ -16,8 +16,8 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "cognitive-profile-canonical",
-          "proof_role": "Prove canonical profile creation, update linkage, and bounded projections.",
+          "lane": "cognitive_profile-runtime-v3",
+          "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -25,70 +25,48 @@
             "AC-4",
             "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 500,
+          "budget_seconds": 600,
           "budget_tokens": 4000,
           "argv": [
             "cargo",
-            "test",
+            "nextest",
+            "run",
             "--manifest-path",
-            "adl/Cargo.toml",
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
             "cognitive_profile",
-            "--",
-            "--nocapture"
+            "--no-tests=fail",
+            "--status-level",
+            "all"
           ],
           "parallel_group": "5830-core",
           "defer_reason": null
         },
         {
-          "lane": "cognitive-profile-privacy-negative",
-          "proof_role": "Reject stale, forbidden, mismatched, unexplained, or private evidence.",
+          "lane": "cognitive_profile-native-platform-receipts",
+          "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
           "acceptance_ids": [
-            "AC-1",
             "AC-4",
-            "AC-5"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 500,
-          "budget_tokens": 4000,
-          "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "cognitive_profile_negative",
-            "--",
-            "--nocapture"
-          ],
-          "parallel_group": "5830-negative",
-          "defer_reason": null
-        },
-        {
-          "lane": "cognitive-profile-non-reputation",
-          "proof_role": "Reject diagnosis, reputation, standing, rights, personhood, and consciousness inference.",
-          "acceptance_ids": [
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 200,
-          "budget_tokens": 2000,
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
           "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "cognitive_profile_claim_boundary",
-            "--",
-            "--nocapture"
+            "ruby",
+            "-rjson",
+            "-e",
+            "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+            ".csdlc/evidence/5830/native-platform/macos.json",
+            ".csdlc/evidence/5830/native-platform/linux.json"
           ],
-          "parallel_group": "5830-negative",
+          "parallel_group": "5830-platform",
           "defer_reason": null
         }
       ],
@@ -96,7 +74,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5830/design.md",
-      "design_digest": "e9f8fe4c982a1ad3fc18454c2d3e976efee028804c64dd65067fee2bf573cc87",
+      "design_digest": "af18b5f377a88b49556fcd5314db9f1a94ab53c81156e5b0482e750e58130b78",
       "diagram_ref": ".csdlc/prepared/issues/5830/diagram.mmd",
       "diagram_digest": "6b9a9b2ae6cf9491279ce9ea531331cc7b98069e510d08bd2aad9422595fef47"
     }

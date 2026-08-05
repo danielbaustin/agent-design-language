@@ -20,10 +20,12 @@ A versioned birth-decision contract, valid fixture, disqualifying fixtures, vali
 
 ## Scope
 
+- adl-runtime-kernel/src/birthday.rs
+- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/tests/birthday.rs
+- adl-runtime-kernel/tests/fixtures/birthday/
 - docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md
-- adl/src/runtime_v2/ for a narrowly named birthday contract and validator
-- adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/birthday/ for valid and negative fixtures
-- .csdlc/evidence/5825/ for retained validation output
+- .csdlc/evidence/5825/
 
 ## Authority
 
@@ -33,8 +35,8 @@ A versioned birth-decision contract, valid fixture, disqualifying fixtures, vali
 
 ## Assumptions
 
-- Dependencies are gates to verify at execution time, not completion claims in this preparation.
-- Candidate protected paths remain subject to exact claim collision checks before implementation.
+- Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
+- The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
 
 ## Operator Constraints
 

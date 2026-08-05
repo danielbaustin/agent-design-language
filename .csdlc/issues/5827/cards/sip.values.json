@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-10] Continuity across bounded cycles",
     "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
     "version": "v0.92",
-    "generation": 21
+    "generation": 34
   },
   "status": "ready",
   "content": {
@@ -16,9 +16,11 @@
       "goal": "Implement WP-10 deterministic continuity across two or more bounded cycles without treating restart, wake, restore, or snapshot as sufficient identity continuity.",
       "required_outcome": "A versioned continuity record and validator linking identity root, predecessor and current cycles, ordered evidence, continuity-head derivation, witnesses, grade or stable rejection reason.",
       "declared_scope": [
+        "adl-runtime-kernel/src/birthday_continuity.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/birthday_continuity.rs",
+        "adl-runtime-kernel/tests/fixtures/birthday_continuity/",
         "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
-        "adl/src/runtime_v2/ narrowly named continuity record and validator",
-        "adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/continuity/",
         ".csdlc/evidence/5827/"
       ],
       "authority_boundary": [
@@ -27,8 +29,8 @@
         "Continuity must not expose raw private state or infer metaphysical sameness."
       ],
       "initial_assumptions": [
-        "Every declared dependency is an execution gate to verify from current receipt-backed evidence, not a preparation-time completion claim.",
-        "Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing."
+        "Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.",
+        "The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval."
       ],
       "operator_constraints": [
         "Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.",

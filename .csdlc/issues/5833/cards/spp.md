@@ -16,7 +16,7 @@ Implement and prove WP-15 exact-candidate witness consensus and deterministic re
 
 ## Plan
 
-Revision 8
+Revision 11
 
 ## Steps
 
@@ -52,8 +52,15 @@ Revision 8
     "id": "S4",
     "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5833 linkage.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8",
+      "AC-9"
     ],
     "status": "pending"
   }
@@ -83,7 +90,7 @@ Revision 8
 
 .csdlc/prepared/issues/5833/design.md
 
-Digest: 820499657712f7fe97c21567e3f015c6cdcbc7dfdf5249f6600207693174df8c
+Digest: fd6d20bd10782c504f190bd896ec883f3163d3a80acbac0ea40d98c0d9fa3e83
 
 ## Diagram
 
@@ -96,6 +103,7 @@ Digest: 0255242ebe93f2857c2a9dc5f2d0c1a083fa373b340935cbfe34749941f0d599
 - Any sprint-gate dependency or #4762 is not verifiable.
 - The candidate digest cannot be bound across all witnesses.
 - Privacy, equivocation, authority, or premature-claim negatives cannot fail closed.
+- The WP-13 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.
 
 ## Handoff
 

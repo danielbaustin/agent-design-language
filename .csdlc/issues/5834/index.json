@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "2f8a9edc733d36518cfdfe54639ecbf45210e8028e1a884bf5e25a2d1d52408c",
   "phase": "bound",
-  "generation": 21,
-  "digest": "aeb23b38f71eee828e4ab911828d66b084479592712cd841d64f7c851bb1c030",
+  "generation": 30,
+  "digest": "0c8a4278402318bd980db567a593403da8248bebb5512b0b2b3915207af87419",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5834/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex-5860-design-review",
-      "revision": "b01caf72240ffae18cadcb91dc543b34394499e30f3cd73f5c7b0fd56afacd6e"
+      "reviewer": "codex:5860-birthday-readiness-repair-design-review",
+      "revision": "4cdaaf8cd0144e87c29137b969cff72a5e5e213d7e2d7e0b75a901c62a504d46"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "dfc2a9a39d94e6282dc75de3630642ddba7089cb39ae6400ccfab0a03fec2575",
-      "rendered_digest": "e001e24372db1ed530914f95b30d1ab66bc041895c2310b5d68cbb5f4274fb33",
-      "ast_digest": "4580ce7f39cbea8bcbc49667a5eb912befd7033d1d763bf1d13f3b48439248d2"
+      "values_digest": "2d49ff53dbbc5c2458791f1c77f46c45c070f163087e993d6f9a7bb044e4049a",
+      "rendered_digest": "e3214f9e214e253a804a40b06fa0fc315dd6d74cdb30f2230ee9c0fe86313fed",
+      "ast_digest": "25cc6180a369c28205d7b4d16efe2a21e1dbcfa0b1809caf6b2f8e11a1d1a97a"
     },
     "stp": {
-      "values_digest": "048eb8af0677ba1b767c94810869f4efd50a2277a16900cbb67f98971a55318d",
-      "rendered_digest": "53258cd780c897c29e0135e46f06b3e6bf6ef4c215908b9ccb5acf3a4438f5b6",
-      "ast_digest": "05b8a8b48daca09a3972e81950ad39d223359df0671443753023a0e6b798c4f9"
+      "values_digest": "b93e65be2bae589c8727e1c7f51af73a21fb9e6082212848d34613e4fe7f9c97",
+      "rendered_digest": "0894d8a51b830e5b6b18a0fd0bdf9d2ea708767f6bdf0de822ddab19ee7bc624",
+      "ast_digest": "633e36fb4f2e87b035d872b893097de20ed17eeb658a9bb1c08422ee70ba816a"
     },
     "spp": {
-      "values_digest": "9e8abdc31590749d6d451f67fbe9bcd9f2f22d731fac0cdedc3b432f0a92f0da",
-      "rendered_digest": "f66e54d09fb2cb4311284ccdf07d98342990322af9cafea7056b3c8e995b741b",
-      "ast_digest": "fedcb5fd260404a2ae7923f2c86fb635b52b86a4aa9468221fb68caddf25a648"
+      "values_digest": "b48a92c9c487b0f564dba16124185f9fb7041eb0e6a62e00a5827c4e28522678",
+      "rendered_digest": "dd7c7a12f9af26f228f04fdf9bfd2a9f91280c4834e842ac44e1397d61b00cd4",
+      "ast_digest": "69072458ca39f3cd12eaa1931e3e412d697d799be5957b205a33c3f64a87ac36"
     },
     "vpp": {
-      "values_digest": "09763dfd17efdc83cd104a3ef9bb08acb573758dd3419fb822927e3428416da5",
-      "rendered_digest": "a4b040e38d02d51f9b070f97f51fd84762c8e13c1ee7b0bc82e70437e10ea307",
-      "ast_digest": "07b1520a59c0737553471e3dfe6eb4f28777a1176c8e579e186c7a7f27c33ebc"
+      "values_digest": "0f28afb0d26a3cc8a744cc61d970a4b99432504169fdc46dbed4e1e82762e40c",
+      "rendered_digest": "6dae26196c319a4ec05c1310a4c27386026e2fdc83b8f81c93e42923c2276d5f",
+      "ast_digest": "94313b2ce41116a592ca567638d094444183bc250356bb0bb6ed76ed4f37c04b"
     },
     "srp": {
-      "values_digest": "c86d4026ae33e3e3119ccb6211cd1daaf958deccaae904eb0f624238eb515d28",
+      "values_digest": "851be12b89a9605dcb1ed67c7e41e59fe99f9e3ac84509a58fcffdbe2b27385b",
       "rendered_digest": "17190932d0bba5d9191d53a975465fddac37eb89830aaaa38ebd756d964599a3",
       "ast_digest": "137e5f2ec6e6c6f2da3c450deb1eebac5ae35339e1bd543c1dfc7d6abc733269"
     },
     "sor": {
-      "values_digest": "d2ce3ca6f4c15e5e4df67c5dc86b814b6fde2fc30e774e0e0889038f50764f50",
+      "values_digest": "341ca4f2314347d72703b1af67fbeb694d42c2cfa63918f236d749711d4e75b1",
       "rendered_digest": "9c5f2b3c80e1c6fef456129710248d984e21f19b8959152442c897af648beca7",
       "ast_digest": "1e76b8e18e111f25a6ef160b34eb5df0a73d783efe16a58ce5209f6e8b6697a4"
     }
@@ -265,6 +265,83 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release temporary preparation-only claim after typed card validation",
       "operation": "{\"claim_id\":\"prep-5860-5834-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Reacquire issue-local preparation claim to repair exact review findings without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-birthday-readiness-repair\",\"claim_id\":\"repair-5860-birthday-5834\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5834\",\".csdlc/prepared/issues/5834\",\".csdlc/evidence/5834\",\".csdlc/locks/5834.lock\"],\"purpose\":\"Repair Birthday sprint design-time readiness findings only; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md\",\"docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json\",\"docs/milestones/v0.92/review/first-birthday-review-packet.schema.json\",\".csdlc/prepared/issues/5834/validate-review-packet.rb\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md (WP-16 row only)\",\".csdlc/evidence/5834/\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md\",\".csdlc/issues/5825/ through .csdlc/issues/5833/ exact-head evidence\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 25,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md\",\"docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json\",\"docs/milestones/v0.92/review/first-birthday-review-packet.schema.json\",\".csdlc/prepared/issues/5834/validate-review-packet.rb\",\"docs/milestones/v0.92/DEMO_MATRIX_v0.92.md (WP-16 row only)\",\".csdlc/evidence/5834/\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 26,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any required child lacks terminal exact-head evidence.\",\"A packet link or digest cannot be validated reproducibly.\",\"Assembly requires editing shared milestone or release authority outside WP-16.\",\"The WP-13A dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.\"]}"
+    },
+    {
+      "sequence": 35,
+      "generation": 27,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-16 packet inventories one canonical exact revision/digest for every required WP-08 through WP-15 proof, negative report, caveat, reviewer question, redacted projection, and public non-claim.\",\"All issues #5825 through #5833, including #5831 and #5832, satisfy sprint gate 4 terminal and exact-head evidence requirements before assembly.\",\"Implementation is confined to the named WP-16 review packet Markdown, evidence JSON, schema, issue-local validator, WP-16 demo-matrix row, and .csdlc/evidence/5834/.\",\"Schema, link, digest, uniqueness, and completeness validation is reproducible and retained at the exact reviewed revision.\",\"Missing, stale, contradictory, nonterminal, unreviewed, duplicate-digest, private-path, personhood, citizenship, consciousness, governance, or publication-ready inputs produce named blocked failure.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5834 without claiming completion of downstream Birthday work.\",\"Before claim acquisition, reconcile the live issue and canonical wave with the stricter sprint/card dependency on WP-13A/#5831; WP-13A remains required.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Reconcile the stricter WP-13A dependency and verify exact terminal/reviewed evidence for the complete WP-08 through WP-15 roster.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Assemble the named Markdown packet, evidence JSON, schema, and deterministic issue-local validator without manufacturing missing proof.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run schema/link/digest/uniqueness/completeness proof and missing/stale/contradictory/private/overclaim negative fixtures.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5834 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"birthday-review-packet\",\"proof_role\":\"Parse the packet manifest/schema, recompute referenced digests, resolve links, and require the exact WP-08 through WP-15 roster including WP-13A and WP-14.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5834/validate-review-packet.rb\",\"--packet\",\"docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md\",\"--manifest\",\"docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json\",\"--schema\",\"docs/milestones/v0.92/review/first-birthday-review-packet.schema.json\"],\"parallel_group\":\"5834-packet\",\"defer_reason\":null},{\"lane\":\"birthday-review-packet-negative\",\"proof_role\":\"Run one-at-a-time negative fixtures for stale digests, missing roster entries, private paths, contradictory status, and forbidden public claims.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":2000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5834/validate-review-packet.rb\",\"--negative-fixtures\",\".csdlc/evidence/5834/negative-fixtures/\"],\"parallel_group\":\"5834-negative\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 36,
+      "generation": 28,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 37,
+      "generation": 29,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 30,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 30,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Release completed Birthday readiness-repair claim for just-in-time child execution binding.",
+      "operation": "{\"claim_id\":\"repair-5860-birthday-5834\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-birthday-readiness-repair\"}"
     }
   ]
 }

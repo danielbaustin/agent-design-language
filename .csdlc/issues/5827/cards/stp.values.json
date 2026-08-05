@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-10] Continuity across bounded cycles",
     "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
     "version": "v0.92",
-    "generation": 21
+    "generation": 34
   },
   "status": "ready",
   "content": {
@@ -23,21 +23,23 @@
       "acceptance_criteria": [
         "The WP-10 record links at least two bounded cycles to the same identity root and deterministically derives a continuity head or stable rejection reason.",
         "WP-09/#5826 terminal proof and current lineage/wake evidence are verified before implementation begins.",
-        "The feature contract, narrowly named Runtime v2 continuity module, tests, fixtures, and evidence stay within declared WP-10 paths.",
+        "Implementation is confined to adl-runtime-kernel/src/birthday_continuity.rs, lib.rs module registration, tests/birthday_continuity.rs, tests/fixtures/birthday_continuity/, the identity feature contract, and .csdlc/evidence/5827/.",
         "Identical predecessor and cycle evidence replay to byte-equivalent semantic continuity output retained at exact revision.",
         "Missing predecessor, root substitution, discontinuous or reordered cycles, duplicate cycles, forged witness, copied state, private paths, and host paths fail closed.",
         "One bounded exact-head SRP review records no unresolved actionable findings.",
-        "The implementation PR targets the intended base and includes Closes #5827 without claiming completion of downstream Birthday work."
+        "The implementation PR targets the intended base and includes Closes #5827 without claiming completion of downstream Birthday work.",
+        "The exact birthday_continuity nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
       ],
       "dependencies": [
         "WP-09 / issue #5826 terminal proof",
-        "Current Runtime v2 private-state lineage and wake-continuity evidence"
+        "Current Runtime v3 continuity.rs and live_continuity.rs authority"
       ],
       "repo_inputs": [
         "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
         "docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md",
-        "adl/src/runtime_v2/private_state_witness.rs",
-        "adl/src/runtime_v2/memory_identity_architecture.rs"
+        "adl-runtime-kernel/src/continuity.rs",
+        "adl-runtime-kernel/src/live_continuity.rs",
+        "adl-runtime-kernel/tests/live_continuity.rs"
       ],
       "non_goals": [
         "Memory Palace retrieval, capability profiles, migration, citizenship, or birthday approval",

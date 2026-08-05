@@ -6,7 +6,7 @@ Assemble WP-16's integrated review packet from `docs/milestones/v0.92/features/F
 
 ## Owned Surface
 
-Candidate protected paths are the review feature contract, a new issue-local reviewer packet/schema and validator under the v0.92 review/evidence surface, `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md` only for exact links/status owned by WP-16, and `.csdlc/evidence/5834/`. Shared release, launch, and milestone status docs require separate owners.
+Protected implementation paths are `docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md`, `docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json`, `docs/milestones/v0.92/review/first-birthday-review-packet.schema.json`, `.csdlc/prepared/issues/5834/validate-review-packet.rb`, `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md` only for the WP-16 link/status row, and `.csdlc/evidence/5834/`. The feature contract is a read-only source unless a fresh claim explicitly adds it. Shared release, launch, and milestone status docs require separate owners.
 
 ## Contract
 
@@ -14,11 +14,11 @@ The packet inventories exact revisions and digests for WP-08 birth contract, WP-
 
 ## Dependencies And Invariants
 
-WP-08 through WP-15, including WP-13A/#5831, WP-14/#5832, and WP-15/#5833, must satisfy sprint gate 4 and exact-head evidence checks. One source digest appears once; private evidence is represented by approved redacted projections; presentation surfaces cannot replace canonical proof.
+WP-08 through WP-15, including WP-13A/#5831, WP-14/#5832, and WP-15/#5833, must satisfy sprint gate 4 and exact-head evidence checks. The canonical issue row currently omits the stricter WP-13A gate carried by the sprint gate; pre-execution dependency reconciliation must align the live issue, canonical wave, and cards before claim acquisition, preserving WP-13A as required. One source digest appears once; private evidence is represented by approved redacted projections; presentation surfaces cannot replace canonical proof.
 
 ## Validation And Rollback
 
-Focused schema/link/digest checks prove packet completeness. Negative and claim-boundary lanes reject missing child proof, stale revisions, contradictory status, private path leakage, personhood/citizenship/consciousness claims, and publication-ready language without authorization. Rollback removes only the assembled packet and restores any WP-16-owned index link.
+`validate-review-packet.rb` parses the schema and packet, recomputes every referenced digest, requires the exact WP-08 through WP-15 roster including WP-13A and WP-14, resolves every repo-relative link, and rejects missing or nonterminal proof. Its negative lane mutates one fixture at a time to prove stale revision, contradictory status, private-path leakage, personhood/citizenship/consciousness claims, and unauthorized publication-ready language fail closed. Rollback removes only the assembled packet/schema/validator and restores the WP-16-owned demo-matrix link.
 
 ## Non-Goals
 

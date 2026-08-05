@@ -2,11 +2,11 @@
 
 ## Outcome And Sources
 
-Implement WP-13A's evaluated, policy-governed graph-change path described in `docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md`. Consume the requalified loop/replay substrate in `adl/src/runtime_v2/loop_runtime.rs`, reasoning graph in `adl/src/runtime_v2/reasoning_graph.rs`, bridge in `reasoning_runtime_bridge.rs`, governed-learning boundary, and `.csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md`.
+Implement WP-13A's evaluated, policy-governed graph-change path in current Runtime v3 authority, `adl-runtime-kernel`, as described in `docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md`. Consume `adl-runtime-kernel/src/reasoning.rs`, `adl-runtime-kernel/src/cognition.rs`, `adl-runtime-kernel/src/governance.rs`, `adl-runtime-kernel/src/durable_state.rs`, and `.csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md`. Retained `adl/src/runtime_v2/` loop and graph semantics are compatibility evidence only, not the implementation target.
 
 ## Owned Surface
 
-Candidate protected paths are narrowly named adaptive-learning modules under `adl/src/runtime_v2/`, Runtime v3 integration under `adl/src/cli/runtime_v3_cmd.rs` only if required, corresponding tests/fixtures, the feature contract, and `.csdlc/evidence/5831/`. Existing loop and graph schemas are changed only through explicit versioning.
+Protected implementation paths are `adl-runtime-kernel/src/adaptive_learning.rs`, `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/adaptive_learning.rs`, `adl-runtime-kernel/tests/fixtures/adaptive_learning/`, `docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md`, and `.csdlc/evidence/5831/`. `reasoning.rs`, `cognition.rs`, `governance.rs`, and `durable_state.rs` remain read-only authorities unless a fresh collision-checked claim explicitly adds a versioned compatibility edit.
 
 ## Contract
 
@@ -18,7 +18,7 @@ WP-01/#5818, WP-13/#5830, merged #5104 semantics, and current Runtime v3 qualifi
 
 ## Validation And Rollback
 
-Focused unit/integration tests prove accepted and rejected mutation paths plus deterministic replay. Negative tests cover forged history, substituted state, invalid graph binding, discontinuous resume, unbounded recurrence, missing evidence, unauthorized mutation, and rollback mismatch. A Runtime v3 integration lane proves the branch-built path. Rollback replays the recorded inverse or restores the prior graph/state hashes without deleting the rejected proposal history.
+The exact `adaptive_learning` Runtime v3 integration-test target must run a nonzero count proving accepted/rejected mutation, deterministic replay, forged/substituted history rejection, invalid graph bindings, discontinuous resume, recurrence bounds, missing evidence, unauthorized mutation, and rollback mismatch. The lane uses `adl-runtime-kernel/Cargo.toml`, not `adl/Cargo.toml`. Native Linux CI and a retained native macOS receipt execute the same fixture digest before portability is claimed. Rollback replays the recorded inverse or restores prior graph/state hashes without deleting rejected proposal history.
 
 ## Non-Goals
 

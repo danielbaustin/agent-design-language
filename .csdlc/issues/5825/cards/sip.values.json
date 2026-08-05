@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-08] Birthday contract and negative cases",
     "slug": "v0-92-wp-08-birthday-contract-and-negative-cases",
     "version": "v0.92",
-    "generation": 21
+    "generation": 44
   },
   "status": "ready",
   "content": {
@@ -16,10 +16,12 @@
       "goal": "Implement the deterministic WP-08 birthday contract and its complete not-a-birthday negative suite.",
       "required_outcome": "A versioned birth-decision contract, valid fixture, disqualifying fixtures, validator, and retained report that distinguish birth from startup, wake, snapshot, admission, copied state, and other non-birth lifecycle events.",
       "declared_scope": [
+        "adl-runtime-kernel/src/birthday.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/birthday.rs",
+        "adl-runtime-kernel/tests/fixtures/birthday/",
         "docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md",
-        "adl/src/runtime_v2/ for a narrowly named birthday contract and validator",
-        "adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/birthday/ for valid and negative fixtures",
-        ".csdlc/evidence/5825/ for retained validation output"
+        ".csdlc/evidence/5825/"
       ],
       "authority_boundary": [
         "Issue 5825 owns only the WP-08 birth decision contract and disqualifying cases.",
@@ -27,8 +29,8 @@
         "Existing v0.91.x birthday non-claims remain authoritative until this issue produces reviewed evidence."
       ],
       "initial_assumptions": [
-        "Dependencies are gates to verify at execution time, not completion claims in this preparation.",
-        "Candidate protected paths remain subject to exact claim collision checks before implementation."
+        "Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.",
+        "The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval."
       ],
       "operator_constraints": [
         "Use typed C-SDLC v2 lifecycle operations and an issue-bound worktree.",

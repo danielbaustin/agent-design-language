@@ -16,14 +16,14 @@ Implement and prove WP-12 canonical capability envelopes with explicit providers
 
 ## Plan
 
-Revision 8
+Revision 15
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5825, #5826, and #4761 evidence and inspect exact provider/profile surfaces before narrowing paths.",
+    "action": "Reconcile the WP-08 dependency mismatch, verify #5825/#5826/#4761 evidence, and claim the exact capability_envelope.rs, lib.rs, tests, fixture, feature, and evidence paths.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -52,8 +52,15 @@ Revision 8
     "id": "S4",
     "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8",
+      "AC-9"
     ],
     "status": "pending"
   }
@@ -67,9 +74,9 @@ Revision 8
 
 ## Risks
 
-- Stale #4761 claims could be copied as current capability.
-- Envelope parsing could treat missing limits as unlimited.
-- Provider metadata or fixtures could leak secrets or machine-local paths.
+- Capability could be mistaken for authority or invocation proof.
+- Retained #4761 provenance could be copied without current digest verification.
+- A required provider adapter edit could exceed the exact capability-envelope boundary.
 
 ## Estimates
 
@@ -83,7 +90,7 @@ Revision 8
 
 .csdlc/prepared/issues/5829/design.md
 
-Digest: a4a7cfc5283f886defec6b25dc9b3e3fed519d27eef59b892c249efc1e4e7688
+Digest: e0c98b4bbad7618c697213e6e5f76e42394d12fee8330c942d04d164766baacf
 
 ## Diagram
 
@@ -93,9 +100,10 @@ Digest: 78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a
 
 ## Stop Conditions
 
-- #5825, #5826, or #4761 evidence is not verifiable.
-- A provider adapter change exceeds the narrow envelope boundary.
-- Secret-safe or authority-escalation negatives cannot be proven.
+- WP-08/#5825, WP-09/#5826, or #4761 evidence is stale or unverifiable.
+- The WP-08 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.
+- Execution requires provider-adapter or credential changes outside the exact declared paths.
+- Secret-like data or unbounded authority cannot be excluded.
 
 ## Handoff
 

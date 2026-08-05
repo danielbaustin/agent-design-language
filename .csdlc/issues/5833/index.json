@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "53e5aa3396c8636e2b4d03f6971114be6111155898524a5ca2c789983f475997",
   "phase": "bound",
-  "generation": 21,
-  "digest": "a3ab55497e42b56fc552533f88acffe4fa70f30596906c17761254c03de81c50",
+  "generation": 30,
+  "digest": "67eeb20cdee82f018a541f92b29e08f2fc58425f68ddd6baffc9178dafadcdb0",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5833/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex-5860-design-review",
-      "revision": "820499657712f7fe97c21567e3f015c6cdcbc7dfdf5249f6600207693174df8c"
+      "reviewer": "codex:5860-birthday-readiness-repair-design-review",
+      "revision": "fd6d20bd10782c504f190bd896ec883f3163d3a80acbac0ea40d98c0d9fa3e83"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "3400dccef0cbec2936bdc20e994254a3976f4093e4f7181aba8ca554a95b2989",
-      "rendered_digest": "074cf13545e7c608d3e5c4951a8f930ccb176969b2052ede5ba7aa565e749064",
-      "ast_digest": "597b36b8185a2f91b6cfea97bc443a4067cd722fb76749a6a563327669265b5b"
+      "values_digest": "7e710bd242347ed44293c30825c9647483ca66e4afcb653ee0942794b41207c6",
+      "rendered_digest": "09a320c11ebf5b8eab5c09f2d04753651d545a20b75c50f2dd0b4e5946be0b89",
+      "ast_digest": "7ddd37151865ef70f0a6c3bb60f20d4db578dd556da94b164dc27e04f6eb2417"
     },
     "stp": {
-      "values_digest": "07c6b280b8765e71792a3e03cbc0ca45f8f3135065fc6009f156641c551ffe37",
-      "rendered_digest": "cfe46030edbd814c998cec5dd19df4a33c7baefe4403f4af1c163f1560c526ac",
-      "ast_digest": "bb4cbf38fed0210ed3653745b5703af0f5d4460873a9994068df36308872539b"
+      "values_digest": "02f690c7ca93f0c0cdd5ba9cfc5fe557a15e9d0cc26b39ba80d71396985edba8",
+      "rendered_digest": "bc42d2c9cb31038daf16231bfcd6452bec8742a0fbaa1e805d47029d663cc759",
+      "ast_digest": "922daf0100715788042b94318902ad76eff3ea8a8b6f5b0ad5b1b28d48e19551"
     },
     "spp": {
-      "values_digest": "4ebe5baa70fc4d2fa332a30ec9b79a5c0316244fa2da5f9c922c4902a408d708",
-      "rendered_digest": "acfc19c5280db4c0911c5befaa2f62f1ee79661d4a527aedd952fb74962565fd",
-      "ast_digest": "4121361ee74902c7a29e1e67dafdf0bf38de8619f9d79c5166ad73bdaa109af2"
+      "values_digest": "3c6807b902247ae75cea3f03e1930f7168182188ec8edb822b20dce773168034",
+      "rendered_digest": "8848042c0da463857ae8b6fcf5495a925f5841794dfbe1db9c04021d6a2166cd",
+      "ast_digest": "5130b1ac12af8fa2855bea011969b8eb6feb131f010f453e5a59394fd9f07196"
     },
     "vpp": {
-      "values_digest": "74ab4a44cf915a18e2981c034424cab60bb7cd12f230942b9bcf03064b3a67b0",
-      "rendered_digest": "fde5462de20073e20eed92a294b4132cd13c6b2c872e1c0b0d224c032c7db609",
-      "ast_digest": "29c006e855f9547d096c75466ef93408bca4ce92cf15fdc4e7195856869da0e6"
+      "values_digest": "524a01bcd6c7cc06ff07643d551070ea56487204b036313ada7578cd843d2136",
+      "rendered_digest": "7484d3dab486ecc683dc09487e12c180378f7adf855e9c5a26d61cbf228969c3",
+      "ast_digest": "b451e62f973b44748eadb7842a98159b9c421efb2ffb291d13391839c68e0651"
     },
     "srp": {
-      "values_digest": "5307f50cee87bbd9d761c6d1e6310c544e0677ed049d9d01ed780ee448a2a3aa",
+      "values_digest": "e1eae0644facf0ea1b3452588352c156de36957e01e88dfaf486a3f6b102b061",
       "rendered_digest": "56ec22df18e5ffdda568c7610c4251591f6e155519434631b3105bced42eb7e1",
       "ast_digest": "e8ad26ffda18e702a9a1dd14d163e259f5edcd2334f3de62fb9aee08b81b99b8"
     },
     "sor": {
-      "values_digest": "2428adaf1805c15a881fb0ff6feae81d0342662b10597f8629160bc215fd2feb",
+      "values_digest": "be5d6b321e5fe0543caca6ea5959898b4a41b5cf53c475ee5e0c734ba470fbf4",
       "rendered_digest": "80cfc253b18a6a049c6e3fbf9ba4c4d5770cc274c8f3e5103a4e4671ad3b4602",
       "ast_digest": "bc866d00481ec5943d6b753a3283ff8031e449d344cc5c773db718db37bb7bb0"
     }
@@ -265,6 +265,83 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release temporary preparation-only claim after typed card validation",
       "operation": "{\"claim_id\":\"prep-5860-5833-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Reacquire issue-local preparation claim to repair exact review findings without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-birthday-readiness-repair\",\"claim_id\":\"repair-5860-birthday-5833\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5833\",\".csdlc/prepared/issues/5833\",\".csdlc/evidence/5833\",\".csdlc/locks/5833.lock\"],\"purpose\":\"Repair Birthday sprint design-time readiness findings only; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/birth_witness.rs\",\"adl-runtime-kernel/src/lib.rs (module registration only)\",\"adl-runtime-kernel/tests/birth_witness.rs\",\"adl-runtime-kernel/tests/fixtures/birth_witness/\",\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\".csdlc/evidence/5833/\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"docs/milestones/v0.91.8/review/v092_handoff_4762/\",\"adl-runtime-kernel/src/private_state.rs\",\"adl/src/runtime_v2/private_state_witness.rs (read-only compatibility evidence only)\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 25,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/birth_witness.rs\",\"adl-runtime-kernel/src/lib.rs (module registration only)\",\"adl-runtime-kernel/tests/birth_witness.rs\",\"adl-runtime-kernel/tests/fixtures/birth_witness/\",\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\".csdlc/evidence/5833/\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 26,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any sprint-gate dependency or #4762 is not verifiable.\",\"The candidate digest cannot be bound across all witnesses.\",\"Privacy, equivocation, authority, or premature-claim negatives cannot fail closed.\",\"The WP-13 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.\"]}"
+    },
+    {
+      "sequence": 35,
+      "generation": 27,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-15 validator accepts only policy-complete distinct witnesses bound to the exact candidate/evidence digest and derives a deterministic caveated receipt from the validated decision.\",\"WP-09/#5826 through WP-13/#5830 and retained #4762 evidence are verified before implementation.\",\"Implementation is confined to adl-runtime-kernel/src/birth_witness.rs, lib.rs module registration, tests/birth_witness.rs, tests/fixtures/birth_witness/, the feature contract, and .csdlc/evidence/5833/.\",\"Equivalent witness sets and decisions produce canonical exact-revision validation and receipt output.\",\"Missing, duplicate, stale, forged, equivocal, unauthorized, candidate-mismatched, redaction-leaking witnesses and premature birth claims fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5833 without claiming completion of downstream Birthday work.\",\"Before claim acquisition, reconcile the live issue and canonical wave with the stricter sprint/card dependency on WP-13/#5830; WP-13 remains required.\",\"The exact birth_witness nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5826 through #5830 and #4762, then inspect exact private-state witness and birthday candidate contracts.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement witness-set validation, exact candidate binding, accepted/rejected receipt derivation, caveats, redaction, and fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run canonical witness/receipt tests plus equivocation, duplicate, stale, forged, authority, privacy, and premature-claim negatives.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5833 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"birth_witness-runtime-v3\",\"proof_role\":\"Run the exact Runtime v3 integration target and fail when the selected target contains no tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"birth_witness\",\"--no-tests=fail\",\"--status-level\",\"all\"],\"parallel_group\":\"5833-core\",\"defer_reason\":null},{\"lane\":\"birth_witness-native-platform-receipts\",\"proof_role\":\"Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.\",\"acceptance_ids\":[\"AC-4\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"receipts=ARGV.map{|p| JSON.parse(File.read(p))};\\nabort \\\"native platform receipts must cover macos and linux\\\" unless receipts.map{|r| r[\\\"platform\\\"]}.sort==%w[linux macos];\\nabort \\\"native proof failed\\\" unless receipts.all?{|r| r[\\\"status\\\"]==\\\"passed\\\" && Integer(r[\\\"tests_run\\\"])>0};\\nabort \\\"fixture digest mismatch\\\" unless receipts.map{|r| r[\\\"fixture_digest\\\"]}.uniq.length==1\",\".csdlc/evidence/5833/native-platform/macos.json\",\".csdlc/evidence/5833/native-platform/linux.json\"],\"parallel_group\":\"5833-platform\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 36,
+      "generation": 28,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 37,
+      "generation": 29,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 30,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 30,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Release completed Birthday readiness-repair claim for just-in-time child execution binding.",
+      "operation": "{\"claim_id\":\"repair-5860-birthday-5833\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-birthday-readiness-repair\"}"
     }
   ]
 }

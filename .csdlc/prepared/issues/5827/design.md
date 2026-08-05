@@ -6,7 +6,7 @@ Implement the WP-10 continuity record defined by `docs/milestones/v0.92/features
 
 ## Owned Surface
 
-Candidate protected paths are `adl/src/runtime_v2/` for a narrowly named continuity record, `adl/src/runtime_v2/tests/`, `adl/tests/fixtures/runtime_v2/continuity/`, the identity feature contract, and `.csdlc/evidence/5827/`. A record links at least two bounded cycle artifacts through identity root, predecessor/current cycle IDs, ordered evidence refs, continuity-head hash, witness refs, and an explicit continuity grade or rejection reason.
+Protected implementation paths are `adl-runtime-kernel/src/birthday_continuity.rs` (new bounded-cycle continuity record), `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/birthday_continuity.rs`, `adl-runtime-kernel/tests/fixtures/birthday_continuity/`, `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`, and `.csdlc/evidence/5827/`. Existing `adl-runtime-kernel/src/continuity.rs`, `adl-runtime-kernel/src/live_continuity.rs`, and `adl-runtime-kernel/tests/live_continuity.rs` are read-only compatibility authorities unless a fresh claim explicitly adds a bounded integration edit. A record links at least two bounded cycle artifacts through identity root, predecessor/current cycle IDs, ordered evidence refs, continuity-head hash, witness refs, and an explicit continuity grade or rejection reason.
 
 ## Contract
 
@@ -18,7 +18,7 @@ WP-09/#5826 must be terminal. Existing private-state lineage and wake evidence r
 
 ## Validation And Rollback
 
-Focused tests prove a two-or-more-cycle chain and deterministic head derivation. Negative tests cover substitution, discontinuity, duplicate/reordered cycles, missing evidence, and copied state. A portability lane uses repo-relative fixtures and no host paths. Rollback removes the new continuity layer without rewriting predecessor evidence.
+The exact `birthday_continuity` integration-test target must run a nonzero test count proving a two-or-more-cycle chain, deterministic head derivation, substitution/discontinuity/duplicate/reordered/missing-evidence failures, and copied-state rejection. Native Linux CI and a retained native macOS receipt must use the same repo-relative fixture digest before cross-platform output equivalence is claimed. Rollback removes the new continuity layer without rewriting predecessor evidence.
 
 ## Non-Goals
 

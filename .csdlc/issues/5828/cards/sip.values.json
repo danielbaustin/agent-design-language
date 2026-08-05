@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
     "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
     "version": "v0.92",
-    "generation": 21
+    "generation": 30
   },
   "status": "ready",
   "content": {
@@ -16,11 +16,12 @@
       "goal": "Integrate WP-11 Memory Palace context topology with v0.92 identity and continuity while preserving bounded deterministic selection and redaction.",
       "required_outcome": "A versioned-compatible Memory Palace slice that canonically binds declared memory and citation hashes to identity/continuity, bounded working sets, overflow, provenance, temporal anchors, and redaction checks.",
       "declared_scope": [
-        "adl/src/memory_palace.rs",
-        "adl/src/long_lived_agent.rs",
-        "adl/tests/memory_palace_tests.rs",
-        "adl/tests/fixtures/memory_palace/",
+        "adl-runtime-kernel/src/memory_palace.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/memory_palace.rs",
+        "adl-runtime-kernel/tests/fixtures/memory_palace/",
         "docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md",
+        ".csdlc/evidence/5828/obsmem-trace-integration-receipt.json",
         ".csdlc/evidence/5828/"
       ],
       "authority_boundary": [
@@ -29,8 +30,8 @@
         "Memory selection cannot browse raw private state or become unbounded semantic search."
       ],
       "initial_assumptions": [
-        "Every declared dependency is an execution gate to verify from current receipt-backed evidence, not a preparation-time completion claim.",
-        "Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing."
+        "Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.",
+        "The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval."
       ],
       "operator_constraints": [
         "Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.",

@@ -20,9 +20,11 @@ A versioned continuity record and validator linking identity root, predecessor a
 
 ## Scope
 
+- adl-runtime-kernel/src/birthday_continuity.rs
+- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/tests/birthday_continuity.rs
+- adl-runtime-kernel/tests/fixtures/birthday_continuity/
 - docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md
-- adl/src/runtime_v2/ narrowly named continuity record and validator
-- adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/continuity/
 - .csdlc/evidence/5827/
 
 ## Authority
@@ -33,8 +35,8 @@ A versioned continuity record and validator linking identity root, predecessor a
 
 ## Assumptions
 
-- Every declared dependency is an execution gate to verify from current receipt-backed evidence, not a preparation-time completion claim.
-- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
+- Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
+- The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
 
 ## Operator Constraints
 

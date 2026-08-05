@@ -25,23 +25,25 @@ Deliver only the WP-10 multi-cycle continuity chain, fixtures, validator, and re
 
 1. The WP-10 record links at least two bounded cycles to the same identity root and deterministically derives a continuity head or stable rejection reason.
 2. WP-09/#5826 terminal proof and current lineage/wake evidence are verified before implementation begins.
-3. The feature contract, narrowly named Runtime v2 continuity module, tests, fixtures, and evidence stay within declared WP-10 paths.
+3. Implementation is confined to adl-runtime-kernel/src/birthday_continuity.rs, lib.rs module registration, tests/birthday_continuity.rs, tests/fixtures/birthday_continuity/, the identity feature contract, and .csdlc/evidence/5827/.
 4. Identical predecessor and cycle evidence replay to byte-equivalent semantic continuity output retained at exact revision.
 5. Missing predecessor, root substitution, discontinuous or reordered cycles, duplicate cycles, forged witness, copied state, private paths, and host paths fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5827 without claiming completion of downstream Birthday work.
+8. The exact birthday_continuity nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
 
 ## Dependencies
 
 - WP-09 / issue #5826 terminal proof
-- Current Runtime v2 private-state lineage and wake-continuity evidence
+- Current Runtime v3 continuity.rs and live_continuity.rs authority
 
 ## Inputs
 
 - docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md
 - docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md
-- adl/src/runtime_v2/private_state_witness.rs
-- adl/src/runtime_v2/memory_identity_architecture.rs
+- adl-runtime-kernel/src/continuity.rs
+- adl-runtime-kernel/src/live_continuity.rs
+- adl-runtime-kernel/tests/live_continuity.rs
 
 ## Non Goals
 

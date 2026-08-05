@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5830/diagram.mmd
 
 [
   {
-    "lane": "cognitive-profile-canonical",
-    "proof_role": "Prove canonical profile creation, update linkage, and bounded projections.",
+    "lane": "cognitive_profile-runtime-v3",
+    "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -33,70 +33,48 @@ Diagram: .csdlc/prepared/issues/5830/diagram.mmd
       "AC-4",
       "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 500,
+    "budget_seconds": 600,
     "budget_tokens": 4000,
     "argv": [
       "cargo",
-      "test",
+      "nextest",
+      "run",
       "--manifest-path",
-      "adl/Cargo.toml",
+      "adl-runtime-kernel/Cargo.toml",
+      "--test",
       "cognitive_profile",
-      "--",
-      "--nocapture"
+      "--no-tests=fail",
+      "--status-level",
+      "all"
     ],
     "parallel_group": "5830-core",
     "defer_reason": null
   },
   {
-    "lane": "cognitive-profile-privacy-negative",
-    "proof_role": "Reject stale, forbidden, mismatched, unexplained, or private evidence.",
+    "lane": "cognitive_profile-native-platform-receipts",
+    "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
     "acceptance_ids": [
-      "AC-1",
       "AC-4",
-      "AC-5"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 500,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "cognitive_profile_negative",
-      "--",
-      "--nocapture"
-    ],
-    "parallel_group": "5830-negative",
-    "defer_reason": null
-  },
-  {
-    "lane": "cognitive-profile-non-reputation",
-    "proof_role": "Reject diagnosis, reputation, standing, rights, personhood, and consciousness inference.",
-    "acceptance_ids": [
-      "AC-3",
-      "AC-4",
-      "AC-5"
+      "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 200,
-    "budget_tokens": 2000,
+    "budget_seconds": 30,
+    "budget_tokens": 1000,
     "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "cognitive_profile_claim_boundary",
-      "--",
-      "--nocapture"
+      "ruby",
+      "-rjson",
+      "-e",
+      "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+      ".csdlc/evidence/5830/native-platform/macos.json",
+      ".csdlc/evidence/5830/native-platform/linux.json"
     ],
-    "parallel_group": "5830-negative",
+    "parallel_group": "5830-platform",
     "defer_reason": null
   }
 ]
@@ -113,9 +91,11 @@ Tokens: 10000
 
 ## Commands
 
-- `cargo test --manifest-path adl/Cargo.toml cognitive_profile -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml cognitive_profile_negative -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml cognitive_profile_claim_boundary -- --nocapture`
+- `cargo nextest run --manifest-path adl-runtime-kernel/Cargo.toml --test cognitive_profile --no-tests=fail --status-level all`
+- `ruby -rjson -e receipts=ARGV.map{|p| JSON.parse(File.read(p))};
+abort "native platform receipts must cover macos and linux" unless receipts.map{|r| r["platform"]}.sort==%w[linux macos];
+abort "native proof failed" unless receipts.all?{|r| r["status"]=="passed" && Integer(r["tests_run"])>0};
+abort "fixture digest mismatch" unless receipts.map{|r| r["fixture_digest"]}.uniq.length==1 .csdlc/evidence/5830/native-platform/macos.json .csdlc/evidence/5830/native-platform/linux.json`
 
 ## Failure Semantics
 

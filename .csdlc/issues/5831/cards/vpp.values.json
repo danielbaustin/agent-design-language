@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 21
+    "generation": 31
   },
   "status": "ready",
   "content": {
@@ -16,8 +16,8 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "adaptive-learning-accepted-rejected",
-          "proof_role": "Prove accepted and rejected policy paths with durable linked history.",
+          "lane": "adaptive_learning-runtime-v3",
+          "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -25,70 +25,48 @@
             "AC-4",
             "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 500,
+          "budget_seconds": 600,
           "budget_tokens": 4000,
           "argv": [
             "cargo",
-            "test",
+            "nextest",
+            "run",
             "--manifest-path",
-            "adl/Cargo.toml",
-            "adaptive_learning_dag",
-            "--",
-            "--nocapture"
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
+            "adaptive_learning",
+            "--no-tests=fail",
+            "--status-level",
+            "all"
           ],
           "parallel_group": "5831-core",
           "defer_reason": null
         },
         {
-          "lane": "adaptive-learning-replay-negative",
-          "proof_role": "Reject forged history, substituted state, discontinuous resume, unauthorized mutation, and rollback mismatch.",
+          "lane": "adaptive_learning-native-platform-receipts",
+          "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
           "acceptance_ids": [
-            "AC-1",
             "AC-4",
-            "AC-5"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 500,
-          "budget_tokens": 4000,
-          "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "adaptive_learning_dag_negative",
-            "--",
-            "--nocapture"
-          ],
-          "parallel_group": "5831-negative",
-          "defer_reason": null
-        },
-        {
-          "lane": "adaptive-learning-runtime-v3",
-          "proof_role": "Prove branch-built Runtime v3 bounds, cancellation, replay, and integration.",
-          "acceptance_ids": [
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 200,
-          "budget_tokens": 2000,
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
           "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "adaptive_learning_runtime_v3",
-            "--",
-            "--nocapture"
+            "ruby",
+            "-rjson",
+            "-e",
+            "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+            ".csdlc/evidence/5831/native-platform/macos.json",
+            ".csdlc/evidence/5831/native-platform/linux.json"
           ],
-          "parallel_group": "5831-negative",
+          "parallel_group": "5831-platform",
           "defer_reason": null
         }
       ],
@@ -96,9 +74,9 @@
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5831/design.md",
-      "design_digest": "24460a2aafdbc8f6076f5503f41bb945f313268fb975783efcbdbed3b0baaaf6",
+      "design_digest": "8a8476b2b26ffa23054519cb27d2d4ecb61424a7164ba4ff2697eb3c40c9e79a",
       "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",
-      "diagram_digest": "4830e2ee5a1da3b7673f5b3ef82de34dad490fdea86817cf0483f37930c2bdc5"
+      "diagram_digest": "859dbad5aa913e1a5f65375bd3b1ea19e42c33ed9c4c5d264053d6763a54d057"
     }
   }
 }

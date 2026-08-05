@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5825/diagram.mmd
 
 [
   {
-    "lane": "birthday-contract-and-fixtures",
-    "proof_role": "Prove one valid birth packet plus deterministic canonical decision output.",
+    "lane": "birthday-runtime-v3",
+    "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -33,70 +33,48 @@ Diagram: .csdlc/prepared/issues/5825/diagram.mmd
       "AC-4",
       "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 500,
+    "budget_seconds": 600,
     "budget_tokens": 4000,
     "argv": [
       "cargo",
-      "test",
+      "nextest",
+      "run",
       "--manifest-path",
-      "adl/Cargo.toml",
-      "birthday_contract",
-      "--",
-      "--nocapture"
+      "adl-runtime-kernel/Cargo.toml",
+      "--test",
+      "birthday",
+      "--no-tests=fail",
+      "--status-level",
+      "all"
     ],
-    "parallel_group": "birthday-core",
+    "parallel_group": "5825-core",
     "defer_reason": null
   },
   {
-    "lane": "not-a-birthday-negative-matrix",
-    "proof_role": "Reject lifecycle lookalikes and every required-evidence omission with stable reasons.",
+    "lane": "birthday-native-platform-receipts",
+    "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
     "acceptance_ids": [
-      "AC-1",
       "AC-4",
-      "AC-5"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 500,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "birthday_negative",
-      "--",
-      "--nocapture"
-    ],
-    "parallel_group": "birthday-negative",
-    "defer_reason": null
-  },
-  {
-    "lane": "claim-and-path-boundary",
-    "proof_role": "Reject private or host paths and unsupported public claims.",
-    "acceptance_ids": [
-      "AC-3",
-      "AC-4",
-      "AC-5"
+      "AC-8"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 200,
-    "budget_tokens": 2000,
+    "budget_seconds": 30,
+    "budget_tokens": 1000,
     "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "birthday_claim_boundary",
-      "--",
-      "--nocapture"
+      "ruby",
+      "-rjson",
+      "-e",
+      "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+      ".csdlc/evidence/5825/native-platform/macos.json",
+      ".csdlc/evidence/5825/native-platform/linux.json"
     ],
-    "parallel_group": "birthday-negative",
+    "parallel_group": "5825-platform",
     "defer_reason": null
   }
 ]
@@ -113,9 +91,11 @@ Tokens: 10000
 
 ## Commands
 
-- `cargo test --manifest-path adl/Cargo.toml birthday_contract -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml birthday_negative -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml birthday_claim_boundary -- --nocapture`
+- `cargo nextest run --manifest-path adl-runtime-kernel/Cargo.toml --test birthday --no-tests=fail --status-level all`
+- `ruby -rjson -e receipts=ARGV.map{|p| JSON.parse(File.read(p))};
+abort "native platform receipts must cover macos and linux" unless receipts.map{|r| r["platform"]}.sort==%w[linux macos];
+abort "native proof failed" unless receipts.all?{|r| r["status"]=="passed" && Integer(r["tests_run"])>0};
+abort "fixture digest mismatch" unless receipts.map{|r| r["fixture_digest"]}.uniq.length==1 .csdlc/evidence/5825/native-platform/macos.json .csdlc/evidence/5825/native-platform/linux.json`
 
 ## Failure Semantics
 

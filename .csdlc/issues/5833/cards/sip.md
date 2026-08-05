@@ -20,9 +20,11 @@ Versioned witness-set and receipt contracts binding witness identity/role, candi
 
 ## Scope
 
+- adl-runtime-kernel/src/birth_witness.rs
+- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/tests/birth_witness.rs
+- adl-runtime-kernel/tests/fixtures/birth_witness/
 - docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md
-- adl/src/runtime_v2/ narrowly named birth witness and receipt modules
-- adl/src/runtime_v2/tests/ and witness/receipt fixtures
 - .csdlc/evidence/5833/
 
 ## Authority
@@ -34,7 +36,7 @@ Versioned witness-set and receipt contracts binding witness identity/role, candi
 ## Assumptions
 
 - Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
-- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
+- The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
 
 ## Operator Constraints
 

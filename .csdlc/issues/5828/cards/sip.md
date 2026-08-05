@@ -20,11 +20,12 @@ A versioned-compatible Memory Palace slice that canonically binds declared memor
 
 ## Scope
 
-- adl/src/memory_palace.rs
-- adl/src/long_lived_agent.rs
-- adl/tests/memory_palace_tests.rs
-- adl/tests/fixtures/memory_palace/
+- adl-runtime-kernel/src/memory_palace.rs
+- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/tests/memory_palace.rs
+- adl-runtime-kernel/tests/fixtures/memory_palace/
 - docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md
+- .csdlc/evidence/5828/obsmem-trace-integration-receipt.json
 - .csdlc/evidence/5828/
 
 ## Authority
@@ -35,8 +36,8 @@ A versioned-compatible Memory Palace slice that canonically binds declared memor
 
 ## Assumptions
 
-- Every declared dependency is an execution gate to verify from current receipt-backed evidence, not a preparation-time completion claim.
-- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
+- Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
+- The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
 
 ## Operator Constraints
 

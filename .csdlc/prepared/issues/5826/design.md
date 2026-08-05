@@ -2,11 +2,11 @@
 
 ## Outcome And Sources
 
-Define the WP-09 identity record from `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`, the candidate birthday record in `docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md`, and existing lineage/witness authority in `adl/src/runtime_v2/memory_identity_architecture.rs` and `adl/src/runtime_v2/private_state_witness.rs`.
+Define the WP-09 identity record from `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`, the candidate birthday record in `docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md`, and current Runtime v3 lineage/private-state authority in `adl-runtime-kernel/src/identity_memory.rs` and `adl-runtime-kernel/src/private_state.rs`. Retained Runtime v2 lineage is compatibility evidence only.
 
 ## Owned Surface
 
-Candidate protected paths are the identity feature contract, `adl/src/runtime_v2/` for a narrowly named v0.92 identity record, matching Runtime tests and fixtures, and `.csdlc/evidence/5826/`. The record carries schema version, stable name, identity root, aliases, origin evidence, continuity head, memory/capability/witness references, provenance, and redaction policy.
+Protected implementation paths are `adl-runtime-kernel/src/birthday_identity.rs` (new v0.92 identity record), `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/birthday_identity.rs`, `adl-runtime-kernel/tests/fixtures/birthday_identity/`, `docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md`, and `.csdlc/evidence/5826/`. Existing `adl-runtime-kernel/src/identity_memory.rs` and `adl-runtime-kernel/src/private_state.rs` are read-only authorities unless a separately reviewed compatibility edit is added to the fresh claim. The record carries schema version, stable name, identity root, aliases, origin evidence, continuity head, memory/capability/witness references, provenance, and redaction policy.
 
 ## Contract
 
@@ -18,7 +18,7 @@ WP-08/#5825 must be terminal before implementation; prior citizen-state lineage 
 
 ## Validation And Rollback
 
-Focused schema tests cover canonical valid records and deterministic ordering. Negative tests cover missing roots, alias collision, provenance mismatch, substituted continuity head, and private-path disclosure. Rollback removes the v0.92 record/fixtures while retaining prior lineage primitives and WP-08 outputs.
+The exact `birthday_identity` integration-test target must run a nonzero test count covering canonical records, deterministic ordering, missing roots, alias collision, provenance mismatch, substituted continuity heads, and private-path disclosure. Native Linux CI and a retained native macOS receipt run the same fixture digest when portability is claimed. Rollback removes the v0.92 record/fixtures while retaining prior lineage primitives and WP-08 outputs.
 
 ## Non-Goals
 

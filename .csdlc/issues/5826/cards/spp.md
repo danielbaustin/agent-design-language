@@ -16,14 +16,14 @@ Implement and prove WP-09 canonical identity records with stable labels, immutab
 
 ## Plan
 
-Revision 8
+Revision 13
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5825 terminal receipt and inspect the exact identity, lineage, and witness sources before narrowing protected paths.",
+    "action": "Verify #5825 terminal proof and inspect adl-runtime-kernel identity_memory.rs and private_state.rs before claiming the exact birthday_identity.rs, lib.rs, tests, fixture, feature, and evidence paths.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -52,8 +52,14 @@ Revision 8
     "id": "S4",
     "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5826 linkage.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "status": "pending"
   }
@@ -83,7 +89,7 @@ Revision 8
 
 .csdlc/prepared/issues/5826/design.md
 
-Digest: b0a483031afde1863e678d542f09532437b8dccae20f3f11f39073cf5983eed2
+Digest: 8ffcd7f9a30e6bca583ac848376175f0149fe917f0cb7fea84f3bacb169974ff
 
 ## Diagram
 

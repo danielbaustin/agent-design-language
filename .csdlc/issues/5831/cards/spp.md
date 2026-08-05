@@ -16,14 +16,14 @@ Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accept
 
 ## Plan
 
-Revision 8
+Revision 12
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect exact loop, graph, bridge, and policy contracts.",
+    "action": "Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect adl-runtime-kernel reasoning, cognition, governance, and durable-state authorities.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -32,7 +32,7 @@ Revision 8
   },
   {
     "id": "S2",
-    "action": "Implement evaluation bindings, adaptation deltas, proposals, policy decisions, accepted/rejected mutation, durable history, and rollback records.",
+    "action": "Implement evaluation, adaptation delta, proposal, policy decision, accepted/rejected mutation, durable history, and rollback in adl-runtime-kernel/src/adaptive_learning.rs.",
     "acceptance_ids": [
       "AC-1",
       "AC-3"
@@ -52,8 +52,14 @@ Revision 8
     "id": "S4",
     "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5831 linkage.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "status": "pending"
   }
@@ -83,18 +89,19 @@ Revision 8
 
 .csdlc/prepared/issues/5831/design.md
 
-Digest: 24460a2aafdbc8f6076f5503f41bb945f313268fb975783efcbdbed3b0baaaf6
+Digest: 8a8476b2b26ffa23054519cb27d2d4ecb61424a7164ba4ff2697eb3c40c9e79a
 
 ## Diagram
 
 .csdlc/prepared/issues/5831/diagram.mmd
 
-Digest: 4830e2ee5a1da3b7673f5b3ef82de34dad490fdea86817cf0483f37930c2bdc5
+Digest: 859dbad5aa913e1a5f65375bd3b1ea19e42c33ed9c4c5d264053d6763a54d057
 
 ## Stop Conditions
 
 - Any dependency or Runtime v3 qualification evidence is stale or missing.
-- A shared loop/graph schema change lacks explicit versioning.
+- Any proposed implementation path targets adl/src/runtime_v2/ rather than adl-runtime-kernel.
+- A shared Runtime v3 reasoning, cognition, governance, or durable-state edit lacks explicit versioning and a widened collision-checked claim.
 - Rejected-path, replay, bounds, or rollback proof cannot be produced.
 
 ## Handoff

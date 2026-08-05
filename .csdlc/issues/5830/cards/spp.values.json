@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-13] ACP / cognitive profiles",
     "slug": "v0-92-wp-13-acp-cognitive-profiles",
     "version": "v0.92",
-    "generation": 21
+    "generation": 32
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 13,
       "summary": "Implement and prove WP-13 canonical evidence maps with revision-linked updates, bounded projections, privacy, and explicit non-reputation/personhood boundaries.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify #5827, #5828, #5829 and bounded ToM/intelligence/governed-learning inputs, then narrow exact protected paths.",
+          "action": "Verify #5827/#5828/#5829 and current Runtime v3 cognition/governance inputs, then claim the exact cognitive_profile.rs, lib.rs, tests, fixture, feature, and evidence paths.",
           "acceptance_ids": [
             "AC-2",
             "AC-3"
@@ -47,16 +47,24 @@
           "id": "S4",
           "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5830 linkage.",
           "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "status": "pending"
         }
       ],
       "affected_areas": [
+        "adl-runtime-kernel/src/cognitive_profile.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/cognitive_profile.rs",
+        "adl-runtime-kernel/tests/fixtures/cognitive_profile/",
         "docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md",
-        "adl/src/runtime_v2/ cognitive-profile module",
-        "adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/cognitive_profile/",
         ".csdlc/evidence/5830/"
       ],
       "invariants": [
@@ -85,7 +93,7 @@
         "Review finds a label that functions as diagnosis, standing, reputation, or rights inference."
       ],
       "design_ref": ".csdlc/prepared/issues/5830/design.md",
-      "design_digest": "e9f8fe4c982a1ad3fc18454c2d3e976efee028804c64dd65067fee2bf573cc87",
+      "design_digest": "af18b5f377a88b49556fcd5314db9f1a94ab53c81156e5b0482e750e58130b78",
       "diagram_ref": ".csdlc/prepared/issues/5830/diagram.mmd",
       "diagram_digest": "6b9a9b2ae6cf9491279ce9ea531331cc7b98069e510d08bd2aad9422595fef47"
     }

@@ -20,10 +20,11 @@ Durable evaluation, adaptation delta, graph-change proposal, policy decision, ac
 
 ## Scope
 
+- adl-runtime-kernel/src/adaptive_learning.rs
+- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/tests/adaptive_learning.rs
+- adl-runtime-kernel/tests/fixtures/adaptive_learning/
 - docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md
-- adl/src/runtime_v2/ narrowly named adaptive-learning modules
-- adl/src/cli/runtime_v3_cmd.rs only if branch-built integration requires it
-- adl/src/runtime_v2/tests/ and adaptive-learning fixtures
 - .csdlc/evidence/5831/
 
 ## Authority
@@ -35,7 +36,7 @@ Durable evaluation, adaptation delta, graph-change proposal, policy decision, ac
 ## Assumptions
 
 - Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
-- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
+- The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
 
 ## Operator Constraints
 

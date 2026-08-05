@@ -20,10 +20,11 @@ A versioned provider/model/tool/skill/authority/limit envelope, validator, fixtu
 
 ## Scope
 
+- adl-runtime-kernel/src/capability_envelope.rs
+- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/tests/capability_envelope.rs
+- adl-runtime-kernel/tests/fixtures/capability_envelope/
 - docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md
-- adl/src/ narrowly named capability-envelope module and validator
-- adl/src/provider/ and adl/src/provider_adapter.rs only if a narrow adapter is required
-- adl/tests/fixtures/ capability-envelope fixtures
 - .csdlc/evidence/5829/
 
 ## Authority
@@ -34,8 +35,8 @@ A versioned provider/model/tool/skill/authority/limit envelope, validator, fixtu
 
 ## Assumptions
 
-- Every declared dependency is an execution gate to verify from current receipt-backed evidence, not a preparation-time completion claim.
-- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
+- Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
+- The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
 
 ## Operator Constraints
 

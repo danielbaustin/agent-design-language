@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-09] Stable name and identity architecture",
     "slug": "v0-92-wp-09-stable-name-and-identity-architecture",
     "version": "v0.92",
-    "generation": 21
+    "generation": 35
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 13,
       "summary": "Implement and prove WP-09 canonical identity records with stable labels, immutable root authority, provenance, and redaction-safe negative handling.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify #5825 terminal receipt and inspect the exact identity, lineage, and witness sources before narrowing protected paths.",
+          "action": "Verify #5825 terminal proof and inspect adl-runtime-kernel identity_memory.rs and private_state.rs before claiming the exact birthday_identity.rs, lib.rs, tests, fixture, feature, and evidence paths.",
           "acceptance_ids": [
             "AC-2",
             "AC-3"
@@ -47,16 +47,24 @@
           "id": "S4",
           "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5826 linkage.",
           "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "status": "pending"
         }
       ],
       "affected_areas": [
+        "adl-runtime-kernel/src/birthday_identity.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/birthday_identity.rs",
+        "adl-runtime-kernel/tests/fixtures/birthday_identity/",
         "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
-        "adl/src/runtime_v2/ identity record module",
-        "adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/identity/",
         ".csdlc/evidence/5826/"
       ],
       "invariants": [
@@ -85,7 +93,7 @@
         "Review finds an unmodeled alias or provenance ambiguity."
       ],
       "design_ref": ".csdlc/prepared/issues/5826/design.md",
-      "design_digest": "b0a483031afde1863e678d542f09532437b8dccae20f3f11f39073cf5983eed2",
+      "design_digest": "8ffcd7f9a30e6bca583ac848376175f0149fe917f0cb7fea84f3bacb169974ff",
       "diagram_ref": ".csdlc/prepared/issues/5826/diagram.mmd",
       "diagram_digest": "d5cc198edc4895057317ca54fe8aa3c676496c00d23ba4718aa88f17ac266f58"
     }

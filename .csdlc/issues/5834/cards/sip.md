@@ -20,9 +20,11 @@ A schema-validated packet inventorying exact revisions and digests for WP-08 thr
 
 ## Scope
 
-- docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md
-- new issue-local v0.92 Birthday review packet, schema, and validator
-- docs/milestones/v0.92/DEMO_MATRIX_v0.92.md only for WP-16-owned exact links/status
+- docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md
+- docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json
+- docs/milestones/v0.92/review/first-birthday-review-packet.schema.json
+- .csdlc/prepared/issues/5834/validate-review-packet.rb
+- docs/milestones/v0.92/DEMO_MATRIX_v0.92.md (WP-16 row only)
 - .csdlc/evidence/5834/
 
 ## Authority
@@ -34,7 +36,7 @@ A schema-validated packet inventorying exact revisions and digests for WP-08 thr
 ## Assumptions
 
 - Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
-- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
+- The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
 
 ## Operator Constraints
 

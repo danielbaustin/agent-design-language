@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 21
+    "generation": 31
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 12,
       "summary": "Implement and prove WP-13A's evaluation-to-policy-to-graph DAG, including accepted and rejected paths, deterministic replay, bounded Runtime v3 integration, and rollback history.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect exact loop, graph, bridge, and policy contracts.",
+          "action": "Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect adl-runtime-kernel reasoning, cognition, governance, and durable-state authorities.",
           "acceptance_ids": [
             "AC-2",
             "AC-3"
@@ -27,7 +27,7 @@
         },
         {
           "id": "S2",
-          "action": "Implement evaluation bindings, adaptation deltas, proposals, policy decisions, accepted/rejected mutation, durable history, and rollback records.",
+          "action": "Implement evaluation, adaptation delta, proposal, policy decision, accepted/rejected mutation, durable history, and rollback in adl-runtime-kernel/src/adaptive_learning.rs.",
           "acceptance_ids": [
             "AC-1",
             "AC-3"
@@ -47,17 +47,24 @@
           "id": "S4",
           "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5831 linkage.",
           "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "status": "pending"
         }
       ],
       "affected_areas": [
+        "adl-runtime-kernel/src/adaptive_learning.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/adaptive_learning.rs",
+        "adl-runtime-kernel/tests/fixtures/adaptive_learning/",
         "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
-        "adl/src/runtime_v2/ adaptive-learning modules and versioned bridges",
-        "adl/src/cli/runtime_v3_cmd.rs only if required",
-        "adl/src/runtime_v2/tests/ and fixtures",
         ".csdlc/evidence/5831/"
       ],
       "invariants": [
@@ -77,7 +84,8 @@
       },
       "stop_conditions": [
         "Any dependency or Runtime v3 qualification evidence is stale or missing.",
-        "A shared loop/graph schema change lacks explicit versioning.",
+        "Any proposed implementation path targets adl/src/runtime_v2/ rather than adl-runtime-kernel.",
+        "A shared Runtime v3 reasoning, cognition, governance, or durable-state edit lacks explicit versioning and a widened collision-checked claim.",
         "Rejected-path, replay, bounds, or rollback proof cannot be produced."
       ],
       "replan_triggers": [
@@ -86,9 +94,9 @@
         "Review finds mutation before policy decision or an incomplete durable-history edge."
       ],
       "design_ref": ".csdlc/prepared/issues/5831/design.md",
-      "design_digest": "24460a2aafdbc8f6076f5503f41bb945f313268fb975783efcbdbed3b0baaaf6",
+      "design_digest": "8a8476b2b26ffa23054519cb27d2d4ecb61424a7164ba4ff2697eb3c40c9e79a",
       "diagram_ref": ".csdlc/prepared/issues/5831/diagram.mmd",
-      "diagram_digest": "4830e2ee5a1da3b7673f5b3ef82de34dad490fdea86817cf0483f37930c2bdc5"
+      "diagram_digest": "859dbad5aa913e1a5f65375bd3b1ea19e42c33ed9c4c5d264053d6763a54d057"
     }
   }
 }

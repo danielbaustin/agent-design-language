@@ -6,7 +6,7 @@ Define the deterministic WP-08 birth decision consumed by the Birthday sprint. T
 
 ## Owned Surface
 
-Implementation may update the WP-08 feature contract and add an issue-local birthday contract/schema, valid fixture, negative fixtures, validator, and retained validation report. Candidate protected paths are `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`, `adl/src/runtime_v2/`, `adl/tests/fixtures/runtime_v2/birthday/`, `adl/src/runtime_v2/tests/`, and `.csdlc/evidence/5825/`; exact new module names must be narrowed before editing shared Runtime files.
+Protected implementation paths are `adl-runtime-kernel/src/birthday.rs` (new birth-decision contract and validator), `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/birthday.rs` (positive, negative, and deterministic replay tests), `adl-runtime-kernel/tests/fixtures/birthday/` (versioned candidate packets), `docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md`, and `.csdlc/evidence/5825/`. No `adl/src/runtime_v2/` implementation is in scope.
 
 ## Contract
 
@@ -18,7 +18,7 @@ WP-01/#5818 and WP-02A/#5819 must be terminally proven before execution. The dec
 
 ## Validation And Rollback
 
-Focused schema/fixture tests prove one valid packet. A table-driven negative lane proves every listed disqualifier and missing-evidence case. A claim-boundary scan rejects personhood, consciousness, production citizenship, governance, migration, and transport overclaims. Rollback removes the new contract/fixtures and restores the feature doc without altering historical evidence.
+Focused tests must invoke the exact `birthday` integration-test target, assert that at least one test ran, and prove one valid packet plus every table-driven disqualifier and missing-evidence case. A claim-boundary scan rejects personhood, consciousness, production citizenship, governance, migration, and transport overclaims. Native Linux CI and a retained native macOS receipt must execute the same fixture corpus before portability is claimed. Rollback removes the new module/fixtures and restores the feature doc without altering historical evidence.
 
 ## Non-Goals
 

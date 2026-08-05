@@ -16,14 +16,14 @@ Implement and prove WP-10 canonical multi-cycle continuity with predecessor bind
 
 ## Plan
 
-Revision 8
+Revision 13
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5826 terminal receipt and inspect exact lineage and wake-continuity inputs before narrowing protected paths.",
+    "action": "Verify #5826 terminal proof and inspect adl-runtime-kernel continuity.rs and live_continuity.rs before claiming the exact birthday_continuity.rs, lib.rs, tests, fixture, feature, and evidence paths.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -52,8 +52,14 @@ Revision 8
     "id": "S4",
     "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5827 linkage.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "status": "pending"
   }
@@ -83,7 +89,7 @@ Revision 8
 
 .csdlc/prepared/issues/5827/design.md
 
-Digest: a28d472d60100fccbd7ba12e39cd6e6a0f2c1574e09372017a01ca90ae40801b
+Digest: fa58cabd0b42eb2d88e51720df28d38ae5788490daafdda83f182d571e394308
 
 ## Diagram
 

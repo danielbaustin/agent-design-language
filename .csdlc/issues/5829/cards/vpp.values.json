@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 21
+    "generation": 34
   },
   "status": "ready",
   "content": {
@@ -16,8 +16,8 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "capability-envelope-canonical",
-          "proof_role": "Prove complete canonical envelopes bound to identity and exact evidence revision.",
+          "lane": "capability_envelope-runtime-v3",
+          "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -25,70 +25,49 @@
             "AC-4",
             "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8",
+            "AC-9"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 500,
+          "budget_seconds": 600,
           "budget_tokens": 4000,
           "argv": [
             "cargo",
-            "test",
+            "nextest",
+            "run",
             "--manifest-path",
-            "adl/Cargo.toml",
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
             "capability_envelope",
-            "--",
-            "--nocapture"
+            "--no-tests=fail",
+            "--status-level",
+            "all"
           ],
           "parallel_group": "5829-core",
           "defer_reason": null
         },
         {
-          "lane": "capability-authority-and-secret-negative",
-          "proof_role": "Reject stale provenance, undeclared capability, escalation, missing limits, and secret-like content.",
+          "lane": "capability_envelope-native-platform-receipts",
+          "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
           "acceptance_ids": [
-            "AC-1",
             "AC-4",
-            "AC-5"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 500,
-          "budget_tokens": 4000,
-          "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "capability_envelope_negative",
-            "--",
-            "--nocapture"
-          ],
-          "parallel_group": "5829-negative",
-          "defer_reason": null
-        },
-        {
-          "lane": "capability-path-portability",
-          "proof_role": "Prove envelope evidence remains credential-free and repo-relative.",
-          "acceptance_ids": [
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-9"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 200,
-          "budget_tokens": 2000,
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
           "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "capability_envelope_portability",
-            "--",
-            "--nocapture"
+            "ruby",
+            "-rjson",
+            "-e",
+            "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+            ".csdlc/evidence/5829/native-platform/macos.json",
+            ".csdlc/evidence/5829/native-platform/linux.json"
           ],
-          "parallel_group": "5829-negative",
+          "parallel_group": "5829-platform",
           "defer_reason": null
         }
       ],
@@ -96,7 +75,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5829/design.md",
-      "design_digest": "a4a7cfc5283f886defec6b25dc9b3e3fed519d27eef59b892c249efc1e4e7688",
+      "design_digest": "e0c98b4bbad7618c697213e6e5f76e42394d12fee8330c942d04d164766baacf",
       "diagram_ref": ".csdlc/prepared/issues/5829/diagram.mmd",
       "diagram_digest": "78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a"
     }

@@ -20,9 +20,11 @@ A versioned ACP record and update contract binding identity, continuity, allowed
 
 ## Scope
 
+- adl-runtime-kernel/src/cognitive_profile.rs
+- adl-runtime-kernel/src/lib.rs (module registration only)
+- adl-runtime-kernel/tests/cognitive_profile.rs
+- adl-runtime-kernel/tests/fixtures/cognitive_profile/
 - docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md
-- adl/src/runtime_v2/ narrowly named cognitive-profile module
-- adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/cognitive_profile/
 - .csdlc/evidence/5830/
 
 ## Authority
@@ -34,7 +36,7 @@ A versioned ACP record and update contract binding identity, continuity, allowed
 ## Assumptions
 
 - Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.
-- Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing.
+- The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.
 
 ## Operator Constraints
 

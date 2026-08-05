@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-13] ACP / cognitive profiles",
     "slug": "v0-92-wp-13-acp-cognitive-profiles",
     "version": "v0.92",
-    "generation": 21
+    "generation": 32
   },
   "status": "ready",
   "content": {
@@ -23,11 +23,12 @@
       "acceptance_criteria": [
         "The WP-13 profile deterministically binds identity and continuity to allowed evidence digests, update actor/reason, revision linkage, privacy policy, bounded projections, and explicit non-claims.",
         "WP-10/#5827, WP-11/#5828, WP-12/#5829, and current ToM/intelligence/governed-learning evidence are verified before implementation.",
-        "The ACP feature, narrow Runtime v2 module, tests, fixtures, and retained evidence remain within declared WP-13 paths.",
+        "Implementation is confined to adl-runtime-kernel/src/cognitive_profile.rs, lib.rs module registration, tests/cognitive_profile.rs, tests/fixtures/cognitive_profile/, the ACP feature contract, and .csdlc/evidence/5830/; Runtime v2 is read-only evidence.",
         "Canonical profile creation and revision updates replay identically and retain exact-revision internal and public projection proof.",
         "Stale or forbidden evidence, identity mismatch, unexplained mutation, private-state leakage, unsupported labels, reputation, standing, rights, diagnosis, personhood, and consciousness inferences fail closed.",
         "One bounded exact-head SRP review records no unresolved actionable findings.",
-        "The implementation PR targets the intended base and includes Closes #5830 without claiming completion of downstream Birthday work."
+        "The implementation PR targets the intended base and includes Closes #5830 without claiming completion of downstream Birthday work.",
+        "The exact cognitive_profile nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed."
       ],
       "dependencies": [
         "WP-10 / issue #5827 terminal proof",
@@ -37,9 +38,10 @@
       ],
       "repo_inputs": [
         "docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md",
-        "adl/src/runtime_v2/ Theory-of-Mind and intelligence evidence surfaces",
-        "adl/src/runtime_v2/ governed-learning evidence surfaces",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "adl-runtime-kernel/src/identity_memory.rs",
+        "adl-runtime-kernel/src/cognition.rs",
+        "adl-runtime-kernel/src/governance.rs",
+        "adl/src/runtime_v2/ (read-only retained evidence only)"
       ],
       "non_goals": [
         "Diagnosis, scalar moral verdicts, reputation, public standing, rights, citizenship, personhood, or consciousness",

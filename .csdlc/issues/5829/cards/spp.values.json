@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-12] Capability envelope",
     "slug": "v0-92-wp-12-capability-envelope",
     "version": "v0.92",
-    "generation": 21
+    "generation": 34
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 15,
       "summary": "Implement and prove WP-12 canonical capability envelopes with explicit providers, tools, skills, grants, denials, limits, provenance, and secret-safe failure handling.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify #5825, #5826, and #4761 evidence and inspect exact provider/profile surfaces before narrowing paths.",
+          "action": "Reconcile the WP-08 dependency mismatch, verify #5825/#5826/#4761 evidence, and claim the exact capability_envelope.rs, lib.rs, tests, fixture, feature, and evidence paths.",
           "acceptance_ids": [
             "AC-2",
             "AC-3"
@@ -47,17 +47,25 @@
           "id": "S4",
           "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.",
           "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8",
+            "AC-9"
           ],
           "status": "pending"
         }
       ],
       "affected_areas": [
+        "adl-runtime-kernel/src/capability_envelope.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/capability_envelope.rs",
+        "adl-runtime-kernel/tests/fixtures/capability_envelope/",
         "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
-        "adl/src/ capability-envelope module",
-        "adl/src/provider/ and adl/src/provider_adapter.rs only if required",
-        "adl/tests/fixtures/ capability envelope",
         ".csdlc/evidence/5829/"
       ],
       "invariants": [
@@ -66,9 +74,9 @@
         "Credential material, private state, and host-specific paths never enter retained evidence."
       ],
       "risks": [
-        "Stale #4761 claims could be copied as current capability.",
-        "Envelope parsing could treat missing limits as unlimited.",
-        "Provider metadata or fixtures could leak secrets or machine-local paths."
+        "Capability could be mistaken for authority or invocation proof.",
+        "Retained #4761 provenance could be copied without current digest verification.",
+        "A required provider adapter edit could exceed the exact capability-envelope boundary."
       ],
       "execution_estimates": {
         "elapsed_seconds": 7200,
@@ -76,9 +84,10 @@
         "validation_seconds": 1200
       },
       "stop_conditions": [
-        "#5825, #5826, or #4761 evidence is not verifiable.",
-        "A provider adapter change exceeds the narrow envelope boundary.",
-        "Secret-safe or authority-escalation negatives cannot be proven."
+        "WP-08/#5825, WP-09/#5826, or #4761 evidence is stale or unverifiable.",
+        "The WP-08 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.",
+        "Execution requires provider-adapter or credential changes outside the exact declared paths.",
+        "Secret-like data or unbounded authority cannot be excluded."
       ],
       "replan_triggers": [
         "#4761 must be explicitly superseded rather than consumed.",
@@ -86,7 +95,7 @@
         "Review identifies an undeclared authority or resource dimension."
       ],
       "design_ref": ".csdlc/prepared/issues/5829/design.md",
-      "design_digest": "a4a7cfc5283f886defec6b25dc9b3e3fed519d27eef59b892c249efc1e4e7688",
+      "design_digest": "e0c98b4bbad7618c697213e6e5f76e42394d12fee8330c942d04d164766baacf",
       "diagram_ref": ".csdlc/prepared/issues/5829/diagram.mmd",
       "diagram_digest": "78acf0d1432d60e5c4c8b3eba8f887a035f2f55abeee4cc19537b6495dc5de3a"
     }

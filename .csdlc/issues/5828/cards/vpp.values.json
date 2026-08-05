@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-11][runtime] Implement the first Memory Palace context-topology slice",
     "slug": "v0-92-wp-11-runtime-implement-first-memory-palace-context-topology-slice",
     "version": "v0.92",
-    "generation": 21
+    "generation": 30
   },
   "status": "ready",
   "content": {
@@ -16,8 +16,8 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "memory-palace-topology",
-          "proof_role": "Prove identity/continuity-bound topology, bounded selection, and overflow integration.",
+          "lane": "memory_palace-runtime-v3",
+          "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -25,70 +25,49 @@
             "AC-4",
             "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8",
+            "AC-9"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 500,
+          "budget_seconds": 600,
           "budget_tokens": 4000,
           "argv": [
             "cargo",
-            "test",
+            "nextest",
+            "run",
             "--manifest-path",
-            "adl/Cargo.toml",
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
             "memory_palace",
-            "--",
-            "--nocapture"
+            "--no-tests=fail",
+            "--status-level",
+            "all"
           ],
           "parallel_group": "5828-core",
           "defer_reason": null
         },
         {
-          "lane": "memory-palace-negative-replay",
-          "proof_role": "Reject stale, hash-mismatched, discontinuous, unauthorized, or nondeterministically ordered context.",
+          "lane": "memory_palace-native-platform-receipts",
+          "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
           "acceptance_ids": [
-            "AC-1",
             "AC-4",
-            "AC-5"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 500,
-          "budget_tokens": 4000,
-          "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "memory_palace_negative",
-            "--",
-            "--nocapture"
-          ],
-          "parallel_group": "5828-negative",
-          "defer_reason": null
-        },
-        {
-          "lane": "memory-palace-platform-portability",
-          "proof_role": "Prove relative-path fixtures and equivalent output across supported platforms.",
-          "acceptance_ids": [
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-9"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 200,
-          "budget_tokens": 2000,
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
           "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "memory_palace_portability",
-            "--",
-            "--nocapture"
+            "ruby",
+            "-rjson",
+            "-e",
+            "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+            ".csdlc/evidence/5828/native-platform/macos.json",
+            ".csdlc/evidence/5828/native-platform/linux.json"
           ],
-          "parallel_group": "5828-negative",
+          "parallel_group": "5828-platform",
           "defer_reason": null
         }
       ],
@@ -96,9 +75,9 @@
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5828/design.md",
-      "design_digest": "0999cedc855c8f666c2526d256d8222706fecbe79c0695a4e9dc604f42a6566d",
+      "design_digest": "581333d079c24f6145b50ba6749a664f6fbffc50a6e48d6883ae5fc3417e664a",
       "diagram_ref": ".csdlc/prepared/issues/5828/diagram.mmd",
-      "diagram_digest": "c390c8b88c0764207e3fd973dda392d644328194d535eb91def5e644d39b544e"
+      "diagram_digest": "ff82b0bec69f0e9368d20aff4022d0a5506a8040000a27f8a1991dece282ff8b"
     }
   }
 }

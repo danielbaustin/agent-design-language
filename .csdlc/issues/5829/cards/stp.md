@@ -25,11 +25,13 @@ Deliver only the WP-12 capability envelope contract, validation fixtures, and ex
 
 1. The WP-12 envelope deterministically binds identity and evidence revision to explicit provider/model identifiers, tools, skills, grants, denials, resource limits, provenance, and unsupported claims.
 2. WP-08/#5825, WP-09/#5826, and retained #4761 evidence are verified before implementation begins.
-3. The feature contract, narrow envelope module/adapter, tests, fixtures, and evidence stay within declared WP-12 paths and preserve #4761 unchanged.
+3. Implementation is confined to adl-runtime-kernel/src/capability_envelope.rs, lib.rs module registration, tests/capability_envelope.rs, tests/fixtures/capability_envelope/, the feature contract, and .csdlc/evidence/5829/.
 4. Equivalent capability inputs serialize canonically and produce reproducible exact-revision validation evidence.
 5. Unknown or stale provider/model evidence, undeclared tools/skills, authority escalation, omitted limits, secret-like content, private paths, and host paths fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5829 without claiming completion of downstream Birthday work.
+8. Before claim acquisition, reconcile the live issue and canonical wave with the stricter sprint/card dependency on WP-08/#5825; WP-08 remains required.
+9. The exact capability_envelope nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
 
 ## Dependencies
 
@@ -40,7 +42,7 @@ Deliver only the WP-12 capability envelope contract, validation fixtures, and ex
 ## Inputs
 
 - docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md
-- adl/src/provider/
+- adl/src/provider/ (read-only provider inventory)
 - adl/src/provider_adapter.rs
 - .csdlc/evidence/4761/capability-envelope/
 

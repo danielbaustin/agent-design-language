@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-10] Continuity across bounded cycles",
     "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
     "version": "v0.92",
-    "generation": 21
+    "generation": 34
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 13,
       "summary": "Implement and prove WP-10 canonical multi-cycle continuity with predecessor binding, deterministic head derivation, and complete discontinuity negatives.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify #5826 terminal receipt and inspect exact lineage and wake-continuity inputs before narrowing protected paths.",
+          "action": "Verify #5826 terminal proof and inspect adl-runtime-kernel continuity.rs and live_continuity.rs before claiming the exact birthday_continuity.rs, lib.rs, tests, fixture, feature, and evidence paths.",
           "acceptance_ids": [
             "AC-2",
             "AC-3"
@@ -47,16 +47,24 @@
           "id": "S4",
           "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5827 linkage.",
           "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "status": "pending"
         }
       ],
       "affected_areas": [
+        "adl-runtime-kernel/src/birthday_continuity.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/birthday_continuity.rs",
+        "adl-runtime-kernel/tests/fixtures/birthday_continuity/",
         "docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md",
-        "adl/src/runtime_v2/ continuity record module",
-        "adl/src/runtime_v2/tests/ and adl/tests/fixtures/runtime_v2/continuity/",
         ".csdlc/evidence/5827/"
       ],
       "invariants": [
@@ -85,7 +93,7 @@
         "Review identifies an uncovered discontinuity or replay ambiguity."
       ],
       "design_ref": ".csdlc/prepared/issues/5827/design.md",
-      "design_digest": "a28d472d60100fccbd7ba12e39cd6e6a0f2c1574e09372017a01ca90ae40801b",
+      "design_digest": "fa58cabd0b42eb2d88e51720df28d38ae5788490daafdda83f182d571e394308",
       "diagram_ref": ".csdlc/prepared/issues/5827/diagram.mmd",
       "diagram_digest": "b8e8902ce03c1fd254d2be626f03fb412db939612b74f42de3942fcfd6cdbbb4"
     }

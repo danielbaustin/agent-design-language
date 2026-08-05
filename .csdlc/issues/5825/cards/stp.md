@@ -25,11 +25,12 @@ Deliver the WP-08 birthday-decision contract, complete negative fixture matrix, 
 
 1. The WP-08 birth-decision contract accepts one structurally complete candidate and emits stable rejection reasons for every declared lifecycle lookalike or missing evidence surface.
 2. Terminal proof for WP-01/#5818 and WP-02A/#5819 is verified before implementation begins.
-3. The feature contract, Runtime v2 module, tests, fixtures, and retained evidence stay within the declared WP-08 paths and preserve existing birthday non-claims.
+3. Implementation is confined to adl-runtime-kernel/src/birthday.rs, lib.rs module registration, tests/birthday.rs, tests/fixtures/birthday/, the WP-08 feature contract, and .csdlc/evidence/5825/; Runtime v2 is excluded.
 4. Focused and negative validation is deterministic, reproducible, retained under .csdlc/evidence/5825/, and bound to the exact reviewed revision.
 5. Missing or contradictory evidence, private or absolute paths, and personhood, consciousness, citizenship, governance, migration, or public-launch overclaims fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5825 without claiming completion of downstream Birthday work.
+8. The exact birthday nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
 
 ## Dependencies
 
@@ -41,9 +42,8 @@ Deliver the WP-08 birthday-decision contract, complete negative fixture matrix, 
 - docs/milestones/v0.92/features/FIRST_TRUE_GODEL_AGENT_BIRTHDAY_v0.92.md
 - docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md
 - docs/milestones/v0.92/WBS_v0.92.md
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- adl/src/runtime_v2/boot_admission.rs
-- adl/src/runtime_v2/private_state_witness.rs
+- adl-runtime-kernel/src/contract.rs
+- adl-runtime-kernel/src/proof.rs
 
 ## Non Goals
 

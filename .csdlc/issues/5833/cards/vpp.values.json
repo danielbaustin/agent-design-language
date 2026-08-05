@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-15] Birth witnesses and receipts",
     "slug": "v0-92-wp-15-birth-witnesses-and-receipts",
     "version": "v0.92",
-    "generation": 21
+    "generation": 30
   },
   "status": "ready",
   "content": {
@@ -16,8 +16,8 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "birth-witness-and-receipt",
-          "proof_role": "Prove policy-complete exact-candidate witnesses and deterministic accepted/rejected receipts.",
+          "lane": "birth_witness-runtime-v3",
+          "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -25,70 +25,49 @@
             "AC-4",
             "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8",
+            "AC-9"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 500,
+          "budget_seconds": 600,
           "budget_tokens": 4000,
           "argv": [
             "cargo",
-            "test",
+            "nextest",
+            "run",
             "--manifest-path",
-            "adl/Cargo.toml",
-            "birth_witness_receipt",
-            "--",
-            "--nocapture"
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
+            "birth_witness",
+            "--no-tests=fail",
+            "--status-level",
+            "all"
           ],
           "parallel_group": "5833-core",
           "defer_reason": null
         },
         {
-          "lane": "witness-equivocation-security-negative",
-          "proof_role": "Reject duplicate, stale, forged, equivocal, unauthorized, and mismatched witnesses.",
+          "lane": "birth_witness-native-platform-receipts",
+          "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
           "acceptance_ids": [
-            "AC-1",
             "AC-4",
-            "AC-5"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 500,
-          "budget_tokens": 4000,
-          "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "birth_witness_receipt_negative",
-            "--",
-            "--nocapture"
-          ],
-          "parallel_group": "5833-negative",
-          "defer_reason": null
-        },
-        {
-          "lane": "receipt-privacy-and-claim-boundary",
-          "proof_role": "Reject raw-state leakage and premature birth, citizenship, legal, or governance claims.",
-          "acceptance_ids": [
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-9"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 200,
-          "budget_tokens": 2000,
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
           "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "birth_receipt_claim_boundary",
-            "--",
-            "--nocapture"
+            "ruby",
+            "-rjson",
+            "-e",
+            "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+            ".csdlc/evidence/5833/native-platform/macos.json",
+            ".csdlc/evidence/5833/native-platform/linux.json"
           ],
-          "parallel_group": "5833-negative",
+          "parallel_group": "5833-platform",
           "defer_reason": null
         }
       ],
@@ -96,7 +75,7 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5833/design.md",
-      "design_digest": "820499657712f7fe97c21567e3f015c6cdcbc7dfdf5249f6600207693174df8c",
+      "design_digest": "fd6d20bd10782c504f190bd896ec883f3163d3a80acbac0ea40d98c0d9fa3e83",
       "diagram_ref": ".csdlc/prepared/issues/5833/diagram.mmd",
       "diagram_digest": "0255242ebe93f2857c2a9dc5f2d0c1a083fa373b340935cbfe34749941f0d599"
     }

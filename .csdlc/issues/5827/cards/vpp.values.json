@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-10] Continuity across bounded cycles",
     "slug": "v0-92-wp-10-continuity-across-bounded-cycles",
     "version": "v0.92",
-    "generation": 21
+    "generation": 34
   },
   "status": "ready",
   "content": {
@@ -16,8 +16,8 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "continuity-chain-replay",
-          "proof_role": "Prove a canonical two-or-more-cycle chain and deterministic head replay.",
+          "lane": "birthday_continuity-runtime-v3",
+          "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
@@ -25,70 +25,48 @@
             "AC-4",
             "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 500,
+          "budget_seconds": 600,
           "budget_tokens": 4000,
           "argv": [
             "cargo",
-            "test",
+            "nextest",
+            "run",
             "--manifest-path",
-            "adl/Cargo.toml",
-            "continuity_record",
-            "--",
-            "--nocapture"
+            "adl-runtime-kernel/Cargo.toml",
+            "--test",
+            "birthday_continuity",
+            "--no-tests=fail",
+            "--status-level",
+            "all"
           ],
           "parallel_group": "5827-core",
           "defer_reason": null
         },
         {
-          "lane": "continuity-discontinuity-negative",
-          "proof_role": "Reject substitutions, gaps, duplicates, reorderings, forged witnesses, and copied state.",
+          "lane": "birthday_continuity-native-platform-receipts",
+          "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
           "acceptance_ids": [
-            "AC-1",
             "AC-4",
-            "AC-5"
-          ],
-          "deterministic": true,
-          "resource_profile": "medium",
-          "budget_seconds": 500,
-          "budget_tokens": 4000,
-          "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "continuity_record_negative",
-            "--",
-            "--nocapture"
-          ],
-          "parallel_group": "5827-negative",
-          "defer_reason": null
-        },
-        {
-          "lane": "continuity-portability",
-          "proof_role": "Prove continuity fixtures and evidence references remain private-safe and repo-relative.",
-          "acceptance_ids": [
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-8"
           ],
           "deterministic": true,
           "resource_profile": "small",
-          "budget_seconds": 200,
-          "budget_tokens": 2000,
+          "budget_seconds": 30,
+          "budget_tokens": 1000,
           "argv": [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "continuity_record_portability",
-            "--",
-            "--nocapture"
+            "ruby",
+            "-rjson",
+            "-e",
+            "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+            ".csdlc/evidence/5827/native-platform/macos.json",
+            ".csdlc/evidence/5827/native-platform/linux.json"
           ],
-          "parallel_group": "5827-negative",
+          "parallel_group": "5827-platform",
           "defer_reason": null
         }
       ],
@@ -96,7 +74,7 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5827/design.md",
-      "design_digest": "a28d472d60100fccbd7ba12e39cd6e6a0f2c1574e09372017a01ca90ae40801b",
+      "design_digest": "fa58cabd0b42eb2d88e51720df28d38ae5788490daafdda83f182d571e394308",
       "diagram_ref": ".csdlc/prepared/issues/5827/diagram.mmd",
       "diagram_digest": "b8e8902ce03c1fd254d2be626f03fb412db939612b74f42de3942fcfd6cdbbb4"
     }

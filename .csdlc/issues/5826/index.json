@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1bed306513e72500abe5d143e2ec479191780e44a02561af7742f761bc958f89",
   "phase": "bound",
-  "generation": 21,
-  "digest": "49d0012805bd097a35f49b685ccbcc08b8cc24ae6f131508aa090626f8be1a72",
+  "generation": 35,
+  "digest": "9e951832d2bbcc0d751c8fc81c2571a59d2f294354dd2f91c0ba98bfe002c4bb",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5826/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex-5860-design-review",
-      "revision": "b0a483031afde1863e678d542f09532437b8dccae20f3f11f39073cf5983eed2"
+      "reviewer": "codex:5860-birthday-readiness-repair-design-review",
+      "revision": "8ffcd7f9a30e6bca583ac848376175f0149fe917f0cb7fea84f3bacb169974ff"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "6f0ed87afe1bb58e63d77760907ff3c0fc867ac0619ce5f3142ba5578e4fee76",
-      "rendered_digest": "5dd666330aec0a4d769b394c8bb92954a4db5263ecbbba86e3ad47c0cc9c1f85",
-      "ast_digest": "1167db6f3f423322c1e46039a261b45ccfeacdb7579f0b45308db71b984782db"
+      "values_digest": "d7c16d1acc09a7af6c9ab0845afec4c96b79c03eb04e629a3e16c2cf5a303050",
+      "rendered_digest": "37ed53b8e4a74c35faf9146ec157e957e63e6468fd408b0489a6f0ce31b9559c",
+      "ast_digest": "7b17a79a75a5452ade31f126ecc21305ed93291a2174f63b7bcf91b69f790cd9"
     },
     "stp": {
-      "values_digest": "2247c3515fc061888e3391bc9a99163b785ffdc6dc95277994c232c171d70a4a",
-      "rendered_digest": "a20e5c145868c0cdb5cc225769589b5f33025acd5070a5df69efbc8e48c41571",
-      "ast_digest": "a5fae39f455b9ec2698ab4f9b16f2baf57fe701606ab487e5d610d76d4c5c3c6"
+      "values_digest": "c086f04e06629520a088c3a5d1769b1a91ddf46e05385515f6961e6362970a4f",
+      "rendered_digest": "014a0571ccbf49ba7859000273a776a8eb81760aec0d4ed8a8554d05a0b39477",
+      "ast_digest": "0566f0aa1441ef7867fab7913acdb59a068a44900867fa726b713b9d84965106"
     },
     "spp": {
-      "values_digest": "5ce66414c546142dd2857ce395ce9cdfa5aedef5a735f8a12f86495c2d2fbaa0",
-      "rendered_digest": "113263d13b825008c89026fe2932e48cabaa86cf04a0475820dcca016e0dfab4",
-      "ast_digest": "42d1a83b7c88ca71832aae859b1e5efb01db39515c6cda2a8d66c5b7cfbe5143"
+      "values_digest": "0a824e93ac66ecdd541eb6af5b674cba8c7cf940b34b06289633050c471431fd",
+      "rendered_digest": "15d1fa8fa5eb27f19124dc9573290218e5efb0f02d6c2cb90ad349976d7386b2",
+      "ast_digest": "0f2bfe67cd7541e2c75c5b21dbf52c814664cd8b925056f385be858ab73aaa2a"
     },
     "vpp": {
-      "values_digest": "8533ef878c53c21c12a544acb786359b38623462e238fee8ff36271d58126aa7",
-      "rendered_digest": "e398eab8b43f4c53ee28a6e4df3b59ee99c769123a58c28585622619b522225e",
-      "ast_digest": "21ea9a2623f63e75e89b9f2f91cf626b090678c37f7b0364e5d32128beb86108"
+      "values_digest": "236f618d0105cbbcd2054d8e5101895f68d26392ac905c25e9089d70e4953f8b",
+      "rendered_digest": "1fd3ec303488db1af96ce771597885164be81c5b496c5b515815e77228407bd5",
+      "ast_digest": "bea57607d1a7837fd25d7ac8269f904cdeb40970edcf86691e66be328f8abf99"
     },
     "srp": {
-      "values_digest": "de401c281969bdcdc64231b760eaf2d71aa91c1a857383ddababb19d55a57c77",
+      "values_digest": "ada9ec236ea04dec8e1d8c570945f788d24d9a707ee394e87a389bc2dc240562",
       "rendered_digest": "f0e9b963f02bbd8867ff6ecc4de02958433c3ddfaaf01c327402594a46d267dc",
       "ast_digest": "65f6b23f51b9fa521a69b132fb0c73f834514dcf3ee2be2ebd378966acae6071"
     },
     "sor": {
-      "values_digest": "3a7219fabfa661bbe6054f47715fb3d7b2e9b3de46c9b64fa7311721a636be45",
+      "values_digest": "5c6b2114b66957a0dbef237c7dbca9fd2274e6d3bbb70f610e3207a5add96eef",
       "rendered_digest": "73285c147df2070352a736b49dc7cc813558574b83098912c14f34893ea55a9a",
       "ast_digest": "bfc21804e100d80c16cdcb8e3e07b883c104866725478b9e1cc69a392af6a002"
     }
@@ -265,6 +265,118 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release temporary preparation-only claim after typed card validation",
       "operation": "{\"claim_id\":\"prep-5860-5826-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Reacquire issue-local preparation claim to repair exact review findings without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-birthday-readiness-repair\",\"claim_id\":\"repair-5860-birthday-5826\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5826\",\".csdlc/prepared/issues/5826\",\".csdlc/evidence/5826\",\".csdlc/locks/5826.lock\"],\"purpose\":\"Repair Birthday sprint design-time readiness findings only; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/birthday_identity.rs\",\"adl-runtime-kernel/src/lib.rs (module registration only)\",\"adl-runtime-kernel/tests/birthday_identity.rs\",\"adl-runtime-kernel/tests/fixtures/birthday_identity/\",\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\".csdlc/evidence/5826/\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\"docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md\",\"adl-runtime-kernel/src/identity_memory.rs\",\"adl-runtime-kernel/src/private_state.rs\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 25,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/birthday_identity.rs\",\"adl-runtime-kernel/src/lib.rs (module registration only)\",\"adl-runtime-kernel/tests/birthday_identity.rs\",\"adl-runtime-kernel/tests/fixtures/birthday_identity/\",\"docs/milestones/v0.92/features/IDENTITY_STABLE_NAME_AND_CONTINUITY_v0.92.md\",\".csdlc/evidence/5826/\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 26,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"#5825 lacks terminal receipt-backed proof.\",\"Exact identity paths collide with another live claim.\",\"Identity requires raw private state or an unversioned shared schema change.\"]}"
+    },
+    {
+      "sequence": 35,
+      "generation": 27,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-09 record deterministically binds stable name, identity root, aliases, origin evidence, continuity head, provenance, and redaction policy while rejecting ambiguous or substituted identity.\",\"WP-08/#5825 terminal proof and current lineage authority are verified before implementation begins.\",\"Implementation is confined to adl-runtime-kernel/src/birthday_identity.rs, lib.rs module registration, tests/birthday_identity.rs, tests/fixtures/birthday_identity/, the identity feature contract, and .csdlc/evidence/5826/.\",\"Canonical serialization, root derivation, and alias ordering replay identically and are retained at the exact reviewed revision.\",\"Empty roots, alias collision, provenance mismatch, substituted continuity, raw private state, and absolute or path-unsafe references fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5826 without claiming completion of downstream Birthday work.\",\"The exact birthday_identity nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5825 terminal receipt and inspect the exact identity, lineage, and witness sources before narrowing protected paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned identity record, deterministic derivation, canonical serialization, and valid/negative fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused replay, alias/provenance negatives, privacy-redaction, and path-portability lanes and retain exact-revision proof.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5826 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"birthday_identity-runtime-v3\",\"proof_role\":\"Run the exact Runtime v3 integration target and fail when the selected target contains no tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"birthday_identity\",\"--no-tests=fail\",\"--status-level\",\"all\"],\"parallel_group\":\"5826-core\",\"defer_reason\":null},{\"lane\":\"birthday_identity-native-platform-receipts\",\"proof_role\":\"Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"receipts=ARGV.map{|p| JSON.parse(File.read(p))};\\nabort \\\"native platform receipts must cover macos and linux\\\" unless receipts.map{|r| r[\\\"platform\\\"]}.sort==%w[linux macos];\\nabort \\\"native proof failed\\\" unless receipts.all?{|r| r[\\\"status\\\"]==\\\"passed\\\" && Integer(r[\\\"tests_run\\\"])>0};\\nabort \\\"fixture digest mismatch\\\" unless receipts.map{|r| r[\\\"fixture_digest\\\"]}.uniq.length==1\",\".csdlc/evidence/5826/native-platform/macos.json\",\".csdlc/evidence/5826/native-platform/linux.json\"],\"parallel_group\":\"5826-platform\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 36,
+      "generation": 28,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 37,
+      "generation": 29,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 38,
+      "generation": 30,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 31,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5825 terminal proof and inspect adl-runtime-kernel identity_memory.rs and private_state.rs before claiming the exact birthday_identity.rs, lib.rs, tests, fixture, feature, and evidence paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned identity record, deterministic derivation, canonical serialization, and valid/negative fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused replay, alias/provenance negatives, privacy-redaction, and path-portability lanes and retain exact-revision proof.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5826 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 40,
+      "generation": 32,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-08 / issue #5825 terminal proof\",\"Current Runtime v3 identity_memory.rs and private_state.rs authority\"]}"
+    },
+    {
+      "sequence": 41,
+      "generation": 33,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 42,
+      "generation": 34,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5825 terminal proof and inspect adl-runtime-kernel identity_memory.rs and private_state.rs before claiming the exact birthday_identity.rs, lib.rs, tests, fixture, feature, and evidence paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned identity record, deterministic derivation, canonical serialization, and valid/negative fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused replay, alias/provenance negatives, privacy-redaction, and path-portability lanes and retain exact-revision proof.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5826 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 43,
+      "generation": 35,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"dependencies\",\"values\":[\"WP-08 / issue #5825 terminal proof\",\"Current Runtime v3 identity_memory.rs and private_state.rs authority\"]}"
+    },
+    {
+      "sequence": 44,
+      "generation": 35,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Release completed Birthday readiness-repair claim for just-in-time child execution binding.",
+      "operation": "{\"claim_id\":\"repair-5860-birthday-5826\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-birthday-readiness-repair\"}"
     }
   ]
 }

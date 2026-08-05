@@ -7,13 +7,13 @@
     "title": "[v0.92][WP-15] Birth witnesses and receipts",
     "slug": "v0-92-wp-15-birth-witnesses-and-receipts",
     "version": "v0.92",
-    "generation": 21
+    "generation": 30
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 11,
       "summary": "Implement and prove WP-15 exact-candidate witness consensus and deterministic redacted receipts with anti-equivocation, authority, and premature-claim protections.",
       "steps": [
         {
@@ -47,16 +47,25 @@
           "id": "S4",
           "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5833 linkage.",
           "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8",
+            "AC-9"
           ],
           "status": "pending"
         }
       ],
       "affected_areas": [
+        "adl-runtime-kernel/src/birth_witness.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/birth_witness.rs",
+        "adl-runtime-kernel/tests/fixtures/birth_witness/",
         "docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md",
-        "adl/src/runtime_v2/ witness and receipt modules",
-        "adl/src/runtime_v2/tests/ and witness/receipt fixtures",
         ".csdlc/evidence/5833/"
       ],
       "invariants": [
@@ -77,7 +86,8 @@
       "stop_conditions": [
         "Any sprint-gate dependency or #4762 is not verifiable.",
         "The candidate digest cannot be bound across all witnesses.",
-        "Privacy, equivocation, authority, or premature-claim negatives cannot fail closed."
+        "Privacy, equivocation, authority, or premature-claim negatives cannot fail closed.",
+        "The WP-13 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled."
       ],
       "replan_triggers": [
         "Witness role/distinctness policy changes.",
@@ -85,7 +95,7 @@
         "Review identifies a receipt field that substitutes for birthday authority."
       ],
       "design_ref": ".csdlc/prepared/issues/5833/design.md",
-      "design_digest": "820499657712f7fe97c21567e3f015c6cdcbc7dfdf5249f6600207693174df8c",
+      "design_digest": "fd6d20bd10782c504f190bd896ec883f3163d3a80acbac0ea40d98c0d9fa3e83",
       "diagram_ref": ".csdlc/prepared/issues/5833/diagram.mmd",
       "diagram_digest": "0255242ebe93f2857c2a9dc5f2d0c1a083fa373b340935cbfe34749941f0d599"
     }

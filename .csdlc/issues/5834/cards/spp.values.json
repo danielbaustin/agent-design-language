@@ -7,18 +7,18 @@
     "title": "[v0.92][WP-16] Birthday review packet",
     "slug": "v0-92-wp-16-birthday-review-packet",
     "version": "v0.92",
-    "generation": 21
+    "generation": 30
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 8,
+      "plan_revision": 11,
       "summary": "Assemble and prove WP-16's exact-digest reviewer packet with complete child evidence, redacted projections, blocked dispositions, caveats, questions, and public non-claims.",
       "steps": [
         {
           "id": "S1",
-          "action": "Verify terminal receipts and exact-head evidence for every WP-08 through WP-15 dependency and narrow issue-local packet paths.",
+          "action": "Reconcile the stricter WP-13A dependency and verify exact terminal/reviewed evidence for the complete WP-08 through WP-15 roster.",
           "acceptance_ids": [
             "AC-2",
             "AC-3"
@@ -27,7 +27,7 @@
         },
         {
           "id": "S2",
-          "action": "Assemble the schema-bound inventory, exact links/digests, caveats, questions, redacted projections, non-claims, and blocked dispositions.",
+          "action": "Assemble the named Markdown packet, evidence JSON, schema, and deterministic issue-local validator without manufacturing missing proof.",
           "acceptance_ids": [
             "AC-1",
             "AC-3"
@@ -47,16 +47,24 @@
           "id": "S4",
           "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5834 linkage.",
           "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
             "AC-6",
-            "AC-7"
+            "AC-7",
+            "AC-8"
           ],
           "status": "pending"
         }
       ],
       "affected_areas": [
-        "docs/milestones/v0.92/features/FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md",
-        "issue-local v0.92 Birthday review packet, schema, and validator",
-        "docs/milestones/v0.92/DEMO_MATRIX_v0.92 WP-16-owned links only",
+        "docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md",
+        "docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json",
+        "docs/milestones/v0.92/review/first-birthday-review-packet.schema.json",
+        ".csdlc/prepared/issues/5834/validate-review-packet.rb",
+        "docs/milestones/v0.92/DEMO_MATRIX_v0.92.md (WP-16 row only)",
         ".csdlc/evidence/5834/"
       ],
       "invariants": [
@@ -77,7 +85,8 @@
       "stop_conditions": [
         "Any required child lacks terminal exact-head evidence.",
         "A packet link or digest cannot be validated reproducibly.",
-        "Assembly requires editing shared milestone or release authority outside WP-16."
+        "Assembly requires editing shared milestone or release authority outside WP-16.",
+        "The WP-13A dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled."
       ],
       "replan_triggers": [
         "A child republishes or supersedes its canonical exact-head proof.",
@@ -85,7 +94,7 @@
         "Review finds duplicate authority or a presentation-only proof substitution."
       ],
       "design_ref": ".csdlc/prepared/issues/5834/design.md",
-      "design_digest": "b01caf72240ffae18cadcb91dc543b34394499e30f3cd73f5c7b0fd56afacd6e",
+      "design_digest": "4cdaaf8cd0144e87c29137b969cff72a5e5e213d7e2d7e0b75a901c62a504d46",
       "diagram_ref": ".csdlc/prepared/issues/5834/diagram.mmd",
       "diagram_digest": "8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224"
     }

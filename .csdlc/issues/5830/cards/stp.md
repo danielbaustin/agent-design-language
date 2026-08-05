@@ -25,11 +25,12 @@ Deliver only the WP-13 ACP schema, update semantics, fixtures, validator, privac
 
 1. The WP-13 profile deterministically binds identity and continuity to allowed evidence digests, update actor/reason, revision linkage, privacy policy, bounded projections, and explicit non-claims.
 2. WP-10/#5827, WP-11/#5828, WP-12/#5829, and current ToM/intelligence/governed-learning evidence are verified before implementation.
-3. The ACP feature, narrow Runtime v2 module, tests, fixtures, and retained evidence remain within declared WP-13 paths.
+3. Implementation is confined to adl-runtime-kernel/src/cognitive_profile.rs, lib.rs module registration, tests/cognitive_profile.rs, tests/fixtures/cognitive_profile/, the ACP feature contract, and .csdlc/evidence/5830/; Runtime v2 is read-only evidence.
 4. Canonical profile creation and revision updates replay identically and retain exact-revision internal and public projection proof.
 5. Stale or forbidden evidence, identity mismatch, unexplained mutation, private-state leakage, unsupported labels, reputation, standing, rights, diagnosis, personhood, and consciousness inferences fail closed.
 6. One bounded exact-head SRP review records no unresolved actionable findings.
 7. The implementation PR targets the intended base and includes Closes #5830 without claiming completion of downstream Birthday work.
+8. The exact cognitive_profile nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.
 
 ## Dependencies
 
@@ -41,9 +42,10 @@ Deliver only the WP-13 ACP schema, update semantics, fixtures, validator, privac
 ## Inputs
 
 - docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md
-- adl/src/runtime_v2/ Theory-of-Mind and intelligence evidence surfaces
-- adl/src/runtime_v2/ governed-learning evidence surfaces
-- docs/milestones/v0.92/WBS_v0.92.md
+- adl-runtime-kernel/src/identity_memory.rs
+- adl-runtime-kernel/src/cognition.rs
+- adl-runtime-kernel/src/governance.rs
+- adl/src/runtime_v2/ (read-only retained evidence only)
 
 ## Non Goals
 

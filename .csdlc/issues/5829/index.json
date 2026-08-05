@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "b71cf251982c58050c04627547b6d183e6c3b14d192c1389d3bdbab8606f3292",
   "phase": "bound",
-  "generation": 21,
-  "digest": "a0bfc826623b85b7e477d7a7e41f512a3b43ccefa1d760d94763597c2172d4a8",
+  "generation": 34,
+  "digest": "cbc904430221d45df751c64f0ca2d8b40f7c4db38f40b14273dfdbdcc0988fa3",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5829/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex-5860-design-review",
-      "revision": "a4a7cfc5283f886defec6b25dc9b3e3fed519d27eef59b892c249efc1e4e7688"
+      "reviewer": "codex:5860-birthday-readiness-repair-design-review",
+      "revision": "e0c98b4bbad7618c697213e6e5f76e42394d12fee8330c942d04d164766baacf"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "a37d21f4ecdaef4cbb74485b9402a2be5f92d99d1dc72e1cea3580da4e6f34b9",
-      "rendered_digest": "a93991b5c096f90a9872b53a960b867ed9b2bb64bbc0d8438eb338410db2946e",
-      "ast_digest": "d786784a06135580c90f8e4ef14664839215059adfb9f65fd7c94391d51b41c2"
+      "values_digest": "9a67249921933dee44af14105d51b8ef76a7d4e65be9976c36f235096b71a325",
+      "rendered_digest": "27a6a4a185664fbd97306bae3df8ece8b1c84bffb223dfa98b610b85a6a5a39a",
+      "ast_digest": "8be8cfd79c9fafffc2e336373b071c703c3a79e11c3e3b795facdc694660558a"
     },
     "stp": {
-      "values_digest": "1bf170689aa9ea42bd018e6e4c7e8e10ace83f3f5153b98e043ea314b2cc1a17",
-      "rendered_digest": "799cfca5a5a077d61fac2816a1a6b1dacb120e4561807225d00d7484f39a52dc",
-      "ast_digest": "fd84e62f9222ad51ee4cb1e1539a7e72fd605e2b69afae5f15d9829e65c37da5"
+      "values_digest": "cf911a99e9103d63295cd77ae35e6d1d2ace8b8bda65808c9df525a7e63b6b68",
+      "rendered_digest": "e895af6ce53526482dc2b4a31a91e26209c1e90df73aa3782e4f6e9b0aa966c9",
+      "ast_digest": "82c4c52e9a0714b5c7990a13f6230b45cd2497819cbedae0f5815d5358bafd3b"
     },
     "spp": {
-      "values_digest": "164662c667b2f2494d3c3fae22d909d329805f4c336ac7142bcdc54cc47d0267",
-      "rendered_digest": "f2290cb69f26812282419b87343cbcdab575c5135a841fae7d0be016ae1252b8",
-      "ast_digest": "cb318ab6ae10ea112674660534c893443209add7a99280d03c67ab8e8c25808c"
+      "values_digest": "537289746a427a025758cee4eff634d0d8a08bb41c47a6b516629ccb48b3ee1a",
+      "rendered_digest": "a701a79672e17a57f724c16abe65d1df4681c022cadc9cc4ec7be974ced97b2b",
+      "ast_digest": "023a9b32f98c1055c7db5c0da1f3e6fc04a6ba9f32525db0b06b225ac4a3e491"
     },
     "vpp": {
-      "values_digest": "6f2704ddb10a6c6133684eaa053a05c04d48dc005146e3cf701e7299d53da964",
-      "rendered_digest": "506431ee868da1e7be1a7825af0fc07d99d4a648114745e181282f44912dfce4",
-      "ast_digest": "ee5d0bdf3489c3886cf3c8dc75a37382bdd4421b1b3030069d9400ddbd14b44d"
+      "values_digest": "03a998235a09e80428dbc1d68b8e093cf210630e2b25522eba125875a4184bea",
+      "rendered_digest": "9aa27df9f893f22fcff61d3e7607bdcadb97a0f07118c96d51e6089e2ed17023",
+      "ast_digest": "687857ae4af508f3cba9287d2926e3ccb69933d985f7a67c5566d39e2fede71f"
     },
     "srp": {
-      "values_digest": "fdb2dc83db91945d471ca47865eeca9344c63b97160346bf60dc520ca12578b6",
+      "values_digest": "9312b74157f85aa6d182fcb0fbbe03b7309995deca9fb756f7522504ba3ff98f",
       "rendered_digest": "e6e1a97391151d19fad085f398bbda73030215208cf8ac0674304a1ab40ae872",
       "ast_digest": "20dbe7c3c54c99f572aabb26933bd4d07cb4a1d3199b1d7bcb772ab3b1ca91ed"
     },
     "sor": {
-      "values_digest": "3997f9537e3236f434447a1fd1060eced8458e6e32635b7f2f933efdb34c0017",
+      "values_digest": "a20f65bed428668d323abe5b74d6ad86526d6a5debb4b95bd69dc20998690d6e",
       "rendered_digest": "da54e67fc459cdf7ec6dda0ac8e9ca53c1e23d70a238b1dbee9e9fcd5f6688db",
       "ast_digest": "c287e02c30ccc4bca25aaccc60ed0cd16f884134eae9223911ec39db96ceec3b"
     }
@@ -265,6 +265,111 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release temporary preparation-only claim after typed card validation",
       "operation": "{\"claim_id\":\"prep-5860-5829-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Reacquire issue-local preparation claim to repair exact review findings without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-birthday-readiness-repair\",\"claim_id\":\"repair-5860-birthday-5829\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5829\",\".csdlc/prepared/issues/5829\",\".csdlc/evidence/5829\",\".csdlc/locks/5829.lock\"],\"purpose\":\"Repair Birthday sprint design-time readiness findings only; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/capability_envelope.rs\",\"adl-runtime-kernel/src/lib.rs (module registration only)\",\"adl-runtime-kernel/tests/capability_envelope.rs\",\"adl-runtime-kernel/tests/fixtures/capability_envelope/\",\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\".csdlc/evidence/5829/\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\"adl/src/provider/ (read-only provider inventory)\",\"adl/src/provider_adapter.rs\",\".csdlc/evidence/4761/capability-envelope/\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 25,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/capability_envelope.rs\",\"adl-runtime-kernel/src/lib.rs (module registration only)\",\"adl-runtime-kernel/tests/capability_envelope.rs\",\"adl-runtime-kernel/tests/fixtures/capability_envelope/\",\"docs/milestones/v0.92/features/MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md\",\".csdlc/evidence/5829/\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 26,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"#5825, #5826, or #4761 evidence is not verifiable.\",\"A provider adapter change exceeds the narrow envelope boundary.\",\"Secret-safe or authority-escalation negatives cannot be proven.\",\"The WP-08 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.\"]}"
+    },
+    {
+      "sequence": 35,
+      "generation": 27,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-12 envelope deterministically binds identity and evidence revision to explicit provider/model identifiers, tools, skills, grants, denials, resource limits, provenance, and unsupported claims.\",\"WP-08/#5825, WP-09/#5826, and retained #4761 evidence are verified before implementation begins.\",\"Implementation is confined to adl-runtime-kernel/src/capability_envelope.rs, lib.rs module registration, tests/capability_envelope.rs, tests/fixtures/capability_envelope/, the feature contract, and .csdlc/evidence/5829/.\",\"Equivalent capability inputs serialize canonically and produce reproducible exact-revision validation evidence.\",\"Unknown or stale provider/model evidence, undeclared tools/skills, authority escalation, omitted limits, secret-like content, private paths, and host paths fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5829 without claiming completion of downstream Birthday work.\",\"Before claim acquisition, reconcile the live issue and canonical wave with the stricter sprint/card dependency on WP-08/#5825; WP-08 remains required.\",\"The exact capability_envelope nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5825, #5826, and #4761 evidence and inspect exact provider/profile surfaces before narrowing paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned envelope, canonical ordering, explicit grants/denials/limits, validator, and fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused canonicalization, stale/escalation/limit negatives, secret scanning, and path portability lanes.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"capability_envelope-runtime-v3\",\"proof_role\":\"Run the exact Runtime v3 integration target and fail when the selected target contains no tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"capability_envelope\",\"--no-tests=fail\",\"--status-level\",\"all\"],\"parallel_group\":\"5829-core\",\"defer_reason\":null},{\"lane\":\"capability_envelope-native-platform-receipts\",\"proof_role\":\"Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.\",\"acceptance_ids\":[\"AC-4\",\"AC-9\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"receipts=ARGV.map{|p| JSON.parse(File.read(p))};\\nabort \\\"native platform receipts must cover macos and linux\\\" unless receipts.map{|r| r[\\\"platform\\\"]}.sort==%w[linux macos];\\nabort \\\"native proof failed\\\" unless receipts.all?{|r| r[\\\"status\\\"]==\\\"passed\\\" && Integer(r[\\\"tests_run\\\"])>0};\\nabort \\\"fixture digest mismatch\\\" unless receipts.map{|r| r[\\\"fixture_digest\\\"]}.uniq.length==1\",\".csdlc/evidence/5829/native-platform/macos.json\",\".csdlc/evidence/5829/native-platform/linux.json\"],\"parallel_group\":\"5829-platform\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 36,
+      "generation": 28,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 37,
+      "generation": 29,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 30,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Reconcile the WP-08 dependency mismatch, verify #5825/#5826/#4761 evidence, and claim the exact capability_envelope.rs, lib.rs, tests, fixture, feature, and evidence paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned envelope, canonical ordering, explicit grants/denials/limits, validator, and fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused canonicalization, stale/escalation/limit negatives, secret scanning, and path portability lanes.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 31,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 40,
+      "generation": 32,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_plan_steps\",\"steps\":[{\"id\":\"S1\",\"action\":\"Reconcile the WP-08 dependency mismatch, verify #5825/#5826/#4761 evidence, and claim the exact capability_envelope.rs, lib.rs, tests, fixture, feature, and evidence paths.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement the versioned envelope, canonical ordering, explicit grants/denials/limits, validator, and fixtures.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused canonicalization, stale/escalation/limit negatives, secret scanning, and path portability lanes.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5829 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\",\"AC-9\"],\"status\":\"pending\"}]}"
+    },
+    {
+      "sequence": 41,
+      "generation": 33,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"risks\",\"values\":[\"Capability could be mistaken for authority or invocation proof.\",\"Retained #4761 provenance could be copied without current digest verification.\",\"A required provider adapter edit could exceed the exact capability-envelope boundary.\"]}"
+    },
+    {
+      "sequence": 42,
+      "generation": 34,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"WP-08/#5825, WP-09/#5826, or #4761 evidence is stale or unverifiable.\",\"The WP-08 dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.\",\"Execution requires provider-adapter or credential changes outside the exact declared paths.\",\"Secret-like data or unbounded authority cannot be excluded.\"]}"
+    },
+    {
+      "sequence": 43,
+      "generation": 34,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Release completed Birthday readiness-repair claim for just-in-time child execution binding.",
+      "operation": "{\"claim_id\":\"repair-5860-birthday-5829\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-birthday-readiness-repair\"}"
     }
   ]
 }

@@ -2,11 +2,11 @@
 
 ## Outcome And Sources
 
-Extend the already working deterministic slice in `adl/src/memory_palace.rs`, `adl/src/long_lived_agent.rs`, `adl/tests/memory_palace_tests.rs`, and `adl/tests/fixtures/memory_palace/long_running_context.json` so WP-11 is integrated with the v0.92 identity and continuity authorities. The design also follows `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md` and the redaction boundary in `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`.
+Implement the Runtime v3 Memory Palace boundary in `adl-runtime-kernel`, using the existing ObsMem contract in `adl/src/obsmem_contract/` and trace fields in `adl-runtime-kernel/src/observability.rs` as read-only input authorities. The retained `adl/src/memory_palace.rs` slice is compatibility evidence, not the implementation target. The design follows `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md` and the redaction boundary in `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md`.
 
 ## Owned Surface
 
-Candidate protected paths are exactly `adl/src/memory_palace.rs`, `adl/src/long_lived_agent.rs`, `adl/tests/memory_palace_tests.rs`, `adl/tests/fixtures/memory_palace/`, the Memory Palace feature contract, and `.csdlc/evidence/5828/`. Changes must preserve the existing packet schemas unless an explicit versioned migration is designed.
+Protected implementation paths are `adl-runtime-kernel/src/memory_palace.rs` (new Runtime v3 topology/selection boundary), `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/memory_palace.rs`, `adl-runtime-kernel/tests/fixtures/memory_palace/`, `docs/milestones/v0.92/features/MEMORY_PALACE_CONTEXT_TOPOLOGY_v0.92.md`, `.csdlc/evidence/5828/obsmem-trace-integration-receipt.json`, and `.csdlc/evidence/5828/`. The normalized fixture contract is sourced from `adl/src/obsmem_contract/models.rs`; trace bindings are sourced from `adl-runtime-kernel/src/observability.rs` and `adl-runtime-kernel/src/proof.rs`. Those authority files are read-only unless a fresh collision-checked claim explicitly adds them.
 
 ## Contract
 
@@ -14,11 +14,11 @@ Declared memory records and citation hashes form a canonical context topology. B
 
 ## Dependencies And Invariants
 
-WP-09/#5826, WP-10/#5827, and the current ObsMem/trace baseline must be proven. Same inputs and observation time produce byte-equivalent semantic output. No raw private state enters the packet; all references remain repo-relative and witnessed.
+WP-09/#5826 and WP-10/#5827 must be terminal. Before editing, record exact source revisions and digests for `adl/src/obsmem_contract/models.rs`, `adl-runtime-kernel/src/observability.rs`, and `adl-runtime-kernel/src/proof.rs` in `obsmem-trace-integration-receipt.json`; that receipt also names the fixture digest, trace ID, ObsMem citation IDs, and Runtime v3 test output digest. Same normalized ObsMem records, trace refs, identity root, continuity head, observation time, and bounds produce byte-equivalent semantic output. No raw private state enters the packet; all references remain repo-relative and witnessed.
 
 ## Validation And Rollback
 
-Run focused Memory Palace unit/integration tests, deterministic replay comparison, stale/hash/continuity/redaction negative cases, and the platform portability lane for relative paths. Rollback restores the prior Memory Palace integration and fixture schema while preserving emitted historical packets as evidence.
+The exact `memory_palace` Runtime v3 integration-test target must run a nonzero count and prove normalized ObsMem ingestion, trace/receipt binding, deterministic replay, bounded overflow, and stale/hash/continuity/redaction failures. A receipt validator recomputes all authority, fixture, and output digests rather than trusting declared fields. Native Linux CI and a retained native macOS receipt execute the same fixture digest before platform-equivalent output is claimed. Rollback removes the new Runtime v3 module and fixture schema while preserving the integration receipt and emitted historical packets as evidence.
 
 ## Non-Goals
 

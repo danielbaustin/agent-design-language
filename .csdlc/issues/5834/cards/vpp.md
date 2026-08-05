@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5834/diagram.mmd
 
 [
   {
-    "lane": "birthday-review-packet-completeness",
-    "proof_role": "Prove schema, links, digests, uniqueness, and complete WP-08 through WP-15 inventory.",
+    "lane": "birthday-review-packet",
+    "proof_role": "Parse the packet manifest/schema, recompute referenced digests, resolve links, and require the exact WP-08 through WP-15 roster including WP-13A and WP-14.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -33,68 +33,43 @@ Diagram: .csdlc/prepared/issues/5834/diagram.mmd
       "AC-4",
       "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 500,
-    "budget_tokens": 4000,
+    "resource_profile": "small",
+    "budget_seconds": 120,
+    "budget_tokens": 2000,
     "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "birthday_review_packet",
-      "--",
-      "--nocapture"
+      "ruby",
+      ".csdlc/prepared/issues/5834/validate-review-packet.rb",
+      "--packet",
+      "docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md",
+      "--manifest",
+      "docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json",
+      "--schema",
+      "docs/milestones/v0.92/review/first-birthday-review-packet.schema.json"
     ],
-    "parallel_group": "5834-core",
+    "parallel_group": "5834-packet",
     "defer_reason": null
   },
   {
     "lane": "birthday-review-packet-negative",
-    "proof_role": "Reject missing, stale, contradictory, nonterminal, unreviewed, and duplicate authority inputs.",
+    "proof_role": "Run one-at-a-time negative fixtures for stale digests, missing roster entries, private paths, contradictory status, and forbidden public claims.",
     "acceptance_ids": [
       "AC-1",
       "AC-4",
       "AC-5"
     ],
     "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 500,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "birthday_review_packet_negative",
-      "--",
-      "--nocapture"
-    ],
-    "parallel_group": "5834-negative",
-    "defer_reason": null
-  },
-  {
-    "lane": "birthday-review-claim-and-path-boundary",
-    "proof_role": "Reject private paths and personhood, citizenship, consciousness, governance, release, or publication overclaims.",
-    "acceptance_ids": [
-      "AC-3",
-      "AC-4",
-      "AC-5"
-    ],
-    "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 200,
+    "budget_seconds": 120,
     "budget_tokens": 2000,
     "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "birthday_review_packet_claim_boundary",
-      "--",
-      "--nocapture"
+      "ruby",
+      ".csdlc/prepared/issues/5834/validate-review-packet.rb",
+      "--negative-fixtures",
+      ".csdlc/evidence/5834/negative-fixtures/"
     ],
     "parallel_group": "5834-negative",
     "defer_reason": null
@@ -113,9 +88,8 @@ Tokens: 10000
 
 ## Commands
 
-- `cargo test --manifest-path adl/Cargo.toml birthday_review_packet -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml birthday_review_packet_negative -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml birthday_review_packet_claim_boundary -- --nocapture`
+- `ruby .csdlc/prepared/issues/5834/validate-review-packet.rb --packet docs/milestones/v0.92/review/FIRST_BIRTHDAY_REVIEW_PACKET_v0.92.md --manifest docs/milestones/v0.92/review/first-birthday-review-evidence.v1.json --schema docs/milestones/v0.92/review/first-birthday-review-packet.schema.json`
+- `ruby .csdlc/prepared/issues/5834/validate-review-packet.rb --negative-fixtures .csdlc/evidence/5834/negative-fixtures/`
 
 ## Failure Semantics
 

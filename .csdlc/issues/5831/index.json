@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "e7ab200f39f0714ae0aebb76949289e6bd66f4a3b272895650972227f5ad3a79",
   "phase": "bound",
-  "generation": 21,
-  "digest": "8b9479e9b2dfd3baa15d4fcfb96e4ed26f755eb4e8593a36dd3ccb485e69a55a",
+  "generation": 31,
+  "digest": "e6273dd8c1a7f425387310805c19c834c0e41cb5c6250163e2291a0dac1e0863",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -17,38 +17,38 @@
   "diagram_path": ".csdlc/prepared/issues/5831/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex-5860-design-review",
-      "revision": "24460a2aafdbc8f6076f5503f41bb945f313268fb975783efcbdbed3b0baaaf6"
+      "reviewer": "codex:5860-birthday-readiness-repair-design-review",
+      "revision": "8a8476b2b26ffa23054519cb27d2d4ecb61424a7164ba4ff2697eb3c40c9e79a"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "8fff5515493f4fb6e7c36c2539af1aa89ba85685356f145adbb854ffc6111c35",
-      "rendered_digest": "cf8ee04a2b1621d5e07b2a7c8856a04a536208e0398a202f99e6295359c7c537",
-      "ast_digest": "0e89e7f3e83a83e50344d0d04f047a6b119a3731c98fa84313dbc601974201fb"
+      "values_digest": "a08d7c705d3af4679e172ccb35c303e7fc2dede11140be01b7fcc89d496c4253",
+      "rendered_digest": "2971e08bfddf3645f447f633cb5d0f94804c9a86ae287a38f2164e08f78b1b67",
+      "ast_digest": "70eaa850de8f2d5a27ce1ddaaeb016e3785f34ae2daccd3735a5d81daed14901"
     },
     "stp": {
-      "values_digest": "8b3ae4c97a2e50a00117f5f218ebc123505aa22748d695b961de25247fe6c480",
-      "rendered_digest": "677a593a69456f93f2cca8e03e0d81c5d8281848fad6e50d805a21d3f3f06cea",
-      "ast_digest": "16b3481da3804d8e1f96f4b64c8c2db95c50a34b433c0d94194e5181cc9974cc"
+      "values_digest": "ae5269a287378db9aeebdc6c5cb455614999ace5eea56fbe47bc3838690ef909",
+      "rendered_digest": "3dbc1f591953a097b3c5d91eb8760e6f65827f2b078f8f09c45bbcaf92bf0fc9",
+      "ast_digest": "654de1cd6b0f9db0bd86cc3be289d408dbb8c32bb87abdcfb99ebef4efef9362"
     },
     "spp": {
-      "values_digest": "9bd4842576bc03ebd4f5f2c2ef21bbc2e188da7d655fdec21da431437489fe93",
-      "rendered_digest": "2297e85e5c51ce2ad13e67d519f493262b37adc36471f3f215dd8effc7bd2356",
-      "ast_digest": "c327892b6f48ec4145bdfd7727d00074b216dd487deac9fe0c21c29f671e12fc"
+      "values_digest": "970156dc42e4e0acc1f45962607ec2967c51f78a64ea53ff467529813f3be85a",
+      "rendered_digest": "6e47dfbc02bff262feaa3b93e1eff96a28f54cd694ff8d6afacd085db5afdda1",
+      "ast_digest": "889f6ebe83a37342b953e4aeb1cd20dd5eb5e8a32badb704cb4507d2db96e523"
     },
     "vpp": {
-      "values_digest": "057a61a6b8f9794af8c11cb49024c6ad9b7023569e5e01daabaaf2b7617f0c98",
-      "rendered_digest": "164cb9bee1f3a99c16475f2466834cf65ab80c41a1d95c25b0d24e6ece718a52",
-      "ast_digest": "12e1a7d26c321bc5abb352d0e49d2ad3c066bf209890cae162deadecb2f22b2b"
+      "values_digest": "ceb9b08a0d3ec9dee7de7a75db86b67da8185c7912b24d9bbb0b3c8c45043e64",
+      "rendered_digest": "5cf71d156502cdf6d17ca866be712a0a2cae56a2fc73864374f8ce7d6c42f56c",
+      "ast_digest": "1f5d64f35b5b459b1ae63d55e70ba35d606272a437a034c7cf01ee351d8d4f2d"
     },
     "srp": {
-      "values_digest": "3cbb3edd5117de38d4e681850005e1c2f74e6de892d780f697083c4224ae586d",
+      "values_digest": "f47838f80b5a6218e679c62de2c7ae090c44a3266f44922feca5ba82d7efa718",
       "rendered_digest": "f4d1b50f223cce6785b4a476d683618378921ceb30e3306785901a4454c0388b",
       "ast_digest": "ad48467373a00ab4134a625bb5c40e297dafeb7fbf5288f5b2ee8ba6761586e6"
     },
     "sor": {
-      "values_digest": "b530cdcf2b548ed491f765cd7a1dedc630be0a6f08fe2528a04ccc7c2cfc1714",
+      "values_digest": "fa26522cd69b57c7b48e4d2b3d1ac17c4442c8c886401eabcba09e32719c5e4c",
       "rendered_digest": "08069e5c4ac156b5d0d9ee35747632ff67581e203f0aeeaa7d12f41a60e986e9",
       "ast_digest": "1cef938010dcb5de447f8e1c7722d1462c72d177b4688fbe8c531ab97ef18a7c"
     }
@@ -265,6 +265,90 @@
       "actor": "codex-5860-birthday-preparation",
       "reason": "Release temporary preparation-only claim after typed card validation",
       "operation": "{\"claim_id\":\"prep-5860-5831-cards\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-temporary-preparation-binding\",\"previous_owner\":\"codex-5860-birthday-preparation\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Reacquire issue-local preparation claim to repair exact review findings without product implementation.",
+      "operation": "{\"branch\":\"codex/5860-birthday-readiness-repair\",\"claim_id\":\"repair-5860-birthday-5831\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-birthday-readiness-repair\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/issues/5831\",\".csdlc/prepared/issues/5831\",\".csdlc/evidence/5831\",\".csdlc/locks/5831.lock\"],\"purpose\":\"Repair Birthday sprint design-time readiness findings only; no product implementation.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 31,
+      "generation": 23,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"adl-runtime-kernel/src/adaptive_learning.rs\",\"adl-runtime-kernel/src/lib.rs (module registration only)\",\"adl-runtime-kernel/tests/adaptive_learning.rs\",\"adl-runtime-kernel/tests/fixtures/adaptive_learning/\",\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\".csdlc/evidence/5831/\"]}"
+    },
+    {
+      "sequence": 32,
+      "generation": 24,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\"adl-runtime-kernel/src/reasoning.rs\",\"adl-runtime-kernel/src/cognition.rs\",\"adl-runtime-kernel/src/governance.rs\",\"adl-runtime-kernel/src/durable_state.rs\",\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\",\"adl/src/runtime_v2/ (read-only compatibility evidence only)\"]}"
+    },
+    {
+      "sequence": 33,
+      "generation": 25,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"adl-runtime-kernel/src/adaptive_learning.rs\",\"adl-runtime-kernel/src/lib.rs (module registration only)\",\"adl-runtime-kernel/tests/adaptive_learning.rs\",\"adl-runtime-kernel/tests/fixtures/adaptive_learning/\",\"docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md\",\".csdlc/evidence/5831/\"]}"
+    },
+    {
+      "sequence": 34,
+      "generation": 26,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any dependency or Runtime v3 qualification evidence is stale or missing.\",\"A shared loop/graph schema change lacks explicit versioning.\",\"Rejected-path, replay, bounds, or rollback proof cannot be produced.\",\"Any proposed implementation path targets adl/src/runtime_v2/ rather than adl-runtime-kernel.\"]}"
+    },
+    {
+      "sequence": 35,
+      "generation": 27,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Repair exact Birthday sprint execution-readiness review findings.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"The WP-13A DAG durably links loop event, evaluation, evidence-backed state delta, graph proposal, policy decision, accepted or rejected mutation, replay, and rollback/inverse record.\",\"WP-01/#5818, WP-13/#5830, merged #5104 semantics, and current Runtime v3 requalification are verified before implementation.\",\"Implementation is confined to current Runtime v3 authority: adl-runtime-kernel/src/adaptive_learning.rs, lib.rs module registration, tests/adaptive_learning.rs, tests/fixtures/adaptive_learning/, the feature contract, and .csdlc/evidence/5831/; adl/src/runtime_v2/ is excluded from implementation.\",\"Same durable inputs replay to identical proposal, policy disposition, state/graph hashes, and retained exact-revision history.\",\"Missing/forged evidence, substituted state, invalid graph binding, discontinuous resume, unbounded recurrence, unauthorized mutation, rejected-proposal mutation, and rollback mismatch fail closed.\",\"One bounded exact-head SRP review records no unresolved actionable findings.\",\"The implementation PR targets the intended base and includes Closes #5831 without claiming completion of downstream Birthday work.\",\"The exact adaptive_learning nextest target runs at least one test with --no-tests=fail, and native macOS/Linux receipts bind the same fixture digest before portability is claimed.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify #5818, #5830, #5104, and Runtime v3 requalification, then inspect adl-runtime-kernel reasoning, cognition, governance, and durable-state authorities.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Implement evaluation, adaptation delta, proposal, policy decision, accepted/rejected mutation, durable history, and rollback in adl-runtime-kernel/src/adaptive_learning.rs.\",\"acceptance_ids\":[\"AC-1\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run accepted/rejected focused tests, deterministic/forged-history replay negatives, resource bounds, resume continuity, and branch-built Runtime v3 integration.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Resolve one bounded exact-head review and publish only with correct base and Closes #5831 linkage.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"adaptive_learning-runtime-v3\",\"proof_role\":\"Run the exact Runtime v3 integration target and fail when the selected target contains no tests.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\",\"AC-7\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"cargo\",\"nextest\",\"run\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--test\",\"adaptive_learning\",\"--no-tests=fail\",\"--status-level\",\"all\"],\"parallel_group\":\"5831-core\",\"defer_reason\":null},{\"lane\":\"adaptive_learning-native-platform-receipts\",\"proof_role\":\"Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.\",\"acceptance_ids\":[\"AC-4\",\"AC-8\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":1000,\"argv\":[\"ruby\",\"-rjson\",\"-e\",\"receipts=ARGV.map{|p| JSON.parse(File.read(p))};\\nabort \\\"native platform receipts must cover macos and linux\\\" unless receipts.map{|r| r[\\\"platform\\\"]}.sort==%w[linux macos];\\nabort \\\"native proof failed\\\" unless receipts.all?{|r| r[\\\"status\\\"]==\\\"passed\\\" && Integer(r[\\\"tests_run\\\"])>0};\\nabort \\\"fixture digest mismatch\\\" unless receipts.map{|r| r[\\\"fixture_digest\\\"]}.uniq.length==1\",\".csdlc/evidence/5831/native-platform/macos.json\",\".csdlc/evidence/5831/native-platform/linux.json\"],\"parallel_group\":\"5831-platform\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 36,
+      "generation": 28,
+      "actor": "codex:5860-birthday-readiness-repair-design-review",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 37,
+      "generation": 29,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 38,
+      "generation": 30,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"initial_assumptions\",\"values\":[\"Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.\",\"The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval.\"]}"
+    },
+    {
+      "sequence": 39,
+      "generation": 31,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Remove remaining deferred-path language from Birthday execution plans.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"stop_conditions\",\"values\":[\"Any dependency or Runtime v3 qualification evidence is stale or missing.\",\"Any proposed implementation path targets adl/src/runtime_v2/ rather than adl-runtime-kernel.\",\"A shared Runtime v3 reasoning, cognition, governance, or durable-state edit lacks explicit versioning and a widened collision-checked claim.\",\"Rejected-path, replay, bounds, or rollback proof cannot be produced.\"]}"
+    },
+    {
+      "sequence": 40,
+      "generation": 31,
+      "actor": "codex:5860-birthday-readiness-repair",
+      "reason": "Release completed Birthday readiness-repair claim for just-in-time child execution binding.",
+      "operation": "{\"claim_id\":\"repair-5860-birthday-5831\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-issue-5860-readiness-repair\",\"previous_owner\":\"codex:5860-birthday-readiness-repair\"}"
     }
   ]
 }

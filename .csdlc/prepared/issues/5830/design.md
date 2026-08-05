@@ -2,11 +2,11 @@
 
 ## Outcome And Sources
 
-Define WP-13's bounded ACP profile from `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` and landed memory, capability, Theory-of-Mind, intelligence, and governed-learning evidence under `adl/src/runtime_v2/`.
+Define WP-13's bounded ACP profile in current Runtime v3 authority from `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md` and landed memory, capability, Theory-of-Mind, intelligence, and governed-learning evidence. Retained Runtime v2 evidence may be consumed only through explicit versioned references.
 
 ## Owned Surface
 
-Candidate protected paths are the ACP feature contract, a narrowly named Runtime v2 profile contract, matching tests/fixtures, and `.csdlc/evidence/5830/`. The profile contains ID/schema, identity and continuity bindings, allowed evidence refs, update reason/actor, privacy/redaction policy, projections, and explicit non-claims.
+Protected implementation paths are `adl-runtime-kernel/src/cognitive_profile.rs`, `adl-runtime-kernel/src/lib.rs` (module registration only), `adl-runtime-kernel/tests/cognitive_profile.rs`, `adl-runtime-kernel/tests/fixtures/cognitive_profile/`, `docs/milestones/v0.92/features/ACP_COGNITIVE_PROFILES_v0.92.md`, and `.csdlc/evidence/5830/`. Existing evidence under `adl/src/runtime_v2/` is read-only input authority. The profile contains ID/schema, identity and continuity bindings, allowed evidence refs, update reason/actor, privacy/redaction policy, projections, and explicit non-claims.
 
 ## Contract
 
@@ -18,7 +18,7 @@ WP-10/#5827, WP-11/#5828, and WP-12/#5829 must be terminal; the v0.91.1 ToM/inte
 
 ## Validation And Rollback
 
-Focused schema and update tests prove canonical records and revision linkage. Negative/privacy lanes cover unsupported labels, stale evidence, root mismatch, forbidden paths, redaction failure, and reputation/standing inference. Rollback removes the v0.92 profile layer without mutating source evidence.
+The exact `cognitive_profile` Runtime v3 integration-test target must run a nonzero count proving canonical records, revision linkage, unsupported-label rejection, stale evidence, root mismatch, forbidden paths, redaction failure, and reputation/standing non-inference. Native Linux CI and a retained native macOS receipt use the same fixture digest before portability is claimed. Rollback removes the v0.92 profile layer without mutating source evidence.
 
 ## Non-Goals
 

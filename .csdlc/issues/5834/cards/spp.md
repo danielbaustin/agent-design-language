@@ -16,14 +16,14 @@ Assemble and prove WP-16's exact-digest reviewer packet with complete child evid
 
 ## Plan
 
-Revision 8
+Revision 11
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify terminal receipts and exact-head evidence for every WP-08 through WP-15 dependency and narrow issue-local packet paths.",
+    "action": "Reconcile the stricter WP-13A dependency and verify exact terminal/reviewed evidence for the complete WP-08 through WP-15 roster.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -32,7 +32,7 @@ Revision 8
   },
   {
     "id": "S2",
-    "action": "Assemble the schema-bound inventory, exact links/digests, caveats, questions, redacted projections, non-claims, and blocked dispositions.",
+    "action": "Assemble the named Markdown packet, evidence JSON, schema, and deterministic issue-local validator without manufacturing missing proof.",
     "acceptance_ids": [
       "AC-1",
       "AC-3"
@@ -52,8 +52,14 @@ Revision 8
     "id": "S4",
     "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5834 linkage.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8"
     ],
     "status": "pending"
   }
@@ -83,7 +89,7 @@ Revision 8
 
 .csdlc/prepared/issues/5834/design.md
 
-Digest: b01caf72240ffae18cadcb91dc543b34394499e30f3cd73f5c7b0fd56afacd6e
+Digest: 4cdaaf8cd0144e87c29137b969cff72a5e5e213d7e2d7e0b75a901c62a504d46
 
 ## Diagram
 
@@ -96,6 +102,7 @@ Digest: 8a837711a7e5863a846f42a46cd793d3ff77846c6e80cc07d72e14c7665a6224
 - Any required child lacks terminal exact-head evidence.
 - A packet link or digest cannot be validated reproducibly.
 - Assembly requires editing shared milestone or release authority outside WP-16.
+- The WP-13A dependency mismatch among the sprint gate, canonical wave row, live issue, and cards has not been reconciled.
 
 ## Handoff
 

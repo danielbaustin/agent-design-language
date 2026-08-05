@@ -16,14 +16,14 @@ Extend and prove the existing WP-11 Memory Palace topology with identity/continu
 
 ## Plan
 
-Revision 8
+Revision 11
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Verify #5826, #5827, and ObsMem/trace evidence and inspect the exact existing Memory Palace packet schema before editing.",
+    "action": "Verify #5826/#5827 and record recomputed ObsMem models, Runtime v3 observability/proof, fixture, citation, trace, and output digests in the integration receipt.",
     "acceptance_ids": [
       "AC-2",
       "AC-3"
@@ -32,7 +32,7 @@ Revision 8
   },
   {
     "id": "S2",
-    "action": "Integrate identity/continuity gates, canonical topology, bounded selection, overflow, provenance, temporal anchors, and fixtures.",
+    "action": "Implement the bounded Runtime v3 Memory Palace topology and normalized ObsMem/trace bridge in the exact declared files.",
     "acceptance_ids": [
       "AC-1",
       "AC-3"
@@ -52,8 +52,15 @@ Revision 8
     "id": "S4",
     "action": "Resolve one bounded exact-head review and publish only with correct base and Closes #5828 linkage.",
     "acceptance_ids": [
+      "AC-1",
+      "AC-2",
+      "AC-3",
+      "AC-4",
+      "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8",
+      "AC-9"
     ],
     "status": "pending"
   }
@@ -83,19 +90,20 @@ Revision 8
 
 .csdlc/prepared/issues/5828/design.md
 
-Digest: 0999cedc855c8f666c2526d256d8222706fecbe79c0695a4e9dc604f42a6566d
+Digest: 581333d079c24f6145b50ba6749a664f6fbffc50a6e48d6883ae5fc3417e664a
 
 ## Diagram
 
 .csdlc/prepared/issues/5828/diagram.mmd
 
-Digest: c390c8b88c0764207e3fd973dda392d644328194d535eb91def5e644d39b544e
+Digest: ff82b0bec69f0e9368d20aff4022d0a5506a8040000a27f8a1991dece282ff8b
 
 ## Stop Conditions
 
 - Any dependency or ObsMem/trace baseline is not currently proven.
 - An existing packet schema must change without an explicit migration.
 - The exact files collide with another live protected-path claim.
+- The ObsMem models, Runtime v3 observability, or proof authority digest cannot be recorded and recomputed before implementation.
 
 ## Handoff
 

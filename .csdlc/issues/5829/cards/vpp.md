@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5829/diagram.mmd
 
 [
   {
-    "lane": "capability-envelope-canonical",
-    "proof_role": "Prove complete canonical envelopes bound to identity and exact evidence revision.",
+    "lane": "capability_envelope-runtime-v3",
+    "proof_role": "Run the exact Runtime v3 integration target and fail when the selected target contains no tests.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -33,70 +33,49 @@ Diagram: .csdlc/prepared/issues/5829/diagram.mmd
       "AC-4",
       "AC-5",
       "AC-6",
-      "AC-7"
+      "AC-7",
+      "AC-8",
+      "AC-9"
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 500,
+    "budget_seconds": 600,
     "budget_tokens": 4000,
     "argv": [
       "cargo",
-      "test",
+      "nextest",
+      "run",
       "--manifest-path",
-      "adl/Cargo.toml",
+      "adl-runtime-kernel/Cargo.toml",
+      "--test",
       "capability_envelope",
-      "--",
-      "--nocapture"
+      "--no-tests=fail",
+      "--status-level",
+      "all"
     ],
     "parallel_group": "5829-core",
     "defer_reason": null
   },
   {
-    "lane": "capability-authority-and-secret-negative",
-    "proof_role": "Reject stale provenance, undeclared capability, escalation, missing limits, and secret-like content.",
+    "lane": "capability_envelope-native-platform-receipts",
+    "proof_role": "Require passed native macOS and Linux receipts with a nonzero test count and identical fixture digest.",
     "acceptance_ids": [
-      "AC-1",
       "AC-4",
-      "AC-5"
-    ],
-    "deterministic": true,
-    "resource_profile": "medium",
-    "budget_seconds": 500,
-    "budget_tokens": 4000,
-    "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "capability_envelope_negative",
-      "--",
-      "--nocapture"
-    ],
-    "parallel_group": "5829-negative",
-    "defer_reason": null
-  },
-  {
-    "lane": "capability-path-portability",
-    "proof_role": "Prove envelope evidence remains credential-free and repo-relative.",
-    "acceptance_ids": [
-      "AC-3",
-      "AC-4",
-      "AC-5"
+      "AC-9"
     ],
     "deterministic": true,
     "resource_profile": "small",
-    "budget_seconds": 200,
-    "budget_tokens": 2000,
+    "budget_seconds": 30,
+    "budget_tokens": 1000,
     "argv": [
-      "cargo",
-      "test",
-      "--manifest-path",
-      "adl/Cargo.toml",
-      "capability_envelope_portability",
-      "--",
-      "--nocapture"
+      "ruby",
+      "-rjson",
+      "-e",
+      "receipts=ARGV.map{|p| JSON.parse(File.read(p))};\nabort \"native platform receipts must cover macos and linux\" unless receipts.map{|r| r[\"platform\"]}.sort==%w[linux macos];\nabort \"native proof failed\" unless receipts.all?{|r| r[\"status\"]==\"passed\" && Integer(r[\"tests_run\"])>0};\nabort \"fixture digest mismatch\" unless receipts.map{|r| r[\"fixture_digest\"]}.uniq.length==1",
+      ".csdlc/evidence/5829/native-platform/macos.json",
+      ".csdlc/evidence/5829/native-platform/linux.json"
     ],
-    "parallel_group": "5829-negative",
+    "parallel_group": "5829-platform",
     "defer_reason": null
   }
 ]
@@ -113,9 +92,11 @@ Tokens: 10000
 
 ## Commands
 
-- `cargo test --manifest-path adl/Cargo.toml capability_envelope -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml capability_envelope_negative -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml capability_envelope_portability -- --nocapture`
+- `cargo nextest run --manifest-path adl-runtime-kernel/Cargo.toml --test capability_envelope --no-tests=fail --status-level all`
+- `ruby -rjson -e receipts=ARGV.map{|p| JSON.parse(File.read(p))};
+abort "native platform receipts must cover macos and linux" unless receipts.map{|r| r["platform"]}.sort==%w[linux macos];
+abort "native proof failed" unless receipts.all?{|r| r["status"]=="passed" && Integer(r["tests_run"])>0};
+abort "fixture digest mismatch" unless receipts.map{|r| r["fixture_digest"]}.uniq.length==1 .csdlc/evidence/5829/native-platform/macos.json .csdlc/evidence/5829/native-platform/linux.json`
 
 ## Failure Semantics
 

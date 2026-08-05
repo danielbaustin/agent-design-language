@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-13A][runtime] Implement the Adaptive Learning DAG",
     "slug": "v0-92-wp-13a-runtime-implement-adaptive-learning-dag",
     "version": "v0.92",
-    "generation": 21
+    "generation": 31
   },
   "status": "ready",
   "content": {
@@ -16,10 +16,11 @@
       "goal": "Implement WP-13A's evaluated, policy-governed Runtime v3 adaptive-learning DAG with deterministic replay, rejection-before-mutation, and rollback history.",
       "required_outcome": "Durable evaluation, adaptation delta, graph-change proposal, policy decision, accepted/rejected mutation, replay, and inverse/rollback records linked to exact loop and state evidence.",
       "declared_scope": [
+        "adl-runtime-kernel/src/adaptive_learning.rs",
+        "adl-runtime-kernel/src/lib.rs (module registration only)",
+        "adl-runtime-kernel/tests/adaptive_learning.rs",
+        "adl-runtime-kernel/tests/fixtures/adaptive_learning/",
         "docs/milestones/v0.92/features/ADAPTIVE_LEARNING_DAG_v0.92.md",
-        "adl/src/runtime_v2/ narrowly named adaptive-learning modules",
-        "adl/src/cli/runtime_v3_cmd.rs only if branch-built integration requires it",
-        "adl/src/runtime_v2/tests/ and adaptive-learning fixtures",
         ".csdlc/evidence/5831/"
       ],
       "authority_boundary": [
@@ -29,7 +30,7 @@
       ],
       "initial_assumptions": [
         "Every listed dependency is a current execution gate to verify from source and receipt-backed evidence, not a preparation-time completion claim.",
-        "Candidate protected paths must be narrowed and collision-checked against the fresh implementation claim before editing."
+        "The exact declared implementation paths are complete for claim planning and must be collision-checked unchanged before editing; widening requires explicit replan and reapproval."
       ],
       "operator_constraints": [
         "Use typed C-SDLC v2 lifecycle operations in an issue-bound worktree.",
