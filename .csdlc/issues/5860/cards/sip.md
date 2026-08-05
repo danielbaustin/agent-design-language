@@ -20,7 +20,7 @@ Every child has source-grounded approved design, issue-specific SIP/STP/SPP, tru
 
 ## Scope
 
-- .csdlc issue-local readiness surfaces for the 58 execution issues of umbrellas 5854 through 5858, including #5862-#5878
+- .csdlc issue-local readiness surfaces for the 58 execution issues in six umbrellas: #5854 through #5858 plus WP-04 implementation umbrella #5862
 - .csdlc/evidence/5860 readiness matrix and exact-head review
 - Issue #5861 is externally owned and excluded
 
@@ -39,5 +39,6 @@ Every child has source-grounded approved design, issue-specific SIP/STP/SPP, tru
 - Do not start child implementation
 - Do not edit tracked work on main
 - Use typed C-SDLC v2 card and lifecycle operations
-- Use five disjoint sprint preparation lanes
+- Use six disjoint sprint preparation lanes; #5855 owns WP-04 architecture and security gating while #5862 owns WP-04 implementation coordination
+- Do not start #5862 implementation until #5821 is terminal
 - No half-complete or generic cards

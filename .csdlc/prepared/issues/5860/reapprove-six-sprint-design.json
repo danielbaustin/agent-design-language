@@ -1,0 +1,7 @@
+{
+  "issue": 5860,
+  "expected_generation": 11,
+  "expected_digest": "f58202f4da305f313a53fd90110ebac2b19d0e712997e691d610f5f09ef859e4",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "reviewer": "codex:5860-six-sprint-reconciliation"
+}

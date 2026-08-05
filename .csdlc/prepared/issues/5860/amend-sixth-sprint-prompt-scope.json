@@ -1,0 +1,12 @@
+{
+  "issue": 5860,
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "expected_generation": 11,
+  "expected_digest": "bbe13d07d9be874513d18ce54a7091d6bc5ac6d73fb50a4a1d998722d3fe54c9",
+  "now_unix_seconds": 1785959249,
+  "actor": "codex:5860-readiness-integration",
+  "reason": "Protect the sixth sprint operator prompt before splitting WP-04 implementation from the Runtime and Observatory sprint; #5861 remains externally owned and excluded.",
+  "add_protected_paths": [
+    ".adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md"
+  ]
+}

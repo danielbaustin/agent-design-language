@@ -101,19 +101,21 @@ cards present, with `SIP`, `STP`, and `SPP` design-time ready before execution.
 
 ## Cadence Expectations
 
-WP-01 records five live coordination-only umbrellas in
+The canonical wave records six live coordination-only umbrellas in
 `WP_ISSUE_WAVE_v0.92.yaml`: foundation and throughput `#5858`; Runtime,
-Observatory, polis, and protocol `#5855`; birthday core `#5857`;
-demonstration, handoff, and publication `#5854`; and quality and release tail
-`#5856`. All five may be prepared in parallel, while live child
+Observatory, distributed architecture, and protocol `#5855`; distributed
+Guardian implementation `#5862`; birthday core `#5857`; demonstration,
+handoff, and publication `#5854`; and quality and release tail `#5856`. All
+six may be prepared in parallel, while live child
 execution remains dependency-gated. This keeps review and validation tight
 without forcing one oversized single-threaded queue or allowing parallel
 agents to collide on shared Runtime and Observatory surfaces.
 
-Copy-ready prompts for the five individual sprint sessions are retained in:
+Copy-ready prompts for the six individual sprint sessions are retained in:
 
 - `.adl/docs/TBD/V092_SPRINT_5858_FOUNDATION_SESSION_PROMPT.md`
 - `.adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md`
+- `.adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md`
 - `.adl/docs/TBD/V092_SPRINT_5857_BIRTHDAY_CORE_SESSION_PROMPT.md`
 - `.adl/docs/TBD/V092_SPRINT_5854_DEMO_PUBLICATION_SESSION_PROMPT.md`
 - `.adl/docs/TBD/V092_SPRINT_5856_QUALITY_RELEASE_SESSION_PROMPT.md`

@@ -9,15 +9,15 @@ that every child design and plan was issue-specific or bindable.
 
 ## Scope
 
-The repair covers the 58 execution issues assigned to sprint umbrellas #5854
-through #5858, including the reviewed WP-04 implementation umbrella #5862
+The repair covers the 58 execution issues assigned to six sprint umbrellas:
+#5854 through #5858 plus the reviewed WP-04 implementation umbrella #5862
 and its exact sixteen-child wave #5863 through #5878. It may update only each
 issue's C-SDLC design, diagram, cards,
 issue-local readiness evidence, and lock/claim projections required by typed
 lifecycle tooling. It also owns the #5860 lifecycle record, one aggregate
 readiness matrix, the canonical wave membership needed to prove the exact
-denominator, and the Runtime sprint prompt that exposes that membership to an
-operator session.
+denominator, and the Runtime and WP-04 sprint prompts that expose that
+membership to operator sessions.
 
 No product source, milestone feature claim, implementation proof, or child PR
 belongs to this issue. Sidecar issue #5861 is owned by another session and is
@@ -40,8 +40,10 @@ Each child must have:
 
 ## Parallelization
 
-Preparation is split by the five existing sprint umbrellas. The write sets are
-disjoint issue directories. Shared milestone and product paths are
+Preparation is split by six disjoint sprint umbrellas. WP-04 architecture and
+security gating remains in #5855; WP-04 implementation is coordinated only by
+#5862 after #5821 is terminal. The write sets are disjoint issue directories.
+Shared milestone and product paths are
 read-only inputs. Results converge only through the #5860 readiness matrix and
 one integration review.
 
@@ -52,6 +54,7 @@ one integration review.
 - `.csdlc/evidence/5860/`
 - `docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml`
 - `.adl/docs/TBD/V092_SPRINT_5855_RUNTIME_OBSERVATORY_SESSION_PROMPT.md`
+- `.adl/docs/TBD/V092_SPRINT_5862_DISTRIBUTED_GUARDIAN_SESSION_PROMPT.md`
 
 ## Read-Only Inputs
 

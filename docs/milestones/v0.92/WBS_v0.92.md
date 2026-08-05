@@ -123,7 +123,7 @@ closeout planning, next-milestone review, and ceremony form the release tail.
 
 ## Sprint Umbrellas
 
-The issue wave is grouped into five coordination-only sprint umbrellas. These
+The issue wave is grouped into six coordination-only sprint umbrellas. These
 umbrellas define dependency routing, safe parallel lanes, integration proof,
 and write-surface boundaries; they do not replace child-issue ownership or
 authorize an umbrella agent to implement child code directly.
@@ -131,12 +131,13 @@ authorize an umbrella agent to implement child code directly.
 | Sprint issue | Sprint | Members | Execution shape |
 | --- | --- | --- | --- |
 | `#5858` | Foundation and throughput | WP-01B, WP-02, support `#5812`, WP-02A, WP-02B, WP-05, WP-06, WP-07 | Hybrid: migration and CI are serial gates; workflow and remote-runner work may proceed in parallel after CI stabilizes. |
-| `#5855` | Runtime, Observatory, polis, and protocol | support `#5800`, WP-03, support `#5795`, WP-04, WP-14, WP-18A | Hybrid: browser trust and Runtime resilience establish the baseline; local Shepherd integration follows; distributed, protocol, and consumer lanes converge afterward. |
+| `#5855` | Runtime, Observatory, distributed architecture, and protocol | support `#5800`, WP-03, support `#5795`, WP-04, WP-14, WP-18A | Hybrid: browser trust and Runtime resilience establish the baseline; WP-04 publishes the architecture and security gate to `#5862`; protocol and consumer lanes remain dependency-gated. |
+| `#5862` | Distributed Guardian implementation | WP-04-IMP and WP-04.01 through WP-04.16 | Hybrid: starts only after WP-04 issue `#5821` is terminal; child-owned implementation lanes follow the declared DAG and converge through WP-04.16 integrated proof. |
 | `#5857` | Birthday core | WP-08 through WP-13A, WP-15, WP-16 | Hybrid dependency graph with contract and identity gates before integrated witness/review proof. |
 | `#5854` | Demonstration, handoff, and publication | WP-17, WP-18, WP-18B, WP-19, WP-20, WP-24, WP-24A | Publication production starts early after migration; proof and handoff converge only after birthday and protocol dependencies. |
 | `#5856` | Release tail | WP-21, WP-21A, WP-22, WP-23, WP-25 through WP-30 | Sequential quality, review, remediation, planning, and ceremony chain. |
 
-All five umbrellas may be prepared in parallel. Live implementation may start
+All six umbrellas may be prepared in parallel. Live implementation may start
 only for dependency-ready child issues, and each child keeps its own typed
 lifecycle, validation, exact-head review, and publication authority. The exact
 machine-readable membership and serial gates are in

@@ -5,7 +5,7 @@ Repair the v0.92 issue wave so every execution issue is genuinely design-time re
 ## Required Outcome
 
 - Replace every placeholder design and generic plan with issue-specific, source-grounded design and execution boundaries.
-- Verify all 58 execution issues across sprint umbrellas #5854-#5858.
+- Verify all 58 execution issues across six sprint umbrellas: #5854-#5858 and #5862.
 - Make SIP, STP, and SPP complete and issue-specific.
 - Make VPP name the smallest proving validation DAG, including negative and platform lanes where applicable.
 - Keep SRP and SOR truthful in pre-execution state.
@@ -28,7 +28,8 @@ Repair the v0.92 issue wave so every execution issue is genuinely design-time re
 ## Issue Sets
 
 - Foundation #5858: #5818, #5819, #5812, #5801, #5853, #5822, #5823, #5824
-- Runtime #5855: #5800, #5820, #5795, #5821, #5832, #5837, and WP-04 implementation issues #5862-#5878
+- Runtime #5855: #5800, #5820, #5795, #5821, #5832, #5837
+- Distributed Guardian implementation #5862: #5862-#5878
 - Birthday #5857: #5825-#5831, #5833, #5834
 - Demo/publication #5854: #5835, #5836, #5838-#5840, #5844, #5845
 - Quality/release #5856: #5786, #5841-#5843, #5846-#5852

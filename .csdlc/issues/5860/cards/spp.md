@@ -12,11 +12,11 @@ Status: ready
 
 ## Summary
 
-Audit all children, prepare five disjoint sprint sets, integrate typed designs/cards, validate every packet and released claim, then run one independent exact-head review.
+Audit all children, prepare six disjoint sprint sets, integrate typed designs and cards, validate every packet and released claim, then run independent exact-head review.
 
 ## Plan
 
-Revision 2
+Revision 4
 
 ## Steps
 
@@ -32,7 +32,7 @@ Revision 2
   },
   {
     "id": "S2",
-    "action": "Prepare source-grounded designs and typed cards in five disjoint sprint lanes, including WP-04 issues #5862-#5878",
+    "action": "Prepare source-grounded designs and typed cards in six disjoint sprint lanes, with #5855 owning WP-04 architecture and security gating and #5862 separately owning WP-04 implementation coordination after #5821 is terminal",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -98,7 +98,7 @@ Revision 2
 
 .csdlc/prepared/issues/5860/design.md
 
-Digest: 6e077833d7c952f078b626d96d9fcc798a534a5750bdebea45f3348ce8a8e2d7
+Digest: 987f69de241139ee5a986390b8b52e3a41771dcecfbacb7a9e1434d863d8cde8
 
 ## Diagram
 

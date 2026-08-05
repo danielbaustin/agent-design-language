@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-01][readiness] Complete design-time cards for every milestone issue",
     "slug": "v092-all-issue-execution-readiness",
     "version": "v0.92",
-    "generation": 11
+    "generation": 18
   },
   "status": "ready",
   "content": {
@@ -109,7 +109,7 @@
       "planned_validation_tokens": 50000,
       "failure_policy": "Fail closed on any placeholder, generic plan, pending design approval, invalid card, active preparation claim, or product path change.",
       "design_ref": ".csdlc/prepared/issues/5860/design.md",
-      "design_digest": "6e077833d7c952f078b626d96d9fcc798a534a5750bdebea45f3348ce8a8e2d7",
+      "design_digest": "987f69de241139ee5a986390b8b52e3a41771dcecfbacb7a9e1434d863d8cde8",
       "diagram_ref": ".csdlc/prepared/issues/5860/diagram.mmd",
       "diagram_digest": "e2a3e34b6407cb62639a89ed201ac32976da3a2ce4a7f270cdc8a6bac3423209"
     }

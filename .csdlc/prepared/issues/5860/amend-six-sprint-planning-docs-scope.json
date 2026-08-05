@@ -1,0 +1,14 @@
+{
+  "issue": 5860,
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "expected_generation": 16,
+  "expected_digest": "ae745b6def23736e3000b90bb72c293e504e749a5383cbb5bfccc76f359add82",
+  "now_unix_seconds": 1785959565,
+  "actor": "codex:5860-six-sprint-reconciliation",
+  "reason": "Protect the three operator-facing milestone planning documents that still describe the superseded five-sprint topology.",
+  "add_protected_paths": [
+    "docs/milestones/v0.92/README.md",
+    "docs/milestones/v0.92/SPRINT_v0.92.md",
+    "docs/milestones/v0.92/WBS_v0.92.md"
+  ]
+}

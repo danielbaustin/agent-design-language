@@ -1,0 +1,24 @@
+{
+  "issue": 5860,
+  "card": "stp",
+  "expected_generation": 17,
+  "expected_digest": "cd291a3400d2f43e69a28ebc19384aa26e602a21eb4124a9e2ddb068e1636f5d",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "actor": "codex:5860-six-sprint-reconciliation",
+  "reason": "Add the sixth sprint packet to the parent repository inputs.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "repo_inputs",
+    "values": [
+      "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
+      ".csdlc/prepared/issues/5854",
+      ".csdlc/prepared/issues/5855",
+      ".csdlc/prepared/issues/5856",
+      ".csdlc/prepared/issues/5857",
+      ".csdlc/prepared/issues/5858",
+      ".csdlc/prepared/issues/5862",
+      "AGENTS.md"
+    ]
+  },
+  "fail_after_backup": false
+}

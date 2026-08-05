@@ -1,0 +1,14 @@
+{
+  "issue": 5860,
+  "card": "spp",
+  "expected_generation": 14,
+  "expected_digest": "4b2fa3d7c16abb62c526dc1e841af78d9ecc607fcffc657659d71c72cbd82158",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "actor": "codex:5860-six-sprint-reconciliation",
+  "reason": "Make the parent plan summary match the six-sprint execution topology.",
+  "operation": {
+    "operation": "replan",
+    "field": "plan_summary",
+    "value": "Audit all children, prepare six disjoint sprint sets, integrate typed designs and cards, validate every packet and released claim, then run independent exact-head review."
+  }
+}

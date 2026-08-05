@@ -1,0 +1,19 @@
+{
+  "issue": 5860,
+  "card": "stp",
+  "expected_generation": 16,
+  "expected_digest": "a2fbae8def8cdfe2f44b66cdb01d8406c051d6367bc6015337f889cedcaf62d7",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "actor": "codex:5860-six-sprint-reconciliation",
+  "reason": "Record all six sprint execution packets in the parent task dependencies.",
+  "operation": {
+    "operation": "replace_planning_collection",
+    "field": "dependencies",
+    "values": [
+      "Merged WP-01 PR 5859 at 92451299651c44725a1951d4101b9cba27cad864",
+      "Sprint execution packets for #5854 through #5858 plus WP-04 implementation umbrella #5862",
+      "Current v0.92 issue wave"
+    ]
+  },
+  "fail_after_backup": false
+}

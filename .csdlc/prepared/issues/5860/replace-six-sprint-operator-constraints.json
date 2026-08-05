@@ -1,0 +1,21 @@
+{
+  "issue": 5860,
+  "card": "sip",
+  "expected_generation": 13,
+  "expected_digest": "2a05c772a7cede7644465ce5b1182a53dea616eb07168c69489b4720319ef6b6",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "actor": "codex:5860-six-sprint-reconciliation",
+  "reason": "Replace the stale five-lane operator constraint with the authoritative six-sprint boundary.",
+  "operation": {
+    "operation": "replace_operator_constraints",
+    "values": [
+      "Do not start child implementation",
+      "Do not edit tracked work on main",
+      "Use typed C-SDLC v2 card and lifecycle operations",
+      "Use six disjoint sprint preparation lanes; #5855 owns WP-04 architecture and security gating while #5862 owns WP-04 implementation coordination",
+      "Do not start #5862 implementation until #5821 is terminal",
+      "No half-complete or generic cards"
+    ]
+  },
+  "fail_after_backup": false
+}

@@ -35,7 +35,7 @@ Repair and prove child design-time readiness without executing child deliverable
 ## Dependencies
 
 - Merged WP-01 PR 5859 at 92451299651c44725a1951d4101b9cba27cad864
-- Sprint execution packets for 5854 through 5858
+- Sprint execution packets for #5854 through #5858 plus WP-04 implementation umbrella #5862
 - Current v0.92 issue wave
 
 ## Inputs
@@ -46,6 +46,7 @@ Repair and prove child design-time readiness without executing child deliverable
 - .csdlc/prepared/issues/5856
 - .csdlc/prepared/issues/5857
 - .csdlc/prepared/issues/5858
+- .csdlc/prepared/issues/5862
 - AGENTS.md
 
 ## Non Goals

@@ -1,0 +1,39 @@
+{
+  "issue": 5860,
+  "card": "spp",
+  "expected_generation": 15,
+  "expected_digest": "a41f8db0a1407955d3c4f8d11c26c5208adbaee0c38fba45766589997749cb2b",
+  "claim_id": "claim-5860-v092-execution-readiness",
+  "actor": "codex:5860-six-sprint-reconciliation",
+  "reason": "Give WP-04 implementation its own sixth preparation lane and preserve the #5821 terminal gate.",
+  "operation": {
+    "operation": "replace_plan_steps",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Audit all 58 execution issues and preserve the exact defect and readiness baseline",
+        "acceptance_ids": ["AC-1", "AC-5"],
+        "status": "pending"
+      },
+      {
+        "id": "S2",
+        "action": "Prepare source-grounded designs and typed cards in six disjoint sprint lanes, with #5855 owning WP-04 architecture and security gating and #5862 separately owning WP-04 implementation coordination after #5821 is terminal",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6"],
+        "status": "pending"
+      },
+      {
+        "id": "S3",
+        "action": "Integrate results, release preparation claims, and generate the exact 58-row readiness and ownership evidence",
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "status": "pending"
+      },
+      {
+        "id": "S4",
+        "action": "Run typed validation and independent exact-head readiness review, then repair every actionable finding",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-6", "AC-7"],
+        "status": "pending"
+      }
+    ]
+  },
+  "fail_after_backup": false
+}
