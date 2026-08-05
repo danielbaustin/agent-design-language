@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5861,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5861-v092-csdlc-preparation",
+  "title": "[v0.92][C-SDLC v2] Simplify issue preparation and binding",
+  "body": "Closes #5861\n\n## Summary\n- separates claim-free issue preparation from execution ownership\n- adds immutable generations, readiness receipts, dependency and batch truth, typed migration, and crash-safe recovery\n- derives binding from governed session authority and hardens retry/release worktree topology\n- removes the direct init release surface and documents the new operator workflow\n\n## Validation\n- focused preparation regression suite: 20/20 passed\n- strict all-target C-SDLC v2 Clippy: passed with -D warnings\n- broader shared lifecycle compatibility suites were also green during implementation review\n- Gemini 3.1 Pro exact-head remediation review: no actionable findings\n- independent exact-head review: no actionable findings\n\n## Review truth\n- Claude identified two final cross-platform/topology defects; both are fixed in the reviewed revision\n- two later Claude rerun calls returned empty provider output at HTTP 200 and are recorded as provider failures, not approvals\n- publication guard accepts the subsequent review-metadata-only commit",
+  "draft": false,
+  "revision": "git-blake3:4a25d6edbc5be076b019e62b9cd6f6e7d039f806:195a85034daa30b524be58918720e435851c8cdc80ae141aa5a696c3faf153b0",
+  "commit_sha": "4a25d6edbc5be076b019e62b9cd6f6e7d039f806"
+}

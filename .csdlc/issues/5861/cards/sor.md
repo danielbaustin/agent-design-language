@@ -62,11 +62,11 @@ Implemented claim-free C-SDLC v2 issue preparation, readiness sealing, recoverab
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: ready
 
 Merge: not_merged
 
