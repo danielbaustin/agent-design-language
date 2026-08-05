@@ -101,9 +101,13 @@ cards present, with `SIP`, `STP`, and `SPP` design-time ready before execution.
 
 ## Cadence Expectations
 
-The final cadence should be set by WP-01 based on actual issue count and
-dependencies. The planning preference is sprint-sized batches that keep review
-and validation tight rather than one oversized single-threaded queue.
+WP-01 records five coordination-only umbrellas in
+`WP_ISSUE_WAVE_v0.92.yaml`: foundation and throughput; Runtime, Observatory,
+polis, and protocol; birthday core; demonstration, handoff, and publication;
+and the release tail. All five may be prepared in parallel, while live child
+execution remains dependency-gated. This keeps review and validation tight
+without forcing one oversized single-threaded queue or allowing parallel
+agents to collide on shared Runtime and Observatory surfaces.
 
 ## Planned Phases
 

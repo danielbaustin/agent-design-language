@@ -18,7 +18,8 @@ in `WP_ISSUE_WAVE_v0.92.yaml`, and each child issue has an initialized typed
 not started through this planning issue.
 
 - Planning: active under `#5817`
-- Issue wave: open; 38 child work-package issues are mapped in the wave file
+- Issue wave: open; 38 child work-package issues and three supporting issues
+  are mapped in the wave file
 - Cards: initialized for every mapped child issue; issue owners must complete
   issue-specific design approval and binding before implementation
 - Execution: WP-01 only; child WPs remain dependency-gated
@@ -143,7 +144,8 @@ The likely `v0.92` tranche is:
 ## Source Map
 
 - `#3377`: first-birthday readiness packet source.
-- `#3434`: v0.92 planning-doc preparation issue.
+- `#3434`: closed historical v0.92 planning-doc preparation input; not active
+  milestone work.
 - `#3506`: v0.91.5 bridge milestone setup and dependency correction.
 - `#3800`: v0.91.6 first bridge-tranche planning package.
 - `#3801`: v0.91.7 second bridge-tranche planning package.

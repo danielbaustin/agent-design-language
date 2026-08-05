@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d53be3af2faf3e66031a9d44cf075b231b9bb435cb118d4f77841ff2b8f74db9",
   "phase": "implemented",
-  "generation": 12,
-  "digest": "94492c367d79f5f3a971e0a2601101b8448eee6adebb29682d3814e7379ee521",
+  "generation": 14,
+  "digest": "07b20b0a9e6466ff58a951de52a1c93e0699a795e518316384c2dfa7ffb895c0",
   "claim": {
     "id": "claim-5817-v092-wp01",
     "owner": "codex:5817",
-    "generation": 12,
+    "generation": 14,
     "acquired_unix_seconds": 1785910303,
     "expires_unix_seconds": 1786515103,
     "heartbeat_unix_seconds": 1785910303,
@@ -43,34 +43,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "86f730050804e978976441af8554eb9325aff896ec9143015b442b6e0d057e3c",
+      "values_digest": "4744112b23f70dfbd8ed62b8f3039e8643dcbff891039aedc6752f57b1d583c4",
       "rendered_digest": "4451da75fc9cb7d4886b7877ab335834a02ceb41919e4bb6b6bdea011277826f",
       "ast_digest": "02838e8a1abbb2d0df6a250cf97f2b8ac4cef2309d3afaa866777d382c2cc66a"
     },
     "stp": {
-      "values_digest": "a61c38d09862eb4aa2fbc54d21c54faf79508214715df31003cdaafd878a5e51",
+      "values_digest": "409b59970c1e70567c91d887f6bddf14107f35f1c42af672a9823d0a1c94ddd6",
       "rendered_digest": "1d34155c8cb1a8b4cc3a16462f3e1e76a5a9d7fb5dcad1dc0801011ccb404a78",
       "ast_digest": "8cd8c20ceed3eeefa51c5392c7b84f4078db985f356ca1b5abab232dcc3cff65"
     },
     "spp": {
-      "values_digest": "6d5be1e824426b293fb2bb4a4b119226dd89bfb6bc60291c93e98fb2045cbf32",
+      "values_digest": "7d6583bce7507ab09cf865ad970b3b83a8dcc35fde0ee266b528d7c4d44bdf76",
       "rendered_digest": "bf1ba4c2268a9dba7a05452b7849fb8c8404da598b6b4b815a4e6a69350f136e",
       "ast_digest": "ce85c03a9a720cc590ebf965f1ca3824e060ec9ac59512e8c38ca273c7499d18"
     },
     "vpp": {
-      "values_digest": "d791326a3a2c52e2cc5f0435264cbc463e5bc080e97d636570974625fab98ba8",
-      "rendered_digest": "d85894fa48efe8ccb4d733b7e417a2aff1919e67218d67197cce609c0eb86a74",
-      "ast_digest": "1de323fb0538fbab70651bafd41ee7478461e291662947e26e4af0d863244785"
+      "values_digest": "9ea03377cd98199a17f0684fccd5836735977d9faca9d388518f93dfd13b6e30",
+      "rendered_digest": "bac0dde9cbcfe2c5e89f361084769c0ed78b7bbedd6d18793814b9895bc5c7ce",
+      "ast_digest": "dd241175a5477c962773314b36d54e2e9845fdf8537ad98b00eb2644e7612a7b"
     },
     "srp": {
-      "values_digest": "824e187649d805e30290764d5e519a93719514e909311f270eb37bc5a251fbea",
+      "values_digest": "200eefd803259b81c0873b4545aa100a454406f3b3763f22caf7270b563b25b9",
       "rendered_digest": "cd4bb98b48746ccdab2be739406c3e989dc54b4ab3b457c6db777cd32e2b83e0",
       "ast_digest": "552cdee9ab9df482004176341730bd937def333d5da4e7703b963ded3bb34816"
     },
     "sor": {
-      "values_digest": "fe718f23953b64c3b9a015b290aa467c7e5886d047e82bfb51b3cfbec5212c5e",
-      "rendered_digest": "5fad475d72b22d9e908029fe9bfa8bd7833b215a8b5d1326b39f38f1944e02c8",
-      "ast_digest": "c52e343a677f48f2400ad8f7540b22984b28dd8ad86a1e63cb640a885a790963"
+      "values_digest": "a8b13a936ff372dde258dd519f4c8a29295d94e75cd4fc48629dc23cae061c95",
+      "rendered_digest": "cea3f22af57bcb05ca8794f87da94e84e04d16c1e49893e530378b41c6cfc8d5",
+      "ast_digest": "04bfaacbfb988d1f3316de231abefa85a6327aea52545829933f8527f2338a89"
     }
   },
   "transitions": [
@@ -194,6 +194,20 @@
       "actor": "codex:5817-wp02b-sidecar",
       "reason": "Record the complete active v0.92 issue wave after adding and validating the post-migration build-acceleration sidecar.",
       "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Activated the canonical v0.92 milestone package, consumed prerequisite truth, requalified historical loop semantics against current Runtime v3, opened the final issue wave including WP-02B, and initialized every child issue with six typed cards.\",\"changes\":[\"Reconciled active milestone, sprint, WBS, ADR, demo, feature, quality, handoff, and execution-readiness surfaces\",\"Opened and verified 38 child issues across 39 unique work packages\",\"Generated 456 typed child card artifacts with exact wave alignment\",\"Scheduled issue 5853 as WP-02B with a bounded same-SHA build-acceleration experiment and executable evidence validator\",\"Added complete feature ownership and hard WP-22 completion gates\",\"Promoted Memory Palace and Adaptive Learning DAG from planning escape hatches to required working Runtime slices\",\"Requalified #5104 loop semantics against current Runtime v3 source and focused tests\"],\"artifacts\":[\"docs/milestones/v0.92\",\".csdlc/issues/5786\",\".csdlc/issues/5801\",\".csdlc/issues/5818 through .csdlc/issues/5853\",\".csdlc/prepared/issues/5853/design.md\",\".csdlc/prepared/issues/5853/diagram.mmd\",\".csdlc/prepared/issues/5853/validate-experiment.rb\",\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\",\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"],\"validation\":[{\"command\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"purpose\":\"Prove 39 unique acyclic WPs, 38 initialized child issues, 456 typed card artifacts, source dispositions, feature coverage, links, and delivery gates.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\"},{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5817/target\",\"--test\",\"reasoning\"],\"purpose\":\"Requalify current Runtime v3 bounded reasoning, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"},{\"command\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5817\"],\"purpose\":\"Confirm the WP-01 typed lifecycle record remains healthy after the sidecar addition.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5817/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Reject whitespace errors in the complete candidate.\",\"outcome\":\"passed\",\"evidence_ref\":\"working tree\"},{\"command\":[\"git\",\"-C\",\"/Users/daniel/git/agent-design-language\",\"status\",\"--short\",\"--branch\"],\"purpose\":\"Confirm the primary checkout remains clean on main.\",\"outcome\":\"passed\",\"evidence_ref\":\"/Users/daniel/git/agent-design-language\"}]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 13,
+      "actor": "codex:5817",
+      "reason": "Align the proving package with the complete work-package, supporting-issue, and sprint map.",
+      "operation": "{\"operation\":\"replace_validation_lanes\",\"lanes\":[{\"lane\":\"v092-planning-package\",\"proof_role\":\"Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 39 unique WP mappings, 41 initialized child and supporting records, 492 typed card artifacts and schema identities, five complete sprint umbrellas, required feature contracts, delivery gates, active-wave wording, and scope alignment.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":3000,\"argv\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"parallel_group\":\"docs\",\"defer_reason\":null},{\"lane\":\"runtime-v3-loop-requalification\",\"proof_role\":\"Requalify the historical #5104 loop contract against current Runtime v3 bounded execution, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.\",\"acceptance_ids\":[\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":3000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5817/target\",\"--test\",\"reasoning\"],\"parallel_group\":\"runtime\",\"defer_reason\":null},{\"lane\":\"diff-hygiene\",\"proof_role\":\"Reject whitespace errors in the complete WP-01 candidate.\",\"acceptance_ids\":[\"AC-6\",\"AC-7\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":30,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"docs\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 16,
+      "generation": 14,
+      "actor": "codex:5817",
+      "reason": "Record the complete supporting-issue inventory and dependency-aware sprint organization.",
+      "operation": "{\"operation\":\"replace_execution\",\"summary\":\"Activated the canonical v0.92 milestone package, requalified prerequisites, opened the complete issue wave, initialized every child and supporting issue, and organized execution into five dependency-aware sprint umbrellas.\",\"changes\":[\"Reconciled active milestone, sprint, WBS, ADR, demo, feature, quality, handoff, and execution-readiness surfaces\",\"Opened and verified 41 child and supporting issues across 39 unique work packages and three explicit supporting issues\",\"Generated 492 typed card artifacts with exact wave alignment\",\"Scheduled issue 5853 as WP-02B with a bounded same-SHA build-acceleration experiment and executable evidence validator\",\"Recovered and initialized supporting issues 5812, 5800, and 5795 with bounded design and proof contracts\",\"Organized every child and supporting issue exactly once across five coordination-only sprint umbrellas with serial gates, parallel lanes, and write-surface boundaries\",\"Added complete feature ownership and hard WP-22 completion gates, including WP-24 and WP-24A\",\"Requalified #5104 loop semantics against current Runtime v3 source and focused tests\"],\"artifacts\":[\"docs/milestones/v0.92\",\".csdlc/issues/5786\",\".csdlc/issues/5795\",\".csdlc/issues/5800\",\".csdlc/issues/5801\",\".csdlc/issues/5812\",\".csdlc/issues/5818 through .csdlc/issues/5853\",\".csdlc/prepared/issues/5795\",\".csdlc/prepared/issues/5800\",\".csdlc/prepared/issues/5812\",\".csdlc/prepared/issues/5853/validate-experiment.rb\",\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\",\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"],\"validation\":[{\"command\":[\"ruby\",\".csdlc/prepared/issues/5817/validate-v092-package.rb\"],\"purpose\":\"Prove 39 WPs, 41 initialized child and supporting issues, 492 typed card artifacts, five complete sprint umbrellas, source dispositions, feature coverage, links, and delivery gates.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/feature-and-issue-coverage-audit.md\"},{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--target-dir\",\"/Volumes/FastWork/adl-wp-5817/target\",\"--test\",\"reasoning\"],\"purpose\":\"Requalify current Runtime v3 bounded reasoning, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/5817/prerequisite-and-loop-runtime-requalification.md\"},{\"command\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5817\"],\"purpose\":\"Confirm the WP-01 typed lifecycle record remains healthy after sprint organization.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/issues/5817/index.json\"},{\"command\":[\"git\",\"diff\",\"--check\"],\"purpose\":\"Reject whitespace errors in the complete candidate.\",\"outcome\":\"passed\",\"evidence_ref\":\"working tree\"},{\"command\":[\"git\",\"-C\",\"/Users/daniel/git/agent-design-language\",\"status\",\"--short\",\"--branch\"],\"purpose\":\"Confirm the primary checkout remains clean on main.\",\"outcome\":\"passed\",\"evidence_ref\":\"/Users/daniel/git/agent-design-language\"}]}"
     }
   ]
 }

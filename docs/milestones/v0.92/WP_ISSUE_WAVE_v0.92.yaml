@@ -125,6 +125,105 @@ later_backlog:
 retained_operational_inputs:
   - .adl/docs/TBD/OPUS_REVIEW_RUNBOOK.md
 
+supporting_issues:
+  - issue: 5812
+    title: Freedom Gate Clippy cleanup
+    owner_wp: WP-02A
+    queue: runtime_quality
+    depends_on: [WP-01, WP-02A coordination]
+    task_boundary: Deliver Clippy-clean Freedom Gate defaults with unchanged runtime behavior.
+    primary_deliverable: Clippy-clean Freedom Gate defaults with unchanged runtime behavior
+    deliverables:
+      - Two-line behavior-preserving Rust correction
+      - Focused test, formatting, Clippy, and diff-hygiene evidence
+    proof_surface: focused Freedom Gate tests, formatting, Clippy, and exact diff review
+  - issue: 5800
+    title: Browser-trusted local Observatory HTTPS
+    owner_wp: WP-03
+    queue: observatory_tls
+    depends_on: [WP-01, WP-02A, Runtime/Observatory sprint coordination before WP-03]
+    task_boundary: Deliver a browser-trusted local Observatory HTTPS flow with reproducible browser and health proof.
+    primary_deliverable: browser-trusted local Observatory HTTPS with reproducible browser and health proof
+    deliverables:
+      - Supported certificate issuance, trust, renewal or reissue, and startup flow
+      - Chrome, curl, HTML, Runtime-feed, configuration, and documentation evidence
+    proof_surface: trusted-browser, curl, HTML, Runtime-feed, configuration, and negative certificate cases
+  - issue: 5795
+    title: Local Gemma/MLX Shepherd MVP
+    owner_wp: WP-18A
+    queue: observatory_provider
+    depends_on: [WP-03, issue-5800, WP-14 contract stability before final Observatory integration]
+    task_boundary: Deliver real local model-backed Shepherd dialogue through governed Runtime v3 and Observatory surfaces.
+    primary_deliverable: real local model-backed Shepherd dialogue through governed Runtime v3 and Observatory surfaces
+    deliverables:
+      - Runtime provider adapter and governed command/response path for configured local MLX/Gemma
+      - Observatory interaction, truthful status, real smoke, deterministic regression, and negative-case evidence
+    proof_surface: real local-model exchange, governed protocol trace, Observatory interaction, and failure cases
+
+execution_sprints:
+  - sprint: foundation_and_throughput
+    execution_mode: hybrid
+    goal: Establish current documentation, repository ownership, reliable proof infrastructure, and fast operator workflows.
+    members: [WP-01B, WP-02, issue-5812, WP-02A, WP-02B, WP-05, WP-06, WP-07]
+    serial_gates:
+      - WP-01B before WP-02
+      - WP-02 before WP-02A and WP-02B
+      - WP-02A before WP-02B, WP-05, and WP-06
+      - WP-05 before WP-07
+    parallel_lanes:
+      - WP-05 and WP-06 after WP-02A
+      - WP-02B after its budget and runner-access approval
+      - issue-5812 as a bounded low-collision repair coordinated with WP-02A
+    write_surface: canonical docs, repository operations, CI, validation tooling, and bounded Freedom Gate cleanup
+  - sprint: runtime_observatory_polis_protocol
+    execution_mode: hybrid
+    goal: Deliver one resilient Runtime and Observatory path, then distributed, protocol, provider, and consumer integration.
+    members: [issue-5800, WP-03, issue-5795, WP-04, WP-14, WP-18A]
+    serial_gates:
+      - issue-5800 and WP-03 establish the local launch and browser-trust baseline
+      - issue-5795 integrates only after issue-5800 and WP-03 stabilize the Runtime/Observatory path
+      - WP-18A integrates only after WP-03, WP-14, and WP-18 are ready
+    parallel_lanes:
+      - WP-04 architecture and security preparation after WP-03 contracts stabilize
+      - WP-14 protocol reconciliation after Runtime ingress contracts stabilize
+      - issue-5795 local-provider preparation before its final integration gate
+    write_surface: Runtime launch, Observatory HTTPS/WSS, local provider, distributed polis, ACIP/A2A, and consumer integration
+  - sprint: birthday_core
+    execution_mode: hybrid
+    goal: Build the first-birthday identity, continuity, memory, capability, learning, witness, and review contracts.
+    members: [WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-13A, WP-15, WP-16]
+    serial_gates:
+      - WP-08 before WP-09 and WP-12
+      - WP-09 before WP-10 and WP-11
+      - WP-10, WP-11, WP-12, and WP-13 before WP-15
+      - WP-13A and WP-15 before WP-16
+    parallel_lanes:
+      - WP-11, WP-12, WP-13, and WP-13A after their declared prerequisites
+    write_surface: birthday contract, identity, continuity, memory, capability, cognitive profile, adaptive learning, witnesses, and review packet
+  - sprint: demonstration_handoff_publication
+    execution_mode: hybrid
+    goal: Produce real demonstrations, consumer proofs, governance handoff, and complete launch media.
+    members: [WP-17, WP-18, WP-18B, WP-19, WP-20, WP-24, WP-24A]
+    serial_gates:
+      - WP-17 and WP-18 after WP-16
+      - WP-18B after WP-14, WP-16, and WP-18
+      - WP-20 after WP-18, WP-18A, WP-18B, and WP-19
+      - WP-24 final claims after WP-23
+    parallel_lanes:
+      - WP-24 and WP-24A production after WP-02
+      - WP-17, WP-18, and WP-19 preparation as their dependencies become stable
+    write_surface: migration semantics, birthday demo, provider-neutral proof, governance handoff, proof matrix, articles, and podcasts
+  - sprint: release_tail
+    execution_mode: sequential
+    goal: Reduce and refactor safely, enforce the quality gate, complete reviews, remediate findings, and close the milestone.
+    members: [WP-21, WP-21A, WP-22, WP-23, WP-25, WP-26, WP-27, WP-28, WP-28A, WP-29, WP-30]
+    serial_gates:
+      - WP-21 before WP-21A
+      - WP-21A before WP-22
+      - WP-22 through WP-30 in declared dependency order
+    parallel_lanes: []
+    write_surface: reduction, Rust refactoring, quality, documentation, reviews, remediation, next-milestone planning, and ceremony
+
 card_update_rule:
   - Every opened WP must receive SIP, STP, SPP, VPP, SRP, and SOR cards.
   - SIP, STP, and SPP must be issue-specific and design-time ready before execution starts.

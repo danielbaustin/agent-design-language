@@ -1,0 +1,76 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5812,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "00ffe4f675d8a5fb02d44c4860d3f331ef37cbc03e595286463aa7d700e358d4",
+  "phase": "initialized",
+  "generation": 0,
+  "digest": "790d9997d5c1be89c612ca5c0a4f78c9d285db2a22baa106596ecab153c02020",
+  "claim": {
+    "id": "claim-5812-v092-preparation",
+    "owner": "wp01:issue-wave-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1785916360,
+    "expires_unix_seconds": 1788508360,
+    "heartbeat_unix_seconds": 1785916360,
+    "branch": "codex/5812-v092-freedom-gate-clippy",
+    "worktree": ".worktrees/adl-wp-5812",
+    "protected_paths": [
+      ".csdlc/issues/5812",
+      ".csdlc/prepared/issues/5812",
+      ".csdlc/evidence/5812"
+    ],
+    "purpose": "Prepare the bounded WP-02A quality sidecar before execution binding"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5812/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5812/diagram.mmd",
+  "design_review": "pending",
+  "cards": {
+    "sip": {
+      "values_digest": "b1e8a5aeff4fe92ea359691f3bb32b142cb398dfa296291d22fac7ff652bd34b",
+      "rendered_digest": "eea1e855587938558d63612a7aac5412155ff5eec16e1408e712fe87f92b744b",
+      "ast_digest": "932a85ba546430881677b05014186d8f7960ccaf4bf5f3612e4d834438bf93e6"
+    },
+    "stp": {
+      "values_digest": "1efa0379258c37df9a580e09975cd1f49641240b3ce7679c550ad0a9409116b6",
+      "rendered_digest": "c9153f61e73a27c23d2150d2f5baae3f4c0faf87a1c730ef09aab31d1a2e541e",
+      "ast_digest": "81ac774216299fb5e327e9aae614258904580fe56b4a1a915ab7e5bf16ec5fa6"
+    },
+    "spp": {
+      "values_digest": "0ff9f51425ee1e3d557aaa03b50f9c3dbcf577480fdf89a358c0ae879e45d204",
+      "rendered_digest": "50d86ded1ca08ecb46c1e01ec144ddbb85f91e4b32cb6032e3e32c3aabe09bfe",
+      "ast_digest": "3c3293940d8d9f31ddb10e6a8f89b55dacbb70ad45b6d6feded34b77ebf94865"
+    },
+    "vpp": {
+      "values_digest": "ab569b45e394ca472c8ed85410baef4202048bd49bfc085215fd413da113bd22",
+      "rendered_digest": "27bc5c41ce983a3245fd62c9f980e70cbc948cfc50ce67f9c44eebf6eeb1db24",
+      "ast_digest": "d37d357a05e438ff0b12f9ce64666dc5219a70ce24bac8a0b40fdf9ffa784f36"
+    },
+    "srp": {
+      "values_digest": "65de90ee9e4aee700e467b6e0f73b965a06459f992416cecfd6f2866c611ab4a",
+      "rendered_digest": "c83dd84e8956d3c4cc9283fc8b4302ad937f73f3836aa4561d9d72dda4df14df",
+      "ast_digest": "b5a6ecd08df3b59851ae285651c0be23e649888f2d8d4e0d8076ec9dfdca09af"
+    },
+    "sor": {
+      "values_digest": "4a896a819561ed95056fc8dfd41e1750c15b7c1ce1d0cdbbdcc597680adc98de",
+      "rendered_digest": "4ff0dbcf96ef65210fa23f69dbf49528e3d73a11fc06b0895efbd4bf474a9780",
+      "ast_digest": "86e1a36f42bafe12e44ff4801e8c2f186041c38de1baeb98af920e8232c8c94d"
+    }
+  },
+  "transitions": [],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "wp01:issue-wave-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    }
+  ]
+}

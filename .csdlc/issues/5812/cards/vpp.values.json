@@ -1,0 +1,76 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5812,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
+    "slug": "v0-92-freedom-gate-clippy-cleanliness",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "freedom-gate-clippy",
+          "proof_role": "Prove the exact defaults and named production binary are behaviorally correct and Clippy-clean with warnings denied.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 2000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "adl/Cargo.toml",
+            "--bin",
+            "adl-gws-context-mirror",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "rust",
+          "defer_reason": null
+        },
+        {
+          "lane": "diff-hygiene",
+          "proof_role": "Reject unrelated whitespace changes and support exact-head review.",
+          "acceptance_ids": [
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 500,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on semantic drift, lint failure, unrelated changes, or missing focused proof.",
+      "design_ref": ".csdlc/prepared/issues/5812/design.md",
+      "design_digest": "d259e90a5aadf5b1cd805f4495d30ec0a42d39dd756f2d62b0a8a63be8b98f5d",
+      "diagram_ref": ".csdlc/prepared/issues/5812/diagram.mmd",
+      "diagram_digest": "ff62ba79fb6d92d3c3e3d837678c8f146cdae9b793ab34ad77402ecdc2ebbdf5"
+    }
+  }
+}

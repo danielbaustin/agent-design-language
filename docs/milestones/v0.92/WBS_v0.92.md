@@ -15,7 +15,8 @@
 Active allocation. WP-01 reconciled the completed v0.91.8 release package, the
 reviewed TBD input dispositions from `#5359`, the AEE completion tranche, and
 `#3377`, then opened the GitHub issue wave and initialized all six C-SDLC cards
-for every child issue.
+for every child issue. Closed issue `#3434` is retained only as the historical
+v0.92 planning-document preparation input; it is not active milestone work.
 
 ## How To Use
 
@@ -32,7 +33,7 @@ moral-trace, or constitutional-governance milestones.
 
 | WP | Work Package | Description | Primary deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
-| WP-01 | Canonical docs and issue-wave readiness | Update canonical version/docs surfaces, consume reviewed v0.91.8 and TBD dispositions, open the final issue wave, and prepare cards. | Updated canonical docs, opened issue wave, and full SIP/STP/SPP/VPP/SRP/SOR card bundles. | v0.91.8 release truth, AEE completion tranche, `#3377`, and `#5359`. |
+| WP-01 | Canonical docs and issue-wave readiness | Update canonical version/docs surfaces, consume reviewed v0.91.8 and TBD dispositions, open the final issue wave, and prepare cards. | Updated canonical docs, opened issue wave, and full SIP/STP/SPP/VPP/SRP/SOR card bundles. | v0.91.8 release truth, activation-test map, AEE completion tranche, `#3377`, and WP-22 planning dispositions from `#5359`. |
 | WP-01B | Canonical documentation and version activation | Activate v0.92 across `docs/planning/ADL_FEATURE_LIST.md`, current documentation, READMEs, manifests, Cargo metadata, skills, and runbooks before substantive implementation. | Current v0.92 canonical documentation and version truth with a checked-surface inventory. | WP-01. |
 | WP-02 | Agent Logic GitHub organization repository migration | Execute the reviewed five-repository transfer plan before substantive milestone work while retaining `danielbaustin/asksifu` as personal and excluding Horust. | Verified company-owned organization, five serially transferred repositories, preserved GitHub surfaces including issue/PR assignee retention or explicit reassignment, updated integrations, and migration report. | WP-01, WP-01B, reviewed #5815 plan, confirmed destination organization and owners, complete migration inventory, billing/security readiness. |
 | WP-24 | Ten-article launch series | Write all ten planned ADL launch articles in parallel, bring every article to editorial-review-ready state, maintain them as milestone evidence lands, and finalize claims during WP-23. | Ten complete review-ready article drafts, one coherent series arc, claim/evidence matrix, and final release-grounded publication disposition. | WP-02 for parallel drafting; WP-23 for final release-truth alignment. |
@@ -102,6 +103,27 @@ closeout planning, next-milestone review, and ceremony form the release tail.
 7. Build the flagship birthday demo, consumer integrations, provider-neutral
    proof, governance handoff, and proof matrix.
 8. Complete behavior-preserving cleanup before the quality and review tail.
+
+## Sprint Umbrellas
+
+The issue wave is grouped into five coordination-only sprint umbrellas. These
+umbrellas define dependency routing, safe parallel lanes, integration proof,
+and write-surface boundaries; they do not replace child-issue ownership or
+authorize an umbrella agent to implement child code directly.
+
+| Sprint | Members | Execution shape |
+| --- | --- | --- |
+| Foundation and throughput | WP-01B, WP-02, support `#5812`, WP-02A, WP-02B, WP-05, WP-06, WP-07 | Hybrid: migration and CI are serial gates; workflow and remote-runner work may proceed in parallel after CI stabilizes. |
+| Runtime, Observatory, polis, and protocol | support `#5800`, WP-03, support `#5795`, WP-04, WP-14, WP-18A | Hybrid: browser trust and Runtime resilience establish the baseline; local Shepherd integration follows; distributed, protocol, and consumer lanes converge afterward. |
+| Birthday core | WP-08 through WP-13A, WP-15, WP-16 | Hybrid dependency graph with contract and identity gates before integrated witness/review proof. |
+| Demonstration, handoff, and publication | WP-17, WP-18, WP-18B, WP-19, WP-20, WP-24, WP-24A | Publication production starts early after migration; proof and handoff converge only after birthday and protocol dependencies. |
+| Release tail | WP-21, WP-21A, WP-22, WP-23, WP-25 through WP-30 | Sequential quality, review, remediation, planning, and ceremony chain. |
+
+All five umbrellas may be prepared in parallel. Live implementation may start
+only for dependency-ready child issues, and each child keeps its own typed
+lifecycle, validation, exact-head review, and publication authority. The exact
+machine-readable membership and serial gates are in
+`WP_ISSUE_WAVE_v0.92.yaml`.
 
 ## Issue Wave
 

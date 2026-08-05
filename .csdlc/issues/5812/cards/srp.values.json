@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5812,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
+    "slug": "v0-92-freedom-gate-clippy-cleanliness",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Issue 5812 two-line Freedom Gate Clippy repair and focused proof",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Is the diff limited to the two unnecessary closures?",
+        "Are both JSON defaults unchanged?",
+        "Does focused Clippy pass with -D warnings?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

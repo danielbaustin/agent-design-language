@@ -15,7 +15,7 @@ plan, not evidence that a gate has passed.
 | Integrated demonstrations | WP-18, WP-18A, WP-18B | Real first-birthday proof, working Observatory/Unity consumers, provider-neutral multi-agent evidence |
 | Governance handoff | WP-19 | Evidence map for v0.93 without claiming v0.93 governance is implemented |
 | Cleanup and maintainability | WP-20, WP-21, WP-21A | Proven deletion eligibility, behavior-preserving reduction, focused Rust refactoring, no parity regression |
-| Review and release | WP-22, WP-23, WP-25 through WP-30 | Quality review, release evidence, claim-bounded publication, external review, remediation, ceremony, handoff |
+| Review and release | WP-22 through WP-30 | Quality review, release evidence, ten articles, ten podcast packages, claim-bounded publication, external review, remediation, ceremony, handoff |
 
 ## Global Rules
 

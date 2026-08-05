@@ -1,0 +1,6 @@
+flowchart LR
+  O["Observatory operator message"] --> G["Governed Runtime v3 command"]
+  G --> P["Configured local MLX/Gemma provider"]
+  P --> E["Response and execution evidence"]
+  E --> O
+  G --> N["Negative and authorization checks"]

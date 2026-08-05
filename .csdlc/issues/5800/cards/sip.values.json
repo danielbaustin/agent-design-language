@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5800,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
+    "slug": "v0-92-observatory-browser-trusted-https",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the supported local Observatory load over browser-trusted HTTPS without warning bypasses.",
+      "required_outcome": "One documented and reproducible local trust flow makes Chrome, Observatory startup, configured URLs, health checks, and Runtime feed access agree on trusted HTTPS.",
+      "declared_scope": [
+        "demos/html-observatory",
+        "adl-runtime/src/local_tls.rs",
+        "adl-runtime/tests/local_tls.rs",
+        "Runtime and Observatory HTTPS configuration and docs",
+        ".csdlc/issues/5800",
+        ".csdlc/evidence/5800"
+      ],
+      "authority_boundary": [
+        "Issue 5800 owns local Observatory certificate trust and HTTPS consistency",
+        "WP-03 owns broader Runtime launch and resilience",
+        "No AWS certificate or hosted production TLS work is authorized"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Do not bypass browser or TLS verification",
+        "Use one stable supported trust model",
+        "Keep configuration and docs source-grounded",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review"
+      ]
+    }
+  }
+}

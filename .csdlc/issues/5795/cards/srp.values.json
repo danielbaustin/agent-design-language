@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5795,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][runtime][shepherd] Pull local Gemma/MLX Shepherd MVP forward",
+    "slug": "v0-92-local-gemma-mlx-shepherd-mvp",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Issue 5795 local-only governed Shepherd MVP and retained real/negative proof",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does a real local model response traverse the governed Runtime path?",
+        "Can any fake or cached response be mistaken for real execution?",
+        "Do failures preserve policy, truth, and post-failure usability?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

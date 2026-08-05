@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5812,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
+    "slug": "v0-92-freedom-gate-clippy-cleanliness",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver Clippy-clean Freedom Gate defaults with unchanged runtime behavior.",
+      "deliverables": [
+        "Two-line behavior-preserving Rust correction",
+        "Focused test, formatting, Clippy, and diff-hygiene evidence"
+      ],
+      "acceptance_criteria": [
+        "Both unnecessary lazy-evaluation warnings are removed",
+        "The executor_requires_gate_decision default remains true",
+        "The unmediated_execution_allowed default remains false",
+        "Focused Freedom Gate tests pass",
+        "The named production-binary Clippy command passes with -D warnings",
+        "Formatting and diff hygiene pass with no unrelated changes",
+        "One exact-revision review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-01",
+        "WP-02A coordination"
+      ],
+      "repo_inputs": [
+        "adl/src/csm_freedom_gate.rs",
+        "adl/Cargo.toml"
+      ],
+      "non_goals": [
+        "Freedom Gate semantic redesign",
+        "Broad Clippy cleanup",
+        "Google Drive issue 5802",
+        "Dependency or lockfile changes"
+      ]
+    }
+  }
+}

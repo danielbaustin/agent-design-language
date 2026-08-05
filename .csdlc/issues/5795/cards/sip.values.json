@@ -1,0 +1,42 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5795,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][runtime][shepherd] Pull local Gemma/MLX Shepherd MVP forward",
+    "slug": "v0-92-local-gemma-mlx-shepherd-mvp",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Provide a governed Runtime v3 and Observatory path for real local model-backed Shepherd dialogue.",
+      "required_outcome": "A bounded operator message travels through authenticated Runtime v3 control to a configured local MLX/Gemma provider and returns truthful response evidence, with unavailable and unauthorized cases distinguished.",
+      "declared_scope": [
+        "adl-runtime/src/runtime_api.rs",
+        "adl-runtime-kernel Shepherd adapter/control paths",
+        "local MLX/Gemma provider binding",
+        "demos/html-observatory Shepherd controls and status",
+        ".csdlc/issues/5795",
+        ".csdlc/evidence/5795"
+      ],
+      "authority_boundary": [
+        "Issue 5795 owns the local-only Shepherd MVP",
+        "WP-03 owns Runtime launch stability and WP-18A owns final consumer integration",
+        "The v0.95 full Shepherd, training, and evaluator program remains separate",
+        "No cloud or global default model change is authorized"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Use the governed Runtime command path, not a UI shortcut",
+        "Require a real configured local model for production-path success",
+        "Use deterministic fakes only for adapter regression tests",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review"
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+flowchart LR
+  W["Two Clippy warnings"] --> F["Two eager JSON defaults"]
+  F --> T["Focused behavior tests"]
+  F --> C["Clippy -D warnings"]
+  T --> R["Behavior-preserving repair"]
+  C --> R

@@ -6,10 +6,13 @@ Date: 2026-08-04
 
 PASS for WP-01 planning coverage.
 
-- 39 work packages are mapped to 39 unique live GitHub issues.
-- All 39 issues were read through `csdlc-github-issue`; all are open.
-- All live titles now identify their owning WP.
-- 38 child issues have six initialized typed cards, 456 card artifacts total.
+- 39 work packages and three supporting issues are mapped to 42 unique live
+  GitHub issues.
+- All 42 issues were read through `csdlc-github-issue`; all are open.
+- All work-package titles identify their owning WP; the three supporting issues
+  are explicitly mapped to an owner WP in the issue wave.
+- 41 child and supporting issues have six initialized typed cards, 492 card
+  artifacts total.
 - Every child STP task, deliverable, proof surface, and dependency matches the
   authoritative issue wave.
 - Every indexed product feature has a concrete owning WP and linked feature
@@ -45,6 +48,13 @@ WP-24/WP-24A publication, and WP-25 through WP-30 review and release are
 supporting tracks. They remain required work but are not misrepresented as
 standalone product features.
 
+Three live supporting issues are retained explicitly instead of disappearing
+between WPs: `#5812` is owned by the foundation/CI sprint, while Observatory
+issues `#5800` and `#5795` are owned by the Runtime/Observatory sprint. Five
+coordination-only sprint umbrellas cover every child and supporting issue
+exactly once and declare their serial gates, safe parallel lanes, and write
+surfaces.
+
 ## Delivery Standard
 
 - Real-behavior issues require working production paths and real positive and
@@ -66,17 +76,18 @@ The issue-local validator is the focused documentation authority for this
 package. At the corrected candidate it passed with:
 
 ```text
-v0.92 WP-01 validation passed: 39 WPs, 38 child issues, 456 card artifacts
+v0.92 WP-01 validation passed: 39 WPs, 41 child issues, 492 card artifacts
 ```
 
 That validator parses the issue-wave YAML; verifies the `v0.92` milestone
 identity; proves unique WP and issue mappings and an acyclic dependency graph;
 checks WBS/wave alignment; parses every child card values file; verifies issue,
-version, card-kind, and values-object identity for all 456 card artifacts;
+version, card-kind, and values-object identity for all 492 card artifacts;
+checks the three supporting issues and exact five-sprint membership;
 checks required source dispositions, feature contracts, completion gates, and
 active-wave wording; and resolves every relative Markdown link under the v0.92
 milestone package.
 
 The current Runtime v3 reasoning requalification also passed `13/13`,
 `git diff --check` passed, and `csdlc-doctor --repo . --issue 5817` reported
-`status: pass`, phase `implemented`, generation `9`, with no findings.
+`status: pass` in phase `implemented`, with no findings.

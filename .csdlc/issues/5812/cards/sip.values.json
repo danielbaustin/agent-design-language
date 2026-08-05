@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5812,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
+    "slug": "v0-92-freedom-gate-clippy-cleanliness",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Restore Clippy -D warnings cleanliness for the CSM Freedom Gate projection without changing behavior.",
+      "required_outcome": "The two unnecessary lazy default closures are replaced by eager values while the true and false defaults remain exact and all focused proof passes.",
+      "declared_scope": [
+        "adl/src/csm_freedom_gate.rs",
+        "focused CSM Freedom Gate tests",
+        ".csdlc/issues/5812",
+        ".csdlc/evidence/5812"
+      ],
+      "authority_boundary": [
+        "Issue 5812 owns only the two observed Clippy warnings",
+        "WP-02A owns broader CI and coverage reliability",
+        "No semantic Freedom Gate redesign is authorized"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": [
+        "Make the smallest behavior-preserving Rust edit",
+        "Do not change Cargo.lock or dependencies",
+        "Never edit tracked work on main",
+        "Use one bounded pre-PR review"
+      ]
+    }
+  }
+}

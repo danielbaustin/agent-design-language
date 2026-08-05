@@ -1,0 +1,91 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5800,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
+    "slug": "v0-92-observatory-browser-trusted-https",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "local-tls-contract",
+          "proof_role": "Run focused Rust tests for certificate generation, reuse, replacement, trust inputs, and negative cases.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-5",
+            "AC-6",
+            "AC-7"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 3000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-runtime/Cargo.toml",
+            "--test",
+            "local_tls"
+          ],
+          "parallel_group": "tls",
+          "defer_reason": null
+        },
+        {
+          "lane": "observatory-https-health",
+          "proof_role": "Prove verified Observatory HTML access at the configured HTTPS endpoint; browser trust evidence is retained alongside this lane.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": false,
+          "resource_profile": "medium",
+          "budget_seconds": 600,
+          "budget_tokens": 3000,
+          "argv": [
+            "curl",
+            "--config",
+            ".csdlc/prepared/issues/5800/curl-observatory-https.conf"
+          ],
+          "parallel_group": "browser",
+          "defer_reason": "Requires the configured local runtime and trusted Observatory server to be running."
+        },
+        {
+          "lane": "exact-head-diff-hygiene",
+          "proof_role": "Reject unrelated changes and support exact-head review.",
+          "acceptance_ids": [
+            "AC-8"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 500,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "issue-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 3600,
+      "planned_validation_tokens": 25000,
+      "failure_policy": "Fail closed on certificate warnings, trust bypasses, SAN mismatch, partial replacement, private-material exposure, or HTTP/HTTPS configuration drift.",
+      "design_ref": ".csdlc/prepared/issues/5800/design.md",
+      "design_digest": "0eaa5f688d2b49d829df2c8a32be6c85bed2a3ca334f1d7295e17bb05b766749",
+      "diagram_ref": ".csdlc/prepared/issues/5800/diagram.mmd",
+      "diagram_digest": "b0378c26dd8253f7181eafbede1025fdf4f2b203010d36106952e33506a1bc65"
+    }
+  }
+}

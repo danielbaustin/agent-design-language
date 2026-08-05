@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5800,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
+    "slug": "v0-92-observatory-browser-trusted-https",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Issue 5800 local Observatory browser-trusted HTTPS implementation and retained proof",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Does Chrome trust the real supported endpoint without bypasses?",
+        "Are issuance, trust, reissue, configuration, and failure behavior coherent?",
+        "Are private material and platform claims bounded correctly?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

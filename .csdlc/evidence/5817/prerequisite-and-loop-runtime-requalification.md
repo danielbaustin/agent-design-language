@@ -73,7 +73,7 @@ cargo test --locked --manifest-path adl-runtime-kernel/Cargo.toml \
 13 passed; 0 failed; 0 ignored
 ```
 
-The WP-01 package validator separately checks all 38 work packages, all 37
-child issue records, all 444 generated card artifacts, exact wave/card
+The WP-01 package validator separately checks all 39 work packages, all 41
+child and supporting issue records, all 492 generated card artifacts, exact wave/card
 alignment, dependency acyclicity, source dispositions, feature coverage, and
 the milestone completion rules.

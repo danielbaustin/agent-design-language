@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5795,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][runtime][shepherd] Pull local Gemma/MLX Shepherd MVP forward",
+    "slug": "v0-92-local-gemma-mlx-shepherd-mvp",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver real local model-backed Shepherd dialogue through governed Runtime v3 and Observatory surfaces.",
+      "deliverables": [
+        "Runtime provider adapter and governed command/response path for configured local MLX/Gemma",
+        "Observatory interaction, truthful status, real smoke, deterministic regression, and negative-case evidence"
+      ],
+      "acceptance_criteria": [
+        "A configured local MLX/Gemma model produces a real Shepherd response through Runtime v3",
+        "The Observatory sends the bounded command and renders response/result evidence",
+        "Status distinguishes unavailable, deterministic test double, and real local-model execution",
+        "No-model, timeout, malformed command, and unsigned or unauthorized mutation cases fail truthfully",
+        "Deterministic adapter regressions and a real local model smoke both pass",
+        "Freedom Gate, CAV, constitutional policy, and advisory-only authority remain enforced",
+        "The global default model is unchanged and no AWS or cloud path is used",
+        "One exact-revision review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-03",
+        "issue-5800",
+        "WP-14 contract stability before final Observatory integration"
+      ],
+      "repo_inputs": [
+        "adl-runtime/src/runtime_api.rs",
+        "adl-runtime/src/resident_agent.rs",
+        "adl-runtime-kernel/src/assembly.rs",
+        "demos/html-observatory"
+      ],
+      "non_goals": [
+        "Full v0.95 Shepherd or Gemma program",
+        "Training or evaluator productization",
+        "Global default model switch",
+        "AWS or cloud provider execution",
+        "Success credit from a deterministic fake alone"
+      ]
+    }
+  }
+}

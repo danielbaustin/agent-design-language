@@ -1,0 +1,51 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5800,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][observatory][tls] Use browser-trusted local HTTPS certificate",
+    "slug": "v0-92-observatory-browser-trusted-https",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Deliver a browser-trusted local Observatory HTTPS flow with reproducible browser and health proof.",
+      "deliverables": [
+        "Supported certificate issuance, trust, renewal or reissue, and startup flow",
+        "Chrome, curl, HTML, Runtime-feed, configuration, and documentation evidence"
+      ],
+      "acceptance_criteria": [
+        "Chrome loads the supported Observatory URL without certificate warnings or bypasses",
+        "The chosen certificate has correct localhost names and valid trust/expiry behavior",
+        "Startup, configuration, docs, URLs, and health checks consistently use HTTPS",
+        "Observatory HTML and Runtime feed succeed through verified TLS",
+        "Expired, mismatched, missing, or untrusted certificates fail truthfully without deleting the last valid pair",
+        "Certificate private material is not committed or logged",
+        "macOS local proof is retained and Windows/Linux setup is implemented or explicitly bounded by supported portable behavior",
+        "One exact-revision review has no unresolved actionable findings"
+      ],
+      "dependencies": [
+        "WP-01",
+        "WP-02A",
+        "Runtime/Observatory sprint coordination before WP-03"
+      ],
+      "repo_inputs": [
+        "adl-runtime/src/local_tls.rs",
+        "adl-runtime/tests/local_tls.rs",
+        "demos/html-observatory",
+        "infra/runtime-v3/runtime-init.toml"
+      ],
+      "non_goals": [
+        "AWS work",
+        "Let's Encrypt issuance for localhost",
+        "Disabling TLS verification",
+        "Production public-domain certificate automation",
+        "Unrelated Observatory redesign"
+      ]
+    }
+  }
+}

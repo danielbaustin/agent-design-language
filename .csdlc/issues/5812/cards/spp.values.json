@@ -1,0 +1,79 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5812,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.92][runtime][quality] Restore Clippy cleanliness in csm_freedom_gate",
+    "slug": "v0-92-freedom-gate-clippy-cleanliness",
+    "version": "v0.92",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Change only the two defaults, run focused behavior and lint proof, review the exact diff, and publish with closing linkage.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Confirm the two warnings and exact default semantics",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Apply the two-line correction and run focused proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Resolve exact-head review and publish",
+          "acceptance_ids": [
+            "AC-7"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Freedom Gate output is unchanged",
+        "No unrelated source changes",
+        "No tracked work on main"
+      ],
+      "risks": [
+        "Accidental semantic default change",
+        "Unrelated formatting churn",
+        "Validation targets the wrong binary"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "Observed code no longer matches the issue evidence",
+        "Focused tests expose a semantic difference",
+        "Protected-path collision"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5812/design.md",
+      "design_digest": "d259e90a5aadf5b1cd805f4495d30ec0a42d39dd756f2d62b0a8a63be8b98f5d",
+      "diagram_ref": ".csdlc/prepared/issues/5812/diagram.mmd",
+      "diagram_digest": "ff62ba79fb6d92d3c3e3d837678c8f146cdae9b793ab34ad77402ecdc2ebbdf5"
+    }
+  }
+}

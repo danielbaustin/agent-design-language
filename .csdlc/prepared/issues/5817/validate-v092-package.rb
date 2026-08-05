@@ -15,11 +15,15 @@ raise "issue wave is not card-initialized" unless wave.fetch("status") == "cards
 raise "issue wave milestone is not v0.92" unless wave.fetch("milestone") == "v0.92"
 
 rows = wave.fetch("work_packages")
+supporting_rows = wave.fetch("supporting_issues")
 wps = rows.map { |row| row.fetch("wp") }
 issues = rows.map { |row| Integer(row.fetch("issue")) }
 raise "expected 39 work packages, found #{rows.length}" unless rows.length == 39
+raise "expected three supporting issues" unless supporting_rows.length == 3
+raise "supporting issue set differs" unless supporting_rows.map { |row| Integer(row.fetch("issue")) }.sort == [5795, 5800, 5812]
 raise "duplicate WP identifier" unless wps.uniq.length == wps.length
-raise "duplicate issue mapping" unless issues.uniq.length == issues.length
+all_issues = issues + supporting_rows.map { |row| Integer(row.fetch("issue")) }
+raise "duplicate issue mapping" unless all_issues.uniq.length == all_issues.length
 raise "WP-02 must be repository migration issue 5819" unless rows.any? { |row| row["wp"] == "WP-02" && row["issue"] == 5819 }
 raise "WP-02A must be CI issue 5801" unless rows.any? { |row| row["wp"] == "WP-02A" && row["issue"] == 5801 }
 raise "WP-02B must be build acceleration issue 5853" unless rows.any? { |row| row["wp"] == "WP-02B" && row["issue"] == 5853 }
@@ -52,7 +56,7 @@ visit = lambda do |wp|
 end
 wps.each { |wp| visit.call(wp) }
 
-child_rows = rows.reject { |row| row.fetch("wp") == "WP-01" }
+child_rows = rows.reject { |row| row.fetch("wp") == "WP-01" } + supporting_rows
 child_rows.each do |row|
   issue = Integer(row.fetch("issue"))
   issue_root = File.join(ROOT, ".csdlc/issues", issue.to_s)
@@ -78,7 +82,8 @@ child_rows.each do |row|
   stp = JSON.parse(File.read(File.join(issue_root, "cards/stp.values.json")))
     .fetch("content").fetch("values")
   expected_deliverables = row.fetch("deliverables", [row.fetch("primary_deliverable"), row.fetch("proof_surface")])
-  raise "issue #{issue} task does not match wave" unless stp.fetch("task_boundary") == "Deliver #{row.fetch("primary_deliverable")}."
+  expected_task = row.fetch("task_boundary", "Deliver #{row.fetch("primary_deliverable")}.")
+  raise "issue #{issue} task does not match wave" unless stp.fetch("task_boundary") == expected_task
   raise "issue #{issue} deliverables do not match wave" unless stp.fetch("deliverables") == expected_deliverables
   raise "issue #{issue} dependencies do not match wave" unless stp.fetch("dependencies") == Array(row["depends_on"]).map(&:to_s)
 end
@@ -90,6 +95,22 @@ end
 path_counts = claim_paths.each_with_object(Hash.new(0)) { |path, counts| counts[path] += 1 }
 duplicates = path_counts.select { |_path, count| count > 1 }
 raise "duplicate child claim paths: #{duplicates.keys.join(", ")}" unless duplicates.empty?
+
+sprints = wave.fetch("execution_sprints")
+raise "expected five execution sprints" unless sprints.length == 5
+sprint_names = sprints.map { |sprint| sprint.fetch("sprint") }
+raise "duplicate execution sprint" unless sprint_names.uniq.length == sprint_names.length
+expected_members = rows.reject { |row| row.fetch("wp") == "WP-01" }.map { |row| row.fetch("wp") } +
+  supporting_rows.map { |row| "issue-#{row.fetch("issue")}" }
+actual_members = sprints.flat_map { |sprint| sprint.fetch("members").map(&:to_s) }
+raise "duplicate sprint member" unless actual_members.uniq.length == actual_members.length
+raise "sprint membership differs from child issue wave" unless actual_members.sort == expected_members.sort
+sprints.each do |sprint|
+  raise "sprint lacks execution mode" unless %w[sequential parallel hybrid].include?(sprint.fetch("execution_mode"))
+  raise "sprint lacks serial gates" unless sprint.fetch("serial_gates").is_a?(Array)
+  raise "sprint lacks parallel-lane declaration" unless sprint.fetch("parallel_lanes").is_a?(Array)
+  raise "sprint lacks write-surface boundary" if sprint.fetch("write_surface").strip.empty?
+end
 
 expected_sources = %w[
   .adl/docs/TBD/AGENT_LOGIC_ACCOUNT_REPO_MIGRATION_PLAN.md

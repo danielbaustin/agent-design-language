@@ -1,0 +1,7 @@
+flowchart LR
+  C["Trusted certificate source"] --> I["Operator trust/install flow"]
+  I --> O["HTTPS Observatory on configured URL"]
+  O --> B["Chrome trusted load"]
+  O --> H["HTML and Runtime feed health"]
+  B --> P["Retained proof"]
+  H --> P

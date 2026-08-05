@@ -1,0 +1,51 @@
+{
+  "issue": 5817,
+  "card": "vpp",
+  "expected_generation": 12,
+  "expected_digest": "94492c367d79f5f3a971e0a2601101b8448eee6adebb29682d3814e7379ee521",
+  "claim_id": "claim-5817-v092-wp01",
+  "actor": "codex:5817",
+  "reason": "Align the proving package with the complete work-package, supporting-issue, and sprint map.",
+  "operation": {
+    "operation": "replace_validation_lanes",
+    "lanes": [
+      {
+        "lane": "v092-planning-package",
+        "proof_role": "Validate YAML and v0.92 identity, all milestone-local Markdown links, dependency acyclicity, 39 unique WP mappings, 41 initialized child and supporting records, 492 typed card artifacts and schema identities, five complete sprint umbrellas, required feature contracts, delivery gates, active-wave wording, and scope alignment.",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-4", "AC-5", "AC-6"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 120,
+        "budget_tokens": 3000,
+        "argv": ["ruby", ".csdlc/prepared/issues/5817/validate-v092-package.rb"],
+        "parallel_group": "docs",
+        "defer_reason": null
+      },
+      {
+        "lane": "runtime-v3-loop-requalification",
+        "proof_role": "Requalify the historical #5104 loop contract against current Runtime v3 bounded execution, replay, cancellation, checkpoint, mutation, and forgery-rejection behavior.",
+        "acceptance_ids": ["AC-3"],
+        "deterministic": true,
+        "resource_profile": "medium",
+        "budget_seconds": 600,
+        "budget_tokens": 3000,
+        "argv": ["cargo", "test", "--locked", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--target-dir", "/Volumes/FastWork/adl-wp-5817/target", "--test", "reasoning"],
+        "parallel_group": "runtime",
+        "defer_reason": null
+      },
+      {
+        "lane": "diff-hygiene",
+        "proof_role": "Reject whitespace errors in the complete WP-01 candidate.",
+        "acceptance_ids": ["AC-6", "AC-7"],
+        "deterministic": true,
+        "resource_profile": "small",
+        "budget_seconds": 30,
+        "budget_tokens": 500,
+        "argv": ["git", "diff", "--check"],
+        "parallel_group": "docs",
+        "defer_reason": null
+      }
+    ]
+  },
+  "fail_after_backup": false
+}
