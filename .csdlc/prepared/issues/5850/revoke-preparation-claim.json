@@ -1,0 +1,11 @@
+{
+  "issue": 5850,
+  "repository": "danielbaustin/agent-design-language",
+  "expected_claim_id": "claim-5850-v092-preparation",
+  "expected_generation": 8,
+  "expected_digest": "5331df9837e24c3b508e511282258602e72a1457deede2e1f598705c171976b6",
+  "now_unix_seconds": 1785949654,
+  "actor": "codex:5860-quality-release-readiness",
+  "operator_authority": "operator:daniel-5860-preparation-completion",
+  "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time."
+}

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-22] Quality gate",
     "slug": "v0-92-wp-22-quality-gate",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -19,11 +19,12 @@
         "feature-completion matrix, quality-gate record, platform proof, and blocker report"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "AC-1: Every declared predecessor is merged, terminal, claim-free, ancestral, and observed from live GitHub plus canonical typed truth at the pinned gate SHA.",
+        "AC-2: Every canonical v0.92 feature and supporting critical path has exactly one matrix row with owner, implementation paths, reviewed head, PR/merge, validation/negative/integration/platform evidence, and typed terminal reference.",
+        "AC-3: Planned, open, unknown, fixture-only, receipt-only, demo-mode, synthetic, substituted-provider, stale-review, non-ancestral, or platform-unproven rows are rejected as blockers.",
+        "AC-4: Documentation/planning rows are source-grounded and executable; tooling/cleanup rows show measured value and regression safety; runtime/provider/consumer rows prove real production paths.",
+        "AC-5: The retained matrix, gate record, and blocker report are schema-valid, reproducible, findings-first, and block WP-25 while any required row is not accepted.",
+        "AC-6: One exact-head independent review validates the gate logic and all row dispositions with no unresolved actionable finding."
       ],
       "dependencies": [
         "WP-04",
@@ -36,13 +37,14 @@
         "WP-21A"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Live issue #5842 and exact predecessor issues WP-04, WP-05, WP-06, WP-07, WP-13A, WP-20, WP-21, and WP-21A",
+        "docs/milestones/v0.92/features/README.md, FEATURE_PROOF_COVERAGE_v0.92.md, QUALITY_GATE_v0.92.md, DEMO_MATRIX_v0.92.md, and MILESTONE_CHECKLIST_v0.92.md",
+        "Canonical .csdlc records, receipts, issue/PR state, required checks, reviewed heads, merge SHAs, and retained proof"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Repairing product features or waiving incomplete rows to preserve schedule",
+        "Crediting fixtures, receipts, demo mode, synthetic success, substituted providers, stale review, or issue closure as delivery",
+        "WP-23 docs alignment, WP-25 review execution, or release approval"
       ]
     }
   }

@@ -20,10 +20,9 @@ behavior-preserving cleanup with exact deletion denominator
 
 ## Scope
 
-- Issue 5786 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
-- .adl/docs/TBD/ADL_REPOSITORY_CODE_REDUCTION_PLAN_v0.91.8.md
+- Inventory and disposition every remaining adl/src Rust file and every active Cargo, CI, install, docs, demo, and command reference
+- Delete only exact ownership bands whose supported behavior is proven through ADL v2, Runtime v3, C-SDLC v2, or a named adapter/product owner
+- Retain issue-local denominator, parity, rollback, clean-install, platform, and exact-head review evidence
 
 ## Authority
 

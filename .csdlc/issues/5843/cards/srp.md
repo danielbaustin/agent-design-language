@@ -16,9 +16,10 @@ WP-23 issue 5843, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-23 scope?
+- Does every changed canonical statement map to a passing WP-22 evidence row or explicit planned/blocked/non-claim truth?
+- Are historical records preserved while stale current ownership, status, issue, command, and link text is corrected?
+- Do release-facing surfaces avoid every unsupported birthday, provider, platform, privacy, governance, legal, personhood, consciousness, and v0.93 claim?
+- Is any proposed ADR candidate a durable landed decision rather than quota-filling prose?
 
 ## Findings
 

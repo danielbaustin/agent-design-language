@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-30] Release ceremony",
     "slug": "v0-92-wp-30-release-ceremony",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -16,25 +16,102 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-30",
-          "proof_role": "release evidence packet, release notes, and closeout record",
+          "lane": "release-evidence-manifest",
+          "proof_role": "Require every release claim to bind exact implementation, validation, review, merge, terminal receipt, artifact hash, risk, and non-claim evidence.",
           "acceptance_ids": [
             "AC-1",
             "AC-2",
-            "AC-3",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
+          "argv": [
+            "ruby",
+            "-e",
+            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/release-evidence-manifest.json')); abort 'empty manifest' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'unbound claim' unless r['rows'].all? { |x| %w[claim implementation_ref validation_ref review_ref merge_sha terminal_ref].all? { |k| x[k] } }"
+          ],
+          "parallel_group": "release",
+          "defer_reason": null
+        },
+        {
+          "lane": "ceremony-script-preflight",
+          "proof_role": "Prove tag/release ordering, identity checks, dry-run behavior, partial-failure recovery, and duplicate-mutation rejection.",
+          "acceptance_ids": [
             "AC-4",
             "AC-5"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 1200,
-          "budget_tokens": 10000,
+          "budget_seconds": 540,
+          "budget_tokens": 3000,
+          "argv": [
+            "bash",
+            "adl/tools/test_release_ceremony.sh"
+          ],
+          "parallel_group": "ceremony",
+          "defer_reason": null
+        },
+        {
+          "lane": "release-identity-negative",
+          "proof_role": "Reject red checks, active claims, missing receipts/findings, dirty head, tag/release conflict, partial verification, stale assets, and blind retries.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 1500,
+          "argv": [
+            "ruby",
+            "-e",
+            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/ceremony-negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }"
+          ],
+          "parallel_group": "negative",
+          "defer_reason": null
+        },
+        {
+          "lane": "release-doc-hygiene",
+          "proof_role": "Validate final notes, plan, checklist, handoff, links, hashes, redaction, claims, and diff hygiene without broad product tests.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 500,
           "argv": [
             "git",
             "diff",
             "--check"
           ],
-          "parallel_group": "issue-local",
+          "parallel_group": "hygiene",
+          "defer_reason": null
+        },
+        {
+          "lane": "typed-card-doctor",
+          "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "5852"
+          ],
+          "parallel_group": "typed-readback",
           "defer_reason": null
         }
       ],
@@ -42,9 +119,9 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5852/design.md",
-      "design_digest": "2aba5885b6345c3e9f71cf8f720b8cfb41f26e61b0b9c4bb0a2a0e1058afe1e0",
+      "design_digest": "4605a83c28aba9b74d5d068f61d4afc0d6e3559bf06d825003cef1e0d48a23d5",
       "diagram_ref": ".csdlc/prepared/issues/5852/diagram.mmd",
-      "diagram_digest": "b73328d4b8db56c8793d93c6bb6d4916ced566873a6b035055de8c67779d41c4"
+      "diagram_digest": "6457d352e4b029f960adb90912d556e38a0a16ac88e9c3712435b72c47bcc647"
     }
   }
 }

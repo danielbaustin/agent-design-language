@@ -20,9 +20,9 @@ v0.93 handoff and downstream planning update
 
 ## Scope
 
-- Issue 5849 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Map v0.93 prerequisites to exact landed v0.92 evidence, blockers, owned follow-ons, or non-claims after WP-27
+- Reconcile the candidate v0.93 README, WBS, features, wave YAML, checklist, demo, release, security, and governance boundaries
+- Publish a decision-ready handoff without issue creation or milestone activation
 
 ## Authority
 

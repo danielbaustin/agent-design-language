@@ -20,9 +20,9 @@ internal review report and finding register
 
 ## Scope
 
-- Issue 5846 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Freeze an exact-revision publication-safe packet after WP-23, WP-24, and WP-24A
+- Run independent code, architecture, tests/PVF/CI, security, dependency, docs, lifecycle, demo/integration, and release/publication lanes
+- Publish a findings-first internal report and complete finding register without remediation
 
 ## Authority
 

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-28A] Next-milestone closeout plan",
     "slug": "v0-92-wp-28a-next-milestone-closeout-plan",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -19,23 +19,25 @@
         "reviewed closeout plan and issue universe"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "AC-1: WP-28 is merged, terminal, claim-free, ancestral, and the complete v0.92 child/supporting/sprint/release issue universe is pinned to current live and repository truth.",
+        "AC-2: Every row records issue, PR/base/head/merge, checks/review, typed phase, SOR integration, terminal receipt, claim, worktree cleanup, release dependency, classification, owner, and exact next action.",
+        "AC-3: The plan distinguishes pre-merge, merged-unreconciled, receipt-backed closed_out, cleanup-ready, ceremony-only, and later v0.93 acceptance truth without treating GitHub closure alone as terminal.",
+        "AC-4: The dependency DAG orders PR completion, typed finish, claim release, cleanup, WP-29 review, WP-30 tag/release, umbrella closeout, and handoff acceptance without cycles or authority inversion.",
+        "AC-5: Negative cases reject stale heads, red checks, missing review/receipt, active claims, dirty worktrees, partial release identity, duplicate mutation, unknown rows, and unowned actions.",
+        "AC-6: Exact-head independent review has no actionable finding and the plan performs no merge, finish, cleanup, tag, release, close, or activation mutation."
       ],
       "dependencies": [
         "WP-28"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Terminal WP-28 handoff and current v0.92 WBS, issue wave, sprint packets, release docs, and checklist",
+        "Live GitHub issue/PR/check/review state plus canonical .csdlc phase, SOR, receipt, claim, publication, and cleanup truth",
+        "Current v0.93 candidate handoff and activation boundary"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Merging, finishing, releasing claims, cleaning worktrees, tagging, releasing, or closing issues/sprints",
+        "Treating GitHub closure alone as terminal or rewriting historical records",
+        "Executing WP-29/WP-30 or activating v0.93"
       ]
     }
   }

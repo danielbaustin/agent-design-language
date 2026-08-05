@@ -1,2 +1,10 @@
-flowchart LR
-  I["Issue 5848"] --> D["Design required"]
+flowchart TD
+  A[Freeze WP-25 and WP-26 finding universe] --> B[Deduplicate by evidence and failure mode]
+  B --> C[Preserve provenance severity and disagreement]
+  C --> D[Assign owner-aligned remediation slices]
+  D --> E[Implement focused fix with positive negative and rollback proof]
+  E --> F[Record fix head review head PR and merge]
+  F --> G[Re-run affected quality-gate rows]
+  G --> H{Any actionable finding open or unproven?}
+  H -- Yes --> I[Block WP-28 and retain owner route]
+  H -- No --> J[Exact-head disposition review]

@@ -1,0 +1,23 @@
+{
+  "issue": 5843,
+  "base_branch": "main",
+  "branch": "codex/5860-quality-release-readiness",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5843-v092-preparation",
+    "owner": "codex:5860-quality-release-readiness",
+    "generation": 1,
+    "acquired_unix_seconds": 1785948749,
+    "expires_unix_seconds": 1786035149,
+    "heartbeat_unix_seconds": 1785948749,
+    "branch": "codex/5860-quality-release-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5843",
+      ".csdlc/issues/5843",
+      ".csdlc/locks/5843.lock",
+      ".csdlc/prepared/issues/5843"
+    ],
+    "purpose": "Prepare and approve issue 5843 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority."
+  }
+}

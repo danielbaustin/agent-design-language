@@ -20,9 +20,9 @@ behavior-preserving simplification of active Rust ownership boundaries, duplicat
 
 ## Scope
 
-- Issue 5841 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Profile the exact post-WP-21 active Rust products and rank ownership, duplication, dependency-direction, size, and test hotspots
+- Refactor a small exact-file set under one declared owner without changing supported behavior or public contracts
+- Retain characterization, negative, before/after LoC, dependency, lint, test, platform, and review proof
 
 ## Authority
 

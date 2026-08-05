@@ -16,9 +16,10 @@ WP-29 issue 5851, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-29 scope?
+- Does the independent universe/DAG reconstruction match WP-28A with no missing, duplicate, stale, cyclic, or unowned row?
+- Is the v0.93 handoff evidence-complete, candidate-only, owner-bound, and explicit about governance/security/legal/certification non-claims?
+- Do terminal, cleanup, release, retry, and activation failure scenarios block correctly?
+- Are all findings resolved at the exact reviewed SHA without performing WP-30 work?
 
 ## Findings
 

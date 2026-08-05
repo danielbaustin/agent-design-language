@@ -1,0 +1,7 @@
+{
+  "issue": 5850,
+  "expected_generation": 0,
+  "expected_digest": "787cec78c499507ad62f7d21acb46cc874cf12da20975051a54f190c0c0f4e86",
+  "claim_id": "claim-5850-v092-preparation",
+  "reviewer": "codex:5860-quality-release-readiness-design-review"
+}

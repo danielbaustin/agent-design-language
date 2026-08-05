@@ -20,9 +20,9 @@ current canonical docs, release notes, feature list, ADR plan, skills, agent gui
 
 ## Scope
 
-- Issue 5843 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Inventory and reconcile canonical root, milestone, feature, ADR, release, skill, and agent-guidance claims after WP-22 acceptance
+- Map every updated release-facing statement to exact landed evidence or explicit planned/blocked/non-claim truth
+- Retain a docs-review packet, release-truth diff, and ADR candidate packet only where a real unrecorded decision exists
 
 ## Authority
 

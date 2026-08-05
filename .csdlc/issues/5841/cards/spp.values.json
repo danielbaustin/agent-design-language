@@ -7,43 +7,64 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 4,
+      "summary": "After WP-21 lands, rebuild the active Rust hotspot inventory, select exact files and invariants, capture characterization proof, refactor one owner at a time, and prove behavior, negative cases, LoC, lint, tests, and platform parity.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify WP-20/WP-21 terminal ancestry and rank post-deletion Rust hotspots from current source evidence.",
+          "acceptance_ids": [
+            "AC-1"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Select the smallest exact-file set, owners, behavior invariants, metrics, tests, and rollback boundary.",
           "acceptance_ids": [
             "AC-2"
           ],
           "status": "pending"
         },
         {
-          "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "id": "S3",
+          "action": "Capture characterization proof and refactor one ownership boundary without public behavior change.",
           "acceptance_ids": [
-            "AC-1",
             "AC-3",
             "AC-4"
           ],
           "status": "pending"
         },
         {
-          "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "id": "S4",
+          "action": "Run focused parity/negative tests, touched-workspace tests, strict Clippy, formatting, metrics, and platform CI.",
           "acceptance_ids": [
+            "AC-3",
             "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Resolve exact-head review and publish the bounded closing PR with retained inventory and residual hotspots.",
+          "acceptance_ids": [
+            "AC-6"
           ],
           "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        "Exact selected files in adl-v2/crates/adl-language, adl-compiler, or adl-engine",
+        "Exact selected files in adl-runtime-kernel or csdlc-v2",
+        "Only tightly coupled manifests and focused tests",
+        ".csdlc/evidence/5841"
+      ],
       "invariants": [
         "No tracked work on main",
         "No scope absorption across work packages",
@@ -66,9 +87,9 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5841/design.md",
-      "design_digest": "58bd922890d36380a7c5b9662b8b14c893694ec7daa40653b628305dc28e5eb0",
+      "design_digest": "02e97b83ffbc6cbdbf4f0aceee8220ce150c9917c2deef715f767fd595935d45",
       "diagram_ref": ".csdlc/prepared/issues/5841/diagram.mmd",
-      "diagram_digest": "ca9c051bf8bd7704f80646219715b93d4eadc37615f60fa0ec30992b3de1e7b3"
+      "diagram_digest": "b4df00a4d3d743cffd8848bba7bb5c20d5b4d4641915587f6a72b37044e3c611"
     }
   }
 }

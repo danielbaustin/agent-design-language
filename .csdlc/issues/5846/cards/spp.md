@@ -12,38 +12,53 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify review entry gates, freeze the exact v0.92 packet, run bounded independent specialist lanes, retain and deduplicate evidence-backed findings, validate coverage/redaction/revision identity, and meta-review the final report.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify review predecessors and pin target SHA, live issue/PR universe, CI state, source manifest, and digest.",
     "acceptance_ids": [
+      "AC-1",
       "AC-2"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Run the complete bounded specialist lane set over the frozen packet and retain raw lane outputs.",
     "acceptance_ids": [
-      "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Synthesize severity-ranked findings by invariant/failure mode while preserving duplicates, provenance, and disagreement.",
+    "acceptance_ids": [
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Validate packet freshness, coverage, links, identities, redaction, secrets, private paths, and lane completion.",
     "acceptance_ids": [
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve the independent meta-review and publish the internal report/register for WP-26 consumption.",
+    "acceptance_ids": [
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +88,13 @@ Revision 1
 
 .csdlc/prepared/issues/5846/design.md
 
-Digest: df9a0ff138f514095e2e1b27ed3865638dc35654dbf43320b949b148bb08233d
+Digest: 7be28511edf5fabbe7de29e757547181ac330ac7bb2d8e7fe944656307499294
 
 ## Diagram
 
 .csdlc/prepared/issues/5846/diagram.mmd
 
-Digest: b6de047ddd7cf1fb6003c100fdebc6bd530ee94f545bfdcb4767480da713c5ee
+Digest: a045efc1685d9776f7041ed3163c44f35452aadb851e7c625026a3ff430ed779
 
 ## Stop Conditions
 

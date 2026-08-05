@@ -3,9 +3,9 @@
   "issue": 5786,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1b2e09e7400592dbd7115e86ebed6acc75b6ee95fecd960a613e42721e7e5c3b",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "b1fd70c01e1007481615db9c8f87e9cfa719984e87f9c8d4427d064e0cb490f8",
+  "phase": "bound",
+  "generation": 8,
+  "digest": "6e1233d2f2e9085ae6c78c635bc2b6bd2f16f0bc1470d7028df0513a062166f5",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5786/design.md",
   "diagram_path": ".csdlc/prepared/issues/5786/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-quality-release-readiness-design-review",
+      "revision": "a65bea391dd934749955330c81eff121fb2037cf517e491823deeb1bf340f6c2"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "a6c1c69f51e5e34be5ac966d4fbff59736d888c69a03168623d89e1ce44b0499",
-      "rendered_digest": "483c78fa9c58ae3529000c6853b214a32aa4e918476ee776e559f1eef636d019",
-      "ast_digest": "30c4e2c0ea5e5a7ea859e059d3adbe3754cb5874cded47be41521c05cb482613"
+      "values_digest": "aa4016a639fa06357cfdab4df9b36f3e6075542d2507c9ffddc0c12adcf3bd56",
+      "rendered_digest": "fdb2f8640a9eb9f0b84988aad73234d0276ab2dd329917f0abdb5bca33324496",
+      "ast_digest": "d05783fc9e724b14ccecce363a7bf29fb2321b196b530e9d35ed7e2cd0f2990b"
     },
     "stp": {
-      "values_digest": "a0b30bcaecef4aaa49589a09c4c45aaf5ca3031a80b7f283a1bf3c4efaec3449",
-      "rendered_digest": "998490b9f7c45737c409345cd26fa410373f9a3cfa49e995b2bc2b883e8ef28f",
-      "ast_digest": "8848e2d40c4c744882d537353bcea07374febcf86d9fd5dc1be30a2bacf65440"
+      "values_digest": "6df109521c5680674e8d1c137205cb99e5e4574ad3e54ca674dafc54047c48ce",
+      "rendered_digest": "b45321798014b0562090dbfc78af0b7d448c394de900855c428b908547c70856",
+      "ast_digest": "0d07e49fa3af27fa71e573503b788a5643ee9669df345d051f85a2e6d0e417b7"
     },
     "spp": {
-      "values_digest": "5bd7f0efc8c63b0abc730eac81b4f8dd4d99bb23a4307620a4002661c3a687fc",
-      "rendered_digest": "92cbc19ebe6e78ed940ac726cfa80444cc073f78210b4e55b62884a918762bc5",
-      "ast_digest": "9b5b94ac085ba74396b0b33868d9db72114be3347ba4fefdbb75509bccda3936"
+      "values_digest": "9a9261d48e43db281fd8db8a667f9711507ea83b89720cc76ee94dfbc7608b0b",
+      "rendered_digest": "ee2ded8a2e059642cc5a260ea1364bb47317775feba6238c0c34eed6d1445ece",
+      "ast_digest": "4b8345bbe4d4df9612b5280995651f1b844236382d374c4c3af0766928c4f437"
     },
     "vpp": {
-      "values_digest": "3c65141e531a5ca46fdb019c114b38334416a8b6d7955daaa8191ee18fdeefb5",
-      "rendered_digest": "be30880a53f152a0b4f13828d53707a88844935396de60244dc96f9a617bd5fb",
-      "ast_digest": "1bde1da40ccaa48dedf8e741a54db264f05b0f085a85801e51423fe74716d12b"
+      "values_digest": "bf93157558aab5ae23c159b2ffbc141d885eafe995743d962d3c752a06146e90",
+      "rendered_digest": "7e3b3805f5e0c6780164e66236a67b481f8f4dbf1ba1c8d70b769b8e19e0e305",
+      "ast_digest": "573769fc3941d27b1d4bd79dbeeb08fcaa23e966c0d3c549221bb510a1dfb33e"
     },
     "srp": {
-      "values_digest": "d527c333fe9c72ae42dde2b7d0841575158bd7c1fd71d7812ef708338b874215",
-      "rendered_digest": "89919c9f618e02d1bc28ab54c72af1b34984b34d21716d6b100126c0a6f3977a",
-      "ast_digest": "124ce1a83105047c5f9ebaa1d70760a86fd1953f6f164874058befff2cbcdb3d"
+      "values_digest": "4d41fce57eac1dbb25bc505039745f8922667da42c4c394b78c7c00a7e5d95b7",
+      "rendered_digest": "28b2540d589edd13515b7744efae57a4d16d247f28cd4e4b144197685b880e34",
+      "ast_digest": "978d5682fc3d0518e3c446db239064032dc2866e78825aead2c2ac26b5f7e3cd"
     },
     "sor": {
-      "values_digest": "594d21884229e7833791307fe0c62625b21d682dcaf5087c1de56658759c9e51",
+      "values_digest": "0332086a2760b1706c0d475c0cecb9f466f4121a4ed087f294348c76d7520899",
       "rendered_digest": "e7755b231961082e3865c0856f5812fe4ad2d711e1cca17c5cb447e409847a06",
       "ast_digest": "680f19e828ce3990d490537f599b8aba12cfd752d16b83c2082be3107bfa5d0b"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,83 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5786-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5786 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-readiness\",\"claim_id\":\"claim-5786-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5786\",\".csdlc/issues/5786\",\".csdlc/locks/5786.lock\",\".csdlc/prepared/issues/5786\"],\"purpose\":\"Prepare and approve issue 5786 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic scope with exact issue-owned preparation and future execution boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Inventory and disposition every remaining adl/src Rust file and every active Cargo, CI, install, docs, demo, and command reference\",\"Delete only exact ownership bands whose supported behavior is proven through ADL v2, Runtime v3, C-SDLC v2, or a named adapter/product owner\",\"Retain issue-local denominator, parity, rollback, clean-install, platform, and exact-head review evidence\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Bind the task to current issue, repository, milestone, and predecessor evidence.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"Live issue #5786 objective, rollback gate, baseline, and acceptance criteria\",\"docs/milestones/v0.92/WBS_v0.92.md and docs/milestones/v0.92/QUALITY_GATE_v0.92.md\",\"docs/milestones/v0.91.8/BASELINE_AND_OWNERSHIP_v0.91.8.md\",\"docs/milestones/v0.91.8/RUNTIME_V3_FUNCTIONAL_PARITY_PLAN_v0.91.8.md\",\"docs/milestones/v0.91.8/evidence/wp13/5346-deletion-eligibility.v1.json and 5346-post-deletion-validation.v1.json\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic non-goals with issue-specific exclusions and authority boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Deleting before 2026-08-12T09:04:24Z or while rollback/selector health is unresolved\",\"Treating crate movement, build exclusion, or unowned compatibility retention as reduction\",\"WP-21A refactoring, WP-22 gate approval, new features, or downstream release work\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic acceptance, three-step scaffolding, and diff-only VPP with the complete issue-specific plan.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: The execution SHA proves WP-20 ancestry, rollback-window expiry, rollback disposition, selector health, and a clean supported install before deletion.\",\"AC-2: Every remaining adl/src file and active reverse reference has exactly one accountable disposition with replacement evidence or a timed owner/reason/expiry exception.\",\"AC-3: The supported adl command resolves to the thin ADL v2 CLI; Runtime v2 and obsolete compatibility routes are absent only after positive, negative, artifact, trace, failure, and rollback parity.\",\"AC-4: Exact physical LoC/file accounting against the pinned 355,675-line baseline proves at least 80% deletion; 80-89% retention has owner, reason, and expiry, and below 80% is failure.\",\"AC-5: Focused replacement, clean-install, reverse-reference, macOS, Linux, and rollback proof passes at the exact deletion head without unsupported behavior loss.\",\"AC-6: One exact-head independent review has no unresolved actionable finding and the PR uses Closes #5786 without claiming WP-21A or release completion.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify WP-20 terminal ancestry, rollback-window expiry, rollback disposition, selector health, and exact baseline measurement.\",\"acceptance_ids\":[\"AC-1\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Generate the exhaustive legacy and reverse-reference inventory; close or route every missing owner and capability gap.\",\"acceptance_ids\":[\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Delete one exact ownership band at a time while preserving supported CLI, artifact, trace, failure, and rollback contracts.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run denominator, parity, negative, clean-install, and macOS/Linux platform proof and restore any failing band.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Retain exact counts/exceptions, resolve independent review findings, and publish the reviewed closing PR.\",\"acceptance_ids\":[\"AC-4\",\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"deletion-inventory\",\"proof_role\":\"Prove exhaustive dispositions, owners, replacement references, exceptions, and the pinned deletion denominator.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":600,\"budget_tokens\":4000,\"argv\":[\"ruby\",\"-e\",\"require 'json'; d=JSON.parse(File.read('.csdlc/evidence/5786/deletion-manifest.json')); abort 'empty inventory' unless d['rows'].is_a?(Array) && !d['rows'].empty?; abort 'unowned row' unless d['rows'].all? { |r| r['path'] && r['disposition'] && r['owner'] }\"],\"parallel_group\":\"inventory\",\"defer_reason\":null},{\"lane\":\"replacement-parity-negative\",\"proof_role\":\"Prove supported ADL v2/Runtime v3/C-SDLC v2 behavior, failure, rollback, artifact, and trace parity for removed bands.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":1800,\"budget_tokens\":10000,\"argv\":[\"bash\",\"adl/tools/run_owner_validation_lane.sh\",\"all\"],\"parallel_group\":\"parity\",\"defer_reason\":null},{\"lane\":\"thin-cli-clean-install-platform\",\"proof_role\":\"Prove the supported thin CLI and clean installation on the declared macOS/Linux release platforms with no Runtime v2 route.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":4000,\"argv\":[\"bash\",\"adl/tools/install_owner_binaries.sh\"],\"parallel_group\":\"platform\",\"defer_reason\":\"Run locally and in required platform CI only after the deletion candidate is implemented.\"},{\"lane\":\"diff-and-stale-reference-hygiene\",\"proof_role\":\"Reject malformed patches and surviving active references to deleted legacy owners.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"hygiene\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5786\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Make the operative SPP summary issue-specific and executable.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"After WP-20 and the rollback gate, pin the deletion denominator, inventory every legacy owner/reference, close capability gaps, delete in validated ownership bands, prove thin-CLI/runtime/platform parity, and publish exact reduction and exception truth.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Record exact protected-path candidates and require just-in-time narrowing.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"Exact inventory-selected files under adl/src\",\"adl/Cargo.toml, adl/Cargo.lock, workflows, installers, tools, docs, and demos only where deleted owners remain referenced\",\"adl-v2, adl-runtime-kernel, or csdlc-v2 only for a proven replacement gap\",\".csdlc/evidence/5786\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic review prompts while preserving truthful pre-review state.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every deleted file and reverse reference have exact replacement proof or a time-bounded accountable exception?\",\"Do thin-CLI, Runtime v3, C-SDLC v2, artifact, trace, failure, rollback, and platform proofs cover supported behavior at the reviewed head?\",\"Does the independent denominator prove the 80% minimum without credit for movement, exclusion, or unowned retention?\",\"Did the change remain WP-21-only and preserve a truthful rollback path?\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5786-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-preparation-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness\"}"
     }
   ]
 }

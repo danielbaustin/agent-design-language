@@ -1,2 +1,10 @@
-flowchart LR
-  I["Issue 5850"] --> D["Design required"]
+flowchart TD
+  A[Verify WP-28 terminal] --> B[Freeze v0.92 issue PR and receipt universe]
+  B --> C[Reconcile GitHub typed SOR receipt claim and worktree truth]
+  C --> D[Classify complete waiting blocked reconcile cleanup ceremony]
+  D --> E{Every row has exact owner and next action?}
+  E -- No --> X[Block closeout plan]
+  E -- Yes --> F[Topologically order PR finish release cleanup review ceremony]
+  F --> G[Test stale red missing dirty active-claim and retry cases]
+  G --> H[Exact-head plan review]
+  H --> I[Hand sequence to WP-29 and WP-30]

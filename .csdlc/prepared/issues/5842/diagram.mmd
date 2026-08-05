@@ -1,2 +1,12 @@
-flowchart LR
-  I["Issue 5842"] --> D["Design required"]
+flowchart TD
+  A[Pin gate SHA and verify all predecessors] --> B[Enumerate feature index and critical paths]
+  B --> C[Bind each row to issue PR reviewed head merge and typed truth]
+  C --> D[Check implementation validation integration and platform evidence]
+  D --> E{Fixture synthetic substitution stale or missing evidence?}
+  E -- Yes --> F[Record blocking row and owner]
+  E -- No --> G[Mark row accepted]
+  F --> H{Any blocker remains?}
+  G --> H
+  H -- Yes --> I[Fail gate and block WP-25]
+  H -- No --> J[Exact-head independent gate review]
+  J --> K[Allow WP-23 then WP-25 dependency path]

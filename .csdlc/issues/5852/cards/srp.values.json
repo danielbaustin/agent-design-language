@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-30] Release ceremony",
     "slug": "v0-92-wp-30-release-ceremony",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "pre_phase",
   "content": {
@@ -17,9 +17,10 @@
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-30 scope?"
+        "Does every release claim map to exact implementation, validation, review, merge, terminal, artifact, risk, and non-claim evidence?",
+        "Are final notes, checklist, handoff, launch assets, and hashes consistent with landed truth only?",
+        "Do ceremony tests and the reviewed sequence prevent stale, red, dirty, conflicting, partial, or duplicate network mutation?",
+        "Does typed issue/sprint/milestone closeout follow verified release identity without activating v0.93?"
       ],
       "findings": [],
       "residual_risk": [],

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-28A] Next-milestone closeout plan",
     "slug": "v0-92-wp-28a-next-milestone-closeout-plan",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -16,9 +16,9 @@
       "goal": "Complete WP-28A: Next-milestone closeout plan.",
       "required_outcome": "exact terminal issue, PR, receipt, and ceremony sequence",
       "declared_scope": [
-        "Issue 5850 implementation paths to be narrowed during preparation",
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Freeze and reconcile the complete v0.92 issue, PR, typed state, SOR, receipt, claim, worktree, and release-dependency universe",
+        "Classify every row and topologically order remaining PR, finish, release, cleanup, WP-29, WP-30, umbrella, and v0.93 handoff actions",
+        "Publish a reviewed fail-closed closeout plan without performing any closeout mutation"
       ],
       "authority_boundary": [
         "Issue 5850 owns only WP-28A: Next-milestone closeout plan",

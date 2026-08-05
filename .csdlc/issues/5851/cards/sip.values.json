@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-29] Next milestone review pass",
     "slug": "v0-92-wp-29-next-milestone-review-pass",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -16,9 +16,9 @@
       "goal": "Complete WP-29: Next milestone review pass.",
       "required_outcome": "review pass over v0.93 planning and closeout readiness",
       "declared_scope": [
-        "Issue 5851 implementation paths to be narrowed during preparation",
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Independently review the WP-28 handoff and WP-28A universe/closeout sequence at one exact revision",
+        "Rebuild the expected universe/DAG and test v0.93 evidence, owners, acceptance, non-claims, and terminal/ceremony negative scenarios",
+        "Publish findings and a pass/changes-required/blocked disposition for WP-30 without mutation"
       ],
       "authority_boundary": [
         "Issue 5851 owns only WP-29: Next milestone review pass",

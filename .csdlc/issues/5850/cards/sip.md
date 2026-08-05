@@ -20,9 +20,9 @@ exact terminal issue, PR, receipt, and ceremony sequence
 
 ## Scope
 
-- Issue 5850 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Freeze and reconcile the complete v0.92 issue, PR, typed state, SOR, receipt, claim, worktree, and release-dependency universe
+- Classify every row and topologically order remaining PR, finish, release, cleanup, WP-29, WP-30, umbrella, and v0.93 handoff actions
+- Publish a reviewed fail-closed closeout plan without performing any closeout mutation
 
 ## Authority
 

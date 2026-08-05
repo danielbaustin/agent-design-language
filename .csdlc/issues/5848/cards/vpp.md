@@ -24,8 +24,8 @@ Diagram: .csdlc/prepared/issues/5848/diagram.mmd
 
 [
   {
-    "lane": "focused-wp-27",
-    "proof_role": "finding disposition record",
+    "lane": "finding-universe-disposition",
+    "proof_role": "Require complete provenance-preserving rows and exact owner, scope, disposition, evidence, fix/review/PR/merge fields where applicable.",
     "acceptance_ids": [
       "AC-1",
       "AC-2",
@@ -35,14 +35,75 @@ Diagram: .csdlc/prepared/issues/5848/diagram.mmd
     ],
     "deterministic": true,
     "resource_profile": "medium",
-    "budget_seconds": 1200,
-    "budget_tokens": 10000,
+    "budget_seconds": 300,
+    "budget_tokens": 3000,
+    "argv": [
+      "ruby",
+      "-e",
+      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete row' unless r['rows'].all? { |x| %w[id source severity evidence owner disposition].all? { |k| x[k] } }"
+    ],
+    "parallel_group": "disposition",
+    "defer_reason": null
+  },
+  {
+    "lane": "open-stale-unauthorized-negative",
+    "proof_role": "Reject open actionable, stale fix/review SHA, unmerged, failed, missing-proof, unowned follow-on, or unauthorized accepted-risk rows.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
+      "AC-5",
+      "AC-6"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 180,
+    "budget_tokens": 1500,
+    "argv": [
+      "ruby",
+      "-e",
+      "require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/validation.json')); abort 'remediation blockers remain' unless r['blockers'].is_a?(Array) && r['blockers'].empty?"
+    ],
+    "parallel_group": "negative",
+    "defer_reason": null
+  },
+  {
+    "lane": "affected-quality-regression",
+    "proof_role": "Re-run every affected WP-22 row and release-facing claim check at each exact merged remediation revision.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-5"
+    ],
+    "deterministic": true,
+    "resource_profile": "medium",
+    "budget_seconds": 300,
+    "budget_tokens": 2000,
     "argv": [
       "git",
       "diff",
       "--check"
     ],
-    "parallel_group": "issue-local",
+    "parallel_group": "regression",
+    "defer_reason": null
+  },
+  {
+    "lane": "typed-card-doctor",
+    "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-6"
+    ],
+    "deterministic": true,
+    "resource_profile": "small",
+    "budget_seconds": 60,
+    "budget_tokens": 1000,
+    "argv": [
+      "csdlc-doctor",
+      "--repo",
+      ".",
+      "--issue",
+      "5848"
+    ],
+    "parallel_group": "typed-readback",
     "defer_reason": null
   }
 ]
@@ -59,7 +120,10 @@ Tokens: 10000
 
 ## Commands
 
+- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete row' unless r['rows'].all? { |x| %w[id source severity evidence owner disposition].all? { |k| x[k] } }`
+- `ruby -e require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/validation.json')); abort 'remediation blockers remain' unless r['blockers'].is_a?(Array) && r['blockers'].empty?`
 - `git diff --check`
+- `csdlc-doctor --repo . --issue 5848`
 
 ## Failure Semantics
 

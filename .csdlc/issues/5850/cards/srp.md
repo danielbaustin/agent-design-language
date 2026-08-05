@@ -16,9 +16,10 @@ WP-28A issue 5850, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-28A scope?
+- Does the universe include every v0.92 child, supporting issue, sprint umbrella, release issue, PR, receipt, claim, and worktree?
+- Does each row separate live GitHub state from typed phase, SOR, receipt, claim, cleanup, and ceremony truth?
+- Is the sequence acyclic, authority-correct, retry-safe, and complete through WP-29, WP-30, umbrella closeout, and v0.93 handoff?
+- Would every stale, red, missing, active-claim, dirty, partial, unknown, or unowned case fail closed?
 
 ## Findings
 

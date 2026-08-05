@@ -16,9 +16,10 @@ WP-26 issue 5847, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-26 scope?
+- Is the handoff self-contained, exact-revision bound, digest-reproducible, publication-safe, and explicit about reviewer authority?
+- Would any source change, missing evidence, unsafe private state, or unsupported approval claim fail closed before dispatch?
+- Was an actual reviewer-authored report received and preserved without rewriting?
+- Does the separate findings index preserve every returned item and route it to WP-27?
 
 ## Findings
 

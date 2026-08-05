@@ -1,3 +1,63 @@
-# Issue 5848 design
+# Issue 5848 Design: Review Findings Remediation
 
-Status: design required before Ready.
+Status: design-time ready; remediation waits for the received WP-26 review.
+
+## Authority And Sources
+
+Issue #5848 and WP-27 own disposition of the complete WP-25/WP-26 finding
+universe. The internal register, external report, external findings index,
+exact reviewed revision, and any later current recheck are inputs. Historical
+v0.91.8 remediation registers provide a format precedent only; v0.92 findings
+must be resolved from current source and exact evidence.
+
+## Outcome Contract
+
+Create one canonical disposition row per unique finding with original IDs,
+source reviewer, severity, evidence, affected owner, in-scope decision,
+disposition, remediation issue/PR, fix head, proving validation, review head,
+merge state, residual risk, and downstream release-doc impact. Group findings
+into the smallest coherent owner-aligned remediation slices. Fix all actionable
+in-scope findings; route true out-of-scope items to explicit follow-ons; accept
+risk only with operator authority and evidence. Never erase, renumber, or mark a
+finding fixed from intent alone.
+
+## Execution Sequence
+
+1. Verify WP-26 terminal/ancestral truth and freeze the complete internal plus
+   external finding universe.
+2. Deduplicate only when evidence and failure mode are genuinely identical;
+   preserve provenance and reviewer disagreement.
+3. Assign each finding to an owner-aligned remediation slice with exact paths,
+   acceptance criteria, negative cases, and rollback.
+4. Implement and validate slices through their issue-bound lifecycles; record
+   exact fix/review/merge identity in the disposition register.
+5. Re-run affected review and quality-gate checks, including release-facing
+   claim corrections where behavior changed.
+6. Obtain exact-head review of the complete disposition register and block
+   WP-28 while any actionable finding remains open or unproven.
+
+## Protected-Path Candidates
+
+- `docs/reviews/v0.92/remediation-5848`
+- `.csdlc/evidence/5848`
+- exact implementation, test, docs, or workflow files assigned by the frozen
+  finding-to-owner map
+- current release-facing docs only when a remediated claim changes
+
+No broad product root may be claimed. If a finding belongs to another active
+issue or owner, #5848 records and watches that route instead of colliding.
+
+## Validation And Failure Policy
+
+Required lanes are finding-universe completeness, dedup/provenance checks,
+disposition-schema validation, focused positive and negative tests per fix,
+platform/security/privacy lanes required by the finding, exact fix/review/merge
+readback, regression of affected WP-22 rows, and open-finding rejection. Any
+unresolved actionable finding, missing proof, stale fix SHA, or unauthorized
+risk acceptance blocks completion.
+
+## Non-Goals
+
+- No suppression of reviewer findings or blanket risk acceptance.
+- No unrelated cleanup, milestone replanning, or release ceremony.
+- No claim that opening a remediation PR equals a fixed or merged disposition.

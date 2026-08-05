@@ -1,2 +1,11 @@
-flowchart LR
-  I["Issue 5849"] --> D["Design required"]
+flowchart TD
+  A[Verify WP-27 terminal and consume final dispositions] --> B[Inventory v0.93 candidate package]
+  B --> C[Map each prerequisite to v0.92 evidence blocker owner or non-claim]
+  C --> D{Evidence and ownership complete?}
+  D -- No --> E[Record explicit blocker or follow-on]
+  D -- Yes --> F[Reconcile candidate planning documents]
+  E --> G[Preserve forward-planning status]
+  F --> G
+  G --> H[Validate dependencies links YAML and claim boundaries]
+  H --> I[Exact-head review]
+  I --> J[Hand packet to WP-28A]

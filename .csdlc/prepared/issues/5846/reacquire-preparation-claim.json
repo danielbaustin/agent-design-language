@@ -1,0 +1,25 @@
+{
+  "actor": "codex:5860-quality-release-readiness",
+  "expected_digest": "6856aa4732731a78ea27042af8caa5bd78c39ee3eac4dc6ddec418baf7df82e2",
+  "expected_generation": 0,
+  "issue": 5846,
+  "now_unix_seconds": 1785948749,
+  "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5846 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+  "replacement": {
+    "acquired_unix_seconds": 1785948749,
+    "branch": "codex/5860-quality-release-readiness",
+    "expires_unix_seconds": 1786035149,
+    "generation": 0,
+    "heartbeat_unix_seconds": 1785948749,
+    "id": "claim-5846-v092-preparation",
+    "owner": "codex:5860-quality-release-readiness",
+    "protected_paths": [
+      ".csdlc/evidence/5846",
+      ".csdlc/issues/5846",
+      ".csdlc/locks/5846.lock",
+      ".csdlc/prepared/issues/5846"
+    ],
+    "purpose": "Prepare and approve issue 5846 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.",
+    "worktree": "."
+  }
+}

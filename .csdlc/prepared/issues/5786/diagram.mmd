@@ -1,2 +1,15 @@
-flowchart LR
-  I["Issue 5786"] --> D["Design required"]
+flowchart TD
+  A[Pin execution SHA and refresh baseline] --> B{Rollback window expired and selector healthy?}
+  B -- No --> X[Block without deletion]
+  B -- Yes --> C[Inventory every legacy file and active reverse reference]
+  C --> D{Every row has replacement owner or timed exception?}
+  D -- No --> X
+  D -- Yes --> E[Close capability gaps]
+  E --> F[Delete one ownership band]
+  F --> G[Run parity negative rollback install and platform lanes]
+  G -- Fail --> H[Restore band and record blocker]
+  G -- Pass --> I{More eligible bands?}
+  I -- Yes --> F
+  I -- No --> J{At least 80 percent of pinned baseline removed?}
+  J -- No --> X
+  J -- Yes --> K[Exact-head review and retained manifest]

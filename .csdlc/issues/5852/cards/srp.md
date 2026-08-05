@@ -16,9 +16,10 @@ WP-30 issue 5852, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-30 scope?
+- Does every release claim map to exact implementation, validation, review, merge, terminal, artifact, risk, and non-claim evidence?
+- Are final notes, checklist, handoff, launch assets, and hashes consistent with landed truth only?
+- Do ceremony tests and the reviewed sequence prevent stale, red, dirty, conflicting, partial, or duplicate network mutation?
+- Does typed issue/sprint/milestone closeout follow verified release identity without activating v0.93?
 
 ## Findings
 

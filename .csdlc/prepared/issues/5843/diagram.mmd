@@ -1,2 +1,12 @@
-flowchart LR
-  I["Issue 5843"] --> D["Design required"]
+flowchart TD
+  A[Consume passing WP-22 matrix] --> B[Inventory canonical docs claims and commands]
+  B --> C[Classify current stale planned blocked historical unsupported]
+  C --> D{Claim maps to accepted exact evidence?}
+  D -- No --> E[Remove narrow or mark non-claim]
+  D -- Yes --> F[Update canonical release truth]
+  E --> G[Build docs review and ADR candidate packets]
+  F --> G
+  G --> H[Validate links formats versions WP ownership and redaction]
+  H --> I{Contradictions or unsupported claims remain?}
+  I -- Yes --> J[Block with findings]
+  I -- No --> K[Exact-head docs review]

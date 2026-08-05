@@ -16,9 +16,10 @@ WP-28 issue 5849, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-28 scope?
+- Does every v0.93 candidate work area have exact v0.92 evidence, a blocker, an owned follow-on, or explicit non-claim?
+- Are the candidate WBS, issue wave, features, security/governance boundaries, checklist, demo, and release docs mutually consistent?
+- Does the packet remain forward planning with no issue creation, activation, implementation, schedule, legal, production-authority, or certification overclaim?
+- Can WP-28A execute the next planning step without reconstructing chat?
 
 ## Findings
 

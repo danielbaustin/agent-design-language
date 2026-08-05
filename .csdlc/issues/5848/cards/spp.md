@@ -12,38 +12,57 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Freeze the complete review-finding universe, preserve provenance while deduplicating true duplicates, assign exact owner-aligned fix slices, validate and review each fix, reconcile exact PR/merge/quality-gate truth, and block downstream planning until every actionable item is proven.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify WP-26 terminal ancestry and freeze the complete internal/external finding universe.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Deduplicate only identical failure modes, preserve provenance/disagreement, and assign exact owner-aligned remediation slices.",
     "acceptance_ids": [
       "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-2"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Implement each slice through its owner lifecycle with focused positive/negative, rollback, and required platform/security/privacy proof.",
     "acceptance_ids": [
+      "AC-2",
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Record exact fix/review/PR/merge identity, re-run affected WP-22 rows, and reconcile release-facing claims.",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve exact-head disposition review and block or release WP-28 truthfully.",
+    "acceptance_ids": [
+      "AC-5",
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +92,13 @@ Revision 1
 
 .csdlc/prepared/issues/5848/design.md
 
-Digest: 12a8c97a937e85ff1ddbc6220b4346fa081484323af96736c09f3f840f3bce81
+Digest: fe35997745ec728a3c1c992656c895117780f7617fa6f2309aa95b767a78fe1f
 
 ## Diagram
 
 .csdlc/prepared/issues/5848/diagram.mmd
 
-Digest: 25b8dec2b759e8dfba87fd2c6055a1f6a8063c69efc0115abfc869b27b849aed
+Digest: bbd55a23ecab369dc5724109636f2fa3e89c73129f97ce62f2d8b3ee87b0df77
 
 ## Stop Conditions
 

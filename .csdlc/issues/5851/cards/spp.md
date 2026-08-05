@@ -12,38 +12,54 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Freeze the WP-28A packet, independently rebuild and compare its universe/DAG, review v0.93 evidence/owners/non-claims, exercise terminal and ceremony negatives, record evidence-backed findings, and publish an exact-head disposition for WP-30.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify WP-28A terminal ancestry and freeze the exact packet manifest, universe, DAG, and handoff inputs.",
+    "acceptance_ids": [
+      "AC-1"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S2",
+    "action": "Independently rebuild the expected universe/DAG and compare omissions, duplicates, stale identities, cycles, and owner gaps.",
     "acceptance_ids": [
       "AC-2"
     ],
     "status": "pending"
   },
   {
-    "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "id": "S3",
+    "action": "Review v0.93 prerequisite evidence, candidate status, owners, acceptance hooks, and governance/security/legal non-claims.",
     "acceptance_ids": [
-      "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-3"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S4",
+    "action": "Exercise terminal, cleanup, ceremony, retry, and premature-activation negative scenarios and record findings.",
     "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve actionable findings at the current SHA and publish the exact-head result for WP-30.",
+    "acceptance_ids": [
+      "AC-5",
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +89,13 @@ Revision 1
 
 .csdlc/prepared/issues/5851/design.md
 
-Digest: 621061cd88ad47432d2ba50e04188a3b828cc9984943f9147bca408aacf8ce1b
+Digest: c628287fc0ab4ff53142c7a872d39595c10f4950fb60dc50d156a59e0f101aad
 
 ## Diagram
 
 .csdlc/prepared/issues/5851/diagram.mmd
 
-Digest: 2e973eee4767365b6ac354bef8b67133d83d7093c0dc05e0250fbf34d683cdfb
+Digest: 684da2a4d408951a88dc77fd84f07952b5e795bb91e83392370c723c1b647bee
 
 ## Stop Conditions
 

@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-27] Review findings remediation",
     "slug": "v0-92-wp-27-review-findings-remediation",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -19,23 +19,25 @@
         "finding disposition record"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "AC-1: Every WP-25/WP-26 finding appears exactly once in the canonical universe with source ID/reviewer, severity, evidence, invariant, owner, scope decision, and current disposition.",
+        "AC-2: Deduplication preserves all provenance and disagreement; each actionable item has the smallest coherent owner-aligned slice, exact paths, acceptance, negative cases, rollback, and dependency gate.",
+        "AC-3: Every fixed disposition names exact fix head, proving validation, exact-head review, PR, merge, affected platform/security/privacy lanes, and updated WP-22/release-claim evidence.",
+        "AC-4: Out-of-scope routes name a real follow-on owner; accepted risk has explicit operator authority and residual evidence; no finding disappears through rewording.",
+        "AC-5: The disposition register and live issue/PR/typed readback reject stale, open, unmerged, unreviewed, failed, missing-proof, or unauthorized-risk rows.",
+        "AC-6: One exact-head review finds no actionable disposition gap and WP-28 remains blocked until all actionable rows are proven fixed or authoritatively routed."
       ],
       "dependencies": [
         "WP-26"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Terminal WP-25 internal register and WP-26 received report/findings index",
+        "Exact reviewed source revisions, current affected owners, and live issue/PR/typed state",
+        "Current WP-22 matrix rows and release-facing claims affected by each remediation"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Suppressing, renumbering, or blanket-accepting reviewer findings",
+        "Unrelated cleanup, milestone replanning, or release ceremony",
+        "Claiming that an opened PR, intent, or unreviewed patch is a fixed disposition"
       ]
     }
   }

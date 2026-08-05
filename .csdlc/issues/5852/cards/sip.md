@@ -20,9 +20,9 @@ release evidence package and ceremony closeout
 
 ## Scope
 
-- Issue 5852 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Assemble the exact v0.92 release evidence manifest, final release notes/checklist/handoff, and residual-risk/non-claim record
+- Execute the WP-29-approved split-step tag/release ceremony with identity checks and idempotent recovery
+- Verify live release artifacts and complete typed issue, sprint, milestone, and handoff closeout
 
 ## Authority
 

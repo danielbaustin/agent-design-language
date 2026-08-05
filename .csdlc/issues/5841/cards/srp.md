@@ -16,9 +16,10 @@ WP-21A issue 5841, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-21A scope?
+- Does each selected exact-file change reduce a measured ownership or duplication defect without changing supported behavior?
+- Are characterization, negative, lint, test, LoC, dependency, and platform results current for every touched owner?
+- Did any public API widen, feature/deletion work hide inside the refactor, or unowned shared utility appear?
+- Are residual hotspots and rollback boundaries explicit?
 
 ## Findings
 

@@ -1,2 +1,11 @@
-flowchart LR
-  I["Issue 5841"] --> D["Design required"]
+flowchart TD
+  A[WP-20 and WP-21 terminal at execution base] --> B[Profile active Rust owners]
+  B --> C[Rank mixed ownership duplication and test hotspots]
+  C --> D[Select exact files and invariants]
+  D --> E[Capture characterization proof]
+  E --> F[Refactor one bounded owner]
+  F --> G{Focused parity and negative cases pass?}
+  G -- No --> H[Revert slice or replan as feature work]
+  G -- Yes --> I[Run touched workspace tests Clippy and format]
+  I --> J[Record LoC ownership and duplication delta]
+  J --> K[Platform CI and exact-head review]

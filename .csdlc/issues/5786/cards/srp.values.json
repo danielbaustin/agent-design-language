@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21] Repository-wide code reduction cleanup",
     "slug": "v0-92-wp-21-repository-wide-code-reduction-cleanup",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "pre_phase",
   "content": {
@@ -17,9 +17,10 @@
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-21 scope?"
+        "Does every deleted file and reverse reference have exact replacement proof or a time-bounded accountable exception?",
+        "Do thin-CLI, Runtime v3, C-SDLC v2, artifact, trace, failure, rollback, and platform proofs cover supported behavior at the reviewed head?",
+        "Does the independent denominator prove the 80% minimum without credit for movement, exclusion, or unowned retention?",
+        "Did the change remain WP-21-only and preserve a truthful rollback path?"
       ],
       "findings": [],
       "residual_risk": [],

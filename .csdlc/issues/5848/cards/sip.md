@@ -20,9 +20,9 @@ finding dispositions and remediation PRs
 
 ## Scope
 
-- Issue 5848 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Freeze and reconcile the complete WP-25 and WP-26 finding universe
+- Group findings into exact owner-aligned remediation slices with positive, negative, platform/security/privacy, rollback, review, and merge proof
+- Retain one canonical disposition row per finding and block WP-28 while any actionable item is open or unproven
 
 ## Authority
 

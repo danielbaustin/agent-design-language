@@ -20,9 +20,9 @@ quality gate that blocks internal review until every indexed v0.92 feature is la
 
 ## Scope
 
-- Issue 5842 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Build the complete feature and critical-path matrix from the canonical v0.92 index
+- Accept rows only with exact implementation, validation, negative, review, merge, integration, platform, and typed terminal evidence
+- Emit a quality-gate record and owner-routed blocker report that fail closed before internal review
 
 ## Authority
 

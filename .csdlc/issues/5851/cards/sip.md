@@ -20,9 +20,9 @@ review pass over v0.93 planning and closeout readiness
 
 ## Scope
 
-- Issue 5851 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Independently review the WP-28 handoff and WP-28A universe/closeout sequence at one exact revision
+- Rebuild the expected universe/DAG and test v0.93 evidence, owners, acceptance, non-claims, and terminal/ceremony negative scenarios
+- Publish findings and a pass/changes-required/blocked disposition for WP-30 without mutation
 
 ## Authority
 

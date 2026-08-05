@@ -7,43 +7,62 @@
     "title": "[v0.92][WP-28A] Next-milestone closeout plan",
     "slug": "v0-92-wp-28a-next-milestone-closeout-plan",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
     "card_kind": "spp",
     "values": {
-      "plan_revision": 1,
-      "summary": "Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.",
+      "plan_revision": 4,
+      "summary": "Freeze the full v0.92 universe, reconcile live and typed terminal truth, classify each row with one owner/action, build an acyclic retry-safe PR-to-ceremony sequence, test stale/dirty/missing/partial cases, and exact-head review the plan.",
       "steps": [
         {
           "id": "S1",
-          "action": "Prepare exact scope, design, paths, and validation plan",
+          "action": "Verify WP-28 terminal ancestry and freeze the complete live plus typed v0.92 issue/PR/receipt universe.",
           "acceptance_ids": [
-            "AC-2"
+            "AC-1"
           ],
           "status": "pending"
         },
         {
           "id": "S2",
-          "action": "Implement the required outcome and focused proof",
+          "action": "Reconcile every row across GitHub, typed phase/SOR/receipt/claim, worktree cleanup, release dependency, owner, and action.",
           "acceptance_ids": [
-            "AC-1",
-            "AC-3",
-            "AC-4"
+            "AC-2",
+            "AC-3"
           ],
           "status": "pending"
         },
         {
           "id": "S3",
-          "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+          "action": "Topologically order PR completion, finish, claim release, cleanup, WP-29, WP-30, umbrella closeout, and handoff acceptance.",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Exercise stale, red, missing-review/receipt, active-claim, dirty, partial-release, duplicate-retry, unknown, and unowned negative cases.",
           "acceptance_ids": [
             "AC-5"
           ],
           "status": "pending"
+        },
+        {
+          "id": "S5",
+          "action": "Resolve exact-head plan review and publish the non-mutating closeout packet.",
+          "acceptance_ids": [
+            "AC-6"
+          ],
+          "status": "pending"
         }
       ],
-      "affected_areas": [],
+      "affected_areas": [
+        ".csdlc/evidence/5850/issue-universe.json",
+        ".csdlc/evidence/5850/closeout-plan.md",
+        "docs/milestones/v0.92/V092_TERMINAL_CLOSEOUT_PLAN_5850.md"
+      ],
       "invariants": [
         "No tracked work on main",
         "No scope absorption across work packages",
@@ -66,9 +85,9 @@
       ],
       "replan_triggers": [],
       "design_ref": ".csdlc/prepared/issues/5850/design.md",
-      "design_digest": "3c7f044966866c5fb61bb13aa2735abcd08ce9d39a14c4d255b79d4bb4883efb",
+      "design_digest": "2e9351b120a746fac4a1808a7a54d3fac2a647eebb99354e604d546c8eea72f6",
       "diagram_ref": ".csdlc/prepared/issues/5850/diagram.mmd",
-      "diagram_digest": "15132b12a3c504d8ce788b5b27903c542c63c37aea5d51ccc7325d73683d8851"
+      "diagram_digest": "ce44b443126a9cf4b3cc12290861a6bae0cd0d02289d05af13909228de637435"
     }
   }
 }

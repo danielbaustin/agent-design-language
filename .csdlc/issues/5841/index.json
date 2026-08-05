@@ -3,9 +3,9 @@
   "issue": 5841,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1c9f6bcd6c882965b4f63206e47bd8f0328eda71e430debcb67eb87b11bcf889",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "2920c967d30da26251fae0226a04e53d3426496c719bdc294d73bb22fb17f9b8",
+  "phase": "bound",
+  "generation": 8,
+  "digest": "04b365ca6bf00f1d5d5d63446df3426d7614b9afbffb8b33913d94d7cc20158e",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5841/design.md",
   "diagram_path": ".csdlc/prepared/issues/5841/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-quality-release-readiness-design-review",
+      "revision": "02e97b83ffbc6cbdbf4f0aceee8220ce150c9917c2deef715f767fd595935d45"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "2a5977985d7feb6c583c282ed82fd8ce81d85ec3fcf9186deeb690a63fa5fac6",
-      "rendered_digest": "bd8b5d231625b855f9b7a6dcba75d0c9b5d4c7833194d7343f02a7d0f7be5dbd",
-      "ast_digest": "7243987b919ab56bd826ced08bbcff5eea189a3659c94ba231579d56a15585fc"
+      "values_digest": "88098d7064f4426cbc2333b806b286ff32ea69908c69a53a65957702fc08c3d2",
+      "rendered_digest": "a4b5991aeb32bf769372931275cac014d70bef5823c2870dbc253c34a04cc7e9",
+      "ast_digest": "bef612f877177d3ba8340e98db65414bd62eccd3e3721341b88573402c322268"
     },
     "stp": {
-      "values_digest": "3eb39165329dcc0c9bc9b14d0a73c6b3d23b656244ec623862c6e822c62b8158",
-      "rendered_digest": "3f7614dc505bd098a51efa8a4b15591d467ffdc5d4861cc5d193c1ab52824ed4",
-      "ast_digest": "3ed03645c8f0f3d90b09bb6d09f32fc4c6a0e626aeccd79e1983d68151b66896"
+      "values_digest": "dbf75075c445bafd2930dc9b86e6641a08fc446cf7343d9eb6e16f89450ae966",
+      "rendered_digest": "791664dcb33d545ae82bc73b01ad27cea9bb8014e9fd00b2faa45487136ae351",
+      "ast_digest": "ec7ab9c83dd7f77f754fc85a743ddb862a766bba90d90ff62785c4d524b7532d"
     },
     "spp": {
-      "values_digest": "ffc1c6a5cd249b52d52b4ad03a82fbbeffd8c8cc4e01d101fafb861155f3047e",
-      "rendered_digest": "d153b8d50f5cc3843a08574d9944294a06553e559a31b2bb385d8493a84f0e66",
-      "ast_digest": "0a9143bd1814dd7f8d2cd402d1a32f08e1d6228801945016f7ddf2fd66c8a683"
+      "values_digest": "9ca9326df52a4b16ac18403b5601eadae94f7926f4d27254b20838a08f688e4f",
+      "rendered_digest": "c27390682df8a1c0fd19ae9bcd16e8a871f9c92eb973221fa99a61433a1234ce",
+      "ast_digest": "2eaa19e4b10ea8cfd38923bf64444d6d7ff144fec82bc93698aa055868bd9d6a"
     },
     "vpp": {
-      "values_digest": "1eb08f000b635cc40acbfea841f4542a8e9c5764840f9a74142f4e864c3bde72",
-      "rendered_digest": "7697577e2313c01ff6b64533c3d2fd1f1f9d8bdc146964db202495624774a393",
-      "ast_digest": "c13cdf000d1745209231d34880e7c8e1136f2a00069e9a6139baa0c963912b92"
+      "values_digest": "ebee78b23c9e98f68009fb58b7d7c481c09ed1dccd5eb0d0b60cc20d0c9c63a3",
+      "rendered_digest": "4641090bd618e98307a3fbc1718804d15ddaae13b991586e8a22b19e8c8009bd",
+      "ast_digest": "64d87730d8467d583116e7bfb6193a003930c33af5ab20d74a1fb77c85dd8f15"
     },
     "srp": {
-      "values_digest": "b7d6a7898231f5c4c788f9e7ad8b493a60594a8183394fceb0957b666ac99ef3",
-      "rendered_digest": "915aa383d2886c7640fc425e909978c8c0271894d9ae328f3e3cce35bff2d3ef",
-      "ast_digest": "c854a25b10f7f590a3f9ee5fe7e3b9d6e675a0fc782464c76eb162e1185ba56b"
+      "values_digest": "782e159923f8e2620f734bb03c58775cb40f7a0e304e4436beaab25f75b6c51d",
+      "rendered_digest": "168063f7084fabb4b85232a6984b65c5c9c6847542f523e4332c1e923ba9b929",
+      "ast_digest": "3df962446f93ea2eb17b19a4103e5d1740e19bbc21b597477a9cd3b0e98f1e7a"
     },
     "sor": {
-      "values_digest": "bea310c0454262db3f652c3f56359e656c5162d03d8752c19bcc0ab12fee99f6",
+      "values_digest": "ba33041a7a8051f12149ac0332b86d94f0124c67b9dc33ccc0368e88f9f91bf3",
       "rendered_digest": "b149f4e119ec86b9a5b8d437406e06aaf915a40c49f81056d89cc297486e836c",
       "ast_digest": "3d8ab8e31f9073b645cc9bc1c2899591663bd3f328b2565bac43aec80b91e8ec"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,83 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5841-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5841 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-readiness\",\"claim_id\":\"claim-5841-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5841\",\".csdlc/issues/5841\",\".csdlc/locks/5841.lock\",\".csdlc/prepared/issues/5841\"],\"purpose\":\"Prepare and approve issue 5841 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic scope with exact issue-owned preparation and future execution boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Profile the exact post-WP-21 active Rust products and rank ownership, duplication, dependency-direction, size, and test hotspots\",\"Refactor a small exact-file set under one declared owner without changing supported behavior or public contracts\",\"Retain characterization, negative, before/after LoC, dependency, lint, test, platform, and review proof\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Bind the task to current issue, repository, milestone, and predecessor evidence.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"Live issue #5841 and WP-21A rows in docs/milestones/v0.92/WBS_v0.92.md and WP_ISSUE_WAVE_v0.92.yaml\",\"Exact terminal outputs and retained inventory from WP-20 and WP-21\",\"Current manifests, source boundaries, tests, and public APIs in adl-v2, adl-runtime-kernel, and csdlc-v2\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic non-goals with issue-specific exclusions and authority boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Legacy deletion already owned by #5786 or any new v0.92 feature behavior\",\"Broad workspace rewrite, dependency-upgrade campaign, public API redesign, or aesthetic churn\",\"Moving code without reducing responsibility mixing or meaningful duplication\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic acceptance, three-step scaffolding, and diff-only VPP with the complete issue-specific plan.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: WP-20 and WP-21 are merged, terminal, claim-free, ancestral, and the post-deletion hotspot inventory is pinned to the exact execution SHA.\",\"AC-2: Every selected refactor names exact files, current and target owner, behavior invariants, duplication/boundary defect, before/after LoC, and rollback.\",\"AC-3: Characterization and focused positive/negative tests prove no supported language, compiler, engine, runtime, lifecycle, artifact, or error-contract change.\",\"AC-4: The change reduces meaningful responsibility mixing or duplication without widening public APIs, creating an unowned utility, or hiding feature/deletion work.\",\"AC-5: Touched-workspace tests, strict Clippy, formatting, and applicable macOS/Linux CI pass at the exact candidate head.\",\"AC-6: Exact-head independent review has no actionable findings and the closing PR reports unresolved hotspots without claiming broader milestone completion.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify WP-20/WP-21 terminal ancestry and rank post-deletion Rust hotspots from current source evidence.\",\"acceptance_ids\":[\"AC-1\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Select the smallest exact-file set, owners, behavior invariants, metrics, tests, and rollback boundary.\",\"acceptance_ids\":[\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Capture characterization proof and refactor one ownership boundary without public behavior change.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Run focused parity/negative tests, touched-workspace tests, strict Clippy, formatting, metrics, and platform CI.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head review and publish the bounded closing PR with retained inventory and residual hotspots.\",\"acceptance_ids\":[\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"language-compiler-characterization\",\"proof_role\":\"Preserve parser/compiler deterministic identity, diagnostics, limits, and characterization parity.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":5000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-v2/Cargo.toml\",\"-p\",\"adl-language\",\"-p\",\"adl-compiler\"],\"parallel_group\":\"parity\",\"defer_reason\":null},{\"lane\":\"engine-runtime-negative\",\"proof_role\":\"Preserve bounded scheduling, failure/resume, port contracts, and runtime negative behavior for touched owners.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":900,\"budget_tokens\":5000,\"argv\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"adl-v2/Cargo.toml\",\"-p\",\"adl-engine\"],\"parallel_group\":\"parity\",\"defer_reason\":null},{\"lane\":\"strict-rust-quality\",\"proof_role\":\"Prove touched active Rust owners remain warning-free, formatted, and workspace-compatible.\",\"acceptance_ids\":[\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"large\",\"budget_seconds\":1200,\"budget_tokens\":7000,\"argv\":[\"cargo\",\"clippy\",\"--locked\",\"--manifest-path\",\"adl-v2/Cargo.toml\",\"--workspace\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"parallel_group\":\"lint\",\"defer_reason\":null},{\"lane\":\"diff-metrics-platform\",\"proof_role\":\"Validate patch hygiene and retain before/after LoC, dependency, duplication, and required macOS/Linux CI evidence.\",\"acceptance_ids\":[\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"hygiene\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5841\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Make the operative SPP summary issue-specific and executable.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"After WP-21 lands, rebuild the active Rust hotspot inventory, select exact files and invariants, capture characterization proof, refactor one owner at a time, and prove behavior, negative cases, LoC, lint, tests, and platform parity.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Record exact protected-path candidates and require just-in-time narrowing.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"Exact selected files in adl-v2/crates/adl-language, adl-compiler, or adl-engine\",\"Exact selected files in adl-runtime-kernel or csdlc-v2\",\"Only tightly coupled manifests and focused tests\",\".csdlc/evidence/5841\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic review prompts while preserving truthful pre-review state.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does each selected exact-file change reduce a measured ownership or duplication defect without changing supported behavior?\",\"Are characterization, negative, lint, test, LoC, dependency, and platform results current for every touched owner?\",\"Did any public API widen, feature/deletion work hide inside the refactor, or unowned shared utility appear?\",\"Are residual hotspots and rollback boundaries explicit?\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5841-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-preparation-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness\"}"
     }
   ]
 }

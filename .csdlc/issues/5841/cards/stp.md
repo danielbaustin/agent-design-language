@@ -21,11 +21,12 @@ Deliver behavior-preserving simplification of active Rust ownership boundaries, 
 
 ## Acceptance
 
-1. The declared required outcome is complete at the exact reviewed revision
-2. Declared dependencies are verified from current evidence
-3. The named proof surface is reproducible and retained
-4. Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned
-5. One bounded pre-PR review has no unresolved actionable findings
+1. AC-1: WP-20 and WP-21 are merged, terminal, claim-free, ancestral, and the post-deletion hotspot inventory is pinned to the exact execution SHA.
+2. AC-2: Every selected refactor names exact files, current and target owner, behavior invariants, duplication/boundary defect, before/after LoC, and rollback.
+3. AC-3: Characterization and focused positive/negative tests prove no supported language, compiler, engine, runtime, lifecycle, artifact, or error-contract change.
+4. AC-4: The change reduces meaningful responsibility mixing or duplication without widening public APIs, creating an unowned utility, or hiding feature/deletion work.
+5. AC-5: Touched-workspace tests, strict Clippy, formatting, and applicable macOS/Linux CI pass at the exact candidate head.
+6. AC-6: Exact-head independent review has no actionable findings and the closing PR reports unresolved hotspots without claiming broader milestone completion.
 
 ## Dependencies
 
@@ -34,11 +35,12 @@ Deliver behavior-preserving simplification of active Rust ownership boundaries, 
 
 ## Inputs
 
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Live issue #5841 and WP-21A rows in docs/milestones/v0.92/WBS_v0.92.md and WP_ISSUE_WAVE_v0.92.yaml
+- Exact terminal outputs and retained inventory from WP-20 and WP-21
+- Current manifests, source boundaries, tests, and public APIs in adl-v2, adl-runtime-kernel, and csdlc-v2
 
 ## Non Goals
 
-- Adjacent work packages
-- Historical evidence rewriting
-- Unsupported downstream milestone claims
+- Legacy deletion already owned by #5786 or any new v0.92 feature behavior
+- Broad workspace rewrite, dependency-upgrade campaign, public API redesign, or aesthetic churn
+- Moving code without reducing responsibility mixing or meaningful duplication

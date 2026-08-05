@@ -3,9 +3,9 @@
   "issue": 5852,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "af917826983f54ef33a15a08cacf4239502b6469ee09079b0a28f195e9741431",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "109bb41ae2326a9577aafbab69ce713302862f43dcbbb80536b5058851fdedff",
+  "phase": "bound",
+  "generation": 8,
+  "digest": "ea2bd017302bfa1e1c1366ab63977756857056d72632f53c83afb04396963ab9",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5852/design.md",
   "diagram_path": ".csdlc/prepared/issues/5852/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-quality-release-readiness-design-review",
+      "revision": "4605a83c28aba9b74d5d068f61d4afc0d6e3559bf06d825003cef1e0d48a23d5"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "96ced71cdc79474bd89a3fd4cd921eee751aa01c8b339f477c8ff8c8444f9ac8",
-      "rendered_digest": "1eeeb4956f3d2541e81f989144ed4f526166a82ab61edac217b71225be118731",
-      "ast_digest": "abced984e8656b92e28e7582532db0d6190f3a4f5db8f5c32b3918ef26d15e7c"
+      "values_digest": "bca36c3ab8de2968b56c03d9f815eb886cecbe4e9fbae1baf9695751a05ff52a",
+      "rendered_digest": "be5003b662067d5bab91d7c4553fcdd70728fbe6e5de6ee928563a945d5e58e1",
+      "ast_digest": "26f535c6f0bcb09c4857e1b891a69f874f1cf58a6976c6dfe6872ced7d7b0c7b"
     },
     "stp": {
-      "values_digest": "4c38fb81971c650903a74b26eb856399fc7b2269f779b56e60909103408d2318",
-      "rendered_digest": "94e8ef5f3d0024698a2c76a918edc9d1477302deb832e090ff22428007ae42ad",
-      "ast_digest": "cd008c8315b6d0ecfe5b0df6cd2d35f4aaa494c91a35c7a013a928fc76b892fc"
+      "values_digest": "0d66fcf0f7101420fe65cb90ae1d5f868cc4c47b01afd0b433298cf145ec6447",
+      "rendered_digest": "3d396b6e5e1491362ba0f40f6d1f74ccb8d988730770630570ceb3fe9da149d6",
+      "ast_digest": "bea85d5035a0b377f19f1a0f64bf0ef94d0de6185cd8be44a92da1485798ad9a"
     },
     "spp": {
-      "values_digest": "cddefdda91e7d2559206fa41efd252efabb98164069247289373970378179904",
-      "rendered_digest": "43e3bb7694ab17a351a9ed6d8826f5ead0954521732c6654448e1736b11df38a",
-      "ast_digest": "09f551d70f5bf5c4080edce1d9041185a74a5df12fcf6dff372fdf012bab29d0"
+      "values_digest": "0f47e554734e398f1a0444866773f288aa976ba3599d10bc7d3148dcc955eb12",
+      "rendered_digest": "5b6b087e6f2855acb430983a44823d8b80a33ac70c81e1eaea93c62d18d90aee",
+      "ast_digest": "81ea8f416b040a718816855e2eb00563198c6e0943da354fac3f070731db2a76"
     },
     "vpp": {
-      "values_digest": "e87e23db3fc5af6e10dcdf4f15f782eb5db4aecb997d44f31f9829d55ab1dde1",
-      "rendered_digest": "5785cbed50142a54675b10d7f9b92f497ac0218b1dc60ad67d0ba3b2a0f8af36",
-      "ast_digest": "d38e3a3155b4438a5a282478e705d3bb9e2df98c3f2fa8606f220d2852add0d8"
+      "values_digest": "0f230edd36449292d75362ad5fbfd6749360cc86c25af92db1fa8f52c2f627ae",
+      "rendered_digest": "64c49c4614a7fc68af22dc0a1fdbb381e13c1b03ef2b0b40cc61de7a34ebc54f",
+      "ast_digest": "b63781334792418b92fabb308ba388331631ecf517357c40f51aab17f00760b7"
     },
     "srp": {
-      "values_digest": "4b361f91c11b27110e4d41b566b5a449f3752e4217e097698e036da2ee238c75",
-      "rendered_digest": "26dab4778a59c7347ba8daba6b1efe4eb5e9b8b40b6e97ccbda182ea4321e781",
-      "ast_digest": "398f6441b209b74c4ea0b65199ece10f6163f697a308e96af31b7b109dc4964f"
+      "values_digest": "88a7143fd3eabb4a9a6c5b26e1f14002419a453e48c936699ab8225edf40c602",
+      "rendered_digest": "392c586ae21a77ce6717f21c780b03649921cab7ce1faf6b4ec5ee16247652cb",
+      "ast_digest": "75d679dec3b72e6f8b9c263e17f296e2b8bcc2049033e2f66a5a9c30187fc175"
     },
     "sor": {
-      "values_digest": "d61c3a9b53e9dfd7263f1cd5e2f3f21085e2567c0a41400de236d5e0ba17558c",
+      "values_digest": "f3640aaa21e413928d9f6535849e60509400c0b112159677ce4bee08f8bc39ce",
       "rendered_digest": "2cf64595a2dc6c3b25eefd8028717e80ac4fa419fb182cab5d1bf273c16b484f",
       "ast_digest": "e5296f9f599959eaaa052d0feaecd7cfa28ec61756815c3d98807aacebfde812"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,83 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5852-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5852 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-readiness\",\"claim_id\":\"claim-5852-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5852\",\".csdlc/issues/5852\",\".csdlc/locks/5852.lock\",\".csdlc/prepared/issues/5852\"],\"purpose\":\"Prepare and approve issue 5852 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic scope with exact issue-owned preparation and future execution boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Assemble the exact v0.92 release evidence manifest, final release notes/checklist/handoff, and residual-risk/non-claim record\",\"Execute the WP-29-approved split-step tag/release ceremony with identity checks and idempotent recovery\",\"Verify live release artifacts and complete typed issue, sprint, milestone, and handoff closeout\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Bind the task to current issue, repository, milestone, and predecessor evidence.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"Passing terminal WP-29 review and its approved closeout/ceremony sequence\",\"All required terminal child/sprint records, quality/internal/external/remediation evidence, final docs and launch packages\",\"docs/milestones/v0.92/RELEASE_PLAN_v0.92.md, RELEASE_NOTES_v0.92.md, MILESTONE_CHECKLIST_v0.92.md, NEXT_MILESTONE_HANDOFF_v0.92.md, and adl/tools/release_ceremony.sh\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic non-goals with issue-specific exclusions and authority boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Product remediation, evidence invention, or feature completion by tag/release ceremony\",\"Unreviewed network mutation or blind retry of partial/non-idempotent release steps\",\"Activating v0.93 or claiming legal personhood, production governance, consciousness, or unproven delivery\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic acceptance, three-step scaffolding, and diff-only VPP with the complete issue-specific plan.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: WP-29 passed at the exact ancestral SHA; every required child/sprint is terminal and claim-free; the candidate head is clean with green required checks and conflict-free tag/release identity.\",\"AC-2: The release evidence manifest binds every final claim to exact implementation, validation, review, merge, terminal receipt, artifact hash, and residual-risk/non-claim evidence.\",\"AC-3: Final notes, plan, checklist, handoff, launch assets, and evidence links describe landed reviewed behavior only and pass format/link/redaction/claim-boundary checks.\",\"AC-4: Ceremony script tests and dry-run pass at the exact reviewed head; tag push, draft release, publication, and verification execute in the approved order with identity checks before retry.\",\"AC-5: Independent live readback proves annotated tag object/target, release target/state/notes/assets/hashes, and records any partial failure without duplicate mutation.\",\"AC-6: Typed #5852, sprint #5856, and milestone closeout use retained receipts/live release truth, and v0.93 receives the accepted handoff without activation or unsupported claims.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify WP-29 pass, all terminal/claim/check/head/tag/release entry gates, and pin the ceremony candidate SHA.\",\"acceptance_ids\":[\"AC-1\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Assemble and validate the evidence manifest, final notes/plan/checklist/handoff, assets, hashes, risks, and non-claims.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Run focused ceremony script tests and dry-run; resolve exact-head review before merge.\",\"acceptance_ids\":[\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"At the exact merge commit create/push the annotated tag, create/publish the release, and identity-check every retry.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Verify live tag/release/assets, complete typed issue/sprint/milestone closeout, and accept the v0.93 handoff without activation.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"release-evidence-manifest\",\"proof_role\":\"Require every release claim to bind exact implementation, validation, review, merge, terminal receipt, artifact hash, risk, and non-claim evidence.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/release-evidence-manifest.json')); abort 'empty manifest' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'unbound claim' unless r['rows'].all? { |x| %w[claim implementation_ref validation_ref review_ref merge_sha terminal_ref].all? { |k| x[k] } }\"],\"parallel_group\":\"release\",\"defer_reason\":null},{\"lane\":\"ceremony-script-preflight\",\"proof_role\":\"Prove tag/release ordering, identity checks, dry-run behavior, partial-failure recovery, and duplicate-mutation rejection.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":540,\"budget_tokens\":3000,\"argv\":[\"bash\",\"adl/tools/test_release_ceremony.sh\"],\"parallel_group\":\"ceremony\",\"defer_reason\":null},{\"lane\":\"release-identity-negative\",\"proof_role\":\"Reject red checks, active claims, missing receipts/findings, dirty head, tag/release conflict, partial verification, stale assets, and blind retries.\",\"acceptance_ids\":[\"AC-1\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":1500,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5852/ceremony-negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"release-doc-hygiene\",\"proof_role\":\"Validate final notes, plan, checklist, handoff, links, hashes, redaction, claims, and diff hygiene without broad product tests.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":120,\"budget_tokens\":500,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"hygiene\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5852\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Make the operative SPP summary issue-specific and executable.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify WP-29 and all terminal gates, assemble evidence-linked final release artifacts, dry-run and review the ceremony, then at the exact merged commit create/push tag, publish/verify release, recover partial state idempotently, and close typed issue/sprint/milestone truth.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Record exact protected-path candidates and require just-in-time narrowing.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/milestones/v0.92/RELEASE_NOTES_v0.92.md, RELEASE_PLAN_v0.92.md, MILESTONE_CHECKLIST_v0.92.md, and NEXT_MILESTONE_HANDOFF_v0.92.md\",\"docs/milestones/v0.92/V092_RELEASE_CEREMONY_5852.md\",\"adl/tools/release_ceremony.sh and test_release_ceremony.sh only for a separately reviewed preflight defect\",\".csdlc/evidence/5852 plus live tag/release/issue/sprint state\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic review prompts while preserving truthful pre-review state.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every release claim map to exact implementation, validation, review, merge, terminal, artifact, risk, and non-claim evidence?\",\"Are final notes, checklist, handoff, launch assets, and hashes consistent with landed truth only?\",\"Do ceremony tests and the reviewed sequence prevent stale, red, dirty, conflicting, partial, or duplicate network mutation?\",\"Does typed issue/sprint/milestone closeout follow verified release identity without activating v0.93?\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5852-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-preparation-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness\"}"
     }
   ]
 }

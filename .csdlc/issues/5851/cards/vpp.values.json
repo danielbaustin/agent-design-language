@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-29] Next milestone review pass",
     "slug": "v0-92-wp-29-next-milestone-review-pass",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -16,25 +16,82 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-29",
-          "proof_role": "next-milestone review findings and disposition",
+          "lane": "independent-universe-dag-comparison",
+          "proof_role": "Rebuild and compare the expected issue/PR/receipt/claim/worktree/release universe and dependency DAG.",
           "acceptance_ids": [
             "AC-1",
-            "AC-2",
-            "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-2"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 1200,
-          "budget_tokens": 10000,
+          "budget_seconds": 300,
+          "budget_tokens": 3000,
           "argv": [
-            "git",
-            "diff",
-            "--check"
+            "ruby",
+            "-e",
+            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/universe-comparison.json')); abort 'comparison mismatch' unless r['missing'].is_a?(Array) && r['missing'].empty? && r['duplicates'].empty? && r['cycles'].empty? && r['unowned'].empty?"
           ],
-          "parallel_group": "issue-local",
+          "parallel_group": "review",
+          "defer_reason": null
+        },
+        {
+          "lane": "handoff-boundary-review",
+          "proof_role": "Validate v0.93 evidence/blocker/owner/acceptance coverage, candidate status, and governance/security/legal/certification non-claims.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 1500,
+          "argv": [
+            "ruby",
+            "-e",
+            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/handoff-review.json')); abort 'handoff review blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?"
+          ],
+          "parallel_group": "review",
+          "defer_reason": null
+        },
+        {
+          "lane": "closeout-ceremony-negative",
+          "proof_role": "Reject missing/stale/red/active-claim/absent-receipt/dirty/partial/duplicate/premature-closeout and activation scenarios.",
+          "acceptance_ids": [
+            "AC-4",
+            "AC-5",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 180,
+          "budget_tokens": 1500,
+          "argv": [
+            "ruby",
+            "-e",
+            "require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }"
+          ],
+          "parallel_group": "negative",
+          "defer_reason": null
+        },
+        {
+          "lane": "typed-card-doctor",
+          "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "5851"
+          ],
+          "parallel_group": "typed-readback",
           "defer_reason": null
         }
       ],
@@ -42,9 +99,9 @@
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5851/design.md",
-      "design_digest": "621061cd88ad47432d2ba50e04188a3b828cc9984943f9147bca408aacf8ce1b",
+      "design_digest": "c628287fc0ab4ff53142c7a872d39595c10f4950fb60dc50d156a59e0f101aad",
       "diagram_ref": ".csdlc/prepared/issues/5851/diagram.mmd",
-      "diagram_digest": "2e973eee4767365b6ac354bef8b67133d83d7093c0dc05e0250fbf34d683cdfb"
+      "diagram_digest": "684da2a4d408951a88dc77fd84f07952b5e795bb91e83392370c723c1b647bee"
     }
   }
 }

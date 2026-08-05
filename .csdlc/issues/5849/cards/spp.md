@@ -12,38 +12,56 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Consume terminal remediation, inventory the v0.93 candidate corpus, map every prerequisite to exact evidence/blocker/owner/non-claim, reconcile decision-ready candidate planning, validate dependencies and claim boundaries, and hand the reviewed packet to WP-28A.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify WP-27 terminal ancestry and freeze final v0.92 quality/review/remediation inputs.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Inventory the complete v0.93 candidate corpus, dependencies, decisions, stale assumptions, owners, and evidence hooks.",
     "acceptance_ids": [
-      "AC-1",
+      "AC-2",
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Map every prerequisite to exact evidence, blocker, follow-on, or non-claim and reconcile candidate documents.",
+    "acceptance_ids": [
+      "AC-2",
       "AC-3",
       "AC-4"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S4",
+    "action": "Validate formats, links, dependencies, owners, acceptance hooks, redaction, and activation/legal/certification negative boundaries.",
     "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve exact-head docs review and hand the packet to WP-28A.",
+    "acceptance_ids": [
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +91,13 @@ Revision 1
 
 .csdlc/prepared/issues/5849/design.md
 
-Digest: 949bead4dbda33e1f09aa971ae793365ebfed87bd37c43e3baf0089b7f8ed65d
+Digest: e2a54eff73538d18c5b3267dac4ba7b03f92189d08d369c6c5072b89807b47b2
 
 ## Diagram
 
 .csdlc/prepared/issues/5849/diagram.mmd
 
-Digest: 2aa5a8f5ae5eb634870ec6155a04490fd6f7cf3bd78ff632b9cb4b1beaaa20b4
+Digest: 71c4234b11ef676b8124bc3a101e7670f42ee734598fb52da48405843f96b070
 
 ## Stop Conditions
 

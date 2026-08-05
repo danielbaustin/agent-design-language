@@ -1,0 +1,23 @@
+{
+  "issue": 5848,
+  "base_branch": "main",
+  "branch": "codex/5860-quality-release-readiness",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5848-v092-preparation",
+    "owner": "codex:5860-quality-release-readiness",
+    "generation": 1,
+    "acquired_unix_seconds": 1785948749,
+    "expires_unix_seconds": 1786035149,
+    "heartbeat_unix_seconds": 1785948749,
+    "branch": "codex/5860-quality-release-readiness",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/evidence/5848",
+      ".csdlc/issues/5848",
+      ".csdlc/locks/5848.lock",
+      ".csdlc/prepared/issues/5848"
+    ],
+    "purpose": "Prepare and approve issue 5848 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority."
+  }
+}

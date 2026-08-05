@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -16,25 +16,117 @@
       "summary": "Execute the smallest proving validation DAG.",
       "lanes": [
         {
-          "lane": "focused-wp-21a",
-          "proof_role": "exact refactoring inventory, focused behavior parity, Clippy and test proof, before/after LoC, and bounded review",
+          "lane": "language-compiler-characterization",
+          "proof_role": "Preserve parser/compiler deterministic identity, diagnostics, limits, and characterization parity.",
           "acceptance_ids": [
-            "AC-1",
             "AC-2",
             "AC-3",
-            "AC-4",
-            "AC-5"
+            "AC-4"
           ],
           "deterministic": true,
           "resource_profile": "medium",
-          "budget_seconds": 3600,
-          "budget_tokens": 25000,
+          "budget_seconds": 900,
+          "budget_tokens": 5000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-v2/Cargo.toml",
+            "-p",
+            "adl-language",
+            "-p",
+            "adl-compiler"
+          ],
+          "parallel_group": "parity",
+          "defer_reason": null
+        },
+        {
+          "lane": "engine-runtime-negative",
+          "proof_role": "Preserve bounded scheduling, failure/resume, port contracts, and runtime negative behavior for touched owners.",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "medium",
+          "budget_seconds": 900,
+          "budget_tokens": 5000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "adl-v2/Cargo.toml",
+            "-p",
+            "adl-engine"
+          ],
+          "parallel_group": "parity",
+          "defer_reason": null
+        },
+        {
+          "lane": "strict-rust-quality",
+          "proof_role": "Prove touched active Rust owners remain warning-free, formatted, and workspace-compatible.",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 1200,
+          "budget_tokens": 7000,
+          "argv": [
+            "cargo",
+            "clippy",
+            "--locked",
+            "--manifest-path",
+            "adl-v2/Cargo.toml",
+            "--workspace",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "parallel_group": "lint",
+          "defer_reason": null
+        },
+        {
+          "lane": "diff-metrics-platform",
+          "proof_role": "Validate patch hygiene and retain before/after LoC, dependency, duplication, and required macOS/Linux CI evidence.",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 500,
           "argv": [
             "git",
             "diff",
             "--check"
           ],
-          "parallel_group": "issue-local",
+          "parallel_group": "hygiene",
+          "defer_reason": null
+        },
+        {
+          "lane": "typed-card-doctor",
+          "proof_role": "Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-6"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "csdlc-doctor",
+            "--repo",
+            ".",
+            "--issue",
+            "5841"
+          ],
+          "parallel_group": "typed-readback",
           "defer_reason": null
         }
       ],
@@ -42,9 +134,9 @@
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on false completion claims, path collisions, invalid lifecycle state, or missing named proof; preserve a specific blocker instead of degrading.",
       "design_ref": ".csdlc/prepared/issues/5841/design.md",
-      "design_digest": "58bd922890d36380a7c5b9662b8b14c893694ec7daa40653b628305dc28e5eb0",
+      "design_digest": "02e97b83ffbc6cbdbf4f0aceee8220ce150c9917c2deef715f767fd595935d45",
       "diagram_ref": ".csdlc/prepared/issues/5841/diagram.mmd",
-      "diagram_digest": "ca9c051bf8bd7704f80646219715b93d4eadc37615f60fa0ec30992b3de1e7b3"
+      "diagram_digest": "b4df00a4d3d743cffd8848bba7bb5c20d5b4d4641915587f6a72b37044e3c611"
     }
   }
 }

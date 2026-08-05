@@ -16,9 +16,10 @@ WP-25 issue 5846, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-25 scope?
+- Does the frozen packet cover every v0.92 code, docs, test, evidence, lifecycle, demo, launch, and release surface needed for internal review?
+- Did independent specialist lanes inspect actual source/evidence and preserve dissent rather than reviewing only cards?
+- Are severities, findings, routes, duplicates, and residual risks evidence-bound and complete?
+- Is the packet publication-safe, exact-revision fresh, and free of remediation or release overclaim?
 
 ## Findings
 

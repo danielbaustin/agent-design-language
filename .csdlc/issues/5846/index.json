@@ -3,9 +3,9 @@
   "issue": 5846,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "d0065e7d9fbb8473f69e63534eeae8f58389bd4a27a4b49afae9d0861e6984a1",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "6856aa4732731a78ea27042af8caa5bd78c39ee3eac4dc6ddec418baf7df82e2",
+  "phase": "bound",
+  "generation": 8,
+  "digest": "85dae8e5752eb3d0d8424d16617135bf26e44ba9348fe3ce0f90686ab173b724",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5846/design.md",
   "diagram_path": ".csdlc/prepared/issues/5846/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-quality-release-readiness-design-review",
+      "revision": "7be28511edf5fabbe7de29e757547181ac330ac7bb2d8e7fe944656307499294"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "e493e7de018f04fed3d1e3c2a7ca37c8564432455dcc9c790c1f9688064b0886",
-      "rendered_digest": "e0f68889d53b1736b2a4724a3cd0e636865366ec04b3460ad881a81fff83826a",
-      "ast_digest": "e55f4fdcfca7cf091133add2f2027d32530a98e50e818395865194e27fa84adb"
+      "values_digest": "52bb09a0bad826bcfdd379da6262d9f588a27748b278b03f718869e09c60ae3a",
+      "rendered_digest": "6cd37bce55935fd5a84cf16cd466d7529a3016bdb62704134311ff1d7bdc5556",
+      "ast_digest": "573e31d13fc0142925bd07de7ec0ac448a6172d284de2ee6ef2d1387faa241d2"
     },
     "stp": {
-      "values_digest": "6b5cb98fba17ab66c7fc55f3a47739014c795c487d7eeeb2160dd988b18405e8",
-      "rendered_digest": "18adbb79ce22c015afb1b7398467fc62a9ac193f6ca068e72a692ef1813b56aa",
-      "ast_digest": "65f654abf50f2d0cf46af36f8aceae3c9b50adab6f381d81cab461cf285501fd"
+      "values_digest": "c20fb7ef7a2f7574cdd5f8d53d276e434c36344daf1027a40abafe3aa1f5911f",
+      "rendered_digest": "61e6c851841de6927f8186d9b21c7847161e874bdaa03db846a7a115b28c8469",
+      "ast_digest": "fec1f4666c8b1e555336ecc23d198dc82440d1a0201e3cd3cf74b5c1210a3918"
     },
     "spp": {
-      "values_digest": "320c0c47c0d77843d3b00238e3720eceeb07f0665835b35e4bf8067862c6bbca",
-      "rendered_digest": "eb38caf31f10fe74a075a1754a6f4cc36b126a670822a78c3a79ebc8602c1879",
-      "ast_digest": "b3971085d81aa0aa1fe5461c9e7c8a2401d404743a52782be20330e042841ec0"
+      "values_digest": "ae08961150c9c4c9cabd7b3ee11a24874a759577f48a2d59e0a0b3e4f96c7ea2",
+      "rendered_digest": "335af05593cc44e18c81f81e445a1e1ddb93866e41e25486897a6b751484dc2f",
+      "ast_digest": "5b606087f84911fb9d7cbe150abc1f8c3b53aa79680abb6d02d8e4ea19718d6a"
     },
     "vpp": {
-      "values_digest": "0c331b205dc9a5ba3e73c433b3f7340d4fc4a22568bef1d68d856e57024ac629",
-      "rendered_digest": "d2376a5dd5843c97f4095b580bcfc5c23bf474f93b6c982cda7701662929345c",
-      "ast_digest": "ff43897749ed4ee2da6850f1e4154f13f2d85082aab863c754672e059e7db6da"
+      "values_digest": "de7260c8c9e6df29df8d4e33c2dd4cf9fc618cb7fd25fc7fe7fa98a149a63dc1",
+      "rendered_digest": "2a9ae598f889ec647af0b5dd9e708ab935935abd44531b1cba211db7735d7291",
+      "ast_digest": "5bd648c04aa3a38051735fabb532f0d0ef926e8e5fd71271e1217369c7f4eaf1"
     },
     "srp": {
-      "values_digest": "5a1c7289cd314d35b2c063dda996d4b8f602df12c5e1902ac2c6f7a24c148fd3",
-      "rendered_digest": "9696a85b143501d44175892df88d0866d746456f6659de5be1a28bc03be440a1",
-      "ast_digest": "d044e1c2d68d3896a306e5095b72dc23716e88993ffdb4a7aa32e25470d1f0b7"
+      "values_digest": "9c5fa5b791fedc804664a990c9b66229a2458464c96d365519761f350121fff1",
+      "rendered_digest": "17f3ce72e452c2337fd2470fae613acfc802d78f543751a0dc085552a413b0b2",
+      "ast_digest": "fe3633650ad2a11ab99fb402aeff4de2c172664df31c599bf2ccecaf47a99e61"
     },
     "sor": {
-      "values_digest": "56350c56bea951dc12fc3f2c95b9c66e79ff12c4111684e3b2b208f6497d821d",
+      "values_digest": "296bf6c09c25570ab5f066ab8657325ebe8fafcb13b804e40e5eb0741aecebd3",
       "rendered_digest": "5456367d1b905e4048a5b6dddfd7f66065cd8eb7fcaeee76a68c6202c4cbd7ad",
       "ast_digest": "68fb1482d3fcecfb3b9886393111b9bbaba3a074f6e56e8949dfe6d36650f171"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,83 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5846-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5846 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-readiness\",\"claim_id\":\"claim-5846-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5846\",\".csdlc/issues/5846\",\".csdlc/locks/5846.lock\",\".csdlc/prepared/issues/5846\"],\"purpose\":\"Prepare and approve issue 5846 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic scope with exact issue-owned preparation and future execution boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Freeze an exact-revision publication-safe packet after WP-23, WP-24, and WP-24A\",\"Run independent code, architecture, tests/PVF/CI, security, dependency, docs, lifecycle, demo/integration, and release/publication lanes\",\"Publish a findings-first internal report and complete finding register without remediation\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Bind the task to current issue, repository, milestone, and predecessor evidence.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"Passing WP-22 gate; terminal WP-23, WP-24, and WP-24A outputs\",\"Complete v0.92 source, docs, feature, demo, publication, evidence, issue/PR, typed lifecycle, and release corpus\",\"docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md as format precedent only\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic non-goals with issue-specific exclusions and authority boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Fixing findings, dispatching external review, or approving release\",\"Opening one issue per finding or suppressing specialist disagreement\",\"Crediting closed issues, receipts, articles, or podcasts as product acceptance without WP-22 evidence\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic acceptance, three-step scaffolding, and diff-only VPP with the complete issue-specific plan.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: WP-23, WP-24, and WP-24A are merged, terminal, claim-free, ancestral, and the review target/manifest are pinned to one exact SHA.\",\"AC-2: The packet explicitly inventories included, excluded, unknown, local-only, and redacted code, docs, tests, evidence, issues/PRs, demos, launch assets, and release surfaces.\",\"AC-3: Independent specialist lanes cover correctness, architecture, tests/PVF/CI, security/privacy, dependencies, docs/claims, lifecycle/evidence, demos/integration, and release/publication.\",\"AC-4: Every finding has stable ID, evidence, severity, invariant/failure mode, reproduction or proof gap, owner route, and open disposition; duplicates and disagreements remain traceable.\",\"AC-5: Packet digest, revision identity, source coverage, evidence links, redaction/private-path/secret hygiene, and specialist completion validate or the review is blocked.\",\"AC-6: A bounded independent meta-review finds no actionable review-quality gap and the result does not claim remediation, external approval, or release readiness.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify review predecessors and pin target SHA, live issue/PR universe, CI state, source manifest, and digest.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Run the complete bounded specialist lane set over the frozen packet and retain raw lane outputs.\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Synthesize severity-ranked findings by invariant/failure mode while preserving duplicates, provenance, and disagreement.\",\"acceptance_ids\":[\"AC-4\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Validate packet freshness, coverage, links, identities, redaction, secrets, private paths, and lane completion.\",\"acceptance_ids\":[\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve the independent meta-review and publish the internal report/register for WP-26 consumption.\",\"acceptance_ids\":[\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"review-packet-manifest\",\"proof_role\":\"Validate exact target, packet object inventory/digest, issue/PR/typed identity, and included/excluded/unknown/redacted surfaces.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/packet-manifest.json')); abort 'target missing' unless r['target_sha']; abort 'corpus missing' unless r['paths'].is_a?(Array) && !r['paths'].empty?\"],\"parallel_group\":\"packet\",\"defer_reason\":null},{\"lane\":\"specialist-findings-schema\",\"proof_role\":\"Require all specialist lanes and evidence-backed stable findings with explicit disagreement/duplicate accounting.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/findings.json')); abort 'lanes incomplete' unless r['lanes_complete']==true; abort 'bad finding' unless r.fetch('findings',[]).all? { |f| %w[id severity evidence invariant owner disposition].all? { |k| f[k] } }\"],\"parallel_group\":\"findings\",\"defer_reason\":null},{\"lane\":\"review-redaction-negative\",\"proof_role\":\"Reject secrets, private paths, hidden local state, unsupported severities, stale packet identity, and incomplete reviewer lanes.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":1500,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/internal-review-5846/validation.json')); abort 'review validation blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5846\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Make the operative SPP summary issue-specific and executable.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Verify review entry gates, freeze the exact v0.92 packet, run bounded independent specialist lanes, retain and deduplicate evidence-backed findings, validate coverage/redaction/revision identity, and meta-review the final report.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Record exact protected-path candidates and require just-in-time narrowing.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/reviews/v0.92/internal-review-5846\",\"docs/milestones/v0.92/review/V092_INTERNAL_REVIEW_5846.md\",\".csdlc/evidence/5846\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic review prompts while preserving truthful pre-review state.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does the frozen packet cover every v0.92 code, docs, test, evidence, lifecycle, demo, launch, and release surface needed for internal review?\",\"Did independent specialist lanes inspect actual source/evidence and preserve dissent rather than reviewing only cards?\",\"Are severities, findings, routes, duplicates, and residual risks evidence-bound and complete?\",\"Is the packet publication-safe, exact-revision fresh, and free of remediation or release overclaim?\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5846-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-preparation-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness\"}"
     }
   ]
 }

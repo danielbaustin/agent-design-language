@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-23] Docs and release-truth pass",
     "slug": "v0-92-wp-23-docs-and-release-truth-pass",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "pre_phase",
   "content": {
@@ -17,9 +17,10 @@
       "review_revision": null,
       "reviewer": null,
       "review_prompts": [
-        "Does the implementation satisfy the required outcome with real behavior?",
-        "Are dependencies, negative cases, proof, and claim boundaries truthful?",
-        "Did the change remain within WP-23 scope?"
+        "Does every changed canonical statement map to a passing WP-22 evidence row or explicit planned/blocked/non-claim truth?",
+        "Are historical records preserved while stale current ownership, status, issue, command, and link text is corrected?",
+        "Do release-facing surfaces avoid every unsupported birthday, provider, platform, privacy, governance, legal, personhood, consciousness, and v0.93 claim?",
+        "Is any proposed ADR candidate a durable landed decision rather than quota-filling prose?"
       ],
       "findings": [],
       "residual_risk": [],

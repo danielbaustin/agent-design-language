@@ -1,2 +1,10 @@
-flowchart LR
-  I["Issue 5846"] --> D["Design required"]
+flowchart TD
+  A[Verify WP-23 WP-24 WP-24A terminal and ancestral] --> B[Freeze exact review packet and manifest]
+  B --> C[Run code architecture tests security dependency docs lifecycle demo release lanes]
+  C --> D[Retain lane findings and disagreements]
+  D --> E[Synthesize by invariant and failure mode]
+  E --> F[Validate evidence links severity redaction and coverage]
+  F --> G{Packet stale incomplete or unsafe?}
+  G -- Yes --> H[Return blocked review]
+  G -- No --> I[Meta-review report quality]
+  I --> J[Publish findings register for WP-26]

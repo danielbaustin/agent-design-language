@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-29] Next milestone review pass",
     "slug": "v0-92-wp-29-next-milestone-review-pass",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -19,23 +19,25 @@
         "next-milestone review findings and disposition"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "AC-1: WP-28A is merged, terminal, claim-free, ancestral, and its target SHA, packet manifest, issue universe, DAG, and handoff inputs are frozen for review.",
+        "AC-2: An independent reconstruction covers every expected v0.92 issue/PR/receipt/claim/worktree/release row and detects omissions, duplicates, stale identities, cycles, or owner gaps.",
+        "AC-3: The v0.93 handoff has complete evidence/blocker/follow-on/non-claim mapping, owners, acceptance hooks, candidate status, and governance/security/legal/certification boundaries.",
+        "AC-4: Negative scenarios cover missing rows, stale SHAs, red checks, active claims, absent receipts, dirty cleanup, partial/failed release, duplicate retry, premature closeout, and v0.93 activation.",
+        "AC-5: Every review finding has evidence, severity, route, disposition, and revision identity; substantive packet changes require a fresh review.",
+        "AC-6: The exact-head result has no unresolved actionable finding before pass and performs no closeout, ceremony, or activation mutation."
       ],
       "dependencies": [
         "WP-28A"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Terminal WP-28 and WP-28A packets, manifests, exact reviewed heads, and current v0.92 quality/review/remediation evidence",
+        "Live GitHub plus canonical typed issue/PR/SOR/receipt/claim/worktree truth",
+        "Current v0.93 candidate package and handoff prerequisite map"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Product review already owned by WP-25/WP-26 or remediation owned by WP-27",
+        "Merge, finish, cleanup, tag, release, ceremony, sprint closeout, or v0.93 activation",
+        "Approving from packet existence or author self-attestation"
       ]
     }
   }

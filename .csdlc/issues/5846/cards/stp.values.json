@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-25] Internal review",
     "slug": "v0-92-wp-25-internal-review",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -19,11 +19,12 @@
         "internal review packet"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "AC-1: WP-23, WP-24, and WP-24A are merged, terminal, claim-free, ancestral, and the review target/manifest are pinned to one exact SHA.",
+        "AC-2: The packet explicitly inventories included, excluded, unknown, local-only, and redacted code, docs, tests, evidence, issues/PRs, demos, launch assets, and release surfaces.",
+        "AC-3: Independent specialist lanes cover correctness, architecture, tests/PVF/CI, security/privacy, dependencies, docs/claims, lifecycle/evidence, demos/integration, and release/publication.",
+        "AC-4: Every finding has stable ID, evidence, severity, invariant/failure mode, reproduction or proof gap, owner route, and open disposition; duplicates and disagreements remain traceable.",
+        "AC-5: Packet digest, revision identity, source coverage, evidence links, redaction/private-path/secret hygiene, and specialist completion validate or the review is blocked.",
+        "AC-6: A bounded independent meta-review finds no actionable review-quality gap and the result does not claim remediation, external approval, or release readiness."
       ],
       "dependencies": [
         "WP-23",
@@ -31,13 +32,14 @@
         "WP-24A"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Passing WP-22 gate; terminal WP-23, WP-24, and WP-24A outputs",
+        "Complete v0.92 source, docs, feature, demo, publication, evidence, issue/PR, typed lifecycle, and release corpus",
+        "docs/milestones/v0.91.8/review/V0918_INTERNAL_REVIEW_PLAN_5356.md as format precedent only"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Fixing findings, dispatching external review, or approving release",
+        "Opening one issue per finding or suppressing specialist disagreement",
+        "Crediting closed issues, receipts, articles, or podcasts as product acceptance without WP-22 evidence"
       ]
     }
   }

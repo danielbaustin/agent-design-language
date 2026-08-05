@@ -16,9 +16,10 @@ WP-22 issue 5842, its declared implementation paths, and retained proof
 
 ## Prompts
 
-- Does the implementation satisfy the required outcome with real behavior?
-- Are dependencies, negative cases, proof, and claim boundaries truthful?
-- Did the change remain within WP-22 scope?
+- Does the matrix cover every canonical feature and required critical path without omission or duplicate credit?
+- Is every accepted row bound to exact implementation, review, merge, validation, integration, platform, and terminal evidence?
+- Do all prohibited evidence classes and unsupported claims fail closed?
+- Does any unresolved row still allow WP-25 to advance incorrectly?
 
 ## Findings
 

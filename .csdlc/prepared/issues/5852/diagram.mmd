@@ -1,2 +1,13 @@
-flowchart LR
-  I["Issue 5852"] --> D["Design required"]
+flowchart TD
+  A[Verify WP-29 pass all terminal truth clean head and green checks] --> B[Assemble final evidence notes checklist and handoff]
+  B --> C[Run ceremony preflight dry-run and exact-head review]
+  C --> D{Tag or release identity conflicts?}
+  D -- Yes --> X[Block and preserve live state]
+  D -- No --> E[Merge reviewed packet]
+  E --> F[Create and push annotated v0.92 tag]
+  F --> G[Create and publish GitHub release]
+  G --> H[Verify commit tag release notes assets and hashes]
+  H --> I{Partial or mismatched state?}
+  I -- Yes --> X
+  I -- No --> J[Typed issue sprint and milestone closeout]
+  J --> K[Accept v0.93 handoff without activating it]

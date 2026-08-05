@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-26] External / third-party review",
     "slug": "v0-92-wp-26-external-third-party-review",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -16,9 +16,9 @@
       "goal": "Complete WP-26: External / third-party review.",
       "required_outcome": "external review handoff and received review",
       "declared_scope": [
-        "Issue 5847 implementation paths to be narrowed during preparation",
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Prepare and freeze a publication-safe exact-revision third-party review handoff after WP-25",
+        "Dispatch only through an operator-approved reviewer channel with read-only authority and current digest",
+        "Retain the received report unchanged and create a separate complete findings index for WP-27"
       ],
       "authority_boundary": [
         "Issue 5847 owns only WP-26: External / third-party review",

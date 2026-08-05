@@ -12,38 +12,55 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+After WP-20 and the rollback gate, pin the deletion denominator, inventory every legacy owner/reference, close capability gaps, delete in validated ownership bands, prove thin-CLI/runtime/platform parity, and publish exact reduction and exception truth.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify WP-20 terminal ancestry, rollback-window expiry, rollback disposition, selector health, and exact baseline measurement.",
+    "acceptance_ids": [
+      "AC-1"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S2",
+    "action": "Generate the exhaustive legacy and reverse-reference inventory; close or route every missing owner and capability gap.",
     "acceptance_ids": [
       "AC-2"
     ],
     "status": "pending"
   },
   {
-    "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "id": "S3",
+    "action": "Delete one exact ownership band at a time while preserving supported CLI, artifact, trace, failure, and rollback contracts.",
     "acceptance_ids": [
-      "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S4",
+    "action": "Run denominator, parity, negative, clean-install, and macOS/Linux platform proof and restore any failing band.",
     "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Retain exact counts/exceptions, resolve independent review findings, and publish the reviewed closing PR.",
+    "acceptance_ids": [
+      "AC-4",
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +90,13 @@ Revision 1
 
 .csdlc/prepared/issues/5786/design.md
 
-Digest: a8bdc7791a07d9dc6cbc50239115bad292609037e01949282a6c0acd75ee174d
+Digest: a65bea391dd934749955330c81eff121fb2037cf517e491823deeb1bf340f6c2
 
 ## Diagram
 
 .csdlc/prepared/issues/5786/diagram.mmd
 
-Digest: 7e9fec9389fd1fb70076e8ecfe9717199033c94fc3382022268a3e25d0a8e300
+Digest: 713df357faa79f6e7978d40833f7932dcf2dc1e12f5416ab45e6b498c880be0e
 
 ## Stop Conditions
 

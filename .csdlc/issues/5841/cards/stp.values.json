@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-21A] Rust refactoring and maintainability pass",
     "slug": "v0-92-wp-21a-rust-refactoring-and-maintainability-pass",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -19,24 +19,26 @@
         "exact refactoring inventory, focused behavior parity, Clippy and test proof, before/after LoC, and bounded review"
       ],
       "acceptance_criteria": [
-        "The declared required outcome is complete at the exact reviewed revision",
-        "Declared dependencies are verified from current evidence",
-        "The named proof surface is reproducible and retained",
-        "Applicable negative, failure, security, privacy, portability, and claim boundaries are tested or dispositioned",
-        "One bounded pre-PR review has no unresolved actionable findings"
+        "AC-1: WP-20 and WP-21 are merged, terminal, claim-free, ancestral, and the post-deletion hotspot inventory is pinned to the exact execution SHA.",
+        "AC-2: Every selected refactor names exact files, current and target owner, behavior invariants, duplication/boundary defect, before/after LoC, and rollback.",
+        "AC-3: Characterization and focused positive/negative tests prove no supported language, compiler, engine, runtime, lifecycle, artifact, or error-contract change.",
+        "AC-4: The change reduces meaningful responsibility mixing or duplication without widening public APIs, creating an unowned utility, or hiding feature/deletion work.",
+        "AC-5: Touched-workspace tests, strict Clippy, formatting, and applicable macOS/Linux CI pass at the exact candidate head.",
+        "AC-6: Exact-head independent review has no actionable findings and the closing PR reports unresolved hotspots without claiming broader milestone completion."
       ],
       "dependencies": [
         "WP-20",
         "WP-21"
       ],
       "repo_inputs": [
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Live issue #5841 and WP-21A rows in docs/milestones/v0.92/WBS_v0.92.md and WP_ISSUE_WAVE_v0.92.yaml",
+        "Exact terminal outputs and retained inventory from WP-20 and WP-21",
+        "Current manifests, source boundaries, tests, and public APIs in adl-v2, adl-runtime-kernel, and csdlc-v2"
       ],
       "non_goals": [
-        "Adjacent work packages",
-        "Historical evidence rewriting",
-        "Unsupported downstream milestone claims"
+        "Legacy deletion already owned by #5786 or any new v0.92 feature behavior",
+        "Broad workspace rewrite, dependency-upgrade campaign, public API redesign, or aesthetic churn",
+        "Moving code without reducing responsibility mixing or meaningful duplication"
       ]
     }
   }

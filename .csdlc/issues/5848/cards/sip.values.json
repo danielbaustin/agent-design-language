@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-27] Review findings remediation",
     "slug": "v0-92-wp-27-review-findings-remediation",
     "version": "v0.92",
-    "generation": 0
+    "generation": 8
   },
   "status": "ready",
   "content": {
@@ -16,9 +16,9 @@
       "goal": "Complete WP-27: Review findings remediation.",
       "required_outcome": "finding dispositions and remediation PRs",
       "declared_scope": [
-        "Issue 5848 implementation paths to be narrowed during preparation",
-        "docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml",
-        "docs/milestones/v0.92/WBS_v0.92.md"
+        "Freeze and reconcile the complete WP-25 and WP-26 finding universe",
+        "Group findings into exact owner-aligned remediation slices with positive, negative, platform/security/privacy, rollback, review, and merge proof",
+        "Retain one canonical disposition row per finding and block WP-28 while any actionable item is open or unproven"
       ],
       "authority_boundary": [
         "Issue 5848 owns only WP-27: Review findings remediation",

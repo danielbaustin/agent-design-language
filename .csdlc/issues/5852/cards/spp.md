@@ -12,38 +12,55 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify WP-29 and all terminal gates, assemble evidence-linked final release artifacts, dry-run and review the ceremony, then at the exact merged commit create/push tag, publish/verify release, recover partial state idempotently, and close typed issue/sprint/milestone truth.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify WP-29 pass, all terminal/claim/check/head/tag/release entry gates, and pin the ceremony candidate SHA.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Assemble and validate the evidence manifest, final notes/plan/checklist/handoff, assets, hashes, risks, and non-claims.",
     "acceptance_ids": [
-      "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Run focused ceremony script tests and dry-run; resolve exact-head review before merge.",
     "acceptance_ids": [
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "At the exact merge commit create/push the annotated tag, create/publish the release, and identity-check every retry.",
+    "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Verify live tag/release/assets, complete typed issue/sprint/milestone closeout, and accept the v0.93 handoff without activation.",
+    "acceptance_ids": [
+      "AC-5",
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +90,13 @@ Revision 1
 
 .csdlc/prepared/issues/5852/design.md
 
-Digest: 2aba5885b6345c3e9f71cf8f720b8cfb41f26e61b0b9c4bb0a2a0e1058afe1e0
+Digest: 4605a83c28aba9b74d5d068f61d4afc0d6e3559bf06d825003cef1e0d48a23d5
 
 ## Diagram
 
 .csdlc/prepared/issues/5852/diagram.mmd
 
-Digest: b73328d4b8db56c8793d93c6bb6d4916ced566873a6b035055de8c67779d41c4
+Digest: 6457d352e4b029f960adb90912d556e38a0a16ac88e9c3712435b72c47bcc647
 
 ## Stop Conditions
 

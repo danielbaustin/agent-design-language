@@ -1,2 +1,9 @@
-flowchart LR
-  I["Issue 5851"] --> D["Design required"]
+flowchart TD
+  A[Verify WP-28A terminal and freeze packet] --> B[Independently rebuild issue universe and DAG]
+  B --> C[Compare terminal and ceremony sequence]
+  C --> D[Review v0.93 evidence owners acceptance and non-claims]
+  D --> E[Exercise missing stale active-claim dirty and failed-release cases]
+  E --> F[Record severity findings and routes]
+  F --> G{Actionable findings resolved at current SHA?}
+  G -- No --> H[Changes required and fresh review]
+  G -- Yes --> I[Publish exact-head pass for WP-30]

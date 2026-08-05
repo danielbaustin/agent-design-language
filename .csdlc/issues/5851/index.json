@@ -3,9 +3,9 @@
   "issue": 5851,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "1c65d63dcfb7c628b911d1171ec521d35dd85521a1615f401d78c4cada4e556d",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "1e1e8d514b3a2aea3ff744920223939833e33c612be7b8eeb3c4d47260d88ec5",
+  "phase": "bound",
+  "generation": 8,
+  "digest": "6de2eb7e8fc7d32881827c712d3b59cd57bc44964cafb4f47fcd920ded6e4804",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5851/design.md",
   "diagram_path": ".csdlc/prepared/issues/5851/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-quality-release-readiness-design-review",
+      "revision": "c628287fc0ab4ff53142c7a872d39595c10f4950fb60dc50d156a59e0f101aad"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "41e8ba2dc2c7515c0cd5897c1a33f092403ef300562553b51a8d55d9425eeafa",
-      "rendered_digest": "0a0209b3dd54dd684f6f1caa5812a41a6062ac8ae1565a0d2be26aafbddea364",
-      "ast_digest": "c6bc1c3c796cc542a6ac6f6ad8b531a13cce70b9638dc34f4e5234852f5d2466"
+      "values_digest": "d82741b484d93f8d6daf392214fbf3bee12f2566ae8995153cda1b9a7dec999d",
+      "rendered_digest": "ea113d6c683170cbba996358a5c2f6d4e42a4817b3a5097392084e9e8753e9de",
+      "ast_digest": "caf532389527629fca22fdc88077b6888859217d801367094adb5de6e3446a49"
     },
     "stp": {
-      "values_digest": "4d074bc89a8cf2f522c73cd0c47b83272638332f8949c5cc8ad096d01545349c",
-      "rendered_digest": "c3cf7f44e7a67db40dff4de90ca277814ce6631e8bd63b0e79daf6ac217ba2b3",
-      "ast_digest": "0f9dfc5faab0b7530835adc7c4ce230955ac7f512c3e771042d6ad8b56d4404f"
+      "values_digest": "3c7563cff9fffc5d47a7a2efdf0d76248d9e8303604c253eff8baf7a07bff132",
+      "rendered_digest": "fdafcfa4792e9d14cd5e18454dd8b913bd1fb4400fbdeaf2c31c446fa8ae9891",
+      "ast_digest": "e956bca68fce0ef8f5a4c72719564eb0b312c3828670f356bacb7cc9c2d237e0"
     },
     "spp": {
-      "values_digest": "2636c94e5ef876206e4aff59d15143d24eabe5f8cf58276ccd207fc23b3c987b",
-      "rendered_digest": "5440805faa7e99f1bfecbb0d526423edf9b3ec848696f629d5e36eec607bf713",
-      "ast_digest": "98992457bcd99da503a98cdaf6f29678f3c4ba215d843d3c6a926f2d7adb7280"
+      "values_digest": "facbb5da85c9ad6763df1c12e275d3447350e18ff14ed8a2eb53f26242a786f5",
+      "rendered_digest": "f0f8f3a561ad9bf5260cf87ee9e98577801a2a9abdba46c56314a01762c8d263",
+      "ast_digest": "71af960682308abfea86d6277c405d52e0056ebc952587080da4a82f3536776a"
     },
     "vpp": {
-      "values_digest": "f568513c9e4ca4e3f592842f6ff612d563549157afa771684ab23d33e7225ef5",
-      "rendered_digest": "d0c1ef96c353f75d730b6e133b1b6cdd6b58fe6c238dd57b25f8d5bc424dd8b6",
-      "ast_digest": "2c2b13f79c09fccfe11f7505817abf448cca1c93f59c70d2c0aaa7d2204ad17a"
+      "values_digest": "d0a9485e57bdc9329c4a3daa89fc01983c1fc4f70abb3cc2e6bd5270572957cc",
+      "rendered_digest": "00ec6caee4edbea4847c74e0c071074696546b656911a6e0c899891bebe6e5ea",
+      "ast_digest": "5214aeb9d734257f5a8e6954ffab5e7b689ce628693a6633a703ac7a7641c593"
     },
     "srp": {
-      "values_digest": "d96a7a413633f7bdaba48a4baa1ae78dd3b7af57b567536ff39d3d0386a2df81",
-      "rendered_digest": "81dca8d7636c145f9515e36e2149705590c00dbc0aa9033ff6efbaa47ed7aa95",
-      "ast_digest": "6312c2d0e839c821518f842afd049665e90939e804ec735e95f709c9a65a4b12"
+      "values_digest": "8bbbab673f3882c210ea784c87884e700aa608e5be1e715f1143a9505c2b30bf",
+      "rendered_digest": "fe236a0e8b3846da855ea05f672f1531f9dc6cd0c5848f9dd44e1814088fc780",
+      "ast_digest": "462789fcf15f882db57b467bd4f2eefe89336419502104bdece9b788bae8d4b2"
     },
     "sor": {
-      "values_digest": "87ce3e2d6bd61cf8b886631992503b3a8d175f028b23d11feb6a5360c689e26d",
+      "values_digest": "0d814d0aaf2374ee1f6814505c56780339c1dd35f2a3e5aca98994ed8385d92b",
       "rendered_digest": "3fa1033ef6063f1a11912cbe289b8051a47c359d66d7b0167a239a05c3f67eec",
       "ast_digest": "1a3b3b6cc014cce10e8ce5836d2b9535fd23e00a1ba729de1ba8d98c7e081553"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,83 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5851-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5851 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-readiness\",\"claim_id\":\"claim-5851-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5851\",\".csdlc/issues/5851\",\".csdlc/locks/5851.lock\",\".csdlc/prepared/issues/5851\"],\"purpose\":\"Prepare and approve issue 5851 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic scope with exact issue-owned preparation and future execution boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Independently review the WP-28 handoff and WP-28A universe/closeout sequence at one exact revision\",\"Rebuild the expected universe/DAG and test v0.93 evidence, owners, acceptance, non-claims, and terminal/ceremony negative scenarios\",\"Publish findings and a pass/changes-required/blocked disposition for WP-30 without mutation\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Bind the task to current issue, repository, milestone, and predecessor evidence.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"Terminal WP-28 and WP-28A packets, manifests, exact reviewed heads, and current v0.92 quality/review/remediation evidence\",\"Live GitHub plus canonical typed issue/PR/SOR/receipt/claim/worktree truth\",\"Current v0.93 candidate package and handoff prerequisite map\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic non-goals with issue-specific exclusions and authority boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Product review already owned by WP-25/WP-26 or remediation owned by WP-27\",\"Merge, finish, cleanup, tag, release, ceremony, sprint closeout, or v0.93 activation\",\"Approving from packet existence or author self-attestation\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic acceptance, three-step scaffolding, and diff-only VPP with the complete issue-specific plan.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: WP-28A is merged, terminal, claim-free, ancestral, and its target SHA, packet manifest, issue universe, DAG, and handoff inputs are frozen for review.\",\"AC-2: An independent reconstruction covers every expected v0.92 issue/PR/receipt/claim/worktree/release row and detects omissions, duplicates, stale identities, cycles, or owner gaps.\",\"AC-3: The v0.93 handoff has complete evidence/blocker/follow-on/non-claim mapping, owners, acceptance hooks, candidate status, and governance/security/legal/certification boundaries.\",\"AC-4: Negative scenarios cover missing rows, stale SHAs, red checks, active claims, absent receipts, dirty cleanup, partial/failed release, duplicate retry, premature closeout, and v0.93 activation.\",\"AC-5: Every review finding has evidence, severity, route, disposition, and revision identity; substantive packet changes require a fresh review.\",\"AC-6: The exact-head result has no unresolved actionable finding before pass and performs no closeout, ceremony, or activation mutation.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify WP-28A terminal ancestry and freeze the exact packet manifest, universe, DAG, and handoff inputs.\",\"acceptance_ids\":[\"AC-1\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Independently rebuild the expected universe/DAG and compare omissions, duplicates, stale identities, cycles, and owner gaps.\",\"acceptance_ids\":[\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Review v0.93 prerequisite evidence, candidate status, owners, acceptance hooks, and governance/security/legal non-claims.\",\"acceptance_ids\":[\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Exercise terminal, cleanup, ceremony, retry, and premature-activation negative scenarios and record findings.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve actionable findings at the current SHA and publish the exact-head result for WP-30.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"independent-universe-dag-comparison\",\"proof_role\":\"Rebuild and compare the expected issue/PR/receipt/claim/worktree/release universe and dependency DAG.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/universe-comparison.json')); abort 'comparison mismatch' unless r['missing'].is_a?(Array) && r['missing'].empty? && r['duplicates'].empty? && r['cycles'].empty? && r['unowned'].empty?\"],\"parallel_group\":\"review\",\"defer_reason\":null},{\"lane\":\"handoff-boundary-review\",\"proof_role\":\"Validate v0.93 evidence/blocker/owner/acceptance coverage, candidate status, and governance/security/legal/certification non-claims.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":1500,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/handoff-review.json')); abort 'handoff review blockers' unless r['blockers'].is_a?(Array) && r['blockers'].empty?\"],\"parallel_group\":\"review\",\"defer_reason\":null},{\"lane\":\"closeout-ceremony-negative\",\"proof_role\":\"Reject missing/stale/red/active-claim/absent-receipt/dirty/partial/duplicate/premature-closeout and activation scenarios.\",\"acceptance_ids\":[\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":1500,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('.csdlc/evidence/5851/negative-cases.json')); abort 'negative case escaped' unless r['cases'].is_a?(Array) && r['cases'].all? { |x| x['outcome']=='blocked' }\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5851\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Make the operative SPP summary issue-specific and executable.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Freeze the WP-28A packet, independently rebuild and compare its universe/DAG, review v0.93 evidence/owners/non-claims, exercise terminal and ceremony negatives, record evidence-backed findings, and publish an exact-head disposition for WP-30.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Record exact protected-path candidates and require just-in-time narrowing.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/reviews/v0.92/next-milestone-review-5851\",\"docs/milestones/v0.92/review/V092_NEXT_MILESTONE_REVIEW_5851.md\",\".csdlc/evidence/5851\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic review prompts while preserving truthful pre-review state.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does the independent universe/DAG reconstruction match WP-28A with no missing, duplicate, stale, cyclic, or unowned row?\",\"Is the v0.93 handoff evidence-complete, candidate-only, owner-bound, and explicit about governance/security/legal/certification non-claims?\",\"Do terminal, cleanup, release, retry, and activation failure scenarios block correctly?\",\"Are all findings resolved at the exact reviewed SHA without performing WP-30 work?\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5851-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-preparation-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness\"}"
     }
   ]
 }

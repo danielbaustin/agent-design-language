@@ -1,2 +1,12 @@
-flowchart LR
-  I["Issue 5847"] --> D["Design required"]
+flowchart TD
+  A[Verify WP-25 terminal and consume findings] --> B[Build publication-safe source manifest]
+  B --> C[Redact and compute exact packet digest]
+  C --> D{Links claims identity and authority valid?}
+  D -- No --> X[Block dispatch]
+  D -- Yes --> E[Freeze and operator-authorize packet]
+  E --> F[Dispatch to read-only reviewer]
+  F --> G{Packet changed or report missing?}
+  G -- Yes --> X
+  G -- No --> H[Retain received report without rewriting]
+  H --> I[Normalize separate findings index]
+  I --> J[Route actionable findings to WP-27]

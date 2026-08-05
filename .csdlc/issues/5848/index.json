@@ -3,9 +3,9 @@
   "issue": 5848,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "69a605466990518758a56adab5fead02f83654418b6259dd24bf8dedd0eea706",
-  "phase": "initialized",
-  "generation": 0,
-  "digest": "c9f90bf59f60a4c6fe5b3e970ebb2b5e41bfd7623a3949e88ca4bc9e1f0abac4",
+  "phase": "bound",
+  "generation": 8,
+  "digest": "bce042b42a810ef18119f06927daf700c5422efdbc382e292004d1adf15f1b9a",
   "claim": null,
   "review_assignment": null,
   "review": null,
@@ -15,40 +15,60 @@
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5848/design.md",
   "diagram_path": ".csdlc/prepared/issues/5848/diagram.mmd",
-  "design_review": "pending",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:5860-quality-release-readiness-design-review",
+      "revision": "fe35997745ec728a3c1c992656c895117780f7617fa6f2309aa95b767a78fe1f"
+    }
+  },
   "cards": {
     "sip": {
-      "values_digest": "312fd020a6cb1adc225896040925662452a6eb12ac7345465ea45a545a64a748",
-      "rendered_digest": "60941c25576f83204b81c186dd4a58b97cf2a1651988e5fc136cd167ec2d34a2",
-      "ast_digest": "9b32ae5574ab919b078ef2358843f92fb51119865c1f38e69d822005e5a582e9"
+      "values_digest": "df16ac150743b5b24972e1303b9e54726111065c8b5a932d33a4bc7bed383e9a",
+      "rendered_digest": "57553018413d1e53730ae046f86e3db6a662e4ca6d427dc6a7d1ad39bc3c4bef",
+      "ast_digest": "7716faec8e7b9690b06f9a935565070da003f2dc28b16f2bcd16a6da6a3d5670"
     },
     "stp": {
-      "values_digest": "b97a41158b38c70dbd7b8309ef6214f6d3a78a79f8283e6bf129eefe5ca3d724",
-      "rendered_digest": "8eb1eb506f4d919915d69723b84b2649a951fd6dfe53a427551a4f6abd02fd96",
-      "ast_digest": "96e1c683d0e67bcbfc665edaf0ceb645e81e6167de62b815bbb3a4e961dca98c"
+      "values_digest": "74b934325456432f095cc0536a1779182e1e40ee984fa2aef6eaf70af8c5e834",
+      "rendered_digest": "62692be2f2662069e59d41462ef02224e8b26ef395cfea37847c9667436cd9d2",
+      "ast_digest": "1e7ddef8b46642156aa8a1eaa2e5c3b454b2fd785a6e7d8f1bdb5dd9fb6edc9a"
     },
     "spp": {
-      "values_digest": "da49f5d610ee7c213b9ac5b6de50f737b0ce6c6d127482ec66060b25ba28201b",
-      "rendered_digest": "aa5d0a1f35c4417d19de8aa27b5fd0d3fedf6bc7303f16f342610e09d9964f5d",
-      "ast_digest": "2adb8d6169ed33ff1a2ffd47379996db610ff554fee80fc8c68e73de6a402727"
+      "values_digest": "c85cbbd4e9d3e80e1151a3ffca98e185b7f69433219b0a987cc4c9504f9095cd",
+      "rendered_digest": "99ccea7c7bc0d88dcc759f0554429da97f380c14ee16b04acf2500170844bd52",
+      "ast_digest": "8380cd3d4f8ca13bde60cd4d8dd9a0d2d0375de9b0d6ea36fadcc4b4824d320a"
     },
     "vpp": {
-      "values_digest": "2954880af41bfffdd9bafc906a5b0186e4d7aee1702f6f74ef31ca943deeb26c",
-      "rendered_digest": "21fa6b9afcee9b8f7c0a418cfd62d7752617665460b490277719f8baea709f81",
-      "ast_digest": "c92614a66a576e97ca0dbfac252c9e04d780b7406849a431406b6e0543eb5e7e"
+      "values_digest": "08a4f98a7d4b38190802e6af80dace22c55600a224953574f8ade49a11f2748a",
+      "rendered_digest": "c7b163a342de1a7df9f2b1680be31fb63cb59a5ea27f648a284b9a53a236d751",
+      "ast_digest": "cfe8b3d95253d98ca8ee9a69b7b32355afe3002bbc441b1c07fa411c0238c1c4"
     },
     "srp": {
-      "values_digest": "a86df971807c530064910711b9d27211bb662d5af8d7314db4fe3d8fa898797e",
-      "rendered_digest": "58614f3321847019b760e074167843ff4695846315e4b18bfafd39773f245d87",
-      "ast_digest": "fa1fe3dfa3e705d6b5aeb547e6e47e2c299de2b92b2bd47a7570e439192c466b"
+      "values_digest": "b9e84285694db4d1e7730f7435e61b48593f4ef5b43f07788c570d4fcfdeca45",
+      "rendered_digest": "f7f0ac3dd3482ccdab08d2c40e3a02f052b0221f954239286fffeea33449b185",
+      "ast_digest": "645c5acb2dccd328e223318c9039a381a9187d7f74906ab06dc551ec98a402c3"
     },
     "sor": {
-      "values_digest": "3408a9c0beddbab3037f1951b647a34823c9de6c768cb666132fea085d8138da",
+      "values_digest": "4adebb56e603ed27837745185aaa626021e592f3e0c0b3feaa11e5d56bbfab47",
       "rendered_digest": "535b23834e603c108923eedc9139539d3c8b58cfe8c56f7f618e0a0caa0ad499",
       "ast_digest": "a36cb1ad0b507a85eb65bb837e1210d9448f98d6983ecc611954df1573648130"
     }
   },
-  "transitions": [],
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "verified Git worktree binding"
+    }
+  ],
   "audit": [
     {
       "sequence": 1,
@@ -63,6 +83,83 @@
       "actor": "codex:5817",
       "reason": "Revoke WP-01 bootstrap-only preparation reservation so issue 5817 can own and review every path it publishes; the child session must reacquire its issue-local claim after WP-01 releases.",
       "operation": "{\"claim_id\":\"claim-5848-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-wp01-publication-ownership\",\"previous_owner\":\"wp01:issue-wave-preparation\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Reacquire the exact released WP-01 preparation claim to make issue 5848 design-time execution-ready without product implementation, publication, push, merge, or closeout.",
+      "operation": "{\"branch\":\"codex/5860-quality-release-readiness\",\"claim_id\":\"claim-5848-v092-preparation\",\"operation\":\"reacquire_claim\",\"owner\":\"codex:5860-quality-release-readiness\",\"previous_claim_id\":null,\"previous_owner\":null,\"protected_paths\":[\".csdlc/evidence/5848\",\".csdlc/issues/5848\",\".csdlc/locks/5848.lock\",\".csdlc/prepared/issues/5848\"],\"purpose\":\"Prepare and approve issue 5848 design and typed cards only; no product behavior, shared milestone docs, PR, push, merge, or closeout authority.\",\"worktree\":\".\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 6,
+      "generation": 2,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic scope with exact issue-owned preparation and future execution boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"declared_scope\",\"values\":[\"Freeze and reconcile the complete WP-25 and WP-26 finding universe\",\"Group findings into exact owner-aligned remediation slices with positive, negative, platform/security/privacy, rollback, review, and merge proof\",\"Retain one canonical disposition row per finding and block WP-28 while any actionable item is open or unproven\"]}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Bind the task to current issue, repository, milestone, and predecessor evidence.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"repo_inputs\",\"values\":[\"Terminal WP-25 internal register and WP-26 received report/findings index\",\"Exact reviewed source revisions, current affected owners, and live issue/PR/typed state\",\"Current WP-22 matrix rows and release-facing claims affected by each remediation\"]}"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic non-goals with issue-specific exclusions and authority boundaries.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"non_goals\",\"values\":[\"Suppressing, renumbering, or blanket-accepting reviewer findings\",\"Unrelated cleanup, milestone replanning, or release ceremony\",\"Claiming that an opened PR, intent, or unreviewed patch is a fixed disposition\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic acceptance, three-step scaffolding, and diff-only VPP with the complete issue-specific plan.",
+      "operation": "{\"operation\":\"replace_acceptance_plan\",\"acceptance_criteria\":[\"AC-1: Every WP-25/WP-26 finding appears exactly once in the canonical universe with source ID/reviewer, severity, evidence, invariant, owner, scope decision, and current disposition.\",\"AC-2: Deduplication preserves all provenance and disagreement; each actionable item has the smallest coherent owner-aligned slice, exact paths, acceptance, negative cases, rollback, and dependency gate.\",\"AC-3: Every fixed disposition names exact fix head, proving validation, exact-head review, PR, merge, affected platform/security/privacy lanes, and updated WP-22/release-claim evidence.\",\"AC-4: Out-of-scope routes name a real follow-on owner; accepted risk has explicit operator authority and residual evidence; no finding disappears through rewording.\",\"AC-5: The disposition register and live issue/PR/typed readback reject stale, open, unmerged, unreviewed, failed, missing-proof, or unauthorized-risk rows.\",\"AC-6: One exact-head review finds no actionable disposition gap and WP-28 remains blocked until all actionable rows are proven fixed or authoritatively routed.\"],\"steps\":[{\"id\":\"S1\",\"action\":\"Verify WP-26 terminal ancestry and freeze the complete internal/external finding universe.\",\"acceptance_ids\":[\"AC-1\"],\"status\":\"pending\"},{\"id\":\"S2\",\"action\":\"Deduplicate only identical failure modes, preserve provenance/disagreement, and assign exact owner-aligned remediation slices.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\"],\"status\":\"pending\"},{\"id\":\"S3\",\"action\":\"Implement each slice through its owner lifecycle with focused positive/negative, rollback, and required platform/security/privacy proof.\",\"acceptance_ids\":[\"AC-2\",\"AC-3\"],\"status\":\"pending\"},{\"id\":\"S4\",\"action\":\"Record exact fix/review/PR/merge identity, re-run affected WP-22 rows, and reconcile release-facing claims.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\"],\"status\":\"pending\"},{\"id\":\"S5\",\"action\":\"Resolve exact-head disposition review and block or release WP-28 truthfully.\",\"acceptance_ids\":[\"AC-5\",\"AC-6\"],\"status\":\"pending\"}],\"validation_lanes\":[{\"lane\":\"finding-universe-disposition\",\"proof_role\":\"Require complete provenance-preserving rows and exact owner, scope, disposition, evidence, fix/review/PR/merge fields where applicable.\",\"acceptance_ids\":[\"AC-1\",\"AC-2\",\"AC-3\",\"AC-4\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":3000,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/dispositions.json')); abort 'empty finding universe' unless r['rows'].is_a?(Array) && !r['rows'].empty?; abort 'incomplete row' unless r['rows'].all? { |x| %w[id source severity evidence owner disposition].all? { |k| x[k] } }\"],\"parallel_group\":\"disposition\",\"defer_reason\":null},{\"lane\":\"open-stale-unauthorized-negative\",\"proof_role\":\"Reject open actionable, stale fix/review SHA, unmerged, failed, missing-proof, unowned follow-on, or unauthorized accepted-risk rows.\",\"acceptance_ids\":[\"AC-3\",\"AC-4\",\"AC-5\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":180,\"budget_tokens\":1500,\"argv\":[\"ruby\",\"-e\",\"require 'json'; r=JSON.parse(File.read('docs/reviews/v0.92/remediation-5848/validation.json')); abort 'remediation blockers remain' unless r['blockers'].is_a?(Array) && r['blockers'].empty?\"],\"parallel_group\":\"negative\",\"defer_reason\":null},{\"lane\":\"affected-quality-regression\",\"proof_role\":\"Re-run every affected WP-22 row and release-facing claim check at each exact merged remediation revision.\",\"acceptance_ids\":[\"AC-3\",\"AC-5\"],\"deterministic\":true,\"resource_profile\":\"medium\",\"budget_seconds\":300,\"budget_tokens\":2000,\"argv\":[\"git\",\"diff\",\"--check\"],\"parallel_group\":\"regression\",\"defer_reason\":null},{\"lane\":\"typed-card-doctor\",\"proof_role\":\"Validate the exact rendered six-card bundle, cross-card references, digests, statuses, and canonical issue record.\",\"acceptance_ids\":[\"AC-1\",\"AC-6\"],\"deterministic\":true,\"resource_profile\":\"small\",\"budget_seconds\":60,\"budget_tokens\":1000,\"argv\":[\"csdlc-doctor\",\"--repo\",\".\",\"--issue\",\"5848\"],\"parallel_group\":\"typed-readback\",\"defer_reason\":null}]}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Make the operative SPP summary issue-specific and executable.",
+      "operation": "{\"field\":\"plan_summary\",\"new_value\":\"Freeze the complete review-finding universe, preserve provenance while deduplicating true duplicates, assign exact owner-aligned fix slices, validate and review each fix, reconcile exact PR/merge/quality-gate truth, and block downstream planning until every actionable item is proven.\",\"operation\":\"replan\",\"previous_value\":\"Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Record exact protected-path candidates and require just-in-time narrowing.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"affected_areas\",\"values\":[\"docs/reviews/v0.92/remediation-5848 and .csdlc/evidence/5848\",\"Exact implementation, test, docs, or workflow files assigned by the frozen finding-to-owner map\",\"Exact release-facing docs whose claims change after a proven fix\"]}"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Replace generic review prompts while preserving truthful pre-review state.",
+      "operation": "{\"operation\":\"replace_planning_collection\",\"field\":\"review_prompts\",\"values\":[\"Does every internal and external finding retain provenance, evidence, severity, owner, scope decision, and one truthful disposition?\",\"Are remediation slices narrowly owner-aligned with exact positive, negative, rollback, and platform/security/privacy proof?\",\"Does every fixed row name exact validated, reviewed, merged identity and updated quality/release evidence?\",\"Could any open, stale, unproven, unowned, or unauthorized-risk row incorrectly release WP-28?\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex:5860-quality-release-readiness",
+      "reason": "Release the temporary preparation-only binding after exact-digest design approval and typed card rendering so the implementation session can reacquire authority just in time.",
+      "operation": "{\"claim_id\":\"claim-5848-v092-preparation\",\"operation\":\"revoke_active_claim\",\"operator_authority\":\"operator:daniel-5860-preparation-completion\",\"previous_owner\":\"codex:5860-quality-release-readiness\"}"
     }
   ]
 }

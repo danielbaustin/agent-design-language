@@ -12,38 +12,55 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Verify WP-25, build and redact the exact packet manifest, compute/freeze its digest, validate reviewer authority and claims, dispatch with operator approval, reject stale/missing output, and retain the received report plus routed findings index.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify WP-25 terminal ancestry and resolve entry blockers to a coherent external-review packet.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Build/redact the exact source manifest, normalized handoff metadata, digest, reviewer authority, questions, and return schema.",
     "acceptance_ids": [
-      "AC-1",
+      "AC-2",
+      "AC-3"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S3",
+    "action": "Validate and freeze the packet, obtain operator dispatch authorization, and record truthful send state.",
+    "acceptance_ids": [
       "AC-3",
       "AC-4"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S4",
+    "action": "Reject stale or missing output; retain the received reviewer report unchanged and index every finding for WP-27.",
     "acceptance_ids": [
+      "AC-4",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve exact-head review and publish the closing packet without release or remediation authority.",
+    "acceptance_ids": [
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +90,13 @@ Revision 1
 
 .csdlc/prepared/issues/5847/design.md
 
-Digest: 5933181c50b98d70466083f69138a21a0b6c5413c4153852225baf3f5b9dcad3
+Digest: 22166f395e6aeb03f21a5aaf3e9a6edc998de845fc8fa9dc2c49ba388a7d6387
 
 ## Diagram
 
 .csdlc/prepared/issues/5847/diagram.mmd
 
-Digest: 94ca666891c69b3048803b84dc5ede061ab8c500837311d8fc6819796e894516
+Digest: 3f27fc4f521fdd57a23ed1afaa29417434e08b8ac93e33e58d1a106069d94cd1
 
 ## Stop Conditions
 

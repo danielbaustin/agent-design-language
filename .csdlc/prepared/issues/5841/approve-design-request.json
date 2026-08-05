@@ -1,0 +1,7 @@
+{
+  "issue": 5841,
+  "expected_generation": 0,
+  "expected_digest": "31151323ac9bb619798a3e7d32eefcfea01f16aef34f1ae826e4e570255fef0a",
+  "claim_id": "claim-5841-v092-preparation",
+  "reviewer": "codex:5860-quality-release-readiness-design-review"
+}

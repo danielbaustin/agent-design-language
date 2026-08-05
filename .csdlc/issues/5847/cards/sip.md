@@ -20,9 +20,9 @@ external review handoff and received review
 
 ## Scope
 
-- Issue 5847 implementation paths to be narrowed during preparation
-- docs/milestones/v0.92/WP_ISSUE_WAVE_v0.92.yaml
-- docs/milestones/v0.92/WBS_v0.92.md
+- Prepare and freeze a publication-safe exact-revision third-party review handoff after WP-25
+- Dispatch only through an operator-approved reviewer channel with read-only authority and current digest
+- Retain the received report unchanged and create a separate complete findings index for WP-27
 
 ## Authority
 

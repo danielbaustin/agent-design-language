@@ -12,38 +12,55 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Pin the gate SHA, enumerate every feature and supporting critical path, bind each row to exact accepted evidence, run prohibited-evidence and platform negative audits, emit blockers, and allow downstream review only after an exact-head pass.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify all named predecessor live/typed/ancestry gates and pin the exact quality-gate revision.",
+    "acceptance_ids": [
+      "AC-1"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S2",
+    "action": "Enumerate the complete canonical feature and critical-path universe without dropping planned or blocked rows.",
     "acceptance_ids": [
       "AC-2"
     ],
     "status": "pending"
   },
   {
-    "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "id": "S3",
+    "action": "Resolve each row to exact implementation, validation, review, integration, platform, and terminal evidence.",
     "acceptance_ids": [
-      "AC-1",
-      "AC-3",
+      "AC-2",
       "AC-4"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S4",
+    "action": "Run prohibited-evidence, stale-SHA, ancestry, platform, provider-identity, and unsupported-claim negative audits.",
     "acceptance_ids": [
+      "AC-3",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Emit the gate/blocker packet, resolve exact-head review, and block or permit downstream review truthfully.",
+    "acceptance_ids": [
+      "AC-5",
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +90,13 @@ Revision 1
 
 .csdlc/prepared/issues/5842/design.md
 
-Digest: 9bf8dad87e410d0e345b79c91fae09f2242c9174905519b7e96c7a433e334e79
+Digest: 1076d7023592c911b066cc1e0be39a150f1d6f7db72112e449e109f69651a4d1
 
 ## Diagram
 
 .csdlc/prepared/issues/5842/diagram.mmd
 
-Digest: e2f09b5ec8e1353d7ecbbcbabaccfddc26fa96042cda9b54a4d97c79cbda8e44
+Digest: b1829fae5cf441c5f53f7e5d0184bdbcd7bf61e53855dca5d99241bf03b6c794
 
 ## Stop Conditions
 

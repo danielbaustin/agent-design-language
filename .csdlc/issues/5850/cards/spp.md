@@ -12,38 +12,53 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+Freeze the full v0.92 universe, reconcile live and typed terminal truth, classify each row with one owner/action, build an acyclic retry-safe PR-to-ceremony sequence, test stale/dirty/missing/partial cases, and exact-head review the plan.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify WP-28 terminal ancestry and freeze the complete live plus typed v0.92 issue/PR/receipt universe.",
     "acceptance_ids": [
-      "AC-2"
+      "AC-1"
     ],
     "status": "pending"
   },
   {
     "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "action": "Reconcile every row across GitHub, typed phase/SOR/receipt/claim, worktree cleanup, release dependency, owner, and action.",
     "acceptance_ids": [
-      "AC-1",
-      "AC-3",
-      "AC-4"
+      "AC-2",
+      "AC-3"
     ],
     "status": "pending"
   },
   {
     "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "action": "Topologically order PR completion, finish, claim release, cleanup, WP-29, WP-30, umbrella closeout, and handoff acceptance.",
+    "acceptance_ids": [
+      "AC-4"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S4",
+    "action": "Exercise stale, red, missing-review/receipt, active-claim, dirty, partial-release, duplicate-retry, unknown, and unowned negative cases.",
     "acceptance_ids": [
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve exact-head plan review and publish the non-mutating closeout packet.",
+    "acceptance_ids": [
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +88,13 @@ Revision 1
 
 .csdlc/prepared/issues/5850/design.md
 
-Digest: 3c7f044966866c5fb61bb13aa2735abcd08ce9d39a14c4d255b79d4bb4883efb
+Digest: 2e9351b120a746fac4a1808a7a54d3fac2a647eebb99354e604d546c8eea72f6
 
 ## Diagram
 
 .csdlc/prepared/issues/5850/diagram.mmd
 
-Digest: 15132b12a3c504d8ce788b5b27903c542c63c37aea5d51ccc7325d73683d8851
+Digest: ce44b443126a9cf4b3cc12290861a6bae0cd0d02289d05af13909228de637435
 
 ## Stop Conditions
 

@@ -12,38 +12,54 @@ Status: ready
 
 ## Summary
 
-Prepare the exact issue scope, implement the required outcome, run focused proof, resolve one bounded review, and publish with closing linkage.
+After WP-21 lands, rebuild the active Rust hotspot inventory, select exact files and invariants, capture characterization proof, refactor one owner at a time, and prove behavior, negative cases, LoC, lint, tests, and platform parity.
 
 ## Plan
 
-Revision 1
+Revision 4
 
 ## Steps
 
 [
   {
     "id": "S1",
-    "action": "Prepare exact scope, design, paths, and validation plan",
+    "action": "Verify WP-20/WP-21 terminal ancestry and rank post-deletion Rust hotspots from current source evidence.",
+    "acceptance_ids": [
+      "AC-1"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S2",
+    "action": "Select the smallest exact-file set, owners, behavior invariants, metrics, tests, and rollback boundary.",
     "acceptance_ids": [
       "AC-2"
     ],
     "status": "pending"
   },
   {
-    "id": "S2",
-    "action": "Implement the required outcome and focused proof",
+    "id": "S3",
+    "action": "Capture characterization proof and refactor one ownership boundary without public behavior change.",
     "acceptance_ids": [
-      "AC-1",
       "AC-3",
       "AC-4"
     ],
     "status": "pending"
   },
   {
-    "id": "S3",
-    "action": "Resolve one bounded pre-PR review and publish with closing linkage",
+    "id": "S4",
+    "action": "Run focused parity/negative tests, touched-workspace tests, strict Clippy, formatting, metrics, and platform CI.",
     "acceptance_ids": [
+      "AC-3",
       "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "S5",
+    "action": "Resolve exact-head review and publish the bounded closing PR with retained inventory and residual hotspots.",
+    "acceptance_ids": [
+      "AC-6"
     ],
     "status": "pending"
   }
@@ -73,13 +89,13 @@ Revision 1
 
 .csdlc/prepared/issues/5841/design.md
 
-Digest: 58bd922890d36380a7c5b9662b8b14c893694ec7daa40653b628305dc28e5eb0
+Digest: 02e97b83ffbc6cbdbf4f0aceee8220ce150c9917c2deef715f767fd595935d45
 
 ## Diagram
 
 .csdlc/prepared/issues/5841/diagram.mmd
 
-Digest: ca9c051bf8bd7704f80646219715b93d4eadc37615f60fa0ec30992b3de1e7b3
+Digest: b4df00a4d3d743cffd8848bba7bb5c20d5b4d4641915587f6a72b37044e3c611
 
 ## Stop Conditions
 
