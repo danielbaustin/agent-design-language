@@ -7,7 +7,7 @@
       "issue": 5786,
       "status": "block",
       "phase": "bound",
-      "generation": 8,
+      "generation": 12,
       "ready": false,
       "findings": [
         {
@@ -22,7 +22,7 @@
       "issue": 5795,
       "status": "block",
       "phase": "bound",
-      "generation": 21,
+      "generation": 29,
       "ready": false,
       "findings": [
         {
@@ -37,7 +37,7 @@
       "issue": 5800,
       "status": "block",
       "phase": "bound",
-      "generation": 36,
+      "generation": 44,
       "ready": false,
       "findings": [
         {
@@ -52,7 +52,7 @@
       "issue": 5801,
       "status": "block",
       "phase": "bound",
-      "generation": 17,
+      "generation": 21,
       "ready": false,
       "findings": [
         {
@@ -67,7 +67,7 @@
       "issue": 5812,
       "status": "block",
       "phase": "bound",
-      "generation": 6,
+      "generation": 10,
       "ready": false,
       "findings": [
         {
@@ -82,7 +82,7 @@
       "issue": 5818,
       "status": "block",
       "phase": "bound",
-      "generation": 17,
+      "generation": 21,
       "ready": false,
       "findings": [
         {
@@ -97,7 +97,7 @@
       "issue": 5819,
       "status": "block",
       "phase": "bound",
-      "generation": 17,
+      "generation": 21,
       "ready": false,
       "findings": [
         {
@@ -112,7 +112,7 @@
       "issue": 5820,
       "status": "block",
       "phase": "bound",
-      "generation": 19,
+      "generation": 32,
       "ready": false,
       "findings": [
         {
@@ -127,7 +127,7 @@
       "issue": 5821,
       "status": "block",
       "phase": "bound",
-      "generation": 31,
+      "generation": 52,
       "ready": false,
       "findings": [
         {
@@ -142,7 +142,7 @@
       "issue": 5822,
       "status": "block",
       "phase": "bound",
-      "generation": 15,
+      "generation": 19,
       "ready": false,
       "findings": [
         {
@@ -157,7 +157,7 @@
       "issue": 5823,
       "status": "block",
       "phase": "bound",
-      "generation": 17,
+      "generation": 19,
       "ready": false,
       "findings": [
         {
@@ -172,7 +172,7 @@
       "issue": 5824,
       "status": "block",
       "phase": "bound",
-      "generation": 15,
+      "generation": 19,
       "ready": false,
       "findings": [
         {
@@ -187,7 +187,7 @@
       "issue": 5825,
       "status": "block",
       "phase": "bound",
-      "generation": 44,
+      "generation": 55,
       "ready": false,
       "findings": [
         {
@@ -202,7 +202,7 @@
       "issue": 5826,
       "status": "block",
       "phase": "bound",
-      "generation": 35,
+      "generation": 42,
       "ready": false,
       "findings": [
         {
@@ -217,7 +217,7 @@
       "issue": 5827,
       "status": "block",
       "phase": "bound",
-      "generation": 34,
+      "generation": 41,
       "ready": false,
       "findings": [
         {
@@ -232,7 +232,7 @@
       "issue": 5828,
       "status": "block",
       "phase": "bound",
-      "generation": 30,
+      "generation": 37,
       "ready": false,
       "findings": [
         {
@@ -247,7 +247,7 @@
       "issue": 5829,
       "status": "block",
       "phase": "bound",
-      "generation": 34,
+      "generation": 60,
       "ready": false,
       "findings": [
         {
@@ -262,7 +262,7 @@
       "issue": 5830,
       "status": "block",
       "phase": "bound",
-      "generation": 32,
+      "generation": 39,
       "ready": false,
       "findings": [
         {
@@ -277,7 +277,7 @@
       "issue": 5831,
       "status": "block",
       "phase": "bound",
-      "generation": 31,
+      "generation": 42,
       "ready": false,
       "findings": [
         {
@@ -292,7 +292,7 @@
       "issue": 5832,
       "status": "block",
       "phase": "bound",
-      "generation": 19,
+      "generation": 33,
       "ready": false,
       "findings": [
         {
@@ -307,7 +307,7 @@
       "issue": 5833,
       "status": "block",
       "phase": "bound",
-      "generation": 30,
+      "generation": 41,
       "ready": false,
       "findings": [
         {
@@ -322,7 +322,7 @@
       "issue": 5834,
       "status": "block",
       "phase": "bound",
-      "generation": 30,
+      "generation": 40,
       "ready": false,
       "findings": [
         {
@@ -337,7 +337,7 @@
       "issue": 5835,
       "status": "block",
       "phase": "bound",
-      "generation": 22,
+      "generation": 24,
       "ready": false,
       "findings": [
         {
@@ -352,7 +352,7 @@
       "issue": 5836,
       "status": "block",
       "phase": "bound",
-      "generation": 31,
+      "generation": 33,
       "ready": false,
       "findings": [
         {
@@ -367,7 +367,7 @@
       "issue": 5837,
       "status": "block",
       "phase": "bound",
-      "generation": 21,
+      "generation": 29,
       "ready": false,
       "findings": [
         {
@@ -382,7 +382,7 @@
       "issue": 5838,
       "status": "block",
       "phase": "bound",
-      "generation": 22,
+      "generation": 24,
       "ready": false,
       "findings": [
         {
@@ -397,7 +397,7 @@
       "issue": 5839,
       "status": "block",
       "phase": "bound",
-      "generation": 22,
+      "generation": 24,
       "ready": false,
       "findings": [
         {
@@ -412,7 +412,7 @@
       "issue": 5840,
       "status": "block",
       "phase": "bound",
-      "generation": 22,
+      "generation": 24,
       "ready": false,
       "findings": [
         {
@@ -427,7 +427,7 @@
       "issue": 5841,
       "status": "block",
       "phase": "bound",
-      "generation": 11,
+      "generation": 14,
       "ready": false,
       "findings": [
         {
@@ -442,7 +442,7 @@
       "issue": 5842,
       "status": "block",
       "phase": "bound",
-      "generation": 10,
+      "generation": 13,
       "ready": false,
       "findings": [
         {
@@ -457,7 +457,7 @@
       "issue": 5843,
       "status": "block",
       "phase": "bound",
-      "generation": 10,
+      "generation": 12,
       "ready": false,
       "findings": [
         {
@@ -472,7 +472,7 @@
       "issue": 5844,
       "status": "block",
       "phase": "bound",
-      "generation": 25,
+      "generation": 29,
       "ready": false,
       "findings": [
         {
@@ -487,7 +487,7 @@
       "issue": 5845,
       "status": "block",
       "phase": "bound",
-      "generation": 24,
+      "generation": 32,
       "ready": false,
       "findings": [
         {
@@ -502,7 +502,7 @@
       "issue": 5846,
       "status": "block",
       "phase": "bound",
-      "generation": 10,
+      "generation": 12,
       "ready": false,
       "findings": [
         {
@@ -517,7 +517,7 @@
       "issue": 5847,
       "status": "block",
       "phase": "bound",
-      "generation": 10,
+      "generation": 12,
       "ready": false,
       "findings": [
         {
@@ -532,7 +532,7 @@
       "issue": 5848,
       "status": "block",
       "phase": "bound",
-      "generation": 10,
+      "generation": 13,
       "ready": false,
       "findings": [
         {
@@ -547,7 +547,7 @@
       "issue": 5849,
       "status": "block",
       "phase": "bound",
-      "generation": 8,
+      "generation": 12,
       "ready": false,
       "findings": [
         {
@@ -562,7 +562,7 @@
       "issue": 5850,
       "status": "block",
       "phase": "bound",
-      "generation": 8,
+      "generation": 12,
       "ready": false,
       "findings": [
         {
@@ -577,7 +577,7 @@
       "issue": 5851,
       "status": "block",
       "phase": "bound",
-      "generation": 8,
+      "generation": 12,
       "ready": false,
       "findings": [
         {
@@ -592,7 +592,7 @@
       "issue": 5852,
       "status": "block",
       "phase": "bound",
-      "generation": 10,
+      "generation": 12,
       "ready": false,
       "findings": [
         {
@@ -607,7 +607,262 @@
       "issue": 5853,
       "status": "block",
       "phase": "bound",
-      "generation": 8,
+      "generation": 10,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5862,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5863,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5864,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5865,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5866,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5867,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5868,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5869,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5870,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5871,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5872,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5873,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5874,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5875,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5876,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5877,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
+      "ready": false,
+      "findings": [
+        {
+          "code": "claim_dormant",
+          "message": "nonterminal issue has no active writer claim"
+        }
+      ],
+      "next_operation": "reacquire_claim"
+    },
+    {
+      "schema": "csdlc.doctor.report.v1",
+      "issue": 5878,
+      "status": "block",
+      "phase": "bound",
+      "generation": 2,
       "ready": false,
       "findings": [
         {

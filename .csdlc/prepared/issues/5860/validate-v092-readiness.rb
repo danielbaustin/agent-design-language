@@ -119,21 +119,23 @@ def sha256(path)
   Digest::SHA256.file(path).hexdigest
 end
 
-def live_issue(issue)
+def live_issue_inventory
   stdout, stderr, status = Open3.capture3(
-    "gh", "issue", "view", issue.to_s,
+    "gh", "issue", "list", "--state", "all", "--limit", "200",
     "--json", "number,title,body,state,url"
   )
-  raise "gh issue view #{issue} failed: #{stderr.strip}" unless status.success?
+  raise "gh issue list failed: #{stderr.strip}" unless status.success?
 
-  parsed = JSON.parse(stdout)
-  {
-    "number" => parsed.fetch("number"),
-    "title" => parsed.fetch("title"),
-    "body_sha256" => Digest::SHA256.hexdigest(parsed.fetch("body")),
-    "state" => parsed.fetch("state"),
-    "url" => parsed.fetch("url")
-  }
+  JSON.parse(stdout).to_h do |parsed|
+    issue = parsed.fetch("number")
+    [issue, {
+      "number" => issue,
+      "title" => parsed.fetch("title"),
+      "body_sha256" => Digest::SHA256.hexdigest(parsed.fetch("body")),
+      "state" => parsed.fetch("state"),
+      "url" => parsed.fetch("url")
+    }]
+  end
 end
 
 if ARGV.include?("--self-test")
@@ -172,6 +174,7 @@ matrix_path = option_value("--write-matrix")
 write_hash_path = option_value("--write-hash-manifest")
 write_live_path = option_value("--write-live-manifest")
 verify_live = ARGV.include?("--verify-live")
+live_inventory = nil
 
 missing_wave = issues - rows_by_issue.keys
 errors.concat(missing_wave.map { |issue| "##{issue}: missing canonical wave row" })
@@ -189,10 +192,11 @@ if write_hash_path
 end
 
 if write_live_path
+  live_inventory = live_issue_inventory
   payload = {
     "schema" => "adl.v092.live-issue-contracts.v1",
     "repository" => "danielbaustin/agent-design-language",
-    "issues" => issues.sort.to_h { |issue| [issue.to_s, live_issue(issue)] }
+    "issues" => issues.sort.to_h { |issue| [issue.to_s, live_inventory.fetch(issue)] }
   }
   File.write(write_live_path, JSON.pretty_generate(payload) + "\n")
 end
@@ -208,8 +212,9 @@ if File.file?(LIVE_MANIFEST_PATH)
     errors << "##{issue}: live issue body digest is invalid" unless contract["body_sha256"].to_s.match?(/\A[0-9a-f]{64}\z/)
   end
   if verify_live
+    live_inventory ||= live_issue_inventory
     issues.sort.each do |issue|
-      errors << "##{issue}: live GitHub issue drift" unless live_manifest[issue.to_s] == live_issue(issue)
+      errors << "##{issue}: live GitHub issue drift" unless live_manifest[issue.to_s] == live_inventory[issue]
     end
   end
 else
