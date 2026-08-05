@@ -1463,6 +1463,19 @@ pub fn run_derived_bind(store: &Store, request: DerivedBindRequest) -> Result<De
         } else {
             store.root().join(&intent.worktree)
         };
+        if intent.worktree != "." {
+            let expected = expected_worktree_path(store.root(), &intent.worktree)?;
+            let registered = crate::git::worktrees(store.root())?
+                .into_iter()
+                .find(|(registered_branch, _)| registered_branch == &intent.branch)
+                .map(|(_, path)| path);
+            if registered.as_deref() != Some(expected.as_str()) {
+                return Err(V2Error::new(
+                    ErrorCode::ReconciliationRequired,
+                    "bound retry worktree is not registered to the durable intent branch",
+                ));
+            }
+        }
         let target_store = Store::new(&target);
         let record = target_store.load_record(request.issue)?;
         if record.claim.as_ref().map(|value| value.id.as_str()) != Some(&intent.claim_id)
