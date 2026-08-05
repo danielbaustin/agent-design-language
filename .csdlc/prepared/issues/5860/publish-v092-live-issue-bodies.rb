@@ -23,13 +23,17 @@ unknown = selected - issues
 abort "unknown v0.92 execution issues: #{unknown.join(', ')}" unless unknown.empty?
 
 drift = []
+list_out, list_err, list_status = Open3.capture3(
+  "gh", "issue", "list", "--state", "open", "--limit", "200", "--json", "number,body,state"
+)
+abort "gh issue list failed: #{list_err.strip}" unless list_status.success?
+live = JSON.parse(list_out).to_h { |row| [row.fetch("number"), row] }
+
 selected.each do |issue|
   body_path = "#{BODY_ROOT}/#{issue}.md"
   abort "missing #{body_path}" unless File.file?(body_path)
   expected = File.read(body_path)
-  stdout, stderr, status = Open3.capture3("gh", "issue", "view", issue.to_s, "--json", "body,state")
-  abort "gh issue view #{issue} failed: #{stderr.strip}" unless status.success?
-  observed = JSON.parse(stdout)
+  observed = live[issue] || abort("##{issue}: missing from open issue inventory")
   abort "##{issue}: expected open issue" unless observed.fetch("state") == "OPEN"
   next if observed.fetch("body") == expected
 
