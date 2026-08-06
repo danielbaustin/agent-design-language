@@ -1,0 +1,37 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "gemini-3.1-pro-preview",
+    "credential_ref": "env:GEMINI_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "model_ref": "gemini-3.1-pro-preview",
+    "provider_model_id": "gemini-3.1-pro-preview",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "2026-08-05"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1785980465",
+      "duration_ms": 37236,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted provider text len=6325]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 37239,
+  "request_id": "issue-5861-gemini-31-final-f66424111",
+  "output_text": "**FINDINGS**\n\nReview of ADL issue #5861 at commit `f66424111f06d50f24c68f71f4efd3aeb8197ecb`. The architectural shift deleting the 12,000+ line preparation/claim workflow in favor of Git branch/worktree topology successfully removes the legacy overhead, but the implementation introduces critical correctness blockers in subprocess handling, worktree rollback safety, concurrency, and validation strictness. \n\nThe most immediate blocker is the installer/coexistence smoke test hang, which is caused by improper standard I/O stream handling during subprocess execution in the new validation/bind paths.\n\nDo not merge. Address the following concrete blocking defects.\n\n### 1. Installer/Coexistence Smoke Test Hang (Process Execution)\nThe final executable smoke test hangs because the new `csdlc-validate` and `csdlc-bind` subprocess execution layer does not isolate standard input. \n*   **Defect:** While the latest fixes successfully \"require resolvable commands\" and reject shell wrappers, they invoke these resolved binaries using default standard I/O inheritance. If a coexistence test executable, validation script, or doctor hook attempts to read from `stdin` (or inherited TTY), the process blocks indefinitely. Because this happens while a Git-topology or issue lock is held, it freezes the entire workflow.\n*   **Fix:** Ensure all `std::process::Command` invocations in `validate`, `doctor`, and `bind` explicitly configure `.stdin(std::process::Stdio::null())`.\n\n### 2. Destructive Rollback in Existing Worktrees\nThe branch claims to \"preflight and roll back materialization,\" but the rollback strategy is unsafe when applied to *existing* worktrees.\n*   **Defect:** If `csdlc-bind` begins materializing records or modifying paths in an existing worktree and encounters a failure (e.g., a card verification failure or lock abort), the rollback routine attempts to revert the worktree state. If the user had uncommitted, untracked, or staged changes that intersect with the bound paths prior to command execution, the rollback blindly clobbers them, resulting in unrecoverable data loss.\n*   **Fix:** `csdlc-bind` must mandate a strict clean-worktree preflight (`git status --porcelain` or `git diff-index --quiet HEAD`) before modifying an existing worktree, aborting immediately if dirtiness is detected. Do not implement a generalized stash/recovery mechanism; simply reject the operation.\n\n### 3. Readiness False-Greens (Worktree vs. Topology Desync)\nGit branch/worktree topology is now the sole binding authority, but `csdlc-validate` evaluates readiness against local files without verifying topological sync.\n*   **Defect:** A local worktree can have the correct files and pass `csdlc-validate` (returning a zero exit code), but if the local worktree is detached, or if the local branch is strictly behind the remote authoritative branch tip, validation yields a false-green. The system reports the issue as \"ready\" based on stale local state that does not reflect the authoritative remote Git topology.\n*   **Fix:** `csdlc-validate` must query the Git topology to ensure the local `HEAD` exactly matches the remote tracking branch tip for the issue before running file/command readiness checks.\n\n### 4. Create Atomicity and Distributed Duplicate Creation\nThe latest fixes \"serialize create and bind under consistent Git-topology then issue locks.\" This handles local concurrency but fails distributed concurrency.\n*   **Defect:** Two users executing `csdlc-issue create` simultaneously will both successfully acquire their local Git-topology locks and local issue locks. They will generate the same or overlapping issue definitions locally. If the remote push mechanism does not enforce strict atomicity, both pushes can succeed (or one overwrites the other), resulting in duplicate issue IDs or split-brain topologies.\n*   **Fix:** Issue creation must enforce distributed atomicity by utilizing `git push --set-upstream --atomic` (or leveraging `git update-ref` with expected prior state zero) when establishing the remote topology. If the remote push fails due to an upstream change, the local transaction must roll back and release locks.\n\n### 5. Bind Lock Ordering vs. Doctor Reads (Deadlock Vector)\nWhile `create` and `bind` strictly serialize \"Git-topology *then* issue lock,\" `csdlc-doctor` violates this hierarchy.\n*   **Defect:** `csdlc-doctor` acquires the issue lock first to inspect the current state, and then queries/locks the Git topology to diagnose discrepancies. If `csdlc-bind` is running concurrently (holding Topology Lock, waiting for Issue Lock) and `csdlc-doctor` is running (holding Issue Lock, waiting for Topology Lock), the system deadlocks. \n*   **Fix:** Enforce a universal, strictly ordered lock acquisition hierarchy across *all* binaries: `csdlc-doctor` must acquire the Git-topology lock before attempting to acquire the issue lock.\n\n### 6. Current Record Digest Verification Vulnerability\nThe branch successfully implements the requirement to \"reject unsigned fields in exact legacy shapes.\" However, it neglects the current schema.\n*   **Defect:** The validation logic strictly verifies the cryptographic digests and signatures of legacy claims/records, but it bypasses strict digest verification for the *new* topology-bound record format. An attacker or faulty script modifying a new-format card bypassing the Git commit hash verification will pass `csdlc-validate` undetected.\n*   **Fix:** Apply the exact same strict digest verification logic used for legacy shapes to the current topological record format before marking the binding as complete.\n\n### 7. Lingering Claim Authority in the Runbook\nThe PR adds a \"concise claim-free runbook,\" but active operator truth remains ambiguous.\n*   **Defect:** The active operator configuration (e.g., environment templates or CI pipeline triggers) still conditionally checks for the existence of legacy protected-path claims before granting execution authority, despite the underlying mechanism being deleted. If the legacy path exists as an artifact, it bypasses the new Git-topology binding checks.\n*   **Fix:** Completely strip all remaining conditional checks for legacy protected-paths from the operator runbook and CI evaluation templates. Execution authority must strictly query the current Git topology state exclusively.",
+  "output_text_excerpt": "[redacted provider text len=6325]",
+  "artifact_ref": ".csdlc/evidence/5861/provider-reviews/gemini-final-exact-head-result.json",
+  "trace_ref": "provider_adapter.circuit_breaker"
+}

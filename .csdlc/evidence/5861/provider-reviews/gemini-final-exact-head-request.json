@@ -1,0 +1,29 @@
+{
+  "request_id": "issue-5861-gemini-31-final-f66424111",
+  "run_id": "issue-5861-gemini-31-final-f66424111",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "provider_model_id": "gemini-3.1-pro-preview",
+    "runtime_surface": "hosted_api",
+    "credential_ref": "env:GEMINI_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "model_ref": "gemini-3.1-pro-preview",
+    "provider_model_id": "gemini-3.1-pro-preview",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "2026-08-05"
+  },
+  "prompt_contract_ref": "csdlc.exact_head.review.v1",
+  "lane_ref": "gemini:gemini-3.1-pro-preview__issue-5861-final",
+  "attempt_policy": {
+    "timeout_ms": 180000,
+    "max_attempts": 1,
+    "retry_backoff_ms": 1000
+  },
+  "max_output_tokens": 6000,
+  "input_text": "Review ADL issue #5861 at exact substantive head f66424111f06d50f24c68f71f4efd3aeb8197ecb. Findings first. The branch replaces the overbuilt preparation/claim workflow with csdlc-issue create, csdlc-validate/doctor, and csdlc-bind. Net diff versus current main deletes more than 12,000 lines, including preparation.rs, the preparation integration suite, csdlc-prepare, csdlc-migrate, and claim/lease/heartbeat/protected-path authority. Git branch/worktree topology is the sole binding authority. Review the actual repository diff and focus on concrete blocking correctness defects in: create atomicity and concurrent duplicate creation; readiness false-greens; nonzero validation failure; bind lock ordering, readiness stability, idempotence, rollback in new and existing worktrees; current and legacy record digest verification; active operator/runbook truth; and lingering preparation or claim authority. The latest fixes serialize create and bind under consistent Git-topology then issue locks, verify cards before idempotent success, reject unsigned fields in exact legacy shapes, preflight and roll back materialization, reject shell wrappers and informational validation commands, require resolvable commands and existing affected paths or parents, make blocked/corrupt validation exit nonzero, remove prepared-path review-safe classification, and add a concise claim-free runbook. Focused proof passed before rebase: cargo check --all-targets, actual-binary gate2 create/validate/doctor/bind, legacy injection rejection, and diff hygiene. The installer/coexistence suite passed 15 checks but its final executable smoke case hung and was stopped; do not treat that as a pass. Do not propose a new state machine, claim layer, generalized recovery mechanism, or unrelated refactor."
+}

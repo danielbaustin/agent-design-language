@@ -1,0 +1,29 @@
+{
+  "request_id": "issue-5861-claude-deletion-review",
+  "run_id": "issue-5861-claude-deletion-review",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "provider_model_id": "claude-sonnet-4-6",
+    "runtime_surface": "hosted_api",
+    "credential_ref": "env:ANTHROPIC_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "model_ref": "claude-sonnet-4-6",
+    "provider_model_id": "claude-sonnet-4-6",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1785975000"
+  },
+  "prompt_contract_ref": "csdlc.simplification.review.v1",
+  "lane_ref": "anthropic:claude-sonnet-4-6__issue-5861-deletion-review",
+  "attempt_policy": {
+    "timeout_ms": 180000,
+    "max_attempts": 1,
+    "retry_backoff_ms": 1000
+  },
+  "max_output_tokens": 8000,
+  "input_text": "Review this deletion-first redesign for C-SDLC v2 issue creation and binding. The merged implementation added 2,834 lines of preparation state plus 1,395 test lines, duplicated canonical cards and lifecycle state, required hidden session claims, and shipped an uncallable bind CLI. We reverted it, deleting 5,354 lines. Proposed replacement: one authority at .csdlc/issues/<issue>; csdlc-issue create writes design, diagram, and six editable cards directly without claim or preparation state; existing validation determines readiness; csdlc-bind takes only issue/base/branch/worktree and atomically/idempotently creates the canonical issue branch/worktree; remove Claim, ClaimRecovery, claim IDs, leases, heartbeats, protected paths, reacquire/rehome/amend/release/revoke APIs and gates; old JSON claim fields are ignored during load; existing edit/review/publish/finish/cleanup use issue topology and card validity; no SHA-pinned preparation receipts, WAL, retry loop, compatibility wrapper, or replacement state machine. Worktrees remain. Actual-binary integration test must prove create -> validate/doctor -> bind and conflicting second bind. Findings first. Identify correctness gaps, accidental weakening, and the smallest changes needed. Prefer deletion and existing Store/Git/card primitives. Do not propose a new state machine."
+}

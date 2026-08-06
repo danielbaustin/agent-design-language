@@ -1,0 +1,29 @@
+{
+  "request_id": "issue-5861-claude-final-967f0b59",
+  "run_id": "issue-5861-claude-final-967f0b59",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "provider_model_id": "claude-sonnet-4-6",
+    "runtime_surface": "hosted_api",
+    "credential_ref": "env:ANTHROPIC_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "model_ref": "claude-sonnet-4-6",
+    "provider_model_id": "claude-sonnet-4-6",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "2026-08-05"
+  },
+  "prompt_contract_ref": "csdlc.exact_head.review.v1",
+  "lane_ref": "anthropic:claude-sonnet-4-6__issue-5861-final",
+  "attempt_policy": {
+    "timeout_ms": 180000,
+    "max_attempts": 1,
+    "retry_backoff_ms": 1000
+  },
+  "max_output_tokens": 6000,
+  "input_text": "Review exact head 967f0b59a9229a6cc796de4dce8a16b9bcad280d for ADL issue #5861. The corrective branch deletes the 2,834-line preparation module, 1,395-line preparation test, csdlc-prepare, csdlc-migrate, all Claim and ClaimRecovery models, claim IDs, leases, heartbeats, protected paths, reacquire/rehome/amend/release/revoke APIs, and preparation manifests/receipts/intents. Net diff versus current main is 1,204 additions and 12,127 deletions. The supported path is csdlc-issue --root <repo> create --request <json>, csdlc-validate issue, csdlc-doctor, then csdlc-bind --root <repo> --request <json>. Bind derives authority from Git topology, validates issue readiness before Git mutation, is idempotent for the same issue/branch/worktree, rejects contradictory or conflicting topology, and rolls back a newly created worktree/branch on failure. Create validates card input before writing design/diagram and removes files it created if bootstrap fails. Readiness requires nonempty clean repository-relative affected_areas and validation lanes whose proof role and argv are non-placeholder and not trivial true/false/echo/printf/sleep. Legacy claim-bearing records are parsed through a bounded legacy type, their historical digest is verified before claim removal/topology projection, and tampering fails closed. Focused proof passed after rebase: cargo fmt check, cargo check --all-targets, actual-binary gate2 create/validate/doctor/bind including invalid-before-Git/idempotence/conflict/partial-create cases, gate10a installer/coexistence 16/16, and git diff check. No full suite was run. csdlc-init remains only as an installed legacy auxiliary and its removal is explicitly deferred to backlog #5883. Findings first. Identify any blocking correctness flaw in this final design or evidence, especially validation bypass, Git mutation ordering, legacy digest trust, or hidden claim authority. Do not propose a new state machine or generalized recovery layer."
+}
