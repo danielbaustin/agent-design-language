@@ -2200,7 +2200,10 @@ fn read_regular_projection(root: &Path, relative: &Path) -> Result<Vec<u8>> {
     Ok(fs::read(path)?)
 }
 
-fn read_regular_authored_artifact(root: &Path, relative: &Path) -> Result<Option<Vec<u8>>> {
+pub(crate) fn read_regular_authored_artifact(
+    root: &Path,
+    relative: &Path,
+) -> Result<Option<Vec<u8>>> {
     if !crate::pvf::clean_relative(relative) {
         return Err(V2Error::new(
             ErrorCode::CorruptRecord,
@@ -2277,7 +2280,7 @@ fn canonical_path_metadata_beneath(root: &Path, relative: &Path) -> Result<Optio
     Ok(None)
 }
 
-fn require_canonical_parent_beneath(root: &Path, relative: &Path) -> Result<()> {
+pub(crate) fn require_canonical_parent_beneath(root: &Path, relative: &Path) -> Result<()> {
     if !crate::pvf::clean_relative(relative) {
         return Err(V2Error::new(
             ErrorCode::UnsafeCheckout,
@@ -2317,7 +2320,7 @@ fn require_canonical_parent_beneath(root: &Path, relative: &Path) -> Result<()> 
     Ok(())
 }
 
-fn require_regular_or_absent_beneath(root: &Path, relative: &Path) -> Result<()> {
+pub(crate) fn require_regular_or_absent_beneath(root: &Path, relative: &Path) -> Result<()> {
     if let Some(metadata) = canonical_path_metadata_beneath(root, relative)? {
         if !metadata.is_file() {
             return Err(V2Error::new(

@@ -150,6 +150,34 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     assert!(!repo.join("generated/invalid-design.md").exists());
     assert!(!repo.join("generated/invalid-diagram.mmd").exists());
 
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::symlink;
+
+        let outside = temp.path().join("outside");
+        fs::create_dir_all(&outside).expect("outside directory");
+        symlink(&outside, repo.join("escape")).expect("symlinked authored parent");
+        let symlink_request = temp.path().join("symlink-create.json");
+        let mut symlinked = request();
+        symlinked.issue = 38;
+        symlinked.design_path = "escape/design.md".into();
+        symlinked.diagram_path = "escape/diagram.mmd".into();
+        fs::write(
+            &symlink_request,
+            serde_json::to_vec_pretty(&symlinked).expect("serialize symlink request"),
+        )
+        .expect("symlink request");
+        let symlink_text = symlink_request.to_string_lossy();
+        let symlink_result = command(
+            &repo,
+            env!("CARGO_BIN_EXE_csdlc-issue"),
+            &["--root", &repo_text, "create", "--request", &symlink_text],
+        );
+        assert!(!symlink_result.status.success());
+        assert!(!outside.join("design.md").exists());
+        assert!(!outside.join("diagram.mmd").exists());
+    }
+
     let non_proving_request = temp.path().join("non-proving-create.json");
     let mut non_proving = request();
     non_proving.issue = 41;

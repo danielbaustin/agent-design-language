@@ -10,7 +10,10 @@ use crate::doctor::DoctorStatus;
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::git;
 use crate::model::AuditEvent;
-use crate::store::{bootstrap_issue, validate_bootstrap_request, BootstrapRequest, Store};
+use crate::store::{
+    bootstrap_issue, read_regular_authored_artifact, require_canonical_parent_beneath,
+    require_regular_or_absent_beneath, validate_bootstrap_request, BootstrapRequest, Store,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct BindRequest {
@@ -165,24 +168,36 @@ fn copy_tree(source: &Path, destination: &Path) -> Result<()> {
 }
 
 fn copy_authored_file(source: &Store, target: &Store, relative: &str) -> Result<()> {
-    let from = source.root().join(relative);
+    let relative = Path::new(relative);
     let to = target.root().join(relative);
     if to.starts_with(target.issue_dir(0).parent().expect("issue root")) {
         return Ok(());
     }
-    let bytes = fs::read(&from)?;
-    if let Ok(existing) = fs::read(&to) {
+    let bytes = read_regular_authored_artifact(source.root(), relative)?.ok_or_else(|| {
+        V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            format!("source authored file is absent: {}", relative.display()),
+        )
+    })?;
+    if let Some(existing) = read_regular_authored_artifact(target.root(), relative)? {
         if existing == bytes {
             return Ok(());
         }
         return Err(V2Error::new(
             ErrorCode::ReconciliationRequired,
-            format!("bound worktree has different authored file {relative}"),
+            format!(
+                "bound worktree has different authored file {}",
+                relative.display()
+            ),
         ));
     }
+    require_canonical_parent_beneath(target.root(), relative)?;
+    require_regular_or_absent_beneath(target.root(), relative)?;
     if let Some(parent) = to.parent() {
         fs::create_dir_all(parent)?;
     }
+    require_canonical_parent_beneath(target.root(), relative)?;
+    require_regular_or_absent_beneath(target.root(), relative)?;
     fs::write(to, bytes)?;
     Ok(())
 }
@@ -325,6 +340,11 @@ pub(crate) fn initialize_issue(
     }
     let design = store.root().join(&request.design_path);
     let diagram = store.root().join(&request.diagram_path);
+    for relative in [&request.design_path, &request.diagram_path] {
+        let relative = Path::new(relative);
+        require_canonical_parent_beneath(store.root(), relative)?;
+        require_regular_or_absent_beneath(store.root(), relative)?;
+    }
     let created_design = !design.exists();
     let created_diagram = !diagram.exists();
     let result = (|| {
@@ -332,6 +352,8 @@ pub(crate) fn initialize_issue(
             if let Some(parent) = design.parent() {
                 fs::create_dir_all(parent)?;
             }
+            require_canonical_parent_beneath(store.root(), Path::new(&request.design_path))?;
+            require_regular_or_absent_beneath(store.root(), Path::new(&request.design_path))?;
             fs::write(
                 &design,
                 format!(
@@ -345,6 +367,8 @@ pub(crate) fn initialize_issue(
             if let Some(parent) = diagram.parent() {
                 fs::create_dir_all(parent)?;
             }
+            require_canonical_parent_beneath(store.root(), Path::new(&request.diagram_path))?;
+            require_regular_or_absent_beneath(store.root(), Path::new(&request.diagram_path))?;
             fs::write(
                 &diagram,
                 format!(
