@@ -13,8 +13,8 @@ use crate::error::{ErrorCode, Result, V2Error};
 use crate::lifecycle::initialize_issue;
 use crate::model::{LifecyclePhase, MigrationEvidence};
 use crate::{
-    edit_issue, BootstrapRequest, CardStatus, Claim, EditRequest, PlanningProfile,
-    SemanticOperation, Store,
+    edit_issue, BootstrapRequest, CardStatus, EditRequest, PlanningProfile, SemanticOperation,
+    Store,
 };
 
 #[derive(
@@ -51,7 +51,7 @@ pub struct LegacyImportRequest {
     pub design_path: String,
     pub diagram_path: String,
     pub design_reviewer: String,
-    pub claim: Claim,
+    pub actor: String,
     pub planning_profile: PlanningProfile,
     pub validation_lanes: Vec<ValidationLane>,
     pub imported_unix_seconds: u64,
@@ -255,7 +255,7 @@ pub fn import_legacy(request: LegacyImportRequest) -> Result<ImportReport> {
             diagram_path: request.diagram_path.clone(),
             design_reviewer: request.design_reviewer,
             design_approved: true,
-            claim: request.claim,
+            actor: request.actor,
             initial,
         },
     )?;
@@ -283,7 +283,6 @@ pub fn import_legacy(request: LegacyImportRequest) -> Result<ImportReport> {
                 card: CardKind::Sip,
                 expected_generation: record.generation,
                 expected_digest: record.digest,
-                claim_id: record.claim.as_ref().expect("claim").id.clone(),
                 actor: "csdlc-import".into(),
                 reason: "normalize supported legacy ready outcome".into(),
                 operation: SemanticOperation::AdvancePhase {
@@ -596,7 +595,6 @@ pub struct NormalizedOutcome {
     pub publication_state: String,
     pub merge_state: String,
     pub closeout_state: String,
-    pub claim_active: bool,
     pub doctor_status: String,
     pub doctor_findings: Vec<String>,
 }
@@ -634,7 +632,6 @@ impl NormalizedOutcome {
             publication_state: sor.publication_state.to_string(),
             merge_state: sor.merge_state.to_string(),
             closeout_state: sor.closeout_state.to_string(),
-            claim_active: record.claim.is_some(),
             doctor_status: doctor.status.to_string(),
             doctor_findings,
         })
@@ -673,9 +670,6 @@ pub fn compare_shadow(legacy: &NormalizedOutcome, v2: &NormalizedOutcome) -> Sha
     }
     if legacy.closeout_state != v2.closeout_state {
         differences.push("closeout_state".into());
-    }
-    if legacy.claim_active != v2.claim_active {
-        differences.push("claim_active".into());
     }
     if legacy.doctor_status != v2.doctor_status {
         differences.push("doctor_status".into());

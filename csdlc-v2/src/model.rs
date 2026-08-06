@@ -51,28 +51,6 @@ impl LifecyclePhase {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-pub struct Claim {
-    pub id: String,
-    pub owner: String,
-    pub generation: u64,
-    pub acquired_unix_seconds: u64,
-    pub expires_unix_seconds: u64,
-    pub heartbeat_unix_seconds: u64,
-    pub branch: String,
-    pub worktree: String,
-    pub protected_paths: Vec<String>,
-    pub purpose: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-pub struct ClaimRecovery {
-    pub previous_owner: String,
-    pub observed_expiry_unix_seconds: u64,
-    pub recovery_actor: String,
-    pub reason: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct ReviewAssignment {
     pub reviewer: String,
     pub assigned_by: String,
@@ -145,9 +123,8 @@ pub struct TerminalEvidence {
     pub observed_sha: Option<String>,
     pub observed_state: String,
     pub receipt_path: String,
-    pub released_branch: String,
-    pub released_worktree: String,
-    pub released_protected_paths: Vec<String>,
+    pub branch: Option<String>,
+    pub worktree: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -172,27 +149,6 @@ pub struct MigrationEvidence {
     pub authored_sources: BTreeMap<String, String>,
     pub authored_sections: BTreeMap<String, BTreeMap<String, String>>,
     pub compatibility_view: String,
-}
-
-impl Claim {
-    pub fn validate(&self, claim_id: &str, now: u64) -> Result<()> {
-        if self.id != claim_id {
-            return Err(V2Error::new(
-                ErrorCode::MissingClaim,
-                "claim id does not own this issue",
-            ));
-        }
-        if self.branch.trim().is_empty() || self.worktree.trim().is_empty() {
-            return Err(V2Error::new(
-                ErrorCode::InvalidClaim,
-                "claim branch/worktree is empty",
-            ));
-        }
-        if now >= self.expires_unix_seconds {
-            return Err(V2Error::new(ErrorCode::ExpiredClaim, "claim has expired"));
-        }
-        Ok(())
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -237,7 +193,10 @@ pub struct IssueRecord {
     pub phase: LifecyclePhase,
     pub generation: u64,
     pub digest: String,
-    pub claim: Option<Claim>,
+    #[serde(default)]
+    pub branch: Option<String>,
+    #[serde(default)]
+    pub worktree: Option<String>,
     pub review_assignment: Option<ReviewAssignment>,
     pub review: Option<ReviewEvidence>,
     #[serde(default)]

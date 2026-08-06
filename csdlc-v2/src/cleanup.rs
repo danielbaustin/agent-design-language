@@ -86,7 +86,6 @@ pub struct LegacyTerminalEntry {
     pub phase: LifecyclePhase,
     pub generation: u64,
     pub digest: String,
-    pub claim_free: bool,
     pub receipt_present: bool,
     pub receipt_matches_projection: Option<bool>,
     pub derived_terminal_present: bool,
@@ -143,7 +142,6 @@ struct AuditIssue {
 #[derive(Debug, Deserialize)]
 struct AuditTerminal {
     phase: String,
-    claim_free: bool,
     disposition: String,
     pull_request: Option<u64>,
     observed_sha: Option<String>,
@@ -409,21 +407,16 @@ pub fn build_legacy_terminal_index(
                 .push("derived terminal envelope does not match the tracked projection".into());
         }
         let compatible = record.phase == LifecyclePhase::ClosedOut
-            && record.claim.is_none()
             && receipt_matches_projection.unwrap_or(true)
             && derived_terminal_matches_projection.unwrap_or(true);
         if record.phase != LifecyclePhase::ClosedOut {
             diagnostics.push("tracked projection is not closed_out".into());
-        }
-        if record.claim.is_some() {
-            diagnostics.push("tracked projection retains an active claim".into());
         }
         issues.push(LegacyTerminalEntry {
             issue,
             phase: record.phase,
             generation: record.generation,
             digest: record.digest,
-            claim_free: record.claim.is_none(),
             receipt_present: receipt.is_some(),
             receipt_matches_projection,
             derived_terminal_present: derived.is_some(),
@@ -446,7 +439,6 @@ fn derived_consumed_by_materialized_projection(
 ) -> bool {
     if !receipt_matches_projection
         || record.phase != LifecyclePhase::ClosedOut
-        || record.claim.is_some()
         || envelope.issue != record.issue
         || envelope.repository != record.repository
         || envelope.initialization_digest != record.initialization_digest
@@ -533,9 +525,7 @@ pub fn validate_terminal_census(root: &Path, audit_path: &Path) -> Result<Termin
             .unwrap_or_default();
         let matches = actual.compatible
             && expected.terminal.phase == "closed_out"
-            && expected.terminal.claim_free
             && actual.phase == LifecyclePhase::ClosedOut
-            && actual.claim_free
             && terminal.is_some_and(|value| {
                 disposition == expected.terminal.disposition
                     && value.pull_request == expected.terminal.pull_request

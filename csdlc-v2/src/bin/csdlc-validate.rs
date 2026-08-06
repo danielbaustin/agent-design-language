@@ -12,6 +12,10 @@ struct Cli {
 }
 #[derive(Subcommand)]
 enum Command {
+    Issue {
+        #[arg(long)]
+        issue: u64,
+    },
     Finalize {
         #[arg(long)]
         request: PathBuf,
@@ -20,6 +24,10 @@ enum Command {
 fn main() {
     let cli = Cli::parse();
     let result = match cli.command {
+        Some(Command::Issue { issue }) => {
+            csdlc_v2::doctor::diagnose_result(&Store::new(cli.root), issue)
+                .and_then(|report| serde_json::to_value(report).map_err(Into::into))
+        }
         Some(Command::Finalize { request }) => fs::read(request)
             .map_err(csdlc_v2::V2Error::from)
             .and_then(|b| serde_json::from_slice::<FinalizeRequest>(&b).map_err(Into::into))

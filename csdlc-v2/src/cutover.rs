@@ -149,19 +149,6 @@ where
         unreachable!();
     }
     transitions.push(Generation::V1);
-    steps.push(runner(repo, "v1_rollback_smoke"));
-    if !steps.last().is_some_and(|step| step.passed) {
-        restore_exact(&selector_path, &original_bytes)?;
-        return Ok(failed_evidence(
-            repo,
-            code_revision,
-            &pre_switch_bytes,
-            transitions,
-            steps,
-            v1_paths_before,
-        ));
-    }
-
     selector.default_generation = Generation::V2;
     if let Err(error) = writer(&selector_path, &selector) {
         restore_after_error(&selector_path, &original_bytes, error)?;
@@ -263,9 +250,6 @@ fn failed_evidence(
 }
 
 fn run_step(repo: &Path, id: &str) -> StepEvidence {
-    if id == "v1_rollback_smoke" {
-        return run_v1_rollback_step(repo, id);
-    }
     let (executable, args): (&str, Vec<String>) = match id {
         "v2_lifecycle_smoke" | "v2_switch_back_smoke" => (
             "cargo",
@@ -298,131 +282,6 @@ fn run_step(repo: &Path, id: &str) -> StepEvidence {
         Err(error) => StepEvidence {
             id: id.into(),
             executable: executable.into(),
-            args,
-            exit_code: None,
-            elapsed_millis: started.elapsed().as_millis().try_into().unwrap_or(u64::MAX),
-            stdout_blake3: blake3::hash(&[]).to_hex().to_string(),
-            stderr_blake3: blake3::hash(error.to_string().as_bytes())
-                .to_hex()
-                .to_string(),
-            passed: false,
-        },
-    }
-}
-
-fn run_v1_rollback_step(repo: &Path, id: &str) -> StepEvidence {
-    let started = Instant::now();
-    let args = vec![
-        "claim".into(),
-        "heartbeat".into(),
-        "release".into(),
-        "status".into(),
-        "--temporary-ledger".into(),
-    ];
-    let execute = || -> Result<(Vec<u8>, Vec<u8>)> {
-        let common = PathBuf::from(git_text(repo, &["rev-parse", "--git-common-dir"])?);
-        let common = if common.is_absolute() {
-            common
-        } else {
-            repo.join(common)
-        };
-        let primary = common.parent().ok_or_else(|| {
-            V2Error::new(ErrorCode::GitFailure, "git common directory has no parent")
-        })?;
-        let binary = primary.join(".adl/bin/adl-session");
-        if !binary.is_file() {
-            return Err(V2Error::new(
-                ErrorCode::ValidationFailed,
-                "incumbent adl-session binary is not installed in the primary checkout",
-            ));
-        }
-        let ledger = std::env::temp_dir().join(format!(
-            "csdlc-gate10c-v1-session-{}-{}.jsonl",
-            std::process::id(),
-            OffsetDateTime::now_utc().unix_timestamp_nanos()
-        ));
-        let claim = Command::new(&binary)
-            .args([
-                "claim",
-                "--session-id",
-                "gate10c-v1-rollback-smoke",
-                "--owner",
-                "csdlc-cutover",
-                "--resource",
-                "issue:5294",
-                "--purpose",
-                "rollback-proof",
-                "--issue",
-                "5294",
-                "--ttl-secs",
-                "60",
-                "--ledger",
-            ])
-            .arg(&ledger)
-            .arg("--json")
-            .output()?;
-        if !claim.status.success() {
-            let _ = fs::remove_file(&ledger);
-            return Err(V2Error::new(ErrorCode::ValidationFailed, "v1 claim failed"));
-        }
-        let claim_json: serde_json::Value = serde_json::from_slice(&claim.stdout)?;
-        let claim_id = claim_json
-            .get("claim_id")
-            .and_then(serde_json::Value::as_str)
-            .ok_or_else(|| V2Error::new(ErrorCode::CorruptRecord, "v1 claim id missing"))?
-            .to_owned();
-        let mut combined_stdout = claim.stdout;
-        let mut combined_stderr = claim.stderr;
-        for command_args in [
-            vec![
-                "heartbeat",
-                "--claim-id",
-                claim_id.as_str(),
-                "--ttl-secs",
-                "60",
-            ],
-            vec![
-                "release",
-                "--claim-id",
-                claim_id.as_str(),
-                "--reason",
-                "rollback-smoke",
-            ],
-            vec!["status"],
-        ] {
-            let output = Command::new(&binary)
-                .args(command_args)
-                .arg("--ledger")
-                .arg(&ledger)
-                .arg("--json")
-                .output()?;
-            combined_stdout.extend(output.stdout);
-            combined_stderr.extend(output.stderr);
-            if !output.status.success() {
-                let _ = fs::remove_file(&ledger);
-                return Err(V2Error::new(
-                    ErrorCode::ValidationFailed,
-                    "v1 session lifecycle recovery step failed",
-                ));
-            }
-        }
-        fs::remove_file(ledger)?;
-        Ok((combined_stdout, combined_stderr))
-    };
-    match execute() {
-        Ok((stdout, stderr)) => StepEvidence {
-            id: id.into(),
-            executable: "<primary>/.adl/bin/adl-session".into(),
-            args,
-            exit_code: Some(0),
-            elapsed_millis: started.elapsed().as_millis().try_into().unwrap_or(u64::MAX),
-            stdout_blake3: blake3::hash(&stdout).to_hex().to_string(),
-            stderr_blake3: blake3::hash(&stderr).to_hex().to_string(),
-            passed: true,
-        },
-        Err(error) => StepEvidence {
-            id: id.into(),
-            executable: "<primary>/.adl/bin/adl-session".into(),
             args,
             exit_code: None,
             elapsed_millis: started.elapsed().as_millis().try_into().unwrap_or(u64::MAX),

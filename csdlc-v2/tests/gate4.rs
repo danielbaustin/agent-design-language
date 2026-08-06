@@ -2,9 +2,9 @@ use std::time::Instant;
 
 use csdlc_v2::pvf::*;
 use csdlc_v2::{
-    classify_schedule, classify_shepherd, edit_issue, execute, finalize, initialize_native_json,
-    select, shared_request_path, BootstrapRequest, CardKind, Claim, EditRequest, ErrorCode,
-    FinalizeRequest, InitialCardInput, LifecyclePhase, PlanningProfile, SemanticOperation, Store,
+    bind_issue, classify_schedule, classify_shepherd, execute, finalize, initialize_native_json,
+    select, shared_request_path, BindRequest, BootstrapRequest, ErrorCode, FinalizeRequest,
+    InitialCardInput, LifecyclePhase, PlanningProfile, Store,
 };
 
 fn install_native_authority(root: &std::path::Path) {
@@ -27,7 +27,7 @@ fn install_native_authority(root: &std::path::Path) {
 fn bound_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
     let temp = tempfile::tempdir().expect("fixture");
     assert!(std::process::Command::new("git")
-        .args(["init", "-q"])
+        .args(["init", "-q", "-b", "main"])
         .current_dir(temp.path())
         .status()
         .expect("git init")
@@ -41,27 +41,16 @@ fn bound_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
     )
     .unwrap();
     let store = Store::new(temp.path());
-    let mut record = initialize_native_json(
+    initialize_native_json(
         &store,
         &serde_json::to_vec(&BootstrapRequest {
             issue: 5627,
             repository: "example/repo".into(),
+            actor: "agent".into(),
             design_path: "docs/design.md".into(),
             diagram_path: "docs/diagram.mmd".into(),
             design_reviewer: "operator".into(),
             design_approved: true,
-            claim: Claim {
-                id: "claim".into(),
-                owner: "agent".into(),
-                generation: 0,
-                acquired_unix_seconds: 1,
-                expires_unix_seconds: u64::MAX,
-                heartbeat_unix_seconds: 1,
-                branch: "codex/5627".into(),
-                worktree: ".".into(),
-                protected_paths: vec!["csdlc-v2".into()],
-                purpose: "four command proof".into(),
-            },
             initial: InitialCardInput {
                 title: "four command fixture".into(),
                 slug: "four-command".into(),
@@ -108,23 +97,23 @@ fn bound_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
         .unwrap(),
     )
     .expect("bootstrap");
-    for phase in [LifecyclePhase::Ready, LifecyclePhase::Bound] {
-        record = edit_issue(
-            &store,
-            EditRequest {
-                issue: 5627,
-                card: CardKind::Sip,
-                expected_generation: record.generation,
-                expected_digest: record.digest,
-                claim_id: "claim".into(),
-                actor: "agent".into(),
-                reason: "fixture".into(),
-                operation: SemanticOperation::AdvancePhase { phase },
-                fail_after_backup: false,
-            },
-        )
-        .expect("advance");
-    }
+    assert!(std::process::Command::new("git")
+        .args(["switch", "-q", "-c", "codex/5627"])
+        .current_dir(temp.path())
+        .status()
+        .expect("git switch")
+        .success());
+    bind_issue(
+        &store,
+        BindRequest {
+            issue: 5627,
+            base_branch: "main".into(),
+            branch: "codex/5627".into(),
+            worktree: ".".into(),
+        },
+    )
+    .expect("bind");
+    let record = store.load_record(5627).expect("bound record");
     (temp, store, record)
 }
 
@@ -176,7 +165,6 @@ fn finalize_is_one_atomic_implemented_transition_and_failure_writes_no_state() {
         issue: 5627,
         expected_generation: record.generation,
         expected_digest: record.digest.clone(),
-        claim_id: "claim".into(),
         actor: "agent".into(),
         summary: "implemented four-command lifecycle".into(),
         changes: vec!["csdlc-v2".into()],
@@ -868,12 +856,11 @@ fn scheduler_and_shepherd_are_read_only_classifiers() {
         cards_ready: true,
         design_ready: true,
         dependencies_ready: true,
-        claim_live: true,
         paths_clear: true,
         budget_available: true,
     });
     assert_eq!(schedule.eligible_operations, vec!["validate"]);
-    assert!(schedule.authority.contains("cannot claim"));
+    assert!(schedule.authority.contains("cannot execute"));
     let waiting = classify_shepherd(&ShepherdInput {
         validation: None,
         dependency_wait: true,

@@ -2,12 +2,12 @@ use std::collections::BTreeMap;
 use std::process::Command;
 
 use csdlc_v2::finish::{
-    derive_terminal, envelope_matches_record, envelope_releases_claim, load_cached_terminal,
-    retain_cached_terminal, validate_finish_merge_authority, validate_publication_head_in_repo,
+    derive_terminal, envelope_matches_record, load_cached_terminal, retain_cached_terminal,
+    validate_finish_merge_authority, validate_publication_head_in_repo,
 };
 use csdlc_v2::github::PrStatePacket;
 use csdlc_v2::{
-    Claim, DesignReview, FinishDisposition, FinishRequest, IssueRecord, IssueTerminalObservation,
+    DesignReview, FinishDisposition, FinishRequest, IssueRecord, IssueTerminalObservation,
     LifecyclePhase, MergeMethod, PublicationEvidence, ReviewEvidence,
 };
 
@@ -20,7 +20,8 @@ fn record(phase: LifecyclePhase, publication: Option<PublicationEvidence>) -> Is
         phase,
         generation: 8,
         digest: "canonical".into(),
-        claim: None,
+        branch: None,
+        worktree: None,
         review_assignment: None,
         review: None,
         publication,
@@ -45,7 +46,6 @@ fn no_pr_request() -> FinishRequest {
         issue: 5778,
         expected_generation: 8,
         expected_digest: "canonical".into(),
-        claim_id: "released-claim".into(),
         actor: "operator".into(),
         repository: "owner/repo".into(),
         pull_request: None,
@@ -118,27 +118,6 @@ fn closed_no_pr_requires_canonical_github_approval_label() {
     let error = derive_terminal(&record, &no_pr_request(), &issue("closed", false), None)
         .expect_err("missing approval label");
     assert_eq!(error.code, csdlc_v2::ErrorCode::ReconciliationRequired);
-}
-
-#[test]
-fn mutable_terminal_cache_expires_and_is_bound_to_exact_record() {
-    let record = record(LifecyclePhase::Reviewed, None);
-    let envelope = derive_terminal(&record, &no_pr_request(), &issue("closed", true), None)
-        .expect("derive")
-        .expect("terminal");
-    assert!(
-        envelope_releases_claim(std::path::Path::new("."), &envelope, &record, 400).expect("fresh")
-    );
-    assert!(
-        !envelope_releases_claim(std::path::Path::new("."), &envelope, &record, 401)
-            .expect("expired")
-    );
-    let mut changed = record.clone();
-    changed.generation += 1;
-    assert!(
-        !envelope_releases_claim(std::path::Path::new("."), &envelope, &changed, 100)
-            .expect("record drift")
-    );
 }
 
 #[cfg(unix)]
@@ -256,7 +235,7 @@ fn finish_uses_the_canonical_issue_authority_lock() {
 }
 
 #[test]
-fn published_finish_accepts_owned_claim_without_legacy_merge_ready_state() {
+fn published_finish_accepts_matching_git_topology() {
     let temp = tempfile::tempdir().expect("tempdir");
     assert!(Command::new("git")
         .args(["init", "-q", "-b", "codex/5778"])
@@ -278,31 +257,20 @@ fn published_finish_accepts_owned_claim_without_legacy_merge_ready_state() {
             observed_state: "open".into(),
         }),
     );
-    record.claim = Some(Claim {
-        id: "claim".into(),
-        owner: "operator".into(),
-        generation: record.generation,
-        acquired_unix_seconds: 1,
-        expires_unix_seconds: 200,
-        heartbeat_unix_seconds: 1,
-        branch: "codex/5778".into(),
-        worktree: ".".into(),
-        protected_paths: vec!["csdlc-v2".into()],
-        purpose: "finish".into(),
-    });
+    record.branch = Some("codex/5778".into());
+    record.worktree = Some(temp.path().to_string_lossy().into_owned());
     let mut request = no_pr_request();
     request.pull_request = Some(9);
     request.base = Some("main".into());
     request.head = Some("codex/5778".into());
     request.expected_head_sha = Some("abc".into());
     request.approved_no_pr_reason = None;
-    request.claim_id = "claim".into();
     assert!(validate_finish_merge_authority(temp.path(), &record, &request, 100).is_ok());
 
-    record.claim.as_mut().unwrap().generation -= 1;
+    record.branch = Some("different-branch".into());
     let error = validate_finish_merge_authority(temp.path(), &record, &request, 100)
-        .expect_err("stale claim generation");
-    assert_eq!(error.code, csdlc_v2::ErrorCode::InvalidClaim);
+        .expect_err("branch mismatch");
+    assert_eq!(error.code, csdlc_v2::ErrorCode::ReconciliationRequired);
 }
 
 #[test]
@@ -414,8 +382,6 @@ fn publication_accepts_clean_forward_csdlc_metadata_only_head() {
     .expect("derive merged terminal")
     .expect("merged terminal");
     assert!(!envelope_matches_record(&merged, &record).expect("exact publication identity"));
-    assert!(envelope_releases_claim(temp.path(), &merged, &record, 100)
-        .expect("strict metadata lineage releases claim"));
 
     git(&["checkout", "-qb", "rename-drift", &current]);
     std::fs::create_dir_all(temp.path().join(".csdlc/moved")).unwrap();
@@ -448,10 +414,7 @@ fn publication_accepts_clean_forward_csdlc_metadata_only_head() {
     )
     .expect("derive renamed terminal")
     .expect("renamed terminal");
-    assert!(
-        !envelope_releases_claim(temp.path(), &rename_terminal, &record, 102)
-            .expect("renamed substantive drift must not release claim")
-    );
+    assert!(!envelope_matches_record(&rename_terminal, &record).expect("renamed terminal drift"));
     git(&["checkout", "-q", "codex/5778"]);
 
     let mut exact = record.clone();
@@ -470,10 +433,8 @@ fn publication_accepts_clean_forward_csdlc_metadata_only_head() {
     assert!(
         validate_publication_head_in_repo(temp.path(), &malformed_publication, &request).is_err()
     );
-    assert!(
-        !envelope_releases_claim(temp.path(), &merged, &malformed_publication, 100)
-            .expect("malformed publication must not release claim")
-    );
+    assert!(!envelope_matches_record(&merged, &malformed_publication)
+        .expect("malformed publication identity"));
 
     let mut changed_scope = record.clone();
     changed_scope.review.as_mut().unwrap().scope = vec!["src/lib.rs".into()];
@@ -515,8 +476,5 @@ fn publication_accepts_clean_forward_csdlc_metadata_only_head() {
     )
     .expect("derive substantive terminal")
     .expect("substantive terminal");
-    assert!(
-        !envelope_releases_claim(temp.path(), &substantive, &record, 101)
-            .expect("substantive drift must not release claim")
-    );
+    assert!(!envelope_matches_record(&substantive, &record).expect("substantive terminal drift"));
 }

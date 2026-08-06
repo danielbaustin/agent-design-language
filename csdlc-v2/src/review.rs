@@ -11,7 +11,6 @@ pub struct ReviewAssignmentRequest {
     pub issue: u64,
     pub expected_generation: u64,
     pub expected_digest: String,
-    pub claim_id: String,
     pub reviewer: String,
     pub assigned_by: String,
     pub scope: Vec<String>,
@@ -22,7 +21,6 @@ pub struct ReviewRecordRequest {
     pub issue: u64,
     pub expected_generation: u64,
     pub expected_digest: String,
-    pub claim_id: String,
     pub actor: String,
     pub evidence: ReviewEvidence,
 }
@@ -32,7 +30,6 @@ pub struct ReviewRecoveryRequest {
     pub issue: u64,
     pub expected_generation: u64,
     pub expected_digest: String,
-    pub claim_id: String,
     pub actor: String,
     pub reason: String,
 }
@@ -48,11 +45,10 @@ pub struct PublicationReviewReport {
 
 pub fn assign_review(store: &Store, request: ReviewAssignmentRequest) -> Result<IssueRecord> {
     let record = store.load_record(request.issue)?;
-    require_cas_claim(
+    require_cas(
         &record,
         request.expected_generation,
         &request.expected_digest,
-        &request.claim_id,
     )?;
     if record.phase != LifecyclePhase::Implemented {
         return Err(V2Error::new(
@@ -84,12 +80,7 @@ pub fn assign_review(store: &Store, request: ReviewAssignmentRequest) -> Result<
         revision,
         scope: request.scope,
     };
-    store.commit_review_assignment(
-        request.issue,
-        &request.expected_digest,
-        &request.claim_id,
-        assignment,
-    )
+    store.commit_review_assignment(request.issue, &request.expected_digest, assignment)
 }
 
 pub fn recover_review(store: &Store, request: ReviewRecoveryRequest) -> Result<IssueRecord> {
@@ -103,7 +94,6 @@ pub fn recover_review(store: &Store, request: ReviewRecoveryRequest) -> Result<I
         request.issue,
         request.expected_generation,
         &request.expected_digest,
-        &request.claim_id,
         request.actor,
         request.reason,
     )
@@ -111,11 +101,10 @@ pub fn recover_review(store: &Store, request: ReviewRecoveryRequest) -> Result<I
 
 pub fn record_review(store: &Store, request: ReviewRecordRequest) -> Result<IssueRecord> {
     let record = store.load_record(request.issue)?;
-    require_cas_claim(
+    require_cas(
         &record,
         request.expected_generation,
         &request.expected_digest,
-        &request.claim_id,
     )?;
     if record.phase != LifecyclePhase::Implemented {
         return Err(V2Error::new(
@@ -145,7 +134,6 @@ pub fn record_review(store: &Store, request: ReviewRecordRequest) -> Result<Issu
         issue: request.issue,
         expected_digest: record.digest,
         actor: request.actor,
-        claim_id: request.claim_id,
         evidence: request.evidence,
         result,
         advance_reviewed: true,
@@ -175,12 +163,7 @@ fn validate_direct_evidence(store: &Store, evidence: &ReviewEvidence) -> Result<
     validate_findings(evidence)
 }
 
-fn require_cas_claim(
-    record: &IssueRecord,
-    generation: u64,
-    digest: &str,
-    claim_id: &str,
-) -> Result<()> {
+fn require_cas(record: &IssueRecord, generation: u64, digest: &str) -> Result<()> {
     if record.generation != generation {
         return Err(V2Error::new(
             ErrorCode::StaleGeneration,
@@ -193,11 +176,7 @@ fn require_cas_claim(
             "review digest is stale",
         ));
     }
-    record
-        .claim
-        .as_ref()
-        .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?
-        .validate(claim_id, unix_now()?)
+    Ok(())
 }
 
 fn validate_evidence(assignment: &ReviewAssignment, evidence: &ReviewEvidence) -> Result<()> {
@@ -378,10 +357,4 @@ fn verify_automatic_metadata_only(
     }
     crate::git::metadata_only_changed_paths(root, from_commit, to_commit)
         .is_ok_and(|paths| !paths.is_empty())
-}
-fn unix_now() -> Result<u64> {
-    Ok(std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map_err(|e| V2Error::new(ErrorCode::InvalidInput, e.to_string()))?
-        .as_secs())
 }

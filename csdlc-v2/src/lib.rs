@@ -50,21 +50,14 @@ pub use github::{
     append_marker, execute_github_action, marker_line, GithubAction, GithubActionRequest,
     GithubActionResult, GithubIssuePacket, PrCheck, PrStatePacket, PrStateRequest,
 };
-pub use lifecycle::{
-    amend_claim_scope, bind_issue, heartbeat_claim, initialize_native_json, reacquire_claim,
-    recover_claim, rehome_claim_authority, release_closed_claim, revoke_active_claim,
-    transition_active_claim, AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest,
-    ReacquireClaimRequest, ReacquireClaimResult, RecoverClaimRequest, RehomeClaimAuthorityRequest,
-    RehomeClaimAuthorityResult, ReleaseClosedClaimRequest, RevokeActiveClaimRequest,
-    RevokeActiveClaimResult, TransitionActiveClaimRequest,
-};
+pub use lifecycle::{bind_issue, initialize_native_json, BindRequest, BindResult};
 pub use migration::{
     compare_shadow, generate_compatibility_view, import_legacy, write_compatibility_view_atomic,
     ImportReport, LegacyImportRequest, NormalizedOutcome, ShadowComparison,
 };
 pub use model::{
-    Claim, ClaimRecovery, DesignReview, IssueRecord, LifecyclePhase, MigrationEvidence,
-    NonSubstantiveProof, PublicationEvidence, ReadinessEvidence, ReviewAssignment, ReviewEvidence,
+    DesignReview, IssueRecord, LifecyclePhase, MigrationEvidence, NonSubstantiveProof,
+    PublicationEvidence, ReadinessEvidence, ReviewAssignment, ReviewEvidence,
     ReviewFindingEvidence, TerminalEvidence, TerminalReceipt,
 };
 pub use operator::{

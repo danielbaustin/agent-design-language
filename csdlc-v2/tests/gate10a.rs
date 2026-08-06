@@ -1,8 +1,9 @@
 use csdlc_v2::operator::validate_external_cargo_target;
 use csdlc_v2::{
-    build_and_install_binaries, edit_issue, install_binaries, resolve_operator_generation,
-    verify_coexistence, BootstrapRequest, CardKind, Claim, CoexistenceInventory, EditRequest,
-    Generation, LifecyclePhase, SemanticOperation, SkillManifest, Store,
+    bind_issue, build_and_install_binaries, edit_issue, install_binaries,
+    resolve_operator_generation, verify_coexistence, BindRequest, BootstrapRequest, CardKind,
+    CoexistenceInventory, EditRequest, Generation, LifecyclePhase, SemanticOperation,
+    SkillManifest, Store,
 };
 use std::fs;
 use std::path::Path;
@@ -137,6 +138,7 @@ fn installer_records_provenance_without_replacing_other_files() {
     assert!(destination.join("csdlc-github").is_file());
     assert!(destination.join("csdlc-github-issue").is_file());
     assert!(destination.join("csdlc-github-pr").is_file());
+    assert!(destination.join("csdlc-issue").is_file());
     assert!(destination.join("csdlc-install").is_file());
     assert!(!destination.join("csdlc-merge").exists());
     #[cfg(unix)]
@@ -357,31 +359,20 @@ fn freshly_installed_stable_edit_binary_is_executable() {
     .unwrap();
     install_native_authority(fixture.path());
     let store = Store::new(fixture.path());
-    let initialized = csdlc_v2::initialize_native_json(
+    csdlc_v2::initialize_native_json(&store, &serde_json::to_vec(&bootstrap_request()).unwrap())
+        .unwrap();
+    git(fixture.path(), &["switch", "-c", "issue-42"]);
+    bind_issue(
         &store,
-        &serde_json::to_vec(&bootstrap_request()).unwrap(),
+        BindRequest {
+            issue: 42,
+            base_branch: "main".into(),
+            branch: "issue-42".into(),
+            worktree: ".".into(),
+        },
     )
     .unwrap();
-    let ready = edit_issue(
-        &store,
-        edit(
-            &initialized,
-            SemanticOperation::AdvancePhase {
-                phase: LifecyclePhase::Ready,
-            },
-        ),
-    )
-    .unwrap();
-    let bound = edit_issue(
-        &store,
-        edit(
-            &ready,
-            SemanticOperation::AdvancePhase {
-                phase: LifecyclePhase::Bound,
-            },
-        ),
-    )
-    .unwrap();
+    let bound = store.load_record(42).unwrap();
     let mut execution = edit(
         &bound,
         SemanticOperation::RecordExecution {
@@ -411,7 +402,6 @@ fn freshly_installed_stable_edit_binary_is_executable() {
         issue: 42,
         expected_generation: implemented.generation,
         expected_digest: implemented.digest,
-        claim_id: "claim-1".into(),
         reviewer: "architect".into(),
     };
     let request_path = fixture.path().join("approve.json");
@@ -472,7 +462,6 @@ fn edit(record: &csdlc_v2::IssueRecord, operation: SemanticOperation) -> EditReq
         card: CardKind::Sip,
         expected_generation: record.generation,
         expected_digest: record.digest.clone(),
-        claim_id: "claim-1".into(),
         actor: "agent".into(),
         reason: "test edit".into(),
         operation,
@@ -484,22 +473,11 @@ fn bootstrap_request() -> BootstrapRequest {
     BootstrapRequest {
         issue: 42,
         repository: "example/repo".into(),
+        actor: "agent".into(),
         design_path: "docs/design.md".into(),
         diagram_path: "docs/diagram.mmd".into(),
         design_reviewer: "reviewer".into(),
         design_approved: true,
-        claim: Claim {
-            id: "claim-1".into(),
-            owner: "agent".into(),
-            generation: 0,
-            acquired_unix_seconds: 1,
-            expires_unix_seconds: u64::MAX,
-            heartbeat_unix_seconds: 1,
-            branch: "issue-42".into(),
-            worktree: ".".into(),
-            protected_paths: vec!["docs".into()],
-            purpose: "test".into(),
-        },
         initial: csdlc_v2::InitialCardInput {
             title: "Gate 10A fixture".into(),
             slug: "gate-10a-fixture".into(),

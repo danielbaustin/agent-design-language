@@ -1,9 +1,10 @@
 use csdlc_v2::cards::{FindingDisposition, FindingSeverity};
 use csdlc_v2::{
-    assign_review, edit_issue, evaluate_publication_review, evaluate_publication_review_in_repo,
-    record_review, BootstrapRequest, CardKind, Claim, EditRequest, ErrorCode, InitialCardInput,
-    LifecyclePhase, NonSubstantiveProof, PlanningProfile, ReviewAssignmentRequest, ReviewEvidence,
-    ReviewFindingEvidence, ReviewRecordRequest, ReviewRecoveryRequest, SemanticOperation, Store,
+    assign_review, bind_issue, edit_issue, evaluate_publication_review,
+    evaluate_publication_review_in_repo, record_review, BindRequest, BootstrapRequest, CardKind,
+    EditRequest, ErrorCode, InitialCardInput, LifecyclePhase, NonSubstantiveProof, PlanningProfile,
+    ReviewAssignmentRequest, ReviewEvidence, ReviewFindingEvidence, ReviewRecordRequest,
+    ReviewRecoveryRequest, SemanticOperation, Store,
 };
 
 fn install_native_authority(root: &std::path::Path) {
@@ -62,27 +63,16 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
     git(temp.path(), &["add", "."]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let store = Store::new(temp.path());
-    let mut record = bootstrap_issue(
+    bootstrap_issue(
         &store,
         BootstrapRequest {
             issue: 7,
             repository: "example/repo".into(),
+            actor: "agent".into(),
             design_path: "docs/design.md".into(),
             diagram_path: "docs/diagram.mmd".into(),
             design_reviewer: "architect".into(),
             design_approved: true,
-            claim: Claim {
-                id: "claim".into(),
-                owner: "agent".into(),
-                generation: 0,
-                acquired_unix_seconds: 1,
-                expires_unix_seconds: u64::MAX,
-                heartbeat_unix_seconds: 1,
-                branch: "issue-7".into(),
-                worktree: ".worktrees/issue-7".into(),
-                protected_paths: vec!["src".into()],
-                purpose: "review test".into(),
-            },
             initial: InitialCardInput {
                 title: "review fixture".into(),
                 slug: "review-fixture".into(),
@@ -128,13 +118,19 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
         },
     )
     .expect("init");
+    git(temp.path(), &["switch", "-c", "issue-7"]);
+    bind_issue(
+        &store,
+        BindRequest {
+            issue: 7,
+            base_branch: "main".into(),
+            branch: "issue-7".into(),
+            worktree: ".".into(),
+        },
+    )
+    .expect("bind");
+    let mut record = store.load_record(7).expect("bound record");
     for operation in [
-        SemanticOperation::AdvancePhase {
-            phase: LifecyclePhase::Ready,
-        },
-        SemanticOperation::AdvancePhase {
-            phase: LifecyclePhase::Bound,
-        },
         SemanticOperation::RecordExecution {
             summary: "implemented".into(),
             changes: vec!["src".into()],
@@ -156,7 +152,6 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
                 card,
                 expected_generation: record.generation,
                 expected_digest: record.digest.clone(),
-                claim_id: "claim".into(),
                 actor: "agent".into(),
                 reason: "fixture transition".into(),
                 operation,
@@ -215,7 +210,6 @@ fn assignment_and_recording_update_index_and_srp_without_publication_side_effect
             issue: 7,
             expected_generation: record.generation,
             expected_digest: record.digest,
-            claim_id: "claim".into(),
             reviewer: "subagent".into(),
             assigned_by: "agent".into(),
             scope: vec!["src".into()],
@@ -251,7 +245,6 @@ fn assignment_and_recording_update_index_and_srp_without_publication_side_effect
             issue: 7,
             expected_generation: assigned.generation,
             expected_digest: assigned.digest,
-            claim_id: "claim".into(),
             actor: "agent".into(),
             evidence: value,
         },
@@ -266,7 +259,10 @@ fn assignment_and_recording_update_index_and_srp_without_publication_side_effect
         }
         _ => unreachable!(),
     };
-    assert_eq!(git_out(temp.path(), &["branch", "--show-current"]), "main");
+    assert_eq!(
+        git_out(temp.path(), &["branch", "--show-current"]),
+        "issue-7"
+    );
     assert!(
         !temp.path().join(".git/refs/remotes").exists(),
         "review created remote state"
@@ -285,7 +281,6 @@ fn direct_exact_review_records_and_advances_without_assignment() {
         issue: 7,
         expected_generation: record.generation,
         expected_digest: record.digest.clone(),
-        claim_id: "claim".into(),
         actor: "reviewer".into(),
         evidence: ReviewEvidence {
             reviewer: "reviewer".into(),
@@ -325,7 +320,6 @@ fn dirty_substantive_tree_is_rejected_before_review_assignment() {
             issue: 7,
             expected_generation: record.generation,
             expected_digest: record.digest,
-            claim_id: "claim".into(),
             reviewer: "subagent".into(),
             assigned_by: "agent".into(),
             scope: vec!["docs".into()],
@@ -344,7 +338,6 @@ fn metadata_only_changes_do_not_stale_a_clean_review() {
             issue: 7,
             expected_generation: record.generation,
             expected_digest: record.digest,
-            claim_id: "claim".into(),
             reviewer: "subagent".into(),
             assigned_by: "agent".into(),
             scope: vec!["docs".into()],
@@ -363,7 +356,6 @@ fn metadata_only_changes_do_not_stale_a_clean_review() {
             issue: 7,
             expected_generation: assigned.generation,
             expected_digest: assigned.digest,
-            claim_id: "claim".into(),
             actor: "agent".into(),
             evidence: ReviewEvidence {
                 reviewer: "subagent".into(),
@@ -403,7 +395,6 @@ fn reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview() {
             card: CardKind::Srp,
             expected_generation: implemented.generation,
             expected_digest: implemented.digest.clone(),
-            claim_id: "claim".into(),
             actor: "operator".into(),
             reason: "not actually recovered".into(),
             operation: SemanticOperation::CorrectReviewPromptsAfterRecovery {
@@ -424,7 +415,6 @@ fn reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview() {
             issue: 7,
             expected_generation: implemented.generation,
             expected_digest: implemented.digest,
-            claim_id: "claim".into(),
             reviewer: "subagent".into(),
             assigned_by: "agent".into(),
             scope: vec!["docs".into()],
@@ -443,7 +433,6 @@ fn reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview() {
             issue: 7,
             expected_generation: assigned.generation,
             expected_digest: assigned.digest,
-            claim_id: "claim".into(),
             actor: "agent".into(),
             evidence: ReviewEvidence {
                 reviewer: "subagent".into(),
@@ -475,7 +464,6 @@ fn reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview() {
             issue: 7,
             expected_generation: reviewed.generation,
             expected_digest: reviewed.digest,
-            claim_id: "claim".into(),
             actor: "operator".into(),
             reason: "re-review after finalizing substantive changes".into(),
         },
@@ -496,7 +484,6 @@ fn reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview() {
             card: CardKind::Srp,
             expected_generation: recovered.generation,
             expected_digest: recovered.digest,
-            claim_id: "claim".into(),
             actor: "operator".into(),
             reason: "correct stale review question after recovery".into(),
             operation: SemanticOperation::CorrectReviewPromptsAfterRecovery {
@@ -523,7 +510,6 @@ fn reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview() {
             issue: 7,
             expected_generation: corrected.generation,
             expected_digest: corrected.digest,
-            claim_id: "claim".into(),
             reviewer: "reviewer".into(),
             assigned_by: "operator".into(),
             scope: vec!["docs".into()],
@@ -744,7 +730,6 @@ fn doctor_accepts_committed_typed_metadata_after_review() {
             issue: 7,
             expected_generation: record.generation,
             expected_digest: record.digest,
-            claim_id: "claim".into(),
             reviewer: "subagent".into(),
             assigned_by: "agent".into(),
             scope: vec!["docs".into()],
@@ -763,7 +748,6 @@ fn doctor_accepts_committed_typed_metadata_after_review() {
             issue: 7,
             expected_generation: assigned.generation,
             expected_digest: assigned.digest,
-            claim_id: "claim".into(),
             actor: "subagent".into(),
             evidence: ReviewEvidence {
                 reviewer: "subagent".into(),

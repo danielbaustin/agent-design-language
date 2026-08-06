@@ -16,7 +16,7 @@ const REQUIRED_STEPS: [&str; 5] = [
     "quality",
     "v2_install_verify",
 ];
-const BINARY_NAMES: [&str; 15] = [
+const BINARY_NAMES: [&str; 16] = [
     "csdlc-bind",
     "csdlc-clean",
     "csdlc-doctor",
@@ -24,6 +24,7 @@ const BINARY_NAMES: [&str; 15] = [
     "csdlc-finish",
     "csdlc-init",
     "csdlc-install",
+    "csdlc-issue",
     "csdlc-proof",
     "csdlc-publish",
     "csdlc-review",

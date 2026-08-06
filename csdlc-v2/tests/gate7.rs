@@ -9,7 +9,6 @@ fn request() -> ReadinessRequest {
         issue: 7,
         expected_generation: 4,
         expected_digest: "digest".into(),
-        claim_id: "claim".into(),
         actor: "shepherd".into(),
         pull_request: 70,
         head_sha: "abc".into(),

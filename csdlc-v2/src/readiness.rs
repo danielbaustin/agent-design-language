@@ -66,7 +66,6 @@ pub struct ReadinessRequest {
     pub issue: u64,
     pub expected_generation: u64,
     pub expected_digest: String,
-    pub claim_id: String,
     pub actor: String,
     pub pull_request: u64,
     pub head_sha: String,

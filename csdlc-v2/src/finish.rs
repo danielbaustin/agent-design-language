@@ -57,7 +57,6 @@ pub struct FinishRequest {
     pub issue: u64,
     pub expected_generation: u64,
     pub expected_digest: String,
-    pub claim_id: String,
     pub actor: String,
     pub repository: String,
     pub pull_request: Option<u64>,
@@ -90,7 +89,6 @@ pub struct DerivedTerminalEnvelope {
     pub approved_reason: Option<String>,
     pub observed_unix_seconds: u64,
     pub mutable_fresh_until_unix_seconds: Option<u64>,
-    pub claim_logically_released: bool,
     pub source: String,
     pub digest: String,
 }
@@ -311,7 +309,7 @@ fn now_unix_seconds() -> Result<u64> {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|duration| duration.as_secs())
-        .map_err(|error| V2Error::new(ErrorCode::InvalidClaim, error.to_string()))
+        .map_err(|error| V2Error::new(ErrorCode::InvalidInput, error.to_string()))
 }
 
 fn remote_merge_error(error: octocrab::Error) -> V2Error {
@@ -326,7 +324,6 @@ pub fn validate_request(request: &FinishRequest) -> Result<()> {
         || request.issue == 0
         || request.repository.split_once('/').is_none()
         || request.expected_digest.trim().is_empty()
-        || request.claim_id.trim().is_empty()
         || request.actor.trim().is_empty()
     {
         return Err(V2Error::new(
@@ -572,31 +569,41 @@ pub fn validate_finish_merge_authority(
     root: &Path,
     record: &IssueRecord,
     request: &FinishRequest,
-    now_unix_seconds: u64,
+    _now_unix_seconds: u64,
 ) -> Result<()> {
     validate_canonical_identity(record, request)?;
-    let claim = record
-        .claim
-        .as_ref()
-        .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "finish claim is missing"))?;
-    claim.validate(&request.claim_id, now_unix_seconds)?;
-    if claim.owner != request.actor
-        || claim.generation != record.generation
-        || Some(claim.branch.as_str()) != request.head.as_deref()
-        || git::current_branch(root)? != claim.branch
-        || !claim_worktree_matches_root(root, claim)?
+    let branch = record.branch.as_deref().ok_or_else(|| {
+        V2Error::new(
+            ErrorCode::ReconciliationRequired,
+            "finish issue has no bound branch",
+        )
+    })?;
+    if Some(branch) != request.head.as_deref()
+        || git::current_branch(root)? != branch
+        || !topology_worktree_matches_root(root, record.worktree.as_deref())?
     {
         return Err(V2Error::new(
-            ErrorCode::InvalidClaim,
-            "finish claim is not bound to the canonical generation and checkout",
+            ErrorCode::ReconciliationRequired,
+            "finish checkout does not match the canonical issue topology",
         ));
     }
     Ok(())
 }
 
-fn claim_worktree_matches_root(root: &Path, claim: &crate::model::Claim) -> Result<bool> {
-    if claim.worktree == "." {
+fn topology_worktree_matches_root(root: &Path, worktree: Option<&str>) -> Result<bool> {
+    let Some(worktree) = worktree else {
+        return Ok(false);
+    };
+    if worktree == "." {
         return Ok(true);
+    }
+    let expected = PathBuf::from(worktree);
+    if expected.is_absolute() {
+        return Ok(expected
+            .canonicalize()
+            .ok()
+            .zip(root.canonicalize().ok())
+            .is_some_and(|(expected, current)| expected == current));
     }
     let common_dir = PathBuf::from(
         git::run(
@@ -607,7 +614,7 @@ fn claim_worktree_matches_root(root: &Path, claim: &crate::model::Claim) -> Resu
     );
     Ok(common_dir
         .parent()
-        .map(|primary| primary.join(&claim.worktree))
+        .map(|primary| primary.join(worktree))
         .and_then(|expected| expected.canonicalize().ok())
         .zip(root.canonicalize().ok())
         .is_some_and(|(expected, current)| expected == current))
@@ -689,7 +696,6 @@ pub fn derive_terminal(
                 .observed_unix_seconds
                 .saturating_add(MUTABLE_TERMINAL_FRESHNESS_SECONDS)
         }),
-        claim_logically_released: true,
         source: "live_github".into(),
         digest: String::new(),
     };
@@ -720,7 +726,6 @@ pub fn validate_envelope(envelope: &DerivedTerminalEnvelope) -> Result<()> {
         || envelope.initialization_digest.trim().is_empty()
         || envelope.canonical_digest.trim().is_empty()
         || envelope.observed_unix_seconds == 0
-        || !envelope.claim_logically_released
         || envelope.source != "live_github"
         || envelope.digest != envelope_digest(envelope)?
     {
@@ -798,29 +803,6 @@ fn envelope_matches_record_identity(
                 .is_some_and(|publication| publication.pull_request == pull_request),
             None => true,
         }
-}
-
-pub fn envelope_releases_claim(
-    root: &Path,
-    envelope: &DerivedTerminalEnvelope,
-    record: &IssueRecord,
-    now_unix_seconds: u64,
-) -> Result<bool> {
-    validate_envelope(envelope)?;
-    if !envelope_matches_record_identity(envelope, record) {
-        return Ok(false);
-    }
-    if envelope.pull_request.is_some()
-        && !envelope.head_sha.as_deref().is_some_and(|head| {
-            validate_publication_head_lineage_in_repo(root, record, head).is_ok()
-        })
-    {
-        return Ok(false);
-    }
-    Ok(envelope.disposition == FinishDisposition::Merged
-        || envelope
-            .mutable_fresh_until_unix_seconds
-            .is_some_and(|until| now_unix_seconds <= until))
 }
 
 pub fn terminal_cache_path(root: &Path, issue: u64) -> Result<PathBuf> {
@@ -1011,7 +993,8 @@ mod tests {
             phase: LifecyclePhase::MergeReady,
             generation: 3,
             digest: "digest".into(),
-            claim: None,
+            branch: Some("codex/7".into()),
+            worktree: Some(".".into()),
             review_assignment: None,
             review: None,
             publication: Some(crate::model::PublicationEvidence {
@@ -1046,7 +1029,6 @@ mod tests {
             issue: 7,
             expected_generation: 3,
             expected_digest: "digest".into(),
-            claim_id: "claim".into(),
             actor: "agent".into(),
             repository: "owner/repo".into(),
             pull_request: Some(9),

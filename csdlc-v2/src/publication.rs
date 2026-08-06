@@ -13,7 +13,6 @@ pub struct PublicationRequest {
     pub issue: u64,
     pub expected_generation: u64,
     pub expected_digest: String,
-    pub claim_id: String,
     pub actor: String,
     pub repository: String,
     pub base: String,
@@ -213,11 +212,6 @@ fn verify_record(record: &IssueRecord, request: &PublicationRequest) -> Result<(
             "publication requires reviewed or published phase",
         ));
     }
-    record
-        .claim
-        .as_ref()
-        .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?
-        .validate(&request.claim_id, crate::store::now_seconds()?)?;
     Ok(())
 }
 
@@ -274,7 +268,6 @@ pub fn record_publication(
     store.commit_publication(
         request.issue,
         &request.expected_digest,
-        &request.claim_id,
         request.actor.clone(),
         evidence,
     )

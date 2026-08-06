@@ -178,7 +178,6 @@ pub struct FinalizeRequest {
     pub issue: u64,
     pub expected_generation: u64,
     pub expected_digest: String,
-    pub claim_id: String,
     pub actor: String,
     pub summary: String,
     pub changes: Vec<String>,
@@ -517,12 +516,6 @@ pub fn finalize(store: &Store, request: FinalizeRequest) -> Result<IssueRecord> 
             "finalize request does not match canonical record",
         ));
     }
-    before
-        .claim
-        .as_ref()
-        .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?
-        .validate(&request.claim_id, crate::store::now_seconds()?)?;
-
     let evidence_dir = request.execution.evidence_dir.clone();
     let expected_evidence_dir = store
         .root()
@@ -598,7 +591,6 @@ pub fn finalize(store: &Store, request: FinalizeRequest) -> Result<IssueRecord> 
             issue: request.issue,
             expected_generation: request.expected_generation,
             expected_digest: request.expected_digest,
-            claim_id: request.claim_id,
             actor: request.actor,
             summary: request.summary,
             changes: request.changes,
@@ -878,7 +870,6 @@ pub struct ScheduleInput {
     pub cards_ready: bool,
     pub design_ready: bool,
     pub dependencies_ready: bool,
-    pub claim_live: bool,
     pub paths_clear: bool,
     pub budget_available: bool,
 }
@@ -895,7 +886,6 @@ pub fn classify_schedule(input: &ScheduleInput) -> ScheduleReport {
         ("cards", input.cards_ready),
         ("design", input.design_ready),
         ("dependencies", input.dependencies_ready),
-        ("claim", input.claim_live),
         ("paths", input.paths_clear),
         ("budget", input.budget_available),
     ];
@@ -912,7 +902,7 @@ pub fn classify_schedule(input: &ScheduleInput) -> ScheduleReport {
             vec![]
         },
         blockers,
-        authority: "read_only; cannot claim, execute, publish, merge, or close".into(),
+        authority: "read_only; cannot execute, publish, merge, or close".into(),
     }
 }
 

@@ -3,8 +3,8 @@ use std::collections::BTreeMap;
 use csdlc_v2::cards::{ResourceProfile, ValidationLane};
 use csdlc_v2::migration::ImportStatus;
 use csdlc_v2::{
-    compare_shadow, generate_compatibility_view, import_legacy, CardKind, Claim,
-    LegacyImportRequest, LifecyclePhase, NormalizedOutcome, PlanningProfile, Store,
+    compare_shadow, generate_compatibility_view, import_legacy, CardKind, LegacyImportRequest,
+    LifecyclePhase, NormalizedOutcome, PlanningProfile, Store,
 };
 
 fn write_cards(root: &std::path::Path) -> BTreeMap<CardKind, String> {
@@ -50,18 +50,7 @@ fn request(legacy: &std::path::Path, output: &std::path::Path) -> LegacyImportRe
         design_path: "docs/design.md".into(),
         diagram_path: "docs/diagram.mmd".into(),
         design_reviewer: "migration-reviewer".into(),
-        claim: Claim {
-            id: "claim".into(),
-            owner: "importer".into(),
-            generation: 0,
-            acquired_unix_seconds: 1,
-            expires_unix_seconds: u64::MAX,
-            heartbeat_unix_seconds: 1,
-            branch: "import-88".into(),
-            worktree: output.to_string_lossy().into_owned(),
-            protected_paths: vec![".csdlc/issues/88".into()],
-            purpose: "one-way import".into(),
-        },
+        actor: "importer".into(),
         planning_profile: PlanningProfile::Small,
         validation_lanes: vec![ValidationLane {
             lane: "focused".into(),
@@ -264,10 +253,10 @@ fn shadow_parity_compares_normalized_outcomes_not_markdown_bytes() {
         .equivalent
     );
     let mut mismatch = legacy_observation;
-    mismatch.claim_active = false;
+    mismatch.phase = LifecyclePhase::Published;
     assert_eq!(
         compare_shadow(&mismatch, &actual).differences,
-        vec!["claim_active"]
+        vec!["phase"]
     );
 }
 

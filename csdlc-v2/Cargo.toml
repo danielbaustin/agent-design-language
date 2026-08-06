@@ -23,6 +23,10 @@ name = "csdlc-init"
 path = "src/bin/csdlc-init.rs"
 
 [[bin]]
+name = "csdlc-issue"
+path = "src/bin/csdlc-issue.rs"
+
+[[bin]]
 name = "csdlc-bind"
 path = "src/bin/csdlc-bind.rs"
 
