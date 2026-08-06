@@ -241,6 +241,12 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     let bind_text = bind_request.to_string_lossy();
 
     fs::write(repo.join("design/issue-42.md"), "# Stale design\n").expect("stale design");
+    let invalid_validation = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-validate"),
+        &["--root", &repo_text, "issue", "--issue", "42"],
+    );
+    assert!(!invalid_validation.status.success());
     let invalid_bind = command(
         &repo,
         env!("CARGO_BIN_EXE_csdlc-bind"),
@@ -306,7 +312,8 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
         &["--root", &repo_text, "--request", &conflict_text],
     );
     assert!(!rejected.status.success());
-    assert!(String::from_utf8_lossy(&rejected.stdout).contains("reconciliation_required"));
+    let rejection = String::from_utf8_lossy(&rejected.stdout);
+    assert!(rejection.contains("reconciliation_required") || rejection.contains("corrupt_record"));
 
     git(
         &repo,

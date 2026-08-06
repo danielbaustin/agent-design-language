@@ -1570,13 +1570,33 @@ fn proving_lane(lane: &ValidationLane) -> bool {
     !placeholder(&lane.proof_role)
         && !lane.proof_role.to_ascii_lowercase().contains("non-proving")
         && !lane.argv.iter().any(|value| placeholder(value))
+        && !lane
+            .argv
+            .iter()
+            .any(|value| matches!(value.as_str(), "--help" | "-h" | "--version" | "-V"))
         && !matches!(
             executable.as_str(),
-            "true" | "false" | "echo" | "printf" | "sleep" | ":"
+            "true" | "false" | "echo" | "printf" | "sleep" | ":" | "sh" | "bash" | "zsh" | "env"
         )
 }
 
-pub(crate) fn validate_execution_readiness(cards: &BTreeMap<CardKind, CardValues>) -> Result<()> {
+fn proving_lane_at(root: &Path, lane: &ValidationLane) -> bool {
+    let executable_exists = if lane.argv.first().is_none_or(String::is_empty) {
+        false
+    } else if lane.argv[0].contains('/') {
+        root.join(&lane.argv[0]).is_file()
+    } else {
+        std::env::var_os("PATH").is_some_and(|path| {
+            std::env::split_paths(&path).any(|directory| directory.join(&lane.argv[0]).is_file())
+        })
+    };
+    executable_exists && proving_lane(lane)
+}
+
+pub(crate) fn validate_execution_readiness(
+    root: &Path,
+    cards: &BTreeMap<CardKind, CardValues>,
+) -> Result<()> {
     let affected_areas = match &cards
         .get(&CardKind::Spp)
         .ok_or_else(|| V2Error::new(ErrorCode::CardInvalid, "SPP projection missing"))?
@@ -1587,10 +1607,15 @@ pub(crate) fn validate_execution_readiness(cards: &BTreeMap<CardKind, CardValues
     };
     let owned_paths_are_valid = !affected_areas.is_empty()
         && affected_areas.iter().all(|value| {
+            let relative = Path::new(value);
             !placeholder(value)
-                && Path::new(value)
+                && relative
                     .components()
                     .all(|component| matches!(component, Component::Normal(_)))
+                && (root.join(relative).exists()
+                    || relative.parent().is_some_and(|parent| {
+                        !parent.as_os_str().is_empty() && root.join(parent).is_dir()
+                    }))
         });
     let lanes = match &cards
         .get(&CardKind::Vpp)
@@ -1600,7 +1625,10 @@ pub(crate) fn validate_execution_readiness(cards: &BTreeMap<CardKind, CardValues
         CardContent::Vpp(values) => &values.lanes,
         _ => unreachable!("VPP projection"),
     };
-    if !owned_paths_are_valid || lanes.is_empty() || lanes.iter().any(|lane| !proving_lane(lane)) {
+    if !owned_paths_are_valid
+        || lanes.is_empty()
+        || lanes.iter().any(|lane| !proving_lane_at(root, lane))
+    {
         return Err(V2Error::new(
             ErrorCode::CardInvalid,
             "execution readiness requires owned repository paths and proving validation lanes",

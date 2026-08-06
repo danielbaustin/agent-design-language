@@ -17,7 +17,7 @@ flowchart TB
       machine["Lifecycle state machine\ntyped transitions • guards • invariants"]
       cards["Automated card engine\ntyped values • templates • markdown.rs mdast"]
       design["Design readiness\nissue design • diagram • review"]
-      claims["Session claims\nleases • heartbeats • protected paths"]
+      topology["Issue ownership\nGit branch • worktree"]
       scheduler["Deterministic scheduler\nreadiness • dependencies • budgets"]
       pvf["PVF\nlane selection • execution DAG • convergence"]
       shepherd["Shepherd observer\nwaiting • retry • repair • operator"]
@@ -52,7 +52,7 @@ flowchart TB
   actor --> entry --> api --> machine
   machine <--> cards
   machine --> design
-  machine --> claims
+  machine --> topology
   machine --> scheduler
   scheduler -. "eligibility report only" .-> machine
   validate --> pvf --> shepherd --> machine
@@ -60,7 +60,7 @@ flowchart TB
 
   cards <--> prompts
   design <--> designs
-  claims <--> index
+  topology <--> index
   evidence <--> index
   pvf <--> proof
   shepherd <--> proof
@@ -79,6 +79,6 @@ flowchart TB
   classDef core fill:#eef4ff,stroke:#315a9b;
   classDef truth fill:#fff7e6,stroke:#9a6b16;
   classDef separate fill:#f4f4f4,stroke:#666,stroke-dasharray:5 5;
-  class machine,cards,design,claims,scheduler,pvf,shepherd,evidence core;
+  class machine,cards,design,topology,scheduler,pvf,shepherd,evidence core;
   class prompts,index,designs,proof truth;
   class adl,runtime separate;

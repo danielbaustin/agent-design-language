@@ -118,7 +118,9 @@ fn issue_records(store: &Store) -> Result<Vec<crate::IssueRecord>> {
             continue;
         };
         if entry.path().join("index.json").exists() {
-            records.push(store.load_record(issue)?);
+            let record = store.load_record(issue)?;
+            crate::store::verify_cards(store, &record, &store.load_cards(issue)?)?;
+            records.push(record);
         }
     }
     Ok(records)
@@ -203,9 +205,36 @@ fn materialize_issue(source: &Store, target_root: &Path, issue: u64) -> Result<S
             ));
         }
     } else {
-        copy_tree(&source.issue_dir(issue), &target.issue_dir(issue))?;
-        copy_authored_file(source, &target, &source_record.design_path)?;
-        copy_authored_file(source, &target, &source_record.diagram_path)?;
+        for relative in [&source_record.design_path, &source_record.diagram_path] {
+            let from = source.root().join(relative);
+            let to = target.root().join(relative);
+            if let Ok(existing) = fs::read(&to) {
+                if existing != fs::read(&from)? {
+                    return Err(V2Error::new(
+                        ErrorCode::ReconciliationRequired,
+                        format!("bound worktree has different authored file {relative}"),
+                    ));
+                }
+            }
+        }
+        let design_created = !target.root().join(&source_record.design_path).exists();
+        let diagram_created = !target.root().join(&source_record.diagram_path).exists();
+        let result = (|| {
+            copy_tree(&source.issue_dir(issue), &target.issue_dir(issue))?;
+            copy_authored_file(source, &target, &source_record.design_path)?;
+            copy_authored_file(source, &target, &source_record.diagram_path)?;
+            Ok(())
+        })();
+        if let Err(error) = result {
+            let _ = fs::remove_dir_all(target.issue_dir(issue));
+            if design_created {
+                let _ = fs::remove_file(target.root().join(&source_record.design_path));
+            }
+            if diagram_created {
+                let _ = fs::remove_file(target.root().join(&source_record.diagram_path));
+            }
+            return Err(error);
+        }
     }
     Ok(target)
 }
@@ -214,6 +243,7 @@ pub(crate) fn initialize_issue(
     store: &Store,
     mut request: BootstrapRequest,
 ) -> Result<crate::IssueRecord> {
+    let _creation_lock = store.binding_lock()?;
     if !clean_relative(&request.design_path)
         || !clean_relative(&request.diagram_path)
         || request.design_path == request.diagram_path
@@ -320,6 +350,8 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         && wanted.canonicalize().ok().as_ref() == Some(&current_root)
         && git::current_branch(store.root())? == request.branch;
 
+    let _lock = store.binding_lock()?;
+    let _issue_lock = store.authority_projection_lock(request.issue)?;
     let source_diagnosis = crate::diagnose(store, request.issue);
     let source_phase = source_diagnosis.phase;
     let source_is_bindable = source_diagnosis.status == DoctorStatus::Pass
@@ -339,7 +371,6 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         ));
     }
 
-    let _lock = store.binding_lock()?;
     if !issue_local && git::current_branch(store.root())? != request.base_branch {
         return Err(V2Error::new(
             ErrorCode::UnsafeCheckout,

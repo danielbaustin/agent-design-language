@@ -20,6 +20,7 @@ use crate::model::{
 use crate::review::evaluate_publication_review_in_repo;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct LegacyClaim {
     id: String,
     owner: String,
@@ -34,6 +35,7 @@ struct LegacyClaim {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct LegacyTerminalEvidence {
     pull_request: Option<u64>,
     disposition: crate::readiness::TerminalDisposition,
@@ -46,6 +48,7 @@ struct LegacyTerminalEvidence {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct LegacyIssueRecord {
     schema: String,
     issue: u64,
@@ -74,6 +77,7 @@ struct LegacyIssueRecord {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct LegacyTerminalReceipt {
     schema: String,
     issue: u64,
@@ -2624,5 +2628,25 @@ mod legacy_compatibility_tests {
             .expect_err("tampering must fail closed");
         assert_eq!(error.code, ErrorCode::CorruptRecord);
         assert_eq!(error.message, "legacy index digest mismatch");
+    }
+
+    #[test]
+    fn unsigned_current_topology_cannot_be_injected_into_legacy_record() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let store = Store::new(temp.path());
+        let legacy = legacy_record(44);
+        let mut value = serde_json::to_value(legacy).expect("legacy JSON");
+        value["branch"] = serde_json::json!("injected-branch");
+        value["worktree"] = serde_json::json!("injected-worktree");
+        fs::create_dir_all(store.issue_dir(44)).expect("issue directory");
+        fs::write(
+            store.issue_dir(44).join("index.json"),
+            serde_json::to_vec_pretty(&value).expect("legacy JSON"),
+        )
+        .expect("legacy index");
+
+        store
+            .load_record(44)
+            .expect_err("unsigned topology injection must fail closed");
     }
 }

@@ -9,8 +9,8 @@ operational authority is the independent Rust v2 binary set under
 Use the typed v2 binaries and do not invoke the removed v1 wrappers. The final
 coexistence inventory explicitly records `v1_sunset`; historical Gate 10A-C
 records remain immutable evidence and are not an instruction to retain deleted
-binaries. Session ownership and stale-claim recovery remain required
-invariants, retained in the shared ledger until a later ADL overlap cleanup.
+binaries. Issue ownership is derived from the bound Git branch and worktree;
+claims, leases, heartbeats, and protected-path ledgers are not lifecycle authority.
 
 This file is the repository-local operating contract for coding agents working
 in ADL.

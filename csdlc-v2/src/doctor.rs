@@ -114,7 +114,7 @@ pub fn diagnose(store: &Store, issue: u64) -> DoctorReport {
         report.findings.push(finding(error));
         return report;
     }
-    if let Err(error) = validate_execution_readiness(&cards) {
+    if let Err(error) = validate_execution_readiness(store.root(), &cards) {
         report.findings.push(Finding {
             code: "execution_readiness_invalid".into(),
             message: error.message,

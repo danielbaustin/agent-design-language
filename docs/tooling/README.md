@@ -11,6 +11,8 @@ The goal of this directory is to make ADL’s tooling surfaces understandable an
 - Structured prompt contracts: `structured-prompt-contracts.md`
 - Session coordination and root checkout policy:
   `SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md`
+- Claim-free C-SDLC v2 issue creation and binding:
+  `C_SDLC_V2_ISSUE_CREATION_AND_BINDING_RUNBOOK.md`
 - Default contributor workflow: `../default_workflow.md`
 - Editor and authoring proof surfaces: `editor/README.md`
 - Root project overview: `../README.md`
@@ -112,7 +114,9 @@ These docs describe worktree governance, large-module tracking, and related main
 Important repo-local tooling surfaces include:
 
 - `csdlc-doctor` — typed PR readiness and drift diagnostics
-- `csdlc-bind` — typed execution-context binder
+- `csdlc-issue create` and `csdlc-bind` — claim-free typed issue creation and
+  Git-topology binding; see the
+  [creation and binding runbook](C_SDLC_V2_ISSUE_CREATION_AND_BINDING_RUNBOOK.md)
 - `csdlc-validate`, `csdlc-review`, and `csdlc-publish` — typed finalization,
   exact-revision review, and publication path
 - `adl-lint-prompt-spec` — direct Prompt Spec lint and validation binary

@@ -3,10 +3,14 @@
 C-SDLC work is independent of the sunset ADL wrappers. Use the typed Rust
 binaries and operator skills under `csdlc-v2/`:
 
-1. `csdlc-init` creates the issue-local state and six cards.
+1. `csdlc-issue --root <repo> create --request <json>` creates the issue-local
+   state, six cards, design, and diagram from one typed request.
 2. `csdlc-edit` applies typed card edits; `csdlc-validate` validates values,
    Markdown AST structure, and schemas.
-3. `csdlc-bind` claims the issue and creates the bound worktree.
+3. `csdlc-bind --root <repo> --request <json>` validates readiness and binds
+   the issue to the requested Git branch and worktree. Git topology is the
+   ownership authority; no claim ID, lease, heartbeat, or protected-path ledger
+   is created.
 4. Implement in that worktree, then run the focused Rust/PVF validation lane.
 5. `csdlc-review` records current review truth before `csdlc-publish`.
 6. GitHub issue operations use `csdlc-github-issue`; PR observation uses
@@ -18,6 +22,10 @@ binaries and operator skills under `csdlc-v2/`:
 
 There is no separate closeout writer or terminal-reconciliation command. Safe
 worktree cleanup is a separate operation and is never a side effect of finish.
+
+See
+`docs/tooling/C_SDLC_V2_ISSUE_CREATION_AND_BINDING_RUNBOOK.md` for the bounded
+creation and binding contract.
 
 Use `csdlc-clean cleanup` with a typed request to classify or non-forcibly
 remove one exact registered issue worktree. Dirty, missing, relocated, primary,
