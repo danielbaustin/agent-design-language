@@ -400,6 +400,24 @@ async fn runtime_vector_pipeline_recovers_in_place_when_vector_child_exits() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
+async fn runtime_vector_pipeline_defers_retry_when_restart_record_cannot_be_persisted() {
+    let root = test_root("runtime-vector-restart-record-failure");
+    let mut pipeline =
+        RuntimeVectorPipeline::start_without_subscriber_for_test(vector_config(root, None))
+            .unwrap();
+
+    pipeline.stop_vector_for_test();
+    pipeline.stop_accepting_for_test();
+
+    let error = pipeline.poll_health().unwrap_err();
+    assert!(error.contains("restart_record_not_persisted"), "{error}");
+    assert_eq!(pipeline.snapshot().vector_pid, None);
+
+    assert!(pipeline.poll_health().is_ok());
+    assert_eq!(pipeline.snapshot().vector_pid, None);
+}
+
+#[tokio::test(flavor = "multi_thread")]
 async fn runtime_vector_pipeline_accepts_an_already_reaped_vector_during_cleanup() {
     let root = test_root("runtime-vector-already-reaped");
     let mut pipeline =

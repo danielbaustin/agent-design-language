@@ -41,7 +41,76 @@ use windows_sys::Win32::System::{
 
 pub const VECTOR_COMPONENT_VERSION: &str = "0.56.0";
 const SEQUENCE_CHECKPOINT_SCHEMA: &str = "adl.runtime_v3.observability.sequence.v1";
+const MASTER_LOG_LIVENESS_TIMEOUT: Duration = Duration::from_secs(30);
+const VECTOR_RETRY_BACKOFF_LIMIT: Duration = Duration::from_secs(30);
 static ATOMIC_WRITE_COUNTER: AtomicU64 = AtomicU64::new(0);
+
+#[derive(Debug)]
+struct MasterLogLiveness {
+    last_durable_sequence: Option<u64>,
+    stalled_since: Option<Instant>,
+}
+
+#[derive(Debug, Default)]
+struct RecoveryRetry {
+    failures: u32,
+    retry_at: Option<Instant>,
+}
+
+impl RecoveryRetry {
+    fn ready(&self, now: Instant) -> bool {
+        self.retry_at.is_none_or(|retry_at| now >= retry_at)
+    }
+
+    fn record_failure(&mut self, now: Instant, base: Duration) -> Duration {
+        self.failures = self.failures.saturating_add(1);
+        let delay = vector_retry_backoff(base, self.failures, VECTOR_RETRY_BACKOFF_LIMIT);
+        self.retry_at = Some(now + delay);
+        delay
+    }
+
+    fn reset(&mut self) {
+        self.failures = 0;
+        self.retry_at = None;
+    }
+}
+
+impl MasterLogLiveness {
+    fn new(last_durable_sequence: Option<u64>) -> Self {
+        Self {
+            last_durable_sequence,
+            stalled_since: None,
+        }
+    }
+
+    fn observe(
+        &mut self,
+        latest_sequence: Option<u64>,
+        durable_sequence: Option<u64>,
+        now: Instant,
+        timeout: Duration,
+    ) -> bool {
+        let Some(latest_sequence) = latest_sequence else {
+            self.stalled_since = None;
+            return false;
+        };
+
+        if durable_sequence.is_some_and(|sequence| sequence >= latest_sequence) {
+            self.last_durable_sequence = durable_sequence;
+            self.stalled_since = None;
+            return false;
+        }
+
+        if durable_sequence > self.last_durable_sequence {
+            self.last_durable_sequence = durable_sequence;
+            self.stalled_since = Some(now);
+            return false;
+        }
+
+        let stalled_since = self.stalled_since.get_or_insert(now);
+        now.saturating_duration_since(*stalled_since) >= timeout
+    }
+}
 
 #[derive(Clone, Debug)]
 pub struct RuntimeVectorConfig {
@@ -125,7 +194,8 @@ pub struct RuntimeVectorPipeline {
     sequence_path: PathBuf,
     run_start_sequence: u64,
     last_failure: Option<String>,
-    master_log_lag_started_at: Option<Instant>,
+    master_log_liveness: MasterLogLiveness,
+    recovery_retry: RecoveryRetry,
     drain_complete: bool,
 }
 
@@ -199,6 +269,7 @@ impl RuntimeVectorPipeline {
             .map_err(|_| "runtime_tracing_subscriber_already_installed")?;
         }
         let child = start_vector_with_retries(&config, &ingress, &sequence, &accepting)?;
+        let last_durable_sequence = master_log_highest_sequence(&config.master_log_path);
         Ok(Self {
             child: Some(child),
             ingress,
@@ -210,7 +281,8 @@ impl RuntimeVectorPipeline {
             sequence_path: config.sequence_checkpoint_path.clone(),
             run_start_sequence,
             last_failure: None,
-            master_log_lag_started_at: None,
+            master_log_liveness: MasterLogLiveness::new(last_durable_sequence),
+            recovery_retry: RecoveryRetry::default(),
             drain_complete: false,
         })
     }
@@ -242,6 +314,10 @@ impl RuntimeVectorPipeline {
         if self.drain_complete {
             return Ok(());
         }
+        let now = Instant::now();
+        if self.child.is_none() && !self.recovery_retry.ready(now) {
+            return Ok(());
+        }
         let child_failure = match self.child.as_mut() {
             None => Some(
                 self.last_failure
@@ -257,19 +333,18 @@ impl RuntimeVectorPipeline {
         if let Some(failure) = child_failure {
             return self.restart_vector_after_failure(failure);
         }
-        let last_sequence = self.sequence.load(Ordering::SeqCst).saturating_sub(1);
-        if last_sequence >= self.run_start_sequence
-            && !master_log_contains_sequence(&self.master_log_path, last_sequence)
-        {
-            let lag_started_at = self
-                .master_log_lag_started_at
-                .get_or_insert_with(Instant::now);
-            if lag_started_at.elapsed() >= self.config.drain_timeout {
-                let failure = "master_log_liveness_lag".to_owned();
-                return self.restart_vector_after_failure(failure);
-            }
-        } else {
-            self.master_log_lag_started_at = None;
+        let latest_sequence = self.sequence.load(Ordering::SeqCst).saturating_sub(1);
+        let latest_sequence =
+            (latest_sequence >= self.run_start_sequence).then_some(latest_sequence);
+        let durable_sequence = master_log_highest_sequence(&self.master_log_path);
+        if self.master_log_liveness.observe(
+            latest_sequence,
+            durable_sequence,
+            now,
+            MASTER_LOG_LIVENESS_TIMEOUT,
+        ) {
+            let failure = "master_log_liveness_stalled".to_owned();
+            return self.restart_vector_after_failure(failure);
         }
         Ok(())
     }
@@ -301,38 +376,24 @@ impl RuntimeVectorPipeline {
         );
         if self.sequence.load(Ordering::SeqCst) != restart_sequence.saturating_add(1) {
             let recovery_failure = format!("{failure}:restart_record_not_persisted");
-            self.last_failure = Some(recovery_failure.clone());
-            return Err(recovery_failure);
+            return Err(self.defer_recovery_failure(recovery_failure));
         }
-        let mut child = match spawn_vector_child(&self.config) {
+        let child = match start_vector_with_retries(
+            &self.config,
+            &self.ingress,
+            &self.sequence,
+            &self.accepting,
+        ) {
             Ok(child) => child,
             Err(error) => {
                 let recovery_failure = format!("{failure}:vector_restart_failed:{error}");
-                self.last_failure = Some(recovery_failure.clone());
-                return Err(recovery_failure);
+                return Err(self.defer_recovery_failure(recovery_failure));
             }
         };
-        if let Some(status) = child
-            .try_wait()
-            .map_err(|_| format!("{failure}:vector_restart_health_unknown"))?
-        {
-            let recovery_failure = format!("{failure}:vector_restart_exited:{status}");
-            self.last_failure = Some(recovery_failure.clone());
-            return Err(recovery_failure);
-        }
-        if !wait_for_master_sequence(
-            &self.master_log_path,
-            restart_sequence,
-            self.config.drain_timeout,
-        ) {
-            let _ = child.kill();
-            let _ = child.wait();
-            let recovery_failure = format!("{failure}:vector_restart_readiness_not_observed");
-            self.last_failure = Some(recovery_failure.clone());
-            return Err(recovery_failure);
-        }
         self.child = Some(child);
-        self.master_log_lag_started_at = None;
+        self.master_log_liveness =
+            MasterLogLiveness::new(master_log_highest_sequence(&self.master_log_path));
+        self.recovery_retry.reset();
         self.last_failure = None;
         write_observability_record(
             &self.ingress,
@@ -351,6 +412,13 @@ impl RuntimeVectorPipeline {
             },
         );
         Ok(())
+    }
+
+    fn defer_recovery_failure(&mut self, failure: String) -> String {
+        self.recovery_retry
+            .record_failure(Instant::now(), self.config.vector_startup_backoff);
+        self.last_failure = Some(failure.clone());
+        failure
     }
 
     pub fn audit_master_log(
@@ -468,6 +536,12 @@ impl RuntimeVectorPipeline {
             let _ = child.kill();
             let _ = child.wait();
         }
+    }
+
+    #[cfg(test)]
+    #[allow(dead_code)]
+    pub fn stop_accepting_for_test(&self) {
+        self.accepting.store(false, Ordering::SeqCst);
     }
 
     #[cfg(test)]
@@ -1009,6 +1083,57 @@ fn master_log_contains_sequence(path: &Path, sequence: u64) -> bool {
         })
 }
 
+fn master_log_highest_sequence(path: &Path) -> Option<u64> {
+    let file = File::open(path).ok()?;
+    BufReader::new(file)
+        .lines()
+        .map_while(Result::ok)
+        .filter_map(|line| {
+            serde_json::from_str::<Value>(&line)
+                .ok()
+                .and_then(|record| record["sequence"].as_u64())
+        })
+        .max()
+}
+
+#[cfg(test)]
+mod master_log_liveness_tests {
+    use super::MasterLogLiveness;
+    use std::time::{Duration, Instant};
+
+    #[test]
+    fn forward_progress_while_behind_does_not_trigger_restart() {
+        let start = Instant::now();
+        let timeout = Duration::from_secs(30);
+        let mut liveness = MasterLogLiveness::new(Some(10));
+
+        assert!(!liveness.observe(Some(20), Some(10), start, timeout));
+        assert!(!liveness.observe(Some(20), Some(11), start + Duration::from_secs(29), timeout,));
+        assert!(!liveness.observe(Some(20), Some(12), start + Duration::from_secs(58), timeout,));
+    }
+
+    #[test]
+    fn sustained_pending_backlog_without_progress_triggers_restart() {
+        let start = Instant::now();
+        let timeout = Duration::from_secs(30);
+        let mut liveness = MasterLogLiveness::new(Some(10));
+
+        assert!(!liveness.observe(Some(20), Some(10), start, timeout));
+        assert!(liveness.observe(Some(20), Some(10), start + timeout, timeout,));
+    }
+
+    #[test]
+    fn caught_up_master_log_clears_a_previous_stall_window() {
+        let start = Instant::now();
+        let timeout = Duration::from_secs(30);
+        let mut liveness = MasterLogLiveness::new(Some(10));
+
+        assert!(!liveness.observe(Some(20), Some(10), start, timeout));
+        assert!(!liveness.observe(Some(20), Some(20), start + Duration::from_secs(29), timeout,));
+        assert!(!liveness.observe(Some(21), Some(20), start + Duration::from_secs(31), timeout,));
+    }
+}
+
 struct StructuredEvent<'a> {
     severity: &'a str,
     target: &'a str,
@@ -1105,7 +1230,11 @@ fn start_vector_with_retries(
                         attempt,
                         &last_failure,
                     );
-                    sleep(config.vector_startup_backoff.saturating_mul(attempt));
+                    sleep(vector_retry_backoff(
+                        config.vector_startup_backoff,
+                        attempt,
+                        VECTOR_RETRY_BACKOFF_LIMIT,
+                    ));
                     continue;
                 }
                 break;
@@ -1168,13 +1297,84 @@ fn start_vector_with_retries(
         let _ = child.wait();
         if attempt < config.vector_startup_attempts {
             record_vector_start_retry(config, ingress, sequence, accepting, attempt, &last_failure);
-            sleep(config.vector_startup_backoff.saturating_mul(attempt));
+            sleep(vector_retry_backoff(
+                config.vector_startup_backoff,
+                attempt,
+                VECTOR_RETRY_BACKOFF_LIMIT,
+            ));
         }
     }
     Err(format!(
         "{last_failure}:attempts_exhausted:{}",
         config.vector_startup_attempts
     ))
+}
+
+fn vector_retry_backoff(base: Duration, failed_attempt: u32, limit: Duration) -> Duration {
+    let exponent = failed_attempt.saturating_sub(1).min(31);
+    let multiplier = 1_u32.checked_shl(exponent).unwrap_or(u32::MAX);
+    base.saturating_mul(multiplier).min(limit.max(base))
+}
+
+#[cfg(test)]
+mod vector_retry_backoff_tests {
+    use super::{vector_retry_backoff, RecoveryRetry};
+    use std::time::Duration;
+
+    #[test]
+    fn backoff_is_exponential_and_bounded() {
+        let base = Duration::from_millis(100);
+        let limit = Duration::from_secs(1);
+
+        assert_eq!(
+            vector_retry_backoff(base, 1, limit),
+            Duration::from_millis(100)
+        );
+        assert_eq!(
+            vector_retry_backoff(base, 2, limit),
+            Duration::from_millis(200)
+        );
+        assert_eq!(
+            vector_retry_backoff(base, 3, limit),
+            Duration::from_millis(400)
+        );
+        assert_eq!(vector_retry_backoff(base, 8, limit), limit);
+    }
+
+    #[test]
+    fn backoff_limit_never_shortens_the_configured_base() {
+        let base = Duration::from_secs(5);
+        let lower_limit = Duration::from_secs(1);
+
+        assert_eq!(vector_retry_backoff(base, 1, lower_limit), base);
+        assert_eq!(vector_retry_backoff(base, 8, lower_limit), base);
+    }
+
+    #[test]
+    fn recovery_backoff_persists_across_health_polls_until_reset() {
+        let start = std::time::Instant::now();
+        let base = Duration::from_millis(100);
+        let mut retry = RecoveryRetry::default();
+
+        assert!(retry.ready(start));
+        assert_eq!(
+            retry.record_failure(start, base),
+            Duration::from_millis(100)
+        );
+        assert!(!retry.ready(start + Duration::from_millis(99)));
+        assert!(retry.ready(start + Duration::from_millis(100)));
+
+        assert_eq!(
+            retry.record_failure(start + Duration::from_millis(100), base),
+            Duration::from_millis(200)
+        );
+        assert!(!retry.ready(start + Duration::from_millis(299)));
+        assert!(retry.ready(start + Duration::from_millis(300)));
+
+        retry.reset();
+        assert!(retry.ready(start));
+        assert_eq!(retry.failures, 0);
+    }
 }
 
 fn record_vector_start_retry(
