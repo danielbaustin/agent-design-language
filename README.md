@@ -1,3 +1,5 @@
+> **Canonical development has moved:** New code, branches, and pull requests belong in [agent-logic/agent-design-language](https://github.com/agent-logic/agent-design-language).
+
 # Agent Design Language (ADL)
 
 Agent Design Language is a deterministic cognitive architecture for building
