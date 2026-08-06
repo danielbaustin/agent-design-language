@@ -500,6 +500,7 @@ fn bootstrap_request() -> BootstrapRequest {
                 acceptance_ids: vec!["AC-1".into()],
                 status: csdlc_v2::cards::StepStatus::Pending,
             }],
+            affected_areas: vec!["docs/design.md".into()],
             invariants: vec!["typed mutation".into()],
             risks: vec!["binary drift".into()],
             planning_profile: csdlc_v2::PlanningProfile::Small,

@@ -5,6 +5,8 @@ use std::process::Command;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use crate::cards::validate_initial_input;
+use crate::doctor::DoctorStatus;
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::git;
 use crate::model::AuditEvent;
@@ -222,6 +224,7 @@ pub(crate) fn initialize_issue(
         ));
     }
     validate_bootstrap_request(&request)?;
+    validate_initial_input(&request.initial)?;
     let issue_dir = store.issue_dir(request.issue);
     for authored_path in [&request.design_path, &request.diagram_path] {
         let path = store.root().join(authored_path);
@@ -235,34 +238,50 @@ pub(crate) fn initialize_issue(
             ));
         }
     }
+    if issue_dir.join("index.json").exists() {
+        return bootstrap_issue(store, request);
+    }
     let design = store.root().join(&request.design_path);
     let diagram = store.root().join(&request.diagram_path);
-    if !design.exists() {
-        if let Some(parent) = design.parent() {
-            fs::create_dir_all(parent)?;
+    let created_design = !design.exists();
+    let created_diagram = !diagram.exists();
+    let result = (|| {
+        if created_design {
+            if let Some(parent) = design.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::write(
+                &design,
+                format!(
+                    "# Issue {} design\n\nStatus: design required before Ready.\n",
+                    request.issue
+                ),
+            )?;
+            request.design_approved = false;
         }
-        fs::write(
-            &design,
-            format!(
-                "# Issue {} design\n\nStatus: design required before Ready.\n",
-                request.issue
-            ),
-        )?;
-        request.design_approved = false;
-    }
-    if !diagram.exists() {
-        if let Some(parent) = diagram.parent() {
-            fs::create_dir_all(parent)?;
+        if created_diagram {
+            if let Some(parent) = diagram.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::write(
+                &diagram,
+                format!(
+                    "flowchart LR\n  I[\"Issue {}\"] --> D[\"Design required\"]\n",
+                    request.issue
+                ),
+            )?;
         }
-        fs::write(
-            &diagram,
-            format!(
-                "flowchart LR\n  I[\"Issue {}\"] --> D[\"Design required\"]\n",
-                request.issue
-            ),
-        )?;
+        bootstrap_issue(store, request)
+    })();
+    if result.is_err() {
+        if created_diagram && diagram.exists() {
+            fs::remove_file(&diagram)?;
+        }
+        if created_design && design.exists() {
+            fs::remove_file(&design)?;
+        }
     }
-    bootstrap_issue(store, request)
+    result
 }
 
 pub fn initialize_native_json(store: &Store, bytes: &[u8]) -> Result<crate::IssueRecord> {
@@ -301,6 +320,25 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         && wanted.canonicalize().ok().as_ref() == Some(&current_root)
         && git::current_branch(store.root())? == request.branch;
 
+    let source_diagnosis = crate::diagnose(store, request.issue);
+    let source_phase = source_diagnosis.phase;
+    let source_is_bindable = source_diagnosis.status == DoctorStatus::Pass
+        && matches!(
+            source_phase,
+            Some(
+                crate::LifecyclePhase::Initialized
+                    | crate::LifecyclePhase::Ready
+                    | crate::LifecyclePhase::Bound
+            )
+        )
+        && (source_phase != Some(crate::LifecyclePhase::Initialized) || source_diagnosis.ready);
+    if !source_is_bindable {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "source issue is not execution-ready for binding",
+        ));
+    }
+
     let _lock = store.binding_lock()?;
     if !issue_local && git::current_branch(store.root())? != request.base_branch {
         return Err(V2Error::new(
@@ -321,6 +359,7 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
             if record.issue == request.issue {
                 if branch == &request.branch
                     && path == wanted
+                    && record.branch.as_deref() == Some(request.branch.as_str())
                     && record
                         .worktree
                         .as_deref()
@@ -396,13 +435,6 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         let mut record = target.load_record(request.issue)?;
         let expected_digest = record.digest.clone();
         if record.phase == crate::LifecyclePhase::Initialized {
-            let doctor = crate::diagnose(&target, request.issue);
-            if !doctor.ready {
-                return Err(V2Error::new(
-                    ErrorCode::InvalidTransition,
-                    "issue cards and design are not execution-ready",
-                ));
-            }
             record.advance(
                 crate::LifecyclePhase::Ready,
                 "csdlc-bind".into(),

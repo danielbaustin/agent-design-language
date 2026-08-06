@@ -405,6 +405,7 @@ pub fn generate_sample_packets(repo: &Path, root: &Path) -> Result<Vec<SamplePac
                     acceptance_ids: vec!["AC-1".into(), "AC-2".into()],
                     status: StepStatus::Pending,
                 }],
+                affected_areas: vec!["csdlc-v2".into()],
                 invariants: vec![
                     "v1 remains the default".into(),
                     "review precedes publication".into(),

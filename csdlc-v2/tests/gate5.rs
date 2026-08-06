@@ -95,6 +95,7 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
                     acceptance_ids: vec!["AC-1".into()],
                     status: csdlc_v2::cards::StepStatus::Pending,
                 }],
+                affected_areas: vec!["src".into()],
                 invariants: vec!["exact revision".into()],
                 risks: vec!["stale".into()],
                 planning_profile: PlanningProfile::Small,

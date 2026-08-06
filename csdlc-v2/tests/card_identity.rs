@@ -29,6 +29,7 @@ fn input() -> InitialCardInput {
             acceptance_ids: vec!["AC-1".into()],
             status: StepStatus::Pending,
         }],
+        affected_areas: vec!["csdlc-v2/tests/card_identity.rs".into()],
         invariants: vec!["one version".into()],
         risks: vec![],
         planning_profile: PlanningProfile::Small,

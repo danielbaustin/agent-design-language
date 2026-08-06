@@ -19,6 +19,73 @@ use crate::model::{
 };
 use crate::review::evaluate_publication_review_in_repo;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct LegacyClaim {
+    id: String,
+    owner: String,
+    generation: u64,
+    acquired_unix_seconds: u64,
+    expires_unix_seconds: u64,
+    heartbeat_unix_seconds: u64,
+    branch: String,
+    worktree: String,
+    protected_paths: Vec<String>,
+    purpose: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct LegacyTerminalEvidence {
+    pull_request: Option<u64>,
+    disposition: crate::readiness::TerminalDisposition,
+    observed_sha: Option<String>,
+    observed_state: String,
+    receipt_path: String,
+    released_branch: String,
+    released_worktree: String,
+    released_protected_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct LegacyIssueRecord {
+    schema: String,
+    issue: u64,
+    repository: String,
+    initialization_digest: String,
+    phase: LifecyclePhase,
+    generation: u64,
+    digest: String,
+    claim: Option<LegacyClaim>,
+    review_assignment: Option<ReviewAssignment>,
+    review: Option<ReviewEvidence>,
+    #[serde(default)]
+    publication: Option<PublicationEvidence>,
+    #[serde(default)]
+    readiness: Option<crate::model::ReadinessEvidence>,
+    #[serde(default)]
+    terminal: Option<LegacyTerminalEvidence>,
+    #[serde(default)]
+    migration: Option<crate::model::MigrationEvidence>,
+    design_path: String,
+    diagram_path: String,
+    design_review: DesignReview,
+    cards: BTreeMap<CardKind, CardProjection>,
+    transitions: Vec<TransitionEvent>,
+    audit: Vec<AuditEvent>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct LegacyTerminalReceipt {
+    schema: String,
+    issue: u64,
+    repository: String,
+    initialization_digest: String,
+    receipt_ref: String,
+    authored_artifacts: BTreeMap<String, String>,
+    record: LegacyIssueRecord,
+    cards: BTreeMap<CardKind, CardValues>,
+    digest: String,
+}
+
 #[derive(Debug, Clone)]
 pub struct Store {
     root: PathBuf,
@@ -115,6 +182,9 @@ impl Store {
     pub fn load_record(&self, issue: u64) -> Result<IssueRecord> {
         let mut value: serde_json::Value =
             serde_json::from_slice(&fs::read(self.issue_dir(issue).join("index.json"))?)?;
+        if value.get("claim").is_some() {
+            verify_legacy_record_json(&value)?;
+        }
         let had_legacy_claim = normalize_legacy_record_json(&mut value);
         let mut record: IssueRecord = serde_json::from_value(value)?;
         if had_legacy_claim {
@@ -194,6 +264,13 @@ impl Store {
             ));
         }
         let mut value: serde_json::Value = read_json(&path)?;
+        if value
+            .get("record")
+            .and_then(|record| record.get("claim"))
+            .is_some()
+        {
+            verify_legacy_terminal_receipt_json(&value)?;
+        }
         let had_legacy_claim = value
             .get_mut("record")
             .is_some_and(normalize_legacy_record_json);
@@ -2306,6 +2383,42 @@ fn read_json<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T> {
     Ok(serde_json::from_slice(&fs::read(path)?)?)
 }
 
+fn legacy_record_digest(record: &LegacyIssueRecord) -> Result<String> {
+    let mut value = record.clone();
+    value.digest.clear();
+    Ok(digest(&serde_json::to_vec(&value)?))
+}
+
+fn verify_legacy_record_json(value: &serde_json::Value) -> Result<()> {
+    let record: LegacyIssueRecord = serde_json::from_value(value.clone())?;
+    if record.digest != legacy_record_digest(&record)? {
+        return Err(V2Error::new(
+            ErrorCode::CorruptRecord,
+            "legacy index digest mismatch",
+        ));
+    }
+    Ok(())
+}
+
+fn legacy_terminal_receipt_digest(receipt: &LegacyTerminalReceipt) -> Result<String> {
+    let mut value = receipt.clone();
+    value.digest.clear();
+    Ok(digest(&serde_json::to_vec(&value)?))
+}
+
+fn verify_legacy_terminal_receipt_json(value: &serde_json::Value) -> Result<()> {
+    let receipt: LegacyTerminalReceipt = serde_json::from_value(value.clone())?;
+    if receipt.record.digest != legacy_record_digest(&receipt.record)?
+        || receipt.digest != legacy_terminal_receipt_digest(&receipt)?
+    {
+        return Err(V2Error::new(
+            ErrorCode::CorruptRecord,
+            "legacy terminal receipt digest mismatch",
+        ));
+    }
+    Ok(())
+}
+
 fn normalize_legacy_record_json(value: &mut serde_json::Value) -> bool {
     let Some(object) = value.as_object_mut() else {
         return false;
@@ -2325,6 +2438,26 @@ fn normalize_legacy_record_json(value: &mut serde_json::Value) -> bool {
         {
             object.insert("worktree".into(), worktree);
         }
+    }
+    if let Some(terminal) = object
+        .get_mut("terminal")
+        .and_then(serde_json::Value::as_object_mut)
+    {
+        if terminal.get("branch").is_none() {
+            let branch = terminal
+                .remove("released_branch")
+                .filter(|value| !value.as_str().is_some_and(str::is_empty))
+                .unwrap_or(serde_json::Value::Null);
+            terminal.insert("branch".into(), branch);
+        }
+        if terminal.get("worktree").is_none() {
+            let worktree = terminal
+                .remove("released_worktree")
+                .filter(|value| !value.as_str().is_some_and(str::is_empty))
+                .unwrap_or(serde_json::Value::Null);
+            terminal.insert("worktree".into(), worktree);
+        }
+        terminal.remove("released_protected_paths");
     }
     had_legacy_claim
 }
@@ -2408,5 +2541,88 @@ mod edit_authorization_tests {
                 assert_eq!(error.code, ErrorCode::InvalidTransition);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod legacy_compatibility_tests {
+    use super::*;
+
+    fn legacy_record(issue: u64) -> LegacyIssueRecord {
+        let mut record = LegacyIssueRecord {
+            schema: "csdlc.issue.index.v1".into(),
+            issue,
+            repository: "example/repo".into(),
+            initialization_digest: "initialization".into(),
+            phase: LifecyclePhase::Bound,
+            generation: 1,
+            digest: String::new(),
+            claim: Some(LegacyClaim {
+                id: "legacy-claim".into(),
+                owner: "legacy-operator".into(),
+                generation: 1,
+                acquired_unix_seconds: 1,
+                expires_unix_seconds: 3,
+                heartbeat_unix_seconds: 2,
+                branch: format!("issue-{issue}"),
+                worktree: format!(".worktrees/issue-{issue}"),
+                protected_paths: vec!["src".into()],
+                purpose: "legacy compatibility fixture".into(),
+            }),
+            review_assignment: None,
+            review: None,
+            publication: None,
+            readiness: None,
+            terminal: None,
+            migration: None,
+            design_path: format!("design/issue-{issue}.md"),
+            diagram_path: format!("design/issue-{issue}.mmd"),
+            design_review: DesignReview::Pending,
+            cards: BTreeMap::new(),
+            transitions: Vec::new(),
+            audit: Vec::new(),
+        };
+        record.digest = legacy_record_digest(&record).expect("legacy digest");
+        record
+    }
+
+    fn write_legacy(store: &Store, record: &LegacyIssueRecord) {
+        fs::create_dir_all(store.issue_dir(record.issue)).expect("issue directory");
+        fs::write(
+            store.issue_dir(record.issue).join("index.json"),
+            serde_json::to_vec_pretty(record).expect("legacy JSON"),
+        )
+        .expect("legacy index");
+    }
+
+    #[test]
+    fn valid_legacy_claim_is_verified_before_bounded_normalization() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let store = Store::new(temp.path());
+        let legacy = legacy_record(42);
+        write_legacy(&store, &legacy);
+
+        let record = store.load_record(42).expect("compatible legacy record");
+        assert_eq!(record.branch.as_deref(), Some("issue-42"));
+        assert_eq!(record.worktree.as_deref(), Some(".worktrees/issue-42"));
+        assert_eq!(
+            record.digest,
+            record_digest(&record).expect("current digest")
+        );
+    }
+
+    #[test]
+    fn tampered_legacy_claim_is_rejected_before_normalization() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let store = Store::new(temp.path());
+        let mut legacy = legacy_record(43);
+        legacy.claim.as_mut().expect("claim").owner = "tampered".into();
+        write_legacy(&store, &legacy);
+
+        let error = store
+            .load_record(43)
+            .expect_err("tampering must fail closed");
+        assert_eq!(error.code, ErrorCode::CorruptRecord);
+        assert_eq!(error.message, "legacy index digest mismatch");
     }
 }

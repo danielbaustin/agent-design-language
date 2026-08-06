@@ -455,6 +455,7 @@ fn build_initial(
         non_goals: vec!["legacy implementation reuse".into()],
         plan_summary: plain(&get(CardKind::Spp, "Plan")?),
         steps,
+        affected_areas: vec![format!(".csdlc/issues/{}", request.issue)],
         invariants: list(&get(CardKind::Spp, "Invariants")?),
         risks: list(&get(CardKind::Spp, "Risks")?),
         planning_profile: request.planning_profile,

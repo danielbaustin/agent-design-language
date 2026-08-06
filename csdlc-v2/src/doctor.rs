@@ -4,7 +4,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use strum::{AsRefStr, Display, EnumIter, EnumString};
 
-use crate::cards::digest;
+use crate::cards::{digest, validate_execution_readiness};
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::model::{DesignReview, LifecyclePhase};
 use crate::review::evaluate_publication_review_in_repo;
@@ -113,6 +113,12 @@ pub fn diagnose(store: &Store, issue: u64) -> DoctorReport {
         report.status = DoctorStatus::Corrupt;
         report.findings.push(finding(error));
         return report;
+    }
+    if let Err(error) = validate_execution_readiness(&cards) {
+        report.findings.push(Finding {
+            code: "execution_readiness_invalid".into(),
+            message: error.message,
+        });
     }
     let diagram = fs::read_to_string(store.root().join(&record.diagram_path)).unwrap_or_default();
     let first = diagram

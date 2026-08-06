@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, BTreeSet};
+use std::path::{Component, Path};
 
 use markdown::mdast::Node;
 use markdown::{to_mdast, ParseOptions};
@@ -451,6 +452,7 @@ pub struct InitialCardInput {
     pub non_goals: Vec<String>,
     pub plan_summary: String,
     pub steps: Vec<PlanStep>,
+    pub affected_areas: Vec<String>,
     pub invariants: Vec<String>,
     pub risks: Vec<String>,
     pub planning_profile: PlanningProfile,
@@ -756,7 +758,7 @@ pub fn initial_cards(
                 plan_revision: 1,
                 summary: input.plan_summary,
                 steps: input.steps,
-                affected_areas: Vec::new(),
+                affected_areas: input.affected_areas,
                 invariants: input.invariants,
                 risks: input.risks,
                 execution_estimates: estimates,
@@ -1378,11 +1380,22 @@ fn require_input(input: &InitialCardInput) -> Result<()> {
     .iter()
     .any(|v| v.trim().is_empty())
         || input.declared_scope.is_empty()
+        || input
+            .declared_scope
+            .iter()
+            .any(|value| value.trim().is_empty())
         || input.authority_boundary.is_empty()
         || input.operator_constraints.is_empty()
         || input.deliverables.is_empty()
         || input.acceptance_criteria.is_empty()
         || input.steps.is_empty()
+        || input.affected_areas.is_empty()
+        || input.affected_areas.iter().any(|value| {
+            placeholder(value)
+                || !Path::new(value)
+                    .components()
+                    .all(|component| matches!(component, Component::Normal(_)))
+        })
         || input.stop_conditions.is_empty()
         || input.review_prompts.is_empty()
         || input.review_scope.trim().is_empty()
@@ -1392,7 +1405,13 @@ fn require_input(input: &InitialCardInput) -> Result<()> {
             "initial typed card input is incomplete",
         ));
     }
+    validate_plan_steps(&input.steps)?;
+    validate_validation_lanes(&input.validation_lanes)?;
     Ok(())
+}
+
+pub(crate) fn validate_initial_input(input: &InitialCardInput) -> Result<()> {
+    require_input(input)
 }
 
 fn set_text(values: &mut CardValues, field: TextField, value: String) -> Result<()> {
@@ -1516,7 +1535,7 @@ fn validate_validation_lanes(lanes: &[ValidationLane]) -> Result<()> {
                 || lane.acceptance_ids.is_empty()
                 || acceptance_ids.len() != lane.acceptance_ids.len()
                 || lane.acceptance_ids.iter().any(|id| id.trim().is_empty())
-                || lane.argv.is_empty()
+                || !proving_lane(lane)
                 || lane.budget_seconds == 0
                 || lane.budget_tokens == 0
         })
@@ -1524,6 +1543,67 @@ fn validate_validation_lanes(lanes: &[ValidationLane]) -> Result<()> {
         return Err(V2Error::new(
             ErrorCode::CardInvalid,
             "validation lanes must be unique and complete",
+        ));
+    }
+    Ok(())
+}
+
+fn placeholder(value: &str) -> bool {
+    let value = value.trim().to_ascii_lowercase();
+    value.is_empty()
+        || matches!(
+            value.as_str(),
+            "none" | "n/a" | "na" | "tbd" | "todo" | "unknown" | "placeholder"
+        )
+        || value.contains("<placeholder>")
+        || value.contains("${")
+}
+
+fn proving_lane(lane: &ValidationLane) -> bool {
+    let executable = lane
+        .argv
+        .first()
+        .and_then(|value| Path::new(value).file_name())
+        .and_then(|value| value.to_str())
+        .unwrap_or_default()
+        .to_ascii_lowercase();
+    !placeholder(&lane.proof_role)
+        && !lane.proof_role.to_ascii_lowercase().contains("non-proving")
+        && !lane.argv.iter().any(|value| placeholder(value))
+        && !matches!(
+            executable.as_str(),
+            "true" | "false" | "echo" | "printf" | "sleep" | ":"
+        )
+}
+
+pub(crate) fn validate_execution_readiness(cards: &BTreeMap<CardKind, CardValues>) -> Result<()> {
+    let affected_areas = match &cards
+        .get(&CardKind::Spp)
+        .ok_or_else(|| V2Error::new(ErrorCode::CardInvalid, "SPP projection missing"))?
+        .content
+    {
+        CardContent::Spp(values) => &values.affected_areas,
+        _ => unreachable!("SPP projection"),
+    };
+    let owned_paths_are_valid = !affected_areas.is_empty()
+        && affected_areas.iter().all(|value| {
+            !placeholder(value)
+                && Path::new(value)
+                    .components()
+                    .all(|component| matches!(component, Component::Normal(_)))
+        });
+    let lanes = match &cards
+        .get(&CardKind::Vpp)
+        .ok_or_else(|| V2Error::new(ErrorCode::CardInvalid, "VPP projection missing"))?
+        .content
+    {
+        CardContent::Vpp(values) => &values.lanes,
+        _ => unreachable!("VPP projection"),
+    };
+    if !owned_paths_are_valid || lanes.is_empty() || lanes.iter().any(|lane| !proving_lane(lane)) {
+        return Err(V2Error::new(
+            ErrorCode::CardInvalid,
+            "execution readiness requires owned repository paths and proving validation lanes",
         ));
     }
     Ok(())

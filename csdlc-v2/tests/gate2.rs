@@ -61,6 +61,7 @@ fn request() -> BootstrapRequest {
                 acceptance_ids: vec!["AC-1".into(), "AC-2".into()],
                 status: StepStatus::Pending,
             }],
+            affected_areas: vec!["design/issue-42.md".into()],
             invariants: vec!["Git topology is binding authority".into()],
             risks: vec!["conflicting worktree".into()],
             planning_profile: PlanningProfile::Small,
@@ -121,6 +122,61 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     git(&repo, &["add", "."]);
     git(&repo, &["commit", "-m", "fixture"]);
 
+    let invalid_create_request = temp.path().join("invalid-create.json");
+    let mut invalid_create = request();
+    invalid_create.issue = 40;
+    invalid_create.design_path = "generated/invalid-design.md".into();
+    invalid_create.diagram_path = "generated/invalid-diagram.mmd".into();
+    invalid_create.initial.affected_areas.clear();
+    fs::write(
+        &invalid_create_request,
+        serde_json::to_vec_pretty(&invalid_create).expect("serialize invalid create request"),
+    )
+    .expect("invalid create request");
+    let repo_text = repo.to_string_lossy();
+    let invalid_create_text = invalid_create_request.to_string_lossy();
+    let invalid_created = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-issue"),
+        &[
+            "--root",
+            &repo_text,
+            "create",
+            "--request",
+            &invalid_create_text,
+        ],
+    );
+    assert!(!invalid_created.status.success());
+    assert!(!repo.join("generated/invalid-design.md").exists());
+    assert!(!repo.join("generated/invalid-diagram.mmd").exists());
+
+    let non_proving_request = temp.path().join("non-proving-create.json");
+    let mut non_proving = request();
+    non_proving.issue = 41;
+    non_proving.design_path = "generated/non-proving-design.md".into();
+    non_proving.diagram_path = "generated/non-proving-diagram.mmd".into();
+    non_proving.initial.validation_lanes[0].argv = vec!["true".into()];
+    fs::write(
+        &non_proving_request,
+        serde_json::to_vec_pretty(&non_proving).expect("serialize non-proving request"),
+    )
+    .expect("non-proving request");
+    let non_proving_text = non_proving_request.to_string_lossy();
+    let non_proving_result = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-issue"),
+        &[
+            "--root",
+            &repo_text,
+            "create",
+            "--request",
+            &non_proving_text,
+        ],
+    );
+    assert!(!non_proving_result.status.success());
+    assert!(!repo.join("generated/non-proving-design.md").exists());
+    assert!(!repo.join("generated/non-proving-diagram.mmd").exists());
+
     let create_request = temp.path().join("create.json");
     let mut create = serde_json::to_value(request()).expect("serialize create request");
     create["claim"] = serde_json::json!({"id": "ignored-legacy-create-claim"});
@@ -129,7 +185,6 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
         serde_json::to_vec_pretty(&create).expect("serialize create request"),
     )
     .expect("create request");
-    let repo_text = repo.to_string_lossy();
     let create_text = create_request.to_string_lossy();
     let created = must_succeed(command(
         &repo,
@@ -151,6 +206,25 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     ));
     assert!(diagnosed.contains("\"ready\": true"));
 
+    let duplicate_request = temp.path().join("duplicate-create.json");
+    let mut duplicate = request();
+    duplicate.design_path = "generated/duplicate-design.md".into();
+    duplicate.diagram_path = "generated/duplicate-diagram.mmd".into();
+    fs::write(
+        &duplicate_request,
+        serde_json::to_vec_pretty(&duplicate).expect("serialize duplicate request"),
+    )
+    .expect("duplicate request");
+    let duplicate_text = duplicate_request.to_string_lossy();
+    let duplicate_result = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-issue"),
+        &["--root", &repo_text, "create", "--request", &duplicate_text],
+    );
+    assert!(!duplicate_result.status.success());
+    assert!(!repo.join("generated/duplicate-design.md").exists());
+    assert!(!repo.join("generated/duplicate-diagram.mmd").exists());
+
     let bind_request = temp.path().join("bind.json");
     let bind = serde_json::json!({
         "issue": 42,
@@ -165,6 +239,18 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     )
     .expect("bind request");
     let bind_text = bind_request.to_string_lossy();
+
+    fs::write(repo.join("design/issue-42.md"), "# Stale design\n").expect("stale design");
+    let invalid_bind = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-bind"),
+        &["--root", &repo_text, "--request", &bind_text],
+    );
+    assert!(!invalid_bind.status.success());
+    assert!(!worktree.exists());
+    assert!(!git(&repo, &["branch", "--list", "issue-42"]).contains("issue-42"));
+    fs::write(repo.join("design/issue-42.md"), "# Approved design\n").expect("restore design");
+
     let first = must_succeed(command(
         &repo,
         env!("CARGO_BIN_EXE_csdlc-bind"),
@@ -178,38 +264,28 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     )));
     assert!(topology.contains("branch refs/heads/issue-42"));
 
-    let index = worktree.join(".csdlc/issues/42/index.json");
-    let mut legacy: serde_json::Value =
-        serde_json::from_slice(&fs::read(&index).expect("bound index")).expect("index JSON");
-    legacy
-        .as_object_mut()
-        .expect("record object")
-        .remove("branch");
-    legacy
-        .as_object_mut()
-        .expect("record object")
-        .remove("worktree");
-    legacy["claim"] = serde_json::json!({
-        "id": "legacy-claim",
-        "owner": "legacy-agent",
-        "branch": "issue-42",
-        "worktree": worktree,
-        "protected_paths": ["src"],
-        "heartbeat_unix_seconds": 1,
-        "expires_unix_seconds": 2
-    });
-    fs::write(
-        &index,
-        serde_json::to_vec_pretty(&legacy).expect("serialize legacy index"),
-    )
-    .expect("legacy index");
-
     let second = must_succeed(command(
         &repo,
         env!("CARGO_BIN_EXE_csdlc-bind"),
         &["--root", &repo_text, "--request", &bind_text],
     ));
     assert!(second.contains("\"created\":false"));
+
+    let index = worktree.join(".csdlc/issues/42/index.json");
+    let mut contradictory: serde_json::Value =
+        serde_json::from_slice(&fs::read(&index).expect("bound index")).expect("index JSON");
+    contradictory["branch"] = serde_json::json!("different-branch");
+    fs::write(
+        &index,
+        serde_json::to_vec_pretty(&contradictory).expect("serialize contradictory index"),
+    )
+    .expect("contradictory index");
+    let inconsistent = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-bind"),
+        &["--root", &repo_text, "--request", &bind_text],
+    );
+    assert!(!inconsistent.status.success());
 
     let conflict_request = temp.path().join("conflict.json");
     let conflict_bind = serde_json::json!({
