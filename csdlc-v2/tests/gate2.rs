@@ -177,6 +177,43 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     assert!(!repo.join("generated/non-proving-design.md").exists());
     assert!(!repo.join("generated/non-proving-diagram.mmd").exists());
 
+    #[cfg(unix)]
+    {
+        fs::create_dir_all(repo.join("generated")).expect("generated directory");
+        fs::write(repo.join("generated/not-executable"), "exit 0\n")
+            .expect("non-executable validator");
+        let non_executable_request = temp.path().join("non-executable-create.json");
+        let mut non_executable = request();
+        non_executable.issue = 39;
+        non_executable.design_path = "generated/non-executable-design.md".into();
+        non_executable.diagram_path = "generated/non-executable-diagram.mmd".into();
+        non_executable.initial.validation_lanes[0].argv = vec!["generated/not-executable".into()];
+        fs::write(
+            &non_executable_request,
+            serde_json::to_vec_pretty(&non_executable)
+                .expect("serialize non-executable create request"),
+        )
+        .expect("non-executable create request");
+        let non_executable_text = non_executable_request.to_string_lossy();
+        must_succeed(command(
+            &repo,
+            env!("CARGO_BIN_EXE_csdlc-issue"),
+            &[
+                "--root",
+                &repo_text,
+                "create",
+                "--request",
+                &non_executable_text,
+            ],
+        ));
+        let non_executable_validation = command(
+            &repo,
+            env!("CARGO_BIN_EXE_csdlc-validate"),
+            &["--root", &repo_text, "issue", "--issue", "39"],
+        );
+        assert!(!non_executable_validation.status.success());
+    }
+
     let create_request = temp.path().join("create.json");
     let mut create = serde_json::to_value(request()).expect("serialize create request");
     create["claim"] = serde_json::json!({"id": "ignored-legacy-create-claim"});
@@ -256,6 +293,49 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     assert!(!worktree.exists());
     assert!(!git(&repo, &["branch", "--list", "issue-42"]).contains("issue-42"));
     fs::write(repo.join("design/issue-42.md"), "# Approved design\n").expect("restore design");
+
+    let existing = temp.path().join("worktrees/existing");
+    git(
+        &repo,
+        &[
+            "worktree",
+            "add",
+            "-b",
+            "issue-42-existing",
+            &existing.to_string_lossy(),
+            "main",
+        ],
+    );
+    fs::create_dir_all(existing.join(".csdlc/locks/42.lock")).expect("invalid target lock");
+    let existing_request = temp.path().join("existing-bind.json");
+    fs::write(
+        &existing_request,
+        serde_json::to_vec_pretty(&serde_json::json!({
+            "issue": 42,
+            "base_branch": "main",
+            "branch": "issue-42-existing",
+            "worktree": existing,
+        }))
+        .expect("serialize existing bind request"),
+    )
+    .expect("existing bind request");
+    let existing_result = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-bind"),
+        &[
+            "--root",
+            &repo_text,
+            "--request",
+            &existing_request.to_string_lossy(),
+        ],
+    );
+    assert!(!existing_result.status.success());
+    assert!(!existing.join(".csdlc/issues/42").exists());
+    git(
+        &repo,
+        &["worktree", "remove", "--force", &existing.to_string_lossy()],
+    );
+    git(&repo, &["branch", "-D", "issue-42-existing"]);
 
     let first = must_succeed(command(
         &repo,

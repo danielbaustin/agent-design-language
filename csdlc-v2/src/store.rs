@@ -444,6 +444,15 @@ impl Store {
         record: &IssueRecord,
     ) -> Result<()> {
         let _lock = self.lock(issue)?;
+        self.replace_record_locked(issue, expected_digest, record)
+    }
+
+    pub(crate) fn replace_record_locked(
+        &self,
+        issue: u64,
+        expected_digest: &str,
+        record: &IssueRecord,
+    ) -> Result<()> {
         self.recover_if_needed(issue)?;
         let current = self.load_record(issue)?;
         if current.digest != expected_digest {

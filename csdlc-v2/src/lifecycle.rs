@@ -187,23 +187,63 @@ fn copy_authored_file(source: &Store, target: &Store, relative: &str) -> Result<
     Ok(())
 }
 
-fn materialize_issue(source: &Store, target_root: &Path, issue: u64) -> Result<Store> {
-    let target = Store::new(target_root.to_path_buf());
-    if source.root().canonicalize()? == target.root().canonicalize()? {
-        return Ok(target);
+struct MaterializedIssue {
+    store: Store,
+    issue: u64,
+    source_is_target: bool,
+    created_issue: bool,
+    created_design: bool,
+    created_diagram: bool,
+    design_path: String,
+    diagram_path: String,
+}
+
+impl MaterializedIssue {
+    fn rollback(&self) {
+        if self.created_issue {
+            let _ = fs::remove_dir_all(self.store.issue_dir(self.issue));
+        }
+        if self.created_design {
+            let _ = fs::remove_file(self.store.root().join(&self.design_path));
+        }
+        if self.created_diagram {
+            let _ = fs::remove_file(self.store.root().join(&self.diagram_path));
+        }
     }
+}
+
+fn materialize_issue(source: &Store, target_root: &Path, issue: u64) -> Result<MaterializedIssue> {
+    let target = Store::new(target_root.to_path_buf());
     let source_record = source.load_record(issue)?;
+    let source_is_target = source.root().canonicalize()? == target.root().canonicalize()?;
+    if source_is_target {
+        return Ok(MaterializedIssue {
+            store: target,
+            issue,
+            source_is_target,
+            created_issue: false,
+            created_design: false,
+            created_diagram: false,
+            design_path: source_record.design_path,
+            diagram_path: source_record.diagram_path,
+        });
+    }
+    let mut created_issue = false;
+    let mut created_design = false;
+    let mut created_diagram = false;
     if target.issue_dir(issue).exists() {
         let target_record = target.load_record(issue)?;
         if target_record.issue != source_record.issue
             || target_record.repository != source_record.repository
             || target_record.initialization_digest != source_record.initialization_digest
+            || target_record.digest != source_record.digest
         {
             return Err(V2Error::new(
                 ErrorCode::ReconciliationRequired,
-                "bound worktree contains different issue identity",
+                "bound worktree contains different or stale issue truth",
             ));
         }
+        crate::store::verify_cards(&target, &target_record, &target.load_cards(issue)?)?;
     } else {
         for relative in [&source_record.design_path, &source_record.diagram_path] {
             let from = source.root().join(relative);
@@ -217,26 +257,38 @@ fn materialize_issue(source: &Store, target_root: &Path, issue: u64) -> Result<S
                 }
             }
         }
-        let design_created = !target.root().join(&source_record.design_path).exists();
-        let diagram_created = !target.root().join(&source_record.diagram_path).exists();
+        created_design = !target.root().join(&source_record.design_path).exists();
+        created_diagram = !target.root().join(&source_record.diagram_path).exists();
         let result = (|| {
             copy_tree(&source.issue_dir(issue), &target.issue_dir(issue))?;
+            created_issue = true;
             copy_authored_file(source, &target, &source_record.design_path)?;
             copy_authored_file(source, &target, &source_record.diagram_path)?;
             Ok(())
         })();
         if let Err(error) = result {
-            let _ = fs::remove_dir_all(target.issue_dir(issue));
-            if design_created {
+            if created_issue {
+                let _ = fs::remove_dir_all(target.issue_dir(issue));
+            }
+            if created_design {
                 let _ = fs::remove_file(target.root().join(&source_record.design_path));
             }
-            if diagram_created {
+            if created_diagram {
                 let _ = fs::remove_file(target.root().join(&source_record.diagram_path));
             }
             return Err(error);
         }
     }
-    Ok(target)
+    Ok(MaterializedIssue {
+        store: target,
+        issue,
+        source_is_target,
+        created_issue,
+        created_design,
+        created_diagram,
+        design_path: source_record.design_path,
+        diagram_path: source_record.diagram_path,
+    })
 }
 
 pub(crate) fn initialize_issue(
@@ -461,8 +513,25 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         }
     }
 
+    let materialized = match materialize_issue(store, &wanted, request.issue) {
+        Ok(materialized) => materialized,
+        Err(error) => {
+            if created {
+                let _ = git::run(
+                    store.root(),
+                    &["worktree", "remove", "--force", &wanted_text],
+                );
+                if new_branch {
+                    let _ = git::run(store.root(), &["branch", "-D", &request.branch]);
+                }
+            }
+            return Err(error);
+        }
+    };
+    let target_lock = wanted.join(format!(".csdlc/locks/{}.lock", request.issue));
+    let target_lock_created = !target_lock.exists();
     let commit = (|| {
-        let target = materialize_issue(store, &wanted, request.issue)?;
+        let target = &materialized.store;
         let mut record = target.load_record(request.issue)?;
         let expected_digest = record.digest.clone();
         if record.phase == crate::LifecyclePhase::Initialized {
@@ -494,10 +563,18 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
             operation: "bind".into(),
         });
         record.digest = crate::store::record_digest(&record)?;
-        target.replace_record(request.issue, &expected_digest, &record)
+        if materialized.source_is_target {
+            target.replace_record_locked(request.issue, &expected_digest, &record)
+        } else {
+            target.replace_record(request.issue, &expected_digest, &record)
+        }
     })();
 
     if let Err(error) = commit {
+        materialized.rollback();
+        if target_lock_created {
+            let _ = fs::remove_file(target_lock);
+        }
         if created {
             let _ = git::run(
                 store.root(),

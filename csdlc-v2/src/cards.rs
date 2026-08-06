@@ -1580,14 +1580,33 @@ fn proving_lane(lane: &ValidationLane) -> bool {
         )
 }
 
+fn executable_file(path: &Path) -> bool {
+    let Ok(metadata) = std::fs::metadata(path) else {
+        return false;
+    };
+    if !metadata.is_file() {
+        return false;
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        metadata.permissions().mode() & 0o111 != 0
+    }
+    #[cfg(not(unix))]
+    {
+        true
+    }
+}
+
 fn proving_lane_at(root: &Path, lane: &ValidationLane) -> bool {
     let executable_exists = if lane.argv.first().is_none_or(String::is_empty) {
         false
     } else if lane.argv[0].contains('/') {
-        root.join(&lane.argv[0]).is_file()
+        executable_file(&root.join(&lane.argv[0]))
     } else {
         std::env::var_os("PATH").is_some_and(|path| {
-            std::env::split_paths(&path).any(|directory| directory.join(&lane.argv[0]).is_file())
+            std::env::split_paths(&path)
+                .any(|directory| executable_file(&directory.join(&lane.argv[0])))
         })
     };
     executable_exists && proving_lane(lane)
