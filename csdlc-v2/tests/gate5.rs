@@ -53,6 +53,8 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
         "flowchart LR\n A-->B\n",
     )
     .expect("diagram");
+    std::fs::create_dir_all(temp.path().join("src")).expect("source directory");
+    std::fs::write(temp.path().join("src/lib.rs"), "// fixture\n").expect("source fixture");
     install_native_authority(temp.path());
     git(temp.path(), &["init", "-b", "main"]);
     git(
@@ -63,7 +65,7 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
     git(temp.path(), &["add", "."]);
     git(temp.path(), &["commit", "-m", "fixture"]);
     let store = Store::new(temp.path());
-    bootstrap_issue(
+    let record = bootstrap_issue(
         &store,
         BootstrapRequest {
             issue: 7,
@@ -119,6 +121,22 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
         },
     )
     .expect("init");
+    let _ready = edit_issue(
+        &store,
+        EditRequest {
+            issue: 7,
+            card: CardKind::Sip,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            actor: "agent".into(),
+            reason: "fixture is execution-ready".into(),
+            operation: SemanticOperation::AdvancePhase {
+                phase: LifecyclePhase::Ready,
+            },
+            fail_after_backup: false,
+        },
+    )
+    .expect("ready");
     git(temp.path(), &["switch", "-c", "issue-7"]);
     bind_issue(
         &store,
@@ -645,7 +663,6 @@ fn typed_publication_metadata_commit_does_not_stale_review_but_source_drift_does
     let temp = tempfile::tempdir().expect("temp");
     std::fs::create_dir_all(temp.path().join("docs")).expect("docs");
     std::fs::create_dir_all(temp.path().join(".csdlc/issues/7/cards")).expect("cards");
-    std::fs::create_dir_all(temp.path().join(".csdlc/prepared/issues/7")).expect("prepared");
     std::fs::create_dir_all(temp.path().join(".csdlc/requests")).expect("requests");
     std::fs::create_dir_all(temp.path().join(".csdlc/publication")).expect("publication");
     std::fs::write(temp.path().join("docs/design.md"), "reviewed\n").expect("design");
@@ -673,7 +690,6 @@ fn typed_publication_metadata_commit_does_not_stale_review_but_source_drift_does
         (".csdlc/issues/7/audit.jsonl", "{}\n"),
         (".csdlc/issues/7/cards/sor.md", "card\n"),
         (".csdlc/issues/7/cards/sor.values.json", "{}\n"),
-        (".csdlc/prepared/issues/7/publication.json", "{}\n"),
         (".csdlc/publication/7.intent.json", "{}\n"),
     ] {
         let target = temp.path().join(path);
