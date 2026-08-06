@@ -27,7 +27,7 @@ It provides:
 - Current development state: **the v0.92 issue wave is active; planned runtime
   outcomes remain subject to issue-owned implementation and proof**
 - Retained upstream handoff milestone: **v0.91.8**
-- Current crate version: **0.92.0**
+- Current crate version: **0.91.8**
 
 This README describes the runtime as it exists on the current `main` branch and points to the relevant milestone and demo surfaces in the parent repository.
 
