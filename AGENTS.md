@@ -214,7 +214,7 @@ For a normal tracked issue:
    registry
 5. make sure `SIP`, `STP`, and `SPP` are issue-specific and design-time ready
 6. follow the conductor-selected lifecycle step
-7. if the issue is ready for execution binding, use `csdlc-bind --root . run --request <request.json>`
+7. if the issue is ready for execution binding, use `csdlc-bind --root . --request <request.json>`
 8. call `create_goal` for the bound tracked issue session before implementation
    starts
 9. make the bounded change in the issue worktree, never on `main`

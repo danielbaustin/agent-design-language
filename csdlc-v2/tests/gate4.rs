@@ -1,11 +1,10 @@
 use std::time::Instant;
 
 use csdlc_v2::pvf::*;
-use csdlc_v2::test_support::{initialize_native_json, BootstrapRequest};
 use csdlc_v2::{
-    classify_schedule, classify_shepherd, edit_issue, execute, finalize, select,
-    shared_request_path, CardKind, Claim, EditRequest, ErrorCode, FinalizeRequest,
-    InitialCardInput, LifecyclePhase, PlanningProfile, SemanticOperation, Store,
+    classify_schedule, classify_shepherd, edit_issue, execute, finalize, initialize_native_json,
+    select, shared_request_path, BootstrapRequest, CardKind, Claim, EditRequest, ErrorCode,
+    FinalizeRequest, InitialCardInput, LifecyclePhase, PlanningProfile, SemanticOperation, Store,
 };
 
 fn install_native_authority(root: &std::path::Path) {
@@ -97,7 +96,7 @@ fn bound_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
                     resource_profile: csdlc_v2::cards::ResourceProfile::Small,
                     budget_seconds: 30,
                     budget_tokens: 10,
-                    argv: vec!["cargo".into(), "--version".into()],
+                    argv: vec!["true".into()],
                     parallel_group: "local".into(),
                     defer_reason: None,
                 }],
@@ -105,7 +104,6 @@ fn bound_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
                 review_prompts: vec!["review atomicity".into()],
                 review_scope: "csdlc-v2".into(),
             },
-            prepared_cards: None,
         })
         .unwrap(),
     )

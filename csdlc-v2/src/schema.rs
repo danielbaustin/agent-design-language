@@ -10,20 +10,13 @@ use crate::finish::{
 };
 use crate::github::{GithubActionRequest, GithubActionResult, GithubIssuePacket, PrStatePacket};
 use crate::lifecycle::{
-    AmendClaimScopeRequest, HeartbeatRequest, RecoverClaimRequest, ReleaseClosedClaimRequest,
-    RevokeActiveClaimRequest, RevokeActiveClaimResult, TransitionActiveClaimRequest,
+    AmendClaimScopeRequest, BindRequest, BindResult, HeartbeatRequest, ReacquireClaimRequest,
+    ReacquireClaimResult, RecoverClaimRequest, ReleaseClosedClaimRequest, RevokeActiveClaimRequest,
+    RevokeActiveClaimResult, TransitionActiveClaimRequest,
 };
 use crate::migration::{ImportReport, LegacyImportRequest, NormalizedOutcome, ShadowComparison};
 use crate::model::IssueRecord;
 use crate::model::TerminalReceipt;
-use crate::preparation::{
-    BindReleaseRequest, BindReleaseResult, BindingIntent, DerivedBindRequest, DerivedBindResult,
-    ExecutionReadinessReceipt, IssueCreateRequest, IssueDraft, LegacyPreparationMigrationRequest,
-    LegacyPreparationMigrationResult, LegacyPreparationRepairRequest,
-    LegacyPreparationRepairResult, PreparationManifest, PrepareBatchRequest, PrepareBatchResult,
-    PrepareRunRequest, PrepareRunResult, PrepareSealRequest, PrepareSyncRequest,
-    PreparedGeneration,
-};
 use crate::publication::{PublicationIntent, PublicationRequest, RemotePullRequest};
 use crate::pvf::{
     ExecutionReport, ExecutionRequest, FinalizeRequest, PvfManifest, ScheduleReport, ShepherdReport,
@@ -33,7 +26,7 @@ use crate::review::{
     PublicationReviewReport, ReviewAssignmentRequest, ReviewRecordRequest, ReviewRecoveryRequest,
 };
 use crate::store::ApproveDesignRequest;
-use crate::store::EditRequest;
+use crate::store::{BootstrapRequest, EditRequest};
 
 pub fn public_schema_bundle() -> Value {
     json!({
@@ -43,29 +36,14 @@ pub fn public_schema_bundle() -> Value {
         "legacy_terminal_index_request": schemars::schema_for!(LegacyTerminalIndexRequest),
         "legacy_terminal_index": schemars::schema_for!(LegacyTerminalIndex),
         "terminal_census_report": schemars::schema_for!(TerminalCensusReport),
+        "bootstrap_request": schemars::schema_for!(BootstrapRequest),
         "approve_design_request": schemars::schema_for!(ApproveDesignRequest),
         "edit_request": schemars::schema_for!(EditRequest),
-        "issue_create_request": schemars::schema_for!(IssueCreateRequest),
-        "issue_draft": schemars::schema_for!(IssueDraft),
-        "prepare_sync_request": schemars::schema_for!(PrepareSyncRequest),
-        "prepare_seal_request": schemars::schema_for!(PrepareSealRequest),
-        "prepare_run_request": schemars::schema_for!(PrepareRunRequest),
-        "prepare_run_result": schemars::schema_for!(PrepareRunResult),
-        "prepare_batch_request": schemars::schema_for!(PrepareBatchRequest),
-        "prepare_batch_result": schemars::schema_for!(PrepareBatchResult),
-        "prepared_generation": schemars::schema_for!(PreparedGeneration),
-        "preparation_manifest": schemars::schema_for!(PreparationManifest),
-        "legacy_preparation_migration_request": schemars::schema_for!(LegacyPreparationMigrationRequest),
-        "legacy_preparation_migration_result": schemars::schema_for!(LegacyPreparationMigrationResult),
-        "legacy_preparation_repair_request": schemars::schema_for!(LegacyPreparationRepairRequest),
-        "legacy_preparation_repair_result": schemars::schema_for!(LegacyPreparationRepairResult),
-        "execution_readiness_receipt": schemars::schema_for!(ExecutionReadinessReceipt),
-        "derived_bind_request": schemars::schema_for!(DerivedBindRequest),
-        "derived_bind_result": schemars::schema_for!(DerivedBindResult),
-        "binding_intent": schemars::schema_for!(BindingIntent),
-        "bind_release_request": schemars::schema_for!(BindReleaseRequest),
-        "bind_release_result": schemars::schema_for!(BindReleaseResult),
+        "bind_request": schemars::schema_for!(BindRequest),
+        "bind_result": schemars::schema_for!(BindResult),
         "recover_claim_request": schemars::schema_for!(RecoverClaimRequest),
+        "reacquire_claim_request": schemars::schema_for!(ReacquireClaimRequest),
+        "reacquire_claim_result": schemars::schema_for!(ReacquireClaimResult),
         "release_closed_claim_request": schemars::schema_for!(ReleaseClosedClaimRequest),
         "revoke_active_claim_request": schemars::schema_for!(RevokeActiveClaimRequest),
         "revoke_active_claim_result": schemars::schema_for!(RevokeActiveClaimResult),

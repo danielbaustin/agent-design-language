@@ -1,9 +1,8 @@
 use csdlc_v2::operator::validate_external_cargo_target;
-use csdlc_v2::test_support::{initialize_native_json, BootstrapRequest};
 use csdlc_v2::{
     build_and_install_binaries, edit_issue, install_binaries, resolve_operator_generation,
-    verify_coexistence, CardKind, Claim, CoexistenceInventory, EditRequest, Generation,
-    LifecyclePhase, SemanticOperation, SkillManifest, Store,
+    verify_coexistence, BootstrapRequest, CardKind, Claim, CoexistenceInventory, EditRequest,
+    Generation, LifecyclePhase, SemanticOperation, SkillManifest, Store,
 };
 use std::fs;
 use std::path::Path;
@@ -28,33 +27,6 @@ fn eleven_skills_are_typed_and_bind_the_generation_selector() {
 }
 
 #[test]
-fn legacy_init_bind_and_reacquire_are_not_public_release_apis() {
-    let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let lib = fs::read_to_string(manifest.join("src/lib.rs")).unwrap();
-    assert!(lib.contains("mod lifecycle;"));
-    let release_exports = lib
-        .split("#[cfg(debug_assertions)]")
-        .next()
-        .expect("release API section");
-    for deleted in [
-        " initialize_native_json,",
-        " bind_issue,",
-        " reacquire_claim,",
-        " BindRequest,",
-        " ReacquireClaimRequest,",
-    ] {
-        assert!(
-            !release_exports.contains(deleted),
-            "legacy release API remains public: {deleted}"
-        );
-    }
-    let skill =
-        fs::read_to_string(manifest.join("operator/skills/csdlc-v2-bind/SKILL.md")).unwrap();
-    assert!(skill.contains("Legacy caller-supplied init, bind, and reacquire routes are deleted"));
-    assert!(!skill.contains("compatibility-only"));
-}
-
-#[test]
 fn current_operator_guidance_has_no_sunset_v1_route() {
     let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
     let manifest = SkillManifest::load().unwrap();
@@ -73,9 +45,7 @@ fn current_operator_guidance_has_no_sunset_v1_route() {
 
     let workflow = fs::read_to_string(repo.join("docs/default_workflow.md")).unwrap();
     assert!(workflow.starts_with("# Default C-SDLC v2 workflow"));
-    assert!(workflow.contains("`csdlc-init` command is deleted"));
-    assert!(!workflow.contains("csdlc-init --"));
-    assert!(workflow.contains("csdlc-issue create"));
+    assert!(workflow.contains("csdlc-init"));
     assert!(workflow.contains("csdlc-finish"));
     assert!(!workflow.contains("csdlc-closeout"));
     assert!(current_guidance_is_v2_only(
@@ -173,7 +143,7 @@ fn installer_records_provenance_without_replacing_other_files() {
     {
         use std::os::unix::fs::PermissionsExt;
         assert_ne!(
-            fs::metadata(destination.join("csdlc-issue"))
+            fs::metadata(destination.join("csdlc-init"))
                 .unwrap()
                 .permissions()
                 .mode()
@@ -196,10 +166,10 @@ fn installer_records_provenance_without_replacing_other_files() {
         .present_forbidden_v1_paths
         .contains(&"adl/tools/pr.sh".into()));
     fs::remove_file(repo.join("adl/tools/pr.sh")).unwrap();
-    fs::write(destination.join("csdlc-issue"), b"tampered").unwrap();
+    fs::write(destination.join("csdlc-init"), b"tampered").unwrap();
     let tampered = verify_coexistence(&repo, &destination, &inventory).unwrap();
     assert!(!tampered.pass);
-    assert!(tampered.missing_v2_binaries.contains(&"csdlc-issue".into()));
+    assert!(tampered.missing_v2_binaries.contains(&"csdlc-init".into()));
 
     #[cfg(unix)]
     {
@@ -387,8 +357,11 @@ fn freshly_installed_stable_edit_binary_is_executable() {
     .unwrap();
     install_native_authority(fixture.path());
     let store = Store::new(fixture.path());
-    let initialized =
-        initialize_native_json(&store, &serde_json::to_vec(&bootstrap_request()).unwrap()).unwrap();
+    let initialized = csdlc_v2::initialize_native_json(
+        &store,
+        &serde_json::to_vec(&bootstrap_request()).unwrap(),
+    )
+    .unwrap();
     let ready = edit_issue(
         &store,
         edit(
@@ -569,7 +542,6 @@ fn bootstrap_request() -> BootstrapRequest {
             review_prompts: vec!["Review correctness.".into()],
             review_scope: "fixture".into(),
         },
-        prepared_cards: None,
     }
 }
 
@@ -649,11 +621,11 @@ fn symlinked_installed_binaries_fail_coexistence() {
     let bins = parent.path().join("csdlc-v2");
     install_binaries(prebuilt_binaries(), &bins).unwrap();
     stamp_current_revision(&repo, &bins);
-    fs::remove_file(bins.join("csdlc-issue")).unwrap();
-    symlink("/bin/true", bins.join("csdlc-issue")).unwrap();
+    fs::remove_file(bins.join("csdlc-init")).unwrap();
+    symlink("/bin/true", bins.join("csdlc-init")).unwrap();
     let report = verify_coexistence(&repo, &bins, &CoexistenceInventory::load().unwrap()).unwrap();
     assert!(!report.pass);
-    assert_eq!(report.missing_v2_binaries, vec!["csdlc-issue"]);
+    assert_eq!(report.missing_v2_binaries, vec!["csdlc-init"]);
 }
 
 fn prebuilt_binaries() -> &'static std::path::Path {

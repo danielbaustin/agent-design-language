@@ -7,9 +7,6 @@ use strum::{AsRefStr, Display, EnumIter, EnumString};
 use crate::cards::digest;
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::model::{DesignReview, LifecyclePhase};
-use crate::preparation::{
-    load_binding_intent, load_manifest, BindingIntentState, PreparationState,
-};
 use crate::review::evaluate_publication_review_in_repo;
 use crate::store::{now_seconds, verify_cards, verify_record, Store};
 
@@ -47,10 +44,6 @@ pub struct DoctorReport {
     pub issue: u64,
     pub status: DoctorStatus,
     pub phase: Option<LifecyclePhase>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub preparation_state: Option<PreparationState>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub binding_intent_digest: Option<String>,
     pub generation: Option<u64>,
     pub ready: bool,
     pub findings: Vec<Finding>,
@@ -58,21 +51,11 @@ pub struct DoctorReport {
 }
 
 pub fn diagnose(store: &Store, issue: u64) -> DoctorReport {
-    diagnose_internal(store, issue, true)
-}
-
-pub(crate) fn diagnose_canonical(store: &Store, issue: u64) -> DoctorReport {
-    diagnose_internal(store, issue, false)
-}
-
-fn diagnose_internal(store: &Store, issue: u64, include_preparation: bool) -> DoctorReport {
     let mut report = DoctorReport {
         schema: "csdlc.doctor.report.v1".into(),
         issue,
         status: DoctorStatus::Pass,
         phase: None,
-        preparation_state: None,
-        binding_intent_digest: None,
         generation: None,
         ready: false,
         findings: Vec::new(),
@@ -86,115 +69,6 @@ fn diagnose_internal(store: &Store, issue: u64, include_preparation: bool) -> Do
         });
         report.next_operation = Some("recover_then_retry".into());
         return report;
-    }
-    if include_preparation {
-        let preparation_manifest = store
-            .root()
-            .join(".csdlc/preparation/issues")
-            .join(issue.to_string())
-            .join("manifest.json");
-        let binding_intent = match load_binding_intent(store, issue) {
-            Ok(Some(intent)) if intent.state == BindingIntentState::Releasing => {
-                let manifest = match load_manifest(store, issue) {
-                    Ok(manifest) => manifest,
-                    Err(error) => {
-                        report.status = DoctorStatus::Corrupt;
-                        report.findings.push(finding(error));
-                        report.next_operation = Some("csdlc-migrate repair".into());
-                        return report;
-                    }
-                };
-                report.preparation_state = Some(manifest.state);
-                report.binding_intent_digest = Some(intent.digest);
-                report.next_operation = Some("csdlc-bind release".into());
-                return report;
-            }
-            Ok(intent) => intent,
-            Err(error) if preparation_manifest.exists() => {
-                report.status = DoctorStatus::Corrupt;
-                report.findings.push(finding(error));
-                report.next_operation = Some("csdlc-migrate repair".into());
-                return report;
-            }
-            Err(error) => {
-                report.status = DoctorStatus::Corrupt;
-                report.findings.push(finding(error));
-                report.next_operation = Some("csdlc-migrate repair".into());
-                return report;
-            }
-        };
-        match load_manifest(store, issue) {
-            Ok(manifest)
-                if manifest.state == PreparationState::Binding && binding_intent.is_some() =>
-            {
-                report.preparation_state = Some(manifest.state);
-                let intent = binding_intent.expect("checked binding intent");
-                report.binding_intent_digest = Some(intent.digest);
-                report.next_operation = Some(
-                    if intent.expires_unix_seconds <= now_seconds().unwrap_or(u64::MAX) {
-                        "csdlc-bind release"
-                    } else {
-                        "csdlc-bind run"
-                    }
-                    .into(),
-                );
-                return report;
-            }
-            Ok(manifest)
-                if store.issue_dir(issue).exists() && manifest.state != PreparationState::Bound =>
-            {
-                report.status = DoctorStatus::Corrupt;
-                report.preparation_state = Some(manifest.state);
-                report.findings.push(Finding {
-                    code: "dual_lifecycle_authority".into(),
-                    message:
-                        "canonical issue authority coexists with non-bound preparation authority"
-                            .into(),
-                });
-                report.next_operation = Some("csdlc-migrate preparation".into());
-                return report;
-            }
-            Ok(manifest)
-                if !store.issue_dir(issue).exists()
-                    || manifest.state != PreparationState::Bound =>
-            {
-                report.preparation_state = Some(manifest.state);
-                report.ready = manifest.state == PreparationState::ExecutionReady;
-                let next = match manifest.state {
-                    PreparationState::Draft => "csdlc-prepare sync",
-                    PreparationState::Prepared => "csdlc-prepare seal",
-                    PreparationState::ExecutionReady => "csdlc-bind run",
-                    PreparationState::Binding => match load_binding_intent(store, issue) {
-                        Ok(Some(intent)) if intent.state == BindingIntentState::Releasing => {
-                            report.binding_intent_digest = Some(intent.digest);
-                            "csdlc-bind release"
-                        }
-                        Ok(Some(intent)) => {
-                            report.binding_intent_digest = Some(intent.digest);
-                            "csdlc-bind run"
-                        }
-                        Ok(None) => "csdlc-migrate repair",
-                        Err(error) => {
-                            report.status = DoctorStatus::Corrupt;
-                            report.findings.push(finding(error));
-                            report.next_operation = Some("csdlc-migrate repair".into());
-                            return report;
-                        }
-                    },
-                    PreparationState::Bound => "inspect_bound_worktree",
-                };
-                report.next_operation = Some(next.into());
-                return report;
-            }
-            Ok(_) => {}
-            Err(_) if !preparation_manifest.exists() => {}
-            Err(error) => {
-                report.status = DoctorStatus::Corrupt;
-                report.findings.push(finding(error));
-                report.next_operation = Some("csdlc-migrate repair".into());
-                return report;
-            }
-        }
     }
     let record = match store.load_record(issue) {
         Ok(record) => record,
@@ -257,7 +131,7 @@ fn diagnose_internal(store: &Store, issue: u64, include_preparation: bool) -> Do
                 if report.findings.iter().any(|finding| {
                     finding.code == "claim_dormant" || finding.code == "claim_not_live"
                 }) {
-                    "csdlc-bind --recover-request <request.json>"
+                    "reacquire_claim"
                 } else {
                     "repair_design_readiness"
                 }

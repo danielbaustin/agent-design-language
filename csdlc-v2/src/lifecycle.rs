@@ -37,7 +37,6 @@ pub struct RecoverClaimRequest {
     pub reason: String,
 }
 
-#[cfg(debug_assertions)]
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ReacquireClaimRequest {
     pub issue: u64,
@@ -49,7 +48,6 @@ pub struct ReacquireClaimRequest {
     pub replacement: Claim,
 }
 
-#[cfg(debug_assertions)]
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ReacquireClaimResult {
     pub schema: String,
@@ -508,20 +506,6 @@ fn materialize_bound_issue_state(source: &Store, target_root: &Path, issue: u64)
         "bound worktree already contains different prepared lifecycle state",
     )?;
     copy_dir_recursive(&source_prepared, &target_prepared)?;
-    let source_preparation = source
-        .root()
-        .join(".csdlc/preparation/issues")
-        .join(issue.to_string());
-    let target_preparation = target
-        .root()
-        .join(".csdlc/preparation/issues")
-        .join(issue.to_string());
-    require_matching_tree(
-        &source_preparation,
-        &target_preparation,
-        "bound worktree already contains different claim-free preparation state",
-    )?;
-    copy_dir_recursive(&source_preparation, &target_preparation)?;
     let source_evidence = source
         .root()
         .join(".csdlc/evidence")
@@ -541,7 +525,7 @@ fn materialize_bound_issue_state(source: &Store, target_root: &Path, issue: u64)
     Ok(target)
 }
 
-fn initialize_issue_under_binding_lock(
+pub(crate) fn initialize_issue(
     store: &Store,
     mut request: BootstrapRequest,
 ) -> Result<crate::IssueRecord> {
@@ -569,6 +553,7 @@ fn initialize_issue_under_binding_lock(
             ));
         }
     }
+    let _binding_lock = store.binding_lock()?;
     let now_unix_seconds = unix_now()?;
     for (other_store, other) in active_issue_records_across_worktrees(store)? {
         if other.issue != request.issue {
@@ -632,23 +617,6 @@ fn initialize_issue_under_binding_lock(
     bootstrap_issue(store, request)
 }
 
-pub(crate) fn initialize_issue(
-    store: &Store,
-    request: BootstrapRequest,
-) -> Result<crate::IssueRecord> {
-    let _binding_lock = store.binding_lock()?;
-    initialize_issue_under_binding_lock(store, request)
-}
-
-pub(crate) fn initialize_prepared_issue_under_binding_lock(
-    store: &Store,
-    request: BootstrapRequest,
-) -> Result<crate::IssueRecord> {
-    crate::registry::validate_native_registry(store.root())?;
-    initialize_issue_under_binding_lock(store, request)
-}
-
-#[cfg(debug_assertions)]
 fn initialize_native_issue(store: &Store, request: BootstrapRequest) -> Result<crate::IssueRecord> {
     crate::registry::validate_native_registry(store.root())?;
     initialize_issue(store, request)
@@ -663,7 +631,6 @@ fn initialize_native_issue(store: &Store, request: BootstrapRequest) -> Result<c
 /// let _ = csdlc_v2::initialize_native_issue;
 /// let _ = csdlc_v2::bootstrap_issue;
 /// ```
-#[cfg(debug_assertions)]
 pub fn initialize_native_json(store: &Store, bytes: &[u8]) -> Result<crate::IssueRecord> {
     let value: serde_json::Value = serde_json::from_slice(bytes)?;
     let initial = value
@@ -680,49 +647,12 @@ pub fn initialize_native_json(store: &Store, bytes: &[u8]) -> Result<crate::Issu
     initialize_native_issue(store, request)
 }
 
-pub(crate) fn validate_validation_lanes(
+fn validate_validation_lanes(
     root: &std::path::Path,
     lanes: &[crate::cards::ValidationLane],
 ) -> Result<()> {
     for lane in lanes {
-        let executable = lane.argv.first().ok_or_else(|| {
-            V2Error::new(
-                ErrorCode::InvalidInput,
-                format!("validation lane {} has no executable", lane.lane),
-            )
-        })?;
-        if matches!(
-            executable.rsplit('/').next(),
-            Some("true" | "false" | "echo" | "printf" | "sleep")
-        ) {
-            return Err(V2Error::new(
-                ErrorCode::InvalidInput,
-                format!(
-                    "validation lane {} uses non-proving executable {}",
-                    lane.lane, executable
-                ),
-            ));
-        }
-        let executable_exists = if executable.contains('/') {
-            let path = if Path::new(executable).is_absolute() {
-                Path::new(executable).to_path_buf()
-            } else {
-                root.join(executable)
-            };
-            is_runnable_file(&path)
-        } else {
-            command_is_runnable(executable)
-        };
-        if !executable_exists {
-            return Err(V2Error::new(
-                ErrorCode::InvalidInput,
-                format!(
-                    "validation lane {} names unavailable executable {}",
-                    lane.lane, executable
-                ),
-            ));
-        }
-        for command in lane.argv.iter().skip(1) {
+        for command in &lane.argv {
             if !command.contains('/') {
                 continue;
             }
@@ -743,44 +673,6 @@ pub(crate) fn validate_validation_lanes(
         }
     }
     Ok(())
-}
-
-fn is_runnable_file(path: &Path) -> bool {
-    let Ok(metadata) = fs::metadata(path) else {
-        return false;
-    };
-    if !metadata.is_file() {
-        return false;
-    }
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        metadata.permissions().mode() & 0o111 != 0
-    }
-    #[cfg(not(unix))]
-    {
-        true
-    }
-}
-
-fn command_is_runnable(executable: &str) -> bool {
-    std::env::var_os("PATH").is_some_and(|path| {
-        std::env::split_paths(&path).any(|directory| {
-            if is_runnable_file(&directory.join(executable)) {
-                return true;
-            }
-            #[cfg(windows)]
-            {
-                let extensions =
-                    std::env::var_os("PATHEXT").unwrap_or_else(|| ".COM;.EXE;.BAT;.CMD".into());
-                return extensions.to_string_lossy().split(';').any(|extension| {
-                    is_runnable_file(&directory.join(format!("{executable}{extension}")))
-                });
-            }
-            #[cfg(not(windows))]
-            false
-        })
-    })
 }
 
 pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
@@ -938,19 +830,6 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
                     &target_prepared,
                     "bound worktree already contains different prepared lifecycle state",
                 )?;
-                let source_preparation = store
-                    .root()
-                    .join(".csdlc/preparation/issues")
-                    .join(request.issue.to_string());
-                let target_preparation = target
-                    .root()
-                    .join(".csdlc/preparation/issues")
-                    .join(request.issue.to_string());
-                require_matching_tree(
-                    &source_preparation,
-                    &target_preparation,
-                    "bound worktree already contains different claim-free preparation state",
-                )?;
                 let source_evidence = store
                     .root()
                     .join(".csdlc/evidence")
@@ -983,7 +862,7 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         ));
     }
     if record.phase == crate::LifecyclePhase::Initialized {
-        if !crate::doctor::diagnose_canonical(store, request.issue).ready {
+        if !crate::diagnose(store, request.issue).ready {
             return Err(V2Error::new(
                 ErrorCode::InvalidTransition,
                 "issue is not design/card ready for binding",
@@ -1424,7 +1303,6 @@ pub fn recover_claim(store: &Store, request: RecoverClaimRequest) -> Result<Clai
     Ok(evidence)
 }
 
-#[cfg(debug_assertions)]
 pub fn reacquire_claim(
     store: &Store,
     request: ReacquireClaimRequest,

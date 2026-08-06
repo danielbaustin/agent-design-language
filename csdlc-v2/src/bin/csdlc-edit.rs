@@ -3,8 +3,8 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 use csdlc_v2::{
-    approve_design, edit_issue, public_schema_bundle, ApproveDesignRequest, EditRequest, ErrorCode,
-    Store,
+    approve_design, edit_issue, initialize_native_json, public_schema_bundle, ApproveDesignRequest,
+    EditRequest, ErrorCode, Store,
 };
 use serde::Serialize;
 
@@ -19,6 +19,10 @@ struct Args {
 
 #[derive(Subcommand)]
 enum Command {
+    Bootstrap {
+        #[arg(long)]
+        request: PathBuf,
+    },
     Apply {
         #[arg(long)]
         request: PathBuf,
@@ -48,6 +52,9 @@ fn main() {
         return;
     }
     let result = match args.command {
+        Command::Bootstrap { request } => fs::read(request)
+            .map_err(Into::into)
+            .and_then(|bytes| initialize_native_json(&store, &bytes)),
         Command::Apply { request } => {
             read::<EditRequest>(&request).and_then(|request| edit_issue(&store, request))
         }

@@ -1,9 +1,8 @@
 use csdlc_v2::cards::{FindingDisposition, FindingSeverity};
-use csdlc_v2::test_support::{initialize_native_json, BootstrapRequest};
 use csdlc_v2::{
     assign_review, edit_issue, evaluate_publication_review, evaluate_publication_review_in_repo,
-    record_review, CardKind, Claim, EditRequest, ErrorCode, InitialCardInput, LifecyclePhase,
-    NonSubstantiveProof, PlanningProfile, ReviewAssignmentRequest, ReviewEvidence,
+    record_review, BootstrapRequest, CardKind, Claim, EditRequest, ErrorCode, InitialCardInput,
+    LifecyclePhase, NonSubstantiveProof, PlanningProfile, ReviewAssignmentRequest, ReviewEvidence,
     ReviewFindingEvidence, ReviewRecordRequest, ReviewRecoveryRequest, SemanticOperation, Store,
 };
 
@@ -28,7 +27,7 @@ fn bootstrap_issue(
     store: &Store,
     request: BootstrapRequest,
 ) -> csdlc_v2::Result<csdlc_v2::IssueRecord> {
-    initialize_native_json(store, &serde_json::to_vec(&request).unwrap())
+    csdlc_v2::initialize_native_json(store, &serde_json::to_vec(&request).unwrap())
 }
 
 fn finding(id: &str) -> ReviewFindingEvidence {
@@ -126,7 +125,6 @@ fn implemented_fixture() -> (tempfile::TempDir, Store, csdlc_v2::IssueRecord) {
                 review_prompts: vec!["review correctness".into()],
                 review_scope: "fixture".into(),
             },
-            prepared_cards: None,
         },
     )
     .expect("init");
