@@ -15,7 +15,8 @@ Historical milestone and release evidence remains unchanged.
 ## Results
 
 - Canonical-surface inventory and local Markdown links
-  - PASS: 45 inventoried surfaces and 21 current Markdown files.
+  - PASS: 45 inventoried surfaces and 20 current Markdown files; the historical
+    v0.91.6 rescue contract is retained outside the current-link denominator.
 - Cargo metadata and lock consistency
   - PASS: `cargo metadata --locked --offline --no-deps` for seven Cargo roots.
   - PASS: all 16 release-owned local packages report `0.92.0`.
@@ -24,6 +25,8 @@ Historical milestone and release evidence remains unchanged.
 - Current C-SDLC v2 authority scan
   - PASS: current docs no longer direct operators to v1 wrappers or a
     claim/lease ledger.
+  - PASS: the historical v0.91.6 rescue-sprint contract remains byte-for-byte
+    preserved rather than being rewritten as current policy.
 - `git diff --check`
   - PASS.
 

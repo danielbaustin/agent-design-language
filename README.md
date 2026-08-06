@@ -340,8 +340,9 @@ production markets.
 - Upstream handoff: v0.92 consumes the retained exact-revision v0.91.8
   acceptance and handoff
 - Current ADL package and workspace version: `0.92.0`
-- Most recently completed implementation/readiness tranche and public release:
-  v0.91.7 ([GitHub release](https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91.7))
+- Most recently completed implementation/readiness handoff: v0.91.8
+- Most recently published public release: v0.91.7
+  ([GitHub release](https://github.com/danielbaustin/agent-design-language/releases/tag/v0.91.7))
 - Current milestone state: the v0.92 package and issue wave are active; feature
   implementation, integration, review, and release gates remain open and must
   be proved by their owning issues.

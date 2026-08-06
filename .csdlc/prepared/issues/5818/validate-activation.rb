@@ -133,8 +133,13 @@ markdown_paths.each do |path|
   end
 end
 
-historical = %w[docs/milestones/v0.91.8 docs/releases .csdlc/evidence]
-changed = `git diff --name-only origin/main...HEAD -- #{historical.join(' ')}`.lines.map(&:strip).reject(&:empty?)
+historical = %w[
+  docs/milestones/v0.91.8
+  docs/releases
+  docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md
+  .csdlc/evidence
+]
+changed = `git diff --name-only origin/main -- #{historical.join(' ')}`.lines.map(&:strip).reject(&:empty?)
 unauthorized = changed.reject { |path| path.start_with?(".csdlc/evidence/5818/") }
 abort "historical surface changed: #{unauthorized.join(', ')}" unless unauthorized.empty?
 

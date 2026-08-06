@@ -11,28 +11,14 @@ The goal is simple: a session should not rediscover these rules by failing a
 PR, writing on `main`, abandoning a wait state, or running a broad validation
 lane by accident.
 
-## Current Gate 10D2 Route
-
-Current work uses the eleven typed C-SDLC v2 operator skills and resolved v2
-binaries. Ownership comes from the live issue, branch, worktree, and PR
-topology. Use `csdlc-doctor`, `csdlc-bind`, `csdlc-validate`, `csdlc-review`,
-`csdlc-publish`, `csdlc-shepherd`, `csdlc-finish`, and `csdlc-clean` for their
-declared stages. Claims and the removed v1 wrappers are not current authority.
-
-## Historical v0.91.6 Contract
-
-This section records the historical v0.91.6 rescue-sprint contract. For current
-work, `AGENTS.md` and the C-SDLC v2 operator skills take precedence. In
-particular, current binding derives ownership from the issue branch and
-worktree; the retired claim/lease ledger is not a prerequisite or lifecycle
-authority.
+## Current Contract
 
 - Start every tracked issue through the typed C-SDLC v2 skills and binaries,
   after confirming `csdlc-install resolve` selects `v2`.
 - Keep the root checkout clean on `main`. Use root for inspection, doctor, and
   issue binding only.
-- Before `csdlc-bind`, verify the live issue, branch, worktree, and PR topology
-  reported by `csdlc-doctor`.
+- Before `csdlc-bind`, create or confirm the typed claim required by
+  `csdlc-doctor`.
 - After `csdlc-bind` binds the issue, create the issue-bound goal before editing.
 - Make tracked implementation, janitor, finish, and closeout edits only in the
   issue worktree.
@@ -43,8 +29,7 @@ authority.
   mergeability, dependency truth, or operator decision is not abandoned; it is
   watcher-owned until it routes to `pr-janitor`, `pr-closeout`, human review, or
   the next issue.
-- Issue-bound PR publication must attach a watcher packet during
-  `csdlc-publish`.
+- Issue-bound PR publication must attach a watcher packet during `pr finish`.
   Disabling watcher attachment is fail-closed, PR inventory reports missing
   watcher packets, and closeout must record or update a terminal watcher
   disposition before the issue bundle is considered clean.
@@ -99,13 +84,13 @@ Use a prep scout when all of these are true:
 - root is clean on `main`;
 - the candidate issue is concrete.
 
-The prep scout may inspect issues, cards, worktrees, and PR state. It may run
-typed `csdlc-doctor` readiness. It must stop with
+The prep scout may inspect issues, cards, worktrees, PR state, and session
+ledger claims. It may run typed `csdlc-doctor` readiness. It must stop with
 one of: `ready`, `blocked`, `collision`, or `needs_operator`.
 
 The promotion rule is explicit: once the operator or conductor selects the
-candidate for execution, leave prep-scout mode and use the normal typed
-`csdlc-bind` request path.
+candidate for execution, leave prep-scout mode and use the normal typed claim
+plus `csdlc-bind` request path.
 
 ## Scheduler Boundary
 
@@ -127,8 +112,8 @@ Rescue-sprint commands should not discover at finish time that they need a
 long Cargo build or a locked Cargo process. The expected command posture is:
 
 - prefer explicit command-specific binary overrides;
-- for current publication and terminal work, use the resolved v2
-  `csdlc-publish` and `csdlc-finish` binaries;
+- for `pr finish` in a bound issue worktree, prefer its fresh
+  `adl/target/debug/adl-pr-finish` before a primary-checkout stable binary;
 - prefer fresh built owner binaries in the current or primary checkout;
 - prefer matching owner binaries on `PATH`;
 - use Cargo fallback only when the issue explicitly opts into that compatibility
