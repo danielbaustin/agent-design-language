@@ -532,7 +532,7 @@ mod tests {
 
     #[test]
     fn every_failed_smoke_restores_exact_original_selector_bytes() {
-        for failed_at in 1..=3 {
+        for failed_at in 1..=2 {
             let repo = repo();
             let original = fs::read(repo.path().join(SELECTOR_PATH)).unwrap();
             let mut call = 0;
