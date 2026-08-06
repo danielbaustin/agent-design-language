@@ -358,6 +358,36 @@ fn actual_binaries_create_validate_doctor_and_bind_without_claims() {
     assert!(second.contains("\"created\":false"));
 
     let index = worktree.join(".csdlc/issues/42/index.json");
+    let original_index = fs::read(&index).expect("bound index");
+    let mut unsigned: serde_json::Value =
+        serde_json::from_slice(&original_index).expect("index JSON");
+    unsigned["unsigned_topology"] = serde_json::json!("must fail");
+    fs::write(
+        &index,
+        serde_json::to_vec_pretty(&unsigned).expect("serialize unsigned index"),
+    )
+    .expect("unsigned index");
+    let unsigned_result = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-bind"),
+        &["--root", &repo_text, "--request", &bind_text],
+    );
+    assert!(!unsigned_result.status.success());
+    fs::write(&index, &original_index).expect("restore bound index");
+
+    let audit = worktree.join(".csdlc/issues/42/audit.jsonl");
+    let original_audit = fs::read(&audit).expect("bound audit");
+    let mut forged_audit = original_audit.clone();
+    forged_audit.extend_from_slice(b"{}\n");
+    fs::write(&audit, forged_audit).expect("forged audit");
+    let audit_result = command(
+        &repo,
+        env!("CARGO_BIN_EXE_csdlc-bind"),
+        &["--root", &repo_text, "--request", &bind_text],
+    );
+    assert!(!audit_result.status.success());
+    fs::write(&audit, original_audit).expect("restore bound audit");
+
     let mut contradictory: serde_json::Value =
         serde_json::from_slice(&fs::read(&index).expect("bound index")).expect("index JSON");
     contradictory["branch"] = serde_json::json!("different-branch");

@@ -1533,6 +1533,17 @@ pub(crate) fn verify_cards(
     cards: &BTreeMap<CardKind, CardValues>,
 ) -> Result<()> {
     verify_card_projections(store, record, cards)?;
+    let mut expected_audit = Vec::new();
+    for event in &record.audit {
+        serde_json::to_writer(&mut expected_audit, event)?;
+        expected_audit.push(b'\n');
+    }
+    if fs::read(store.issue_dir(record.issue).join("audit.jsonl"))? != expected_audit {
+        return Err(V2Error::new(
+            ErrorCode::CorruptRecord,
+            "audit projection drift",
+        ));
+    }
     let design_digest = digest(&fs::read(store.root.join(&record.design_path))?);
     let diagram_digest = digest(&fs::read(store.root.join(&record.diagram_path))?);
     validate_cross_card(

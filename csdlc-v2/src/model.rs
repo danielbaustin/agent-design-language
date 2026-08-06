@@ -128,6 +128,7 @@ pub struct TerminalEvidence {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct TerminalReceipt {
     pub schema: String,
     pub issue: u64,
@@ -185,6 +186,7 @@ pub struct AuditEvent {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct IssueRecord {
     pub schema: String,
     pub issue: u64,
