@@ -1634,13 +1634,11 @@ pub(crate) fn verify_record(record: &IssueRecord) -> Result<()> {
             "index digest mismatch",
         ));
     }
-    if record.phase == LifecyclePhase::ClosedOut {
-        if record.terminal.is_none() {
-            return Err(V2Error::new(
-                ErrorCode::CorruptRecord,
-                "closed-out record must have terminal evidence",
-            ));
-        }
+    if record.phase == LifecyclePhase::ClosedOut && record.terminal.is_none() {
+        return Err(V2Error::new(
+            ErrorCode::CorruptRecord,
+            "closed-out record must have terminal evidence",
+        ));
     }
     if record.branch.is_some() != record.worktree.is_some()
         || (record.phase == LifecyclePhase::Bound
