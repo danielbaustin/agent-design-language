@@ -8,7 +8,7 @@
   {"path":"adl/Cargo.toml","owner":"ADL runtime package","disposition":"update","expected_version":"0.92.0","observed_version":"0.92.0"},
   {"path":"adl/Cargo.lock","owner":"Cargo","disposition":"update","expected_version":"0.92.0","observed_version":"0.92.0"},
   {"path":"adl-v2/Cargo.toml","owner":"ADL v2 workspace","disposition":"update","expected_version":"0.92.0","observed_version":"0.92.0"},
-  {"path":"adl-v2/Cargo.lock","owner":"Cargo","disposition":"already_current"},
+  {"path":"adl-v2/Cargo.lock","owner":"Cargo","disposition":"update","expected_version":"0.92.0","observed_version":"0.92.0"},
   {"path":"adl-runtime/Cargo.toml","owner":"ADL Runtime package","disposition":"update","expected_version":"0.92.0","observed_version":"0.92.0"},
   {"path":"adl-runtime/Cargo.lock","owner":"Cargo","disposition":"update","expected_version":"0.92.0","observed_version":"0.92.0"},
   {"path":"adl-runtime-kernel/Cargo.toml","owner":"Runtime Kernel package","disposition":"already_current","expected_version":"0.92.0","observed_version":"0.92.0"},

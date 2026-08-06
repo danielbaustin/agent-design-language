@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "json"
+require "open3"
 require "pathname"
 require "yaml"
 
@@ -64,6 +65,29 @@ rows.each do |row|
   abort "version mismatch #{path}: #{observed.inspect} != #{expected.inspect}" if expected && observed != expected
 end
 
+metadata_manifests = %w[
+  adl/Cargo.toml
+  adl-v2/Cargo.toml
+  adl-runtime/Cargo.toml
+  adl-runtime-kernel/Cargo.toml
+  adl-resilience/Cargo.toml
+  adl-characterization/Cargo.toml
+  csdlc-v2/Cargo.toml
+]
+metadata_manifests.each do |manifest|
+  metadata_json, metadata_error, metadata_status = Open3.capture3(
+    "cargo", "metadata", "--locked", "--offline", "--format-version", "1", "--no-deps",
+    "--manifest-path", ROOT.join(manifest).to_s
+  )
+  abort "Cargo metadata failed for #{manifest}: #{metadata_error}" unless metadata_status.success?
+  packages = JSON.parse(metadata_json).fetch("packages")
+  wrong_versions = packages.reject { |package| package["version"] == "0.92.0" }
+  unless wrong_versions.empty?
+    observed = wrong_versions.map { |package| "#{package['name']}=#{package['version']}" }
+    abort "Cargo package version mismatch for #{manifest}: #{observed.join(', ')}"
+  end
+end
+
 markdown_paths = rows.each_with_object([]) do |row, paths|
   next unless %w[update already_current].include?(row["disposition"])
   path = ROOT.join(row["path"].to_s)
@@ -80,9 +104,11 @@ markdown_paths.each do |path|
   end
 end
 
-historical = %w[docs/milestones/v0.91.8 docs/releases docs/reviews docs/review-fixes .csdlc/evidence]
+historical = %w[docs/milestones docs/releases docs/migrations docs/reviews docs/review-fixes .csdlc/evidence]
 changed = `git diff --name-only origin/main...HEAD -- #{historical.join(' ')}`.lines.map(&:strip).reject(&:empty?)
-unauthorized = changed.reject { |path| path.start_with?(".csdlc/evidence/5818/") }
+unauthorized = changed.reject do |path|
+  path.start_with?("docs/milestones/v0.92/", ".csdlc/evidence/5818/")
+end
 abort "historical surface changed: #{unauthorized.join(', ')}" unless unauthorized.empty?
 
 puts "WP-01B activation evidence valid: #{rows.length} surfaces, #{markdown_paths.length} Markdown files"
