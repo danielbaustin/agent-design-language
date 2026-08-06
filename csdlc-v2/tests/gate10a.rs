@@ -46,7 +46,8 @@ fn current_operator_guidance_has_no_sunset_v1_route() {
 
     let workflow = fs::read_to_string(repo.join("docs/default_workflow.md")).unwrap();
     assert!(workflow.starts_with("# Default C-SDLC v2 workflow"));
-    assert!(workflow.contains("csdlc-init"));
+    assert!(workflow.contains("csdlc-issue --root <repo> create --request <json>"));
+    assert!(!workflow.contains("csdlc-init"));
     assert!(workflow.contains("csdlc-finish"));
     assert!(!workflow.contains("csdlc-closeout"));
     assert!(current_guidance_is_v2_only(
