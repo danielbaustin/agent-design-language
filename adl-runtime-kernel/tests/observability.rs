@@ -400,6 +400,72 @@ async fn runtime_vector_pipeline_recovers_in_place_when_vector_child_exits() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
+async fn runtime_vector_pipeline_preserves_child_when_master_log_resumes_progress() {
+    let root = test_root("runtime-vector-delayed-progress");
+    let controlled_master_log = root.join("controlled-master.log.jsonl");
+    write_records(
+        &controlled_master_log,
+        &[record(11, "INFO", "delayed_delivery", "progress", "wp-12")],
+    );
+    let mut pipeline =
+        RuntimeVectorPipeline::start_without_subscriber_for_test(vector_config(root, None))
+            .unwrap();
+    let original_pid = pipeline.snapshot().vector_pid;
+    let actual_master_log = pipeline.master_log_path_for_test().to_path_buf();
+    pipeline.configure_master_log_watchdog_for_test(
+        controlled_master_log,
+        20,
+        10,
+        Duration::from_secs(31),
+    );
+
+    pipeline.poll_health().unwrap();
+
+    let snapshot = pipeline.snapshot();
+    assert_eq!(snapshot.vector_pid, original_pid);
+    assert_eq!(snapshot.last_failure, None);
+    pipeline.restore_master_log_path_for_test(actual_master_log);
+    pipeline.shutdown().await.unwrap();
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn runtime_vector_pipeline_restarts_child_after_sustained_master_log_stagnation() {
+    let root = test_root("runtime-vector-sustained-stagnation");
+    let controlled_master_log = root.join("controlled-master.log.jsonl");
+    write_records(
+        &controlled_master_log,
+        &[record(10, "INFO", "delivery_stalled", "stagnant", "wp-12")],
+    );
+    let config = vector_config(root, None);
+    let ingress = config.ingress_spool_path.clone();
+    let mut pipeline = RuntimeVectorPipeline::start_without_subscriber_for_test(config).unwrap();
+    let original_pid = pipeline.snapshot().vector_pid;
+    let actual_master_log = pipeline.master_log_path_for_test().to_path_buf();
+    pipeline.configure_master_log_watchdog_for_test(
+        controlled_master_log,
+        20,
+        10,
+        Duration::from_secs(31),
+    );
+
+    pipeline.poll_health().unwrap();
+
+    let snapshot = pipeline.snapshot();
+    assert_ne!(snapshot.vector_pid, original_pid);
+    assert_eq!(snapshot.last_failure, None);
+    let records = read_records(&ingress);
+    assert!(records.iter().any(|record| {
+        record["operation"] == "vector_pipeline_restarting"
+            && record["reason"] == "master_log_liveness_stalled"
+    }));
+    assert!(records
+        .iter()
+        .any(|record| record["operation"] == "vector_pipeline_recovered"));
+    pipeline.restore_master_log_path_for_test(actual_master_log);
+    pipeline.shutdown().await.unwrap();
+}
+
+#[tokio::test(flavor = "multi_thread")]
 async fn runtime_vector_pipeline_defers_retry_when_restart_record_cannot_be_persisted() {
     let root = test_root("runtime-vector-restart-record-failure");
     let mut pipeline =

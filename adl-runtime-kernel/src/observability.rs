@@ -546,6 +546,30 @@ impl RuntimeVectorPipeline {
 
     #[cfg(test)]
     #[allow(dead_code)]
+    pub fn configure_master_log_watchdog_for_test(
+        &mut self,
+        master_log_path: PathBuf,
+        latest_sequence: u64,
+        last_durable_sequence: u64,
+        stalled_for: Duration,
+    ) {
+        self.master_log_path = master_log_path;
+        self.sequence
+            .store(latest_sequence.saturating_add(1), Ordering::SeqCst);
+        self.master_log_liveness = MasterLogLiveness {
+            last_durable_sequence: Some(last_durable_sequence),
+            stalled_since: Some(Instant::now() - stalled_for),
+        };
+    }
+
+    #[cfg(test)]
+    #[allow(dead_code)]
+    pub fn restore_master_log_path_for_test(&mut self, master_log_path: PathBuf) {
+        self.master_log_path = master_log_path;
+    }
+
+    #[cfg(test)]
+    #[allow(dead_code)]
     pub fn terminate_vector_for_test(&mut self) -> bool {
         self.terminate_vector()
     }
