@@ -1,0 +1,163 @@
+{
+  "schema_version": "adl.live_provider_invocations.v1",
+  "credential_policy": "operator_env_or_home_keys_no_secret_material_recorded",
+  "providers": [
+    {
+      "family": "openai",
+      "model": "gpt-5.5"
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview"
+    },
+    {
+      "family": "anthropic",
+      "model": "claude-opus-5"
+    }
+  ],
+  "invocations": [
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065634176,
+      "latency_ms": 7828,
+      "prompt_chars": 59581,
+      "output_chars": 386
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065634361,
+      "latency_ms": 10658,
+      "prompt_chars": 57191,
+      "output_chars": 470
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065680002,
+      "latency_ms": 4498,
+      "prompt_chars": 10536,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065680574,
+      "latency_ms": 3960,
+      "prompt_chars": 10959,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065680175,
+      "latency_ms": 4451,
+      "prompt_chars": 12212,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065680371,
+      "latency_ms": 4339,
+      "prompt_chars": 10830,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065680765,
+      "latency_ms": 3978,
+      "prompt_chars": 11142,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065692598,
+      "latency_ms": 4902,
+      "prompt_chars": 10107,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065693173,
+      "latency_ms": 4558,
+      "prompt_chars": 10682,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065692790,
+      "latency_ms": 5038,
+      "prompt_chars": 10705,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065692982,
+      "latency_ms": 5119,
+      "prompt_chars": 10596,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065693360,
+      "latency_ms": 7977,
+      "prompt_chars": 11195,
+      "output_chars": 98
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786065711071,
+      "latency_ms": 7211,
+      "prompt_chars": 7590,
+      "output_chars": 930
+    }
+  ]
+}

@@ -44,7 +44,7 @@ Diagram: .csdlc/prepared/issues/5844/diagram.mmd
   },
   {
     "lane": "wp24-claims-negative",
-    "proof_role": "Reject outlines, placeholders, fabricated or missing citations, private data, and unsupported current or release claims.",
+    "proof_role": "Reject outlines, placeholders, missing or source-packet-unlisted citations, private data, malformed current/planned posture, and unsafe release disposition; semantic claim relevance remains provider/editor review evidence.",
     "acceptance_ids": [
       "AC-2",
       "AC-4",
