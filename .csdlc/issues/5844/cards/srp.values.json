@@ -7,15 +7,15 @@
     "title": "[v0.92][WP-24] Ten-article launch series",
     "slug": "v0-92-wp-24-ten-article-launch-series",
     "version": "v0.92",
-    "generation": 54
+    "generation": 55
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Review all ten source packets, complete article drafts, editorial reviews, series claim matrix, publication disposition, and exact candidate paths for evidence grounding, audience fit, citation integrity, privacy, duplication, and no publication overclaim.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "docs/milestones/v0.92/publication/articles\n.csdlc/evidence/5844/validate-article-series.rb\n.csdlc/evidence/5844/rollback-manifest.json\n.csdlc/evidence/5844/ROLLBACK_PROCEDURE.md\n.csdlc/evidence/5844/claude-final-01-05-result.json\n.csdlc/evidence/5844/claude-final-06-10-result.json\n.csdlc/evidence/5844/gemini-exact-closing-result.json\n.csdlc/evidence/5844/gemini-exact-provider-invocations.json",
+      "review_revision": "git-blake3:10c004c3150e1eb3fd2a7ddf1108a109631a8ecb:7c48d57a75d3fed8be83962234f42f636fbc81dd7b4590d01bdb5d94135565c3",
+      "reviewer": "codex-subagent:Nash",
       "review_prompts": [
         "Are all ten artifacts complete articles with bounded source packets rather than outlines?",
         "Is every material claim and citation supportable without exposing private information?",
@@ -23,8 +23,11 @@
         "Are #5843-dependent claims and publication status explicitly gated?"
       ],
       "findings": [],
-      "residual_risk": [],
-      "review_result": "pre_review"
+      "residual_risk": [
+        "Before any external publication, recheck #5843 release truth, UTS/ACC versions, CodeFriend status, cryptographic wording, CAV boundaries, and economic/payment posture.",
+        "Gemini supplied no upstream request IDs; retained exact prompts, complete results, and matching invocation metadata provide the bounded association evidence."
+      ],
+      "review_result": "pass"
     }
   }
 }

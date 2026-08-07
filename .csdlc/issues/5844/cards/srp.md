@@ -12,7 +12,14 @@ Status: pre_phase
 
 ## Scope
 
-Review all ten source packets, complete article drafts, editorial reviews, series claim matrix, publication disposition, and exact candidate paths for evidence grounding, audience fit, citation integrity, privacy, duplication, and no publication overclaim.
+docs/milestones/v0.92/publication/articles
+.csdlc/evidence/5844/validate-article-series.rb
+.csdlc/evidence/5844/rollback-manifest.json
+.csdlc/evidence/5844/ROLLBACK_PROCEDURE.md
+.csdlc/evidence/5844/claude-final-01-05-result.json
+.csdlc/evidence/5844/claude-final-06-10-result.json
+.csdlc/evidence/5844/gemini-exact-closing-result.json
+.csdlc/evidence/5844/gemini-exact-provider-invocations.json
 
 ## Prompts
 
@@ -31,12 +38,13 @@ Every actionable finding requires a terminal disposition.
 
 ## Residual Risk
 
-- none
+- Before any external publication, recheck #5843 release truth, UTS/ACC versions, CodeFriend status, cryptographic wording, CAV boundaries, and economic/payment posture.
+- Gemini supplied no upstream request IDs; retained exact prompts, complete results, and matching invocation metadata provide the bounded association evidence.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:10c004c3150e1eb3fd2a7ddf1108a109631a8ecb:7c48d57a75d3fed8be83962234f42f636fbc81dd7b4590d01bdb5d94135565c3")
 
-Reviewer: None
+Reviewer: Some("codex-subagent:Nash")
 
-Result: pre_review
+Result: pass
