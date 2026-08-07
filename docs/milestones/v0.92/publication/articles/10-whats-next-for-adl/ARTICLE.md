@@ -18,7 +18,7 @@ These parts are not a completed artificial society. They are the engineering sub
 
 ADL's active v0.92 milestone is framed around the first true Gödel-agent birthday.
 
-The word “birthday” is intentionally stronger than “startup.” The planned acceptance boundary, set out in Article 3, turns on identity architecture, continuity across cycles, witnessed memory, and a citizen-facing receipt.
+The word “birthday” is intentionally stronger than “startup.” The planned acceptance boundary, set out in the milestone's identity-continuity and birthday plan, turns on identity architecture, continuity across cycles, witnessed memory, and a citizen-facing receipt.
 
 Earlier work can create test citizens, snapshots, wake records, and persistent processes. Those are prerequisites, not substitutes for the event.
 
@@ -54,7 +54,7 @@ The intended result is not an autonomous attacker roaming infrastructure. It is 
 
 CodeFriend offers a practical route for ADL ideas to help engineering teams before the inhabited runtime is complete.
 
-The planned alpha combines external-repository ingestion, evidence packets, architecture cognition, specialist review, executable governance, diagrams, remediation planning, tests, and structured reporting for external readers. Its success should be judged by whether a real operator can run it against a bounded repository and understand both the findings and their evidence; no external customer delivery is claimed here.
+The planned alpha combines external-repository ingestion, evidence packets, architecture cognition, specialist review, executable governance, diagrams, remediation planning, tests, and structured reporting for external readers. Its success should be judged by whether a real operator can run it against a bounded repository and understand both the findings and their evidence.
 
 That product remains planned rather than shipped. The distinction gives the team room to prove usability, reliability, redaction, and delivery instead of treating an internal skill collection as a finished service.
 

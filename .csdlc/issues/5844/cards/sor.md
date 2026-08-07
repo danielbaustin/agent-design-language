@@ -17,14 +17,20 @@ Authored and independently edited the complete source-grounded ten-article WP-24
 ## Artifacts
 
 - docs/milestones/v0.92/publication/articles/
-- .csdlc/evidence/5844/claude-editorial-result.json
-- .csdlc/evidence/5844/gemini-editorial-review.json
+- docs/milestones/v0.92/publication/articles/EDITORIAL_PANEL_REVIEW.md
+- .csdlc/evidence/5844/claude-final-01-05-result.json
+- .csdlc/evidence/5844/claude-final-06-10-result.json
+- .csdlc/evidence/5844/gemini-final-01-05-review.json
+- .csdlc/evidence/5844/gemini-final-06-10-review.json
+- .csdlc/evidence/5844/gemini-final-disposition.json
+- .csdlc/evidence/5844/rollback-manifest.json
+- .csdlc/evidence/5844/ROLLBACK_PROCEDURE.md
 
 ## Execution
 
-- Added ten bounded source packets and ten complete Medium-style article drafts.
-- Added ten per-article editorial reviews, cross-series claim controls, Claude/Gemini review evidence, and stop-before-publish disposition.
-- Resolved all returned Claude and Gemini actionable findings.
+- Added ten bounded source packets, ten complete Medium-style articles, and ten per-article editorial reviews.
+- Added a series claim matrix, stop-before-publish disposition, machine-checked rollback contract, and complete bounded Claude and Gemini review evidence.
+- Resolved every actionable provider and pre-PR finding, including evidence coverage, terminology, duplicate exposition, claim posture, provider-review completeness, automated proof depth, and rollback verification.
 
 ## Validation
 
@@ -34,7 +40,7 @@ Authored and independently edited the complete source-grounded ten-article WP-24
       "ruby",
       ".csdlc/evidence/5844/validate-article-series.rb"
     ],
-    "purpose": "Prove all ten complete packets and required series artifacts exist without placeholders or private paths.",
+    "purpose": "Prove all ten unique complete packets, required headings, minimum draft depth, claim-posture labels, repository-source sections, local link resolution, and privacy safeguards.",
     "outcome": "passed",
     "evidence_ref": ".csdlc/evidence/5844/validate-article-series.rb"
   },
@@ -44,28 +50,28 @@ Authored and independently edited the complete source-grounded ten-article WP-24
       ".csdlc/evidence/5844/validate-article-series.rb",
       "--negative"
     ],
-    "purpose": "Prove review-ready stop-before-publish posture and reject unsafe publication language.",
+    "purpose": "Reject placeholders, private or credential-like content, and unsafe external-publication disposition.",
     "outcome": "passed",
     "evidence_ref": "docs/milestones/v0.92/publication/articles/PUBLICATION_DISPOSITION.md"
+  },
+  {
+    "command": [
+      "ruby",
+      ".csdlc/evidence/5844/validate-article-series.rb",
+      "--rollback"
+    ],
+    "purpose": "Prove the rollback remove, retain, and restore sets are disjoint, complete, issue-scoped, present, and require no external publication action.",
+    "outcome": "passed",
+    "evidence_ref": ".csdlc/evidence/5844/rollback-manifest.json"
   },
   {
     "command": [
       "bash",
       "adl/tools/test_medium_article_writer_skill_contracts.sh"
     ],
-    "purpose": "Prove the repository article-writer contract retains source and publication safeguards.",
+    "purpose": "Prove the repository article-writer contract retains source and stop-before-publish safeguards.",
     "outcome": "passed",
     "evidence_ref": "adl/tools/test_medium_article_writer_skill_contracts.sh"
-  },
-  {
-    "command": [
-      "ruby",
-      "-e",
-      "repository-relative Markdown link audit"
-    ],
-    "purpose": "Prove every repository-relative link in the WP-24 packet resolves.",
-    "outcome": "passed",
-    "evidence_ref": "docs/milestones/v0.92/publication/articles/SERIES_ARC_AND_CLAIM_MATRIX.md"
   }
 ]
 

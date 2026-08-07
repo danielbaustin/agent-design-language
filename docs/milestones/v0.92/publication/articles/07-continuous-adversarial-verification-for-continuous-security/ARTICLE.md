@@ -42,7 +42,7 @@ Continuous adversarial verification therefore has to examine runtime governance,
 
 ## Freedom Gate for security work
 
-Security testing is itself a powerful capability. ADL's ordinary governance principles still apply.
+Security testing is itself a powerful capability, so ADL's Freedom Gate, the runtime admission step that converts a proposed action into scoped, signed authority, applies here unchanged.
 
 A red action should pass through scoped authority and policy. Dangerous payloads should stay inside approved fixtures or isolated targets. Results should be redacted according to audience. Resource ceilings and stop conditions should bound iteration. Refusals and quarantines should remain evidence.
 

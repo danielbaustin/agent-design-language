@@ -1,4 +1,4 @@
-# Source Packet: ADL Runtime and the Cognitive Spacetime Model
+# Source Packet: ADL Runtime and the Cognitive Spacetime Manifold
 
 ## Brief
 
@@ -13,7 +13,7 @@
 | --- | --- | --- |
 | `docs/explainers/CSM.md` | Current architecture | CSM definition, polis relationship, and current boundary. |
 | `docs/architecture/RUNTIME_V3_OPERATIONAL_COMPONENTS.md` | Implemented boundary | Runtime v3 component topology. |
-| `docs/architecture/RUNTIME_V3_GOVERNED_EXECUTION_ARCHITECTURE.md` | Implemented boundary | Freedom Gate, AEE, audit, continuity, and proof limits. |
+| `docs/architecture/RUNTIME_V3_GOVERNED_EXECUTION_ARCHITECTURE.md` | Implemented boundary | Freedom Gate, Adaptive Execution Engine (AEE), audit, continuity, and proof limits. |
 | `docs/adr/0012-runtime-v2-bounded-csm-run.md` | Accepted decision | Bounded CSM execution model. |
 | `docs/milestones/v0.92/IDENTITY_CONTINUITY_AND_BIRTHDAY_PLAN_v0.92.md` | Active plan | Identity-continuity and birthday requirements. |
 

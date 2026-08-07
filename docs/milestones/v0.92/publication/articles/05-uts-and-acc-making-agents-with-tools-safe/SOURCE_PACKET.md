@@ -15,11 +15,12 @@
 | `docs/specs/uts/README.md` | Current spec entrypoint | Implemented UTS v1 and proposed v1.1 boundary. |
 | `docs/specs/uts/UTS_V1.0_SCHEMA.md` | Normative current spec | Implemented tool description fields. |
 | `docs/specs/acc/ACC_V1.0_SPEC.md` | Normative current spec | Implemented authority and visibility contract. |
+| `docs/specs/acc/ACC_V1.1_SPEC.md` | Proposed next-version spec | Additive ACC evolution target, not current runtime behavior. |
 | `docs/adr/0020-universal-tool-schema-portable-tool-description-standard.md` | Accepted decision | Portable tool-description rationale. |
 
 ## Claim Posture
 
-- Current: UTS v1 and ACC v1.0 are implemented baselines with machine-readable schema and Rust surfaces.
+- Current: UTS v1, formally versioned by its v1.0 schema, and ACC v1.0 are implemented baselines with machine-readable schema and Rust surfaces.
 - Proposed: UTS v1.1 and ACC v1.1 are additive evolution targets, not guaranteed current wire behavior.
 - Current but bounded: these contracts improve inspectability and governance; they do not guarantee tool correctness or eliminate runtime policy.
 

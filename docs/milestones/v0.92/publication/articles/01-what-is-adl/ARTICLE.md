@@ -73,3 +73,5 @@ That is the thread the rest of this series follows: from the runtime world, to c
 - [`adl/src/godel/experiment_record.rs`](../../../../../../adl/src/godel/experiment_record.rs)
 - [`adl/src/runtime_v2/theory_of_mind_foundation.rs`](../../../../../../adl/src/runtime_v2/theory_of_mind_foundation.rs)
 - [`csdlc-v2/src/operator.rs`](../../../../../../csdlc-v2/src/operator.rs)
+- [`docs/specs/uts/UTS_V1.0_SCHEMA.md`](../../../../../specs/uts/UTS_V1.0_SCHEMA.md)
+- [`docs/specs/acc/ACC_V1.0_SPEC.md`](../../../../../specs/acc/ACC_V1.0_SPEC.md)

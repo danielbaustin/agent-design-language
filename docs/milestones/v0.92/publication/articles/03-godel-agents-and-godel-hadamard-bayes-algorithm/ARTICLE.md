@@ -24,7 +24,7 @@ The **Bayes phase** asks: *What should we believe, given the evidence and constr
 
 It compares candidates against objectives, prior results, policy, risk, and available evidence. The result may be a selected option, a ranked set, a rejection, or a conclusion that the evidence is insufficient.
 
-The names matter less than the separation. Describing current truth is not the same activity as inventing alternatives. Inventing an alternative does not establish that it is good. Believing a proposal is promising does not grant permission to execute it.
+The names matter less than the separation. They are ADL phase labels, not claims about the underlying mathematics. Describing current truth is not the same activity as inventing alternatives. Inventing an alternative does not establish that it is good. Believing a proposal is promising does not grant permission to execute it.
 
 ## The speculation-to-execution failure
 

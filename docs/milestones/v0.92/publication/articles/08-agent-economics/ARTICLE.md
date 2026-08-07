@@ -6,11 +6,11 @@ Who receives compute when demand exceeds supply? Which memories deserve durable 
 
 These are economic questions, even when no currency is involved.
 
-ADL places them inside the **polis**: the governance, security, social, and economic layer of its runtime world. The project has implemented resource-aware runtime and governance foundations, but its richer market designs remain proposals. That distinction creates room to explore the subject without pretending the answers are settled.
+ADL places them inside the **polis**: the governance, security, social, and economic layer of its runtime world. The project treats resource limits and evidence-bearing cost as governance concerns across current runtime and planning surfaces, but its richer market designs remain proposals. That distinction creates room to explore the subject without pretending the answers are settled.
 
 ## Four scarce goods
 
-ADL's retained Runtime v2 economic design document, a proposal rather than implemented allocation, identifies four basic resource classes.
+ADL's retained Runtime v2 economic source draft, historical lineage rather than implemented allocation, identifies four basic resource classes.
 
 **Compute** includes model inference and execution cycles. It is the most visible cost, but not the only one.
 

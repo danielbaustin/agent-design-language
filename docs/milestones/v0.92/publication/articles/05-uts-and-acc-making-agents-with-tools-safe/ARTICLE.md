@@ -61,7 +61,7 @@ No single layer is asked to solve the entire safety problem.
 
 ## Current versions and future evolution
 
-ADL currently treats UTS v1 and ACC v1.0 as the implemented baselines. They have normative documents and machine-readable schema or runtime surfaces.
+ADL currently treats UTS v1, whose formal implemented schema is v1.0, and ACC v1.0 as the implemented baselines. They have normative documents and machine-readable schema or runtime surfaces.
 
 UTS v1.1 and ACC v1.1 are tracked additive directions. They refine invocation metadata, observability, version negotiation, authority, and visibility, but proposal documents should not be confused with guaranteed current wire behavior.
 
@@ -81,4 +81,5 @@ Their value is narrower and practical: they give agent platforms a precise place
 - [`docs/specs/uts/README.md`](../../../../../specs/uts/README.md)
 - [`docs/specs/uts/UTS_V1.0_SCHEMA.md`](../../../../../specs/uts/UTS_V1.0_SCHEMA.md)
 - [`docs/specs/acc/ACC_V1.0_SPEC.md`](../../../../../specs/acc/ACC_V1.0_SPEC.md)
+- [`docs/specs/acc/ACC_V1.1_SPEC.md`](../../../../../specs/acc/ACC_V1.1_SPEC.md)
 - [`docs/adr/0020-universal-tool-schema-portable-tool-description-standard.md`](../../../../../adr/0020-universal-tool-schema-portable-tool-description-standard.md)

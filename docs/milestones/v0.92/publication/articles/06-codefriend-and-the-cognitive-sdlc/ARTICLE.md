@@ -12,7 +12,7 @@ Git and pull requests are excellent substrates. They preserve changes, branches,
 
 What did the issue ask for? Which task was selected? What plan governed the implementation? Which validations were intended? What did review find? Which findings were fixed or deferred? Did the final outcome match the plan? What evidence should a later agent inherit?
 
-C-SDLC represents one bounded change as a cognitive state transition. ADL's canonical card sequence separates input intent, selected task, operative plan, validation plan, structured review, and outcome truth. A bound worktree gives the change a concrete execution context. Typed tools validate and advance lifecycle state.
+C-SDLC represents one bounded change as a cognitive state transition. ADL's canonical sequence of lifecycle records, called cards, separates input intent, selected task, operative plan, validation plan, structured review, and outcome truth. A bound worktree gives the change a concrete execution context. Typed tools validate and advance lifecycle state.
 
 The distinction between plan and outcome is especially important. If the two share one mutable narrative, a failed experiment can be rewritten to look like the original intention. Separate records preserve learning and accountability.
 
@@ -30,7 +30,7 @@ Governance is not an obstacle placed outside development. It is the structure th
 
 CodeFriend's current foundation is an evidence-first repository review workflow.
 
-It builds a bounded packet of repository facts, assigns specialist review lanes, preserves findings and uncertainty, creates architecture and dependency views, proposes remediation and tests, and synthesizes structured reports intended for external readers. No external customer delivery is claimed. Findings should point to source evidence or clearly identify inference. Skipped surfaces and residual risks stay visible.
+It builds a bounded packet of repository facts, preserves findings and uncertainty, and synthesizes structured reports for readers outside the change. CodeFriend has not been delivered to external customers. Specialist review lanes, architecture and dependency views, and remediation-and-test proposals belong to the planned alpha, not to today's bounded package. Findings should point to source evidence or clearly identify inference. Skipped surfaces and residual risks stay visible.
 
 This is more than automated linting. CodeFriend's planned architecture-cognition layer is meant to reason about module boundaries, coupling, change amplification, architecture drift, decision records, and likely blast radius. Executable governance can turn selected architecture rules into fitness functions and CI-friendly checks.
 

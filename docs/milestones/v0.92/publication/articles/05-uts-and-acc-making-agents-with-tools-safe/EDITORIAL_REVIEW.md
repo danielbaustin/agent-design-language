@@ -13,7 +13,7 @@
 
 ## Evidence And Claim Review
 
-- UTS v1 and ACC v1.0 are correctly identified as current baselines.
+- UTS v1, formally versioned by its v1.0 schema, and ACC v1.0 are correctly identified as current baselines.
 - UTS v1.1 and ACC v1.1 are explicitly proposals rather than current wire guarantees.
 - The article does not claim universal adoption, complete safety, or elimination of human/security review.
 - The tool example is illustrative and not presented as executed evidence.
@@ -27,3 +27,4 @@ No credentials, private schemas, customer tool definitions, or machine-local ref
 - Resolved: repeated the three negative equations because they are the central interoperability guardrail.
 - Resolved: separated tool correctness, authority, and outcome quality.
 - Residual: version language must be rechecked immediately before any later external publication.
+- Resolved: the stronger H1 wording “Safer” is intentional even though the issue-defined directory slug ends in `safe`; the article makes bounded risk-reduction claims, not absolute safety claims.

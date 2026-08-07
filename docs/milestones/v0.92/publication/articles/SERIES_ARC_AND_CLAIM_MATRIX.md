@@ -14,7 +14,7 @@ Each article must stand alone while using the same vocabulary: models propose; t
 | 2 | Explain CSM and runtime | Bounded runtime and governed-execution surfaces exist | Full identity-bearing manifold remains planned | Owns world, time, memory, causality, continuity |
 | 3 | Explain GHB and Gödel experiments | Bounded experiment/adopt-reject artifacts exist | First true Gödel-agent birthday remains active work | Owns cognition and improvement, not runtime topology |
 | 4 | Explain execution authority | Focused signed Freedom Gate is implemented and tested | Broad provider and distributed governance integration remains later | Owns admission, permits, refusal, appeal |
-| 5 | Explain governed tools | UTS v1 and ACC v1.0 are implemented baselines | v1.1 documents are additive proposals | Owns description-versus-authority split |
+| 5 | Explain governed tools | UTS v1, formally versioned by its v1.0 schema, and ACC v1.0 are implemented baselines | v1.1 documents are additive proposals | Owns description-versus-authority split |
 | 6 | Explain CodeFriend and C-SDLC | Typed C-SDLC and bounded review packets exist | Full CodeFriend alpha is planned | Owns software-delivery application |
 | 7 | Explain CAV | Bounded security architecture and bridge evidence exist | Broader continuous adversarial execution is later work | Owns red/blue/purple security loop |
 | 8 | Explain resource governance | Cost and resource posture appears in current architecture | Markets and inter-polis trade are proposals | Owns scarcity and allocation; makes no market claim |

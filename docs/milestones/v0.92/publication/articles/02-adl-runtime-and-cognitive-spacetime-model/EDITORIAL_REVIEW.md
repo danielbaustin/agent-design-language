@@ -1,4 +1,4 @@
-# Editorial Review: ADL Runtime and the Cognitive Spacetime Model
+# Editorial Review: ADL Runtime and the Cognitive Spacetime Manifold
 
 ## Verdict
 
@@ -26,4 +26,5 @@ No private state, absolute paths, credentials, customer claims, or unpublished m
 
 - Resolved: clarified that a snapshot and reused name do not independently prove identity.
 - Resolved: described memory provenance without claiming all Memory Palace work complete.
+- Resolved: corrected the display title to the canonical Cognitive Spacetime Manifold while retaining the issue-defined directory slug.
 - Residual: a future published version could add a reviewed runtime diagram, but the article is complete without one.

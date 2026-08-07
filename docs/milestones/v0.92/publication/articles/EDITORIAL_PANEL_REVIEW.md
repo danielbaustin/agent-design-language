@@ -2,7 +2,7 @@
 
 ## Scope
 
-The complete ten-article packet, series claim matrix, and publication disposition received two independent live-provider reviews:
+The complete ten-article packet, series claim matrix, and publication disposition received two independent live-provider reviews. Initial whole-series responses were truncated, so they were not treated as complete review proof. Final review was split into Articles 1-5 and Articles 6-10, with a separate Gemini closing disposition:
 
 - Claude Opus 5: senior editorial review for argument, prose, accessibility, duplication, claim support, privacy, and publication boundary.
 - Gemini 3.1 Pro Preview: source-posture, cross-series consistency, drift, privacy, and publication-risk review.
@@ -25,7 +25,9 @@ Provider reachability and review quality are separate claims. Retained provider 
 
 ## Panel Disposition
 
-All returned actionable findings are resolved in the issue worktree. The revised packet requires a final exact-revision review and repeated validation before C-SDLC publication. “Publication” in that lifecycle means a repository pull request; external Medium publication remains operator-only and unapproved.
+All returned actionable findings from the initial and grouped reviews are resolved in the issue worktree. The grouped Claude review tightened evidence coverage, corrected the Cognitive Spacetime Manifold title, clarified UTS/ACC versions and sources, narrowed current CodeFriend and economics claims, removed brittle series-position references, and expanded pre-publication checks. Gemini's two groups gave explicit PASS verdicts to all ten articles and its closing disposition passed cross-series consistency, privacy, the `#5843` gate, and review completeness.
+
+The revised packet requires a final exact-revision review and repeated validation before C-SDLC publication. “Publication” in that lifecycle means a repository pull request; external Medium publication remains operator-only and unapproved.
 
 ## Retained Evidence
 
@@ -33,3 +35,8 @@ All returned actionable findings are resolved in the issue worktree. The revised
 - `.csdlc/evidence/5844/claude-editorial-run.jsonl`
 - `.csdlc/evidence/5844/gemini-editorial-review.json`
 - `.csdlc/evidence/5844/gemini-editorial-provider-invocations.json`
+- `.csdlc/evidence/5844/claude-final-01-05-result.json`
+- `.csdlc/evidence/5844/claude-final-06-10-result.json`
+- `.csdlc/evidence/5844/gemini-final-01-05-review.json`
+- `.csdlc/evidence/5844/gemini-final-06-10-review.json`
+- `.csdlc/evidence/5844/gemini-final-disposition.json`

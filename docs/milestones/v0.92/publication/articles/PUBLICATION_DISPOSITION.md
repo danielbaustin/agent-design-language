@@ -14,4 +14,4 @@ After review, the operator may approve, revise, sequence, schedule, or decline a
 
 ## Pre-Publication Recheck
 
-Immediately before any external release, recheck the current repository and milestone truth for every drift-prone statement. In particular, verify the UTS and ACC current-version posture in Article 5, the CodeFriend product status in Article 6, the v0.92 and birthday status in Articles 3 and 10, and the final release wording gated by issue `#5843`.
+Immediately before any external release, recheck the current repository and milestone truth for every drift-prone statement. In particular, verify the UTS and ACC current-version posture in Article 5, the cryptographic specifics in Article 4, the CodeFriend product status in Article 6, the bounded-target and non-certification posture in Article 7, the payment, market, and inter-polis deferral posture in Article 8, the v0.92 and birthday status in Articles 3 and 10, and the final release wording gated by issue `#5843`.

@@ -1,0 +1,44 @@
+{
+  "schema": "adl.wp24.article-rollback.v1",
+  "issue": 5844,
+  "external_publication_action": false,
+  "remove_paths": [
+    "docs/milestones/v0.92/publication/articles/01-what-is-adl/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/02-adl-runtime-and-cognitive-spacetime-model/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/03-godel-agents-and-godel-hadamard-bayes-algorithm/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/04-the-freedom-gate/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/05-uts-and-acc-making-agents-with-tools-safe/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/06-codefriend-and-the-cognitive-sdlc/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/07-continuous-adversarial-verification-for-continuous-security/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/08-agent-economics/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/09-adl-and-social-intelligence/ARTICLE.md",
+    "docs/milestones/v0.92/publication/articles/10-whats-next-for-adl/ARTICLE.md"
+  ],
+  "retain_paths": [
+    "docs/milestones/v0.92/publication/articles/01-what-is-adl/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/01-what-is-adl/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/02-adl-runtime-and-cognitive-spacetime-model/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/02-adl-runtime-and-cognitive-spacetime-model/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/03-godel-agents-and-godel-hadamard-bayes-algorithm/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/03-godel-agents-and-godel-hadamard-bayes-algorithm/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/04-the-freedom-gate/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/04-the-freedom-gate/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/05-uts-and-acc-making-agents-with-tools-safe/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/05-uts-and-acc-making-agents-with-tools-safe/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/06-codefriend-and-the-cognitive-sdlc/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/06-codefriend-and-the-cognitive-sdlc/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/07-continuous-adversarial-verification-for-continuous-security/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/07-continuous-adversarial-verification-for-continuous-security/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/08-agent-economics/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/08-agent-economics/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/09-adl-and-social-intelligence/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/09-adl-and-social-intelligence/EDITORIAL_REVIEW.md",
+    "docs/milestones/v0.92/publication/articles/10-whats-next-for-adl/SOURCE_PACKET.md",
+    "docs/milestones/v0.92/publication/articles/10-whats-next-for-adl/EDITORIAL_REVIEW.md"
+  ],
+  "restore_paths": [
+    "docs/milestones/v0.92/publication/articles/SERIES_ARC_AND_CLAIM_MATRIX.md",
+    "docs/milestones/v0.92/publication/articles/PUBLICATION_DISPOSITION.md"
+  ],
+  "retain_evidence_root": ".csdlc/evidence/5844"
+}
