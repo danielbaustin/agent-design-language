@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5844,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5844-v092-wp24-article-series",
+  "title": "[v0.92][WP-24] Ten-article launch series",
+  "body": "## Summary\n\n- adds ten complete source-grounded launch articles, each with a source packet and editorial review\n- adds cross-series claim controls, stop-before-publish disposition, and rollback evidence\n- records complete Claude Opus 5 and Gemini 3.1 Pro Preview editorial reviews\n\n## Validation\n\n- `ruby .csdlc/evidence/5844/validate-article-series.rb`\n- `ruby .csdlc/evidence/5844/validate-article-series.rb --negative`\n- `ruby .csdlc/evidence/5844/validate-article-series.rb --rollback`\n- `bash adl/tools/test_medium_article_writer_skill_contracts.sh`\n- typed C-SDLC issue validation and doctor\n- exact-head pre-PR subagent review: no actionable findings\n\nExternal Medium publication is not part of this PR and remains operator-only. Release-dependent claims remain gated on #5843 and must be refreshed before external publication.\n\nCloses #5844",
+  "draft": false,
+  "revision": "git-blake3:28185f1b8d75976aa830876b9ffcc0e50b506131:605f843d64d41edd22ca5593418007c4d57abc1da94ecebd39d29cc8460077ee",
+  "commit_sha": "28185f1b8d75976aa830876b9ffcc0e50b506131"
+}
