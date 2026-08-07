@@ -1,0 +1,37 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "claude-opus-5",
+    "credential_ref": "env:ANTHROPIC_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "anthropic",
+    "model_ref": "claude-opus-5",
+    "provider_model_id": "claude-opus-5",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1786064110"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1786064110",
+      "duration_ms": 153212,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted provider text len=4878]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 153212,
+  "request_id": "issue-5844-claude-editorial-review-final",
+  "output_text": "# ADL Issue #5844 — Independent Senior Editor Review\n\nScope: 10 articles + `PUBLICATION_DISPOSITION.md` + `SERIES_ARC_AND_CLAIM_MATRIX.md`. v0.92 and #5843 treated as active/not complete.\n\n---\n\n## P1 — Must fix before the packet advances\n\n**P1-1. Lead article's strongest claim is sourced only to planning/README docs.**\n`docs/milestones/v0.92/publication/articles/01-what-is-adl/ARTICLE.md`, §\"What exists, and what does not\".\n\nThe sentence \"The repository contains implemented Rust surfaces for typed runtime contracts, governed execution, tool schemas, capability contracts, bounded Gödel experiments, social-cognition foundations, and C-SDLC lifecycle operations. It also contains tests, fixtures, architecture decisions, and review evidence for those bounded claims\" is backed by a Repository Sources list containing no code or test path (`adl/README.md`, `ADL_FEATURE_LIST.md`, `CSM.md`, `cognitive-sdlc/architecture.md`, `v0.92/README.md`). This directly contradicts the series' own rule: *\"Never use planning documents as release evidence.\"* It is the series' front door and the claim most likely to be quoted.\n\nProposed edit — pick one:\n- (Preferred) Add to Repository Sources: `adl-runtime-kernel/src/governance.rs`, `adl/src/runtime_v2/theory_of_mind_foundation.rs`, and the Gödel-experiment and C-SDLC module/test paths cited by articles 3 and 6.\n- (Fallback) Rewrite the lead clause to defer evidence: \"Later articles in this series cite the implemented Rust surfaces for typed runtime contracts, governed execution, tool schemas, capability contracts, bounded Gödel experiments, social-cognition foundations, and C-SDLC lifecycle operations, along with their tests and review evidence.\"\n\n---\n\n## P2 — Should fix before review sign-off\n\n**P2-1. Article 2 re-teaches Article 4's mechanics (matrix overlap-control breach).**\n`.../02-adl-runtime-and-cognitive-spacetime-model/ARTICLE.md`, §\"Governed execution in Runtime v3\".\nParagraphs 2–4 restate permits, delegation, quarantine, and checkpoint/restore that the matrix assigns to Article 4 (\"Owns admission, permits, refusal, appeal\"), and Article 4 repeats them near-verbatim (\"Snapshots retain resource balances, revocations, consumed request identities…\").\n\nProposed edit — replace those three paragraphs with:\n> \"A proposed action arrives with identity, policy, resource, and authority information. The Freedom Gate admits or refuses it, and a bounded actuation layer executes only against a signed one-shot permit. Governance and actuation state participate in checkpoint and restore, so a restart cannot silently revive revoked authority. Article 4 covers those mechanics in detail.\"\n\nKeep the existing limitation paragraph that follows.\n\n**P2-2. The birthday acceptance list is recited three times, near-verbatim (02, 03, 10).**\nSame seven-item list appears in `02` §\"Persistence is not identity\", `03` §\"What the birthday would mean\", and `10` §\"The v0.92 identity challenge\".\n\nProposed edits:\n- `02`: replace the list sentence with \"ADL's v0.92 birthday plan therefore sets a higher bar, requiring named identity architecture, continuity records, and witnessed evidence rather than a successful restart. Article 3 states the full acceptance boundary; that surface is still active work.\"\n- `10`: replace \"The planned acceptance boundary includes a stable name and identity architecture, … and a citizen-facing receipt.\" with \"The planned acceptance boundary — set out in article 3 — turns on identity architecture, continuity across cycles, witnessed memory, and a citizen-facing receipt.\"\n- `03`: keep the full list (canonical owner).\n\n**P2-3. \"Runtime v2\" vs \"Runtime v3\" is unexplained and reads inconsistently across articles.**\n`02` presents Runtime v3 as current; `08` calls Runtime v2 \"historical\"; `09` calls a Runtime v2 foundation \"implemented\". A non-repo reader cannot tell whether v2 is superseded, retained, or live.\n\nProposed edits:\n- `02`, first sentence of §\"Governed execution in Runtime v3\", add: \"(Runtime v3 is the current governed-execution architecture; earlier Runtime v2 surfaces remain in the repository and are cited later in this series for memory, citizen state, and Theory of Mind.)\"\n- `08`: \"ADL's historical Runtime v2 economic model\" → \"ADL's retained Runtime v2 economic design document — a proposal, not implemented allocation —\".\n- `09`: \"The implemented Runtime v2 foundation represents…\" → \"The Theory of Mind foundation implemented in ADL's Runtime v2 module represents…\".\n\n**P2-4. \"Customer-grade\" implies customer adoption, which the series rules forbid.**\n- `06` §\"What CodeFriend adds\": \"synthesizes customer-grade reports\" → \"synthesizes structured reports intended for external readers; no external customer delivery has occurred.\"\n- `06` §\"What exists today\" and `10` §\"A product surface through CodeFriend\": \"custom",
+  "output_text_excerpt": "[redacted provider text len=4878]",
+  "artifact_ref": ".csdlc/evidence/5844/claude-editorial-result.json",
+  "trace_ref": "provider_adapter.circuit_breaker"
+}

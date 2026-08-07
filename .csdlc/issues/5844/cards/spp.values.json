@@ -7,7 +7,7 @@
     "title": "[v0.92][WP-24] Ten-article launch series",
     "slug": "v0-92-wp-24-ten-article-launch-series",
     "version": "v0.92",
-    "generation": 37
+    "generation": 50
   },
   "status": "ready",
   "content": {
@@ -23,7 +23,7 @@
             "AC-1",
             "AC-2"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S2",
@@ -32,7 +32,7 @@
             "AC-1",
             "AC-3"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S3",
@@ -41,7 +41,7 @@
             "AC-2",
             "AC-4"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S4",
@@ -51,7 +51,7 @@
             "AC-2",
             "AC-3"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S5",
@@ -60,7 +60,7 @@
             "AC-3",
             "AC-4"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S6",
@@ -68,7 +68,7 @@
           "acceptance_ids": [
             "AC-5"
           ],
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "S7",
@@ -80,7 +80,7 @@
             "AC-4",
             "AC-5"
           ],
-          "status": "pending"
+          "status": "completed"
         }
       ],
       "affected_areas": [

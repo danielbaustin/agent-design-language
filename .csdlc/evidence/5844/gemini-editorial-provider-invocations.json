@@ -1,0 +1,31 @@
+{
+  "schema_version": "adl.live_provider_invocations.v1",
+  "credential_policy": "operator_env_or_home_keys_no_secret_material_recorded",
+  "providers": [
+    {
+      "family": "openai",
+      "model": "gpt-5.5"
+    },
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview"
+    },
+    {
+      "family": "anthropic",
+      "model": "claude-opus-5"
+    }
+  ],
+  "invocations": [
+    {
+      "family": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "http_status": 200,
+      "request_id_present": false,
+      "request_id": null,
+      "timestamp_unix_ms": 1786064055208,
+      "latency_ms": 11307,
+      "prompt_chars": 109148,
+      "output_chars": 1763
+    }
+  ]
+}
